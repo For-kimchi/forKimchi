@@ -1,6 +1,6 @@
-// mapper/mapper.js
 const mariaDB = require('mariadb/callback');
-const sqlList = require('./sql/customers.js');
+const sqlList = require('./sqlList.js');
+const { queryFormat  } = require('../utils/converts.js');
 // DB연결은 가급적 항상 connectionPool을 사용하는걸 추천.
 // 사용하지않으면 불안정하게 연결이 됨.
 const connectionPool = mariaDB.createPool({
@@ -29,7 +29,7 @@ const connectionPool = mariaDB.createPool({
 // 에러가 첫번쨰 매개변수, 결과를 두번쨰 매개변수로
 const query = (alias, values) => {
   return new Promise((resolve, reject) => {
-    let executeSql = sqlList[alias];    
+    let executeSql = queryFormat(sqlList[alias], values);
     // 등록된 쿼리문을 볼려고 콘솔로그 찍음.
     // console.log(`sql : ${executeSql}`);
 
