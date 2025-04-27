@@ -63,9 +63,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="align-middle text-center">
-                        1
-                    </td>
+                    <td class="align-middle text-center">1</td>
                     <td class="align-middle text-center">
                       <p class="text-xs font-weight-bold mb-0">어디꺼</p>
                       <p class="text-xs text-secondary mb-0">제품코드</p>
