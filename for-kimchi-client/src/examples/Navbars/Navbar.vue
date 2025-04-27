@@ -181,8 +181,8 @@
 <script>
 import MaterialInput from "@/components/MaterialInput.vue";
 import Breadcrumbs from "../Breadcrumbs.vue";
-import { useEventStore } from '@/stores/event';
 import { mapState, mapActions } from 'pinia';
+import { useEventStore } from '@/stores/event';
 
 
 export default {
