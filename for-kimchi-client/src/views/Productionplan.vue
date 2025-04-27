@@ -10,7 +10,7 @@
         <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                 <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-                    <h6 class="text-white text-capitalize ps-3">주문서</h6>
+                    <h6 class="text-white text-capitalize ps-3">검색</h6>
                 </div>
             </div>
             <div>
@@ -56,12 +56,15 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                         주문수량
                     </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      주문상태
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td class="align-middle text-center">
-                        1번인데
+                        1
                     </td>
                     <td class="align-middle text-center">
                       <p class="text-xs font-weight-bold mb-0">어디꺼</p>
@@ -76,6 +79,7 @@
                     <td class="align-middle text-center">
                         수량
                     </td>
+                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">수주 등록</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -89,7 +93,7 @@
                 <!--상단-->
                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                     <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-                    <h6 class="text-white text-capitalize ps-3">입력</h6>
+                    <h6 class="text-white text-capitalize ps-3">계획 등록</h6>
                     </div>
                 </div>
                 <ul class="list-group list-group-flush">
@@ -121,7 +125,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox"></th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">NO</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산계획코드</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">시작일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">종료일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산수량</th>
@@ -135,7 +139,7 @@
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">1</td>
                     <td class="align-middle text-center">AAAA01</td>
-                    <td class="align-middle text-center">포기김치10kg</td>
+                    <td class="align-middle text-center"></td>
                     <td class="align-middle text-center">23/04/18</td>
                     <td class="align-middle text-center">23/04/18</td>
                     <td class="align-middle text-center">2000</td>
