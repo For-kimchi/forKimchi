@@ -77,7 +77,7 @@
                     <td class="align-middle text-center">
                         수량
                     </td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">수주 등록</span></td>
+                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">주문 등록</span></td>
                   </tr>
                 </tbody>
               </table>
