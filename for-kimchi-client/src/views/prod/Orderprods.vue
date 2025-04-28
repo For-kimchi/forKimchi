@@ -45,27 +45,31 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">담당자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">승인자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">승인일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품예정일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세비고</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info) in orderList">
+                    <td class="align-middle text-center">{{ info.order_id }}</td>
                     <td class="align-middle text-center">{{ info.order_detail_id }}</td>
-                    <td class="align-middle text-center">2022-12-22</td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">주문상태</span></td>
-                    <td class="align-middle text-center">배추도사</td>
-                    <td class="align-middle text-center">김어진</td>
-                    <td class="align-middle text-center">2022-12-22</td>
-                    <td class="align-middle text-center">김민식</td>
-                    <td class="align-middle text-center">2022-12-30</td>
-                    <td class="align-middle text-center"></td>
+                    <td class="align-middle text-center">{{ info.order_date }}</td>
+                    <td class="align-middle text-center">{{ info.vendor_id }}</td>
+                    <td class="align-middle text-center">{{ info.employee_id }}</td>
+                    <td class="align-middle text-center">{{ info.reg_date }}</td>
+                    <td class="align-middle text-center">{{ info.prod_id }}</td>
+                    <td class="align-middle text-center">{{ info.order_amount }}</td>
+                    <td class="align-middle text-center">{{ info.delivery_due_date }}</td>
+                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_status }}</span></td>
+                    <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -75,7 +79,7 @@
       </div>
     <!-- row div-->
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-12">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -113,7 +117,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
