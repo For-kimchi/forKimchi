@@ -7,6 +7,7 @@ import Dashboard from "../views/Dashboard.vue";
 import Profile from "../views/Profile.vue";
 import SignUp from "../views/SignUp.vue";
 import SignIn from "../views/SignIn.vue";
+
 import OrderList from "../views/business/OrderList.vue";
 import DelivList from "../views/business/DelivList.vue";
 
@@ -33,6 +34,15 @@ import MaterialManagement from "../views/material/MaterialManagement.vue";
 import StoreList from "../views/material/StoreList.vue";
 import StoreManagement from "../views/material/StoreManagement.vue";
 
+
+//business (영업)
+import OrderList from "../views/business/OrderList.vue"
+import DelivList from "../views/business/DelivList.vue"
+
+//basic (기준관리)
+import BasicProd from "../views/basic/BasicProd.vue"
+import BasicBom from "../views/basic/BasicBom.vue"
+import BasicMate from "../views/basic/BasicMate.vue"
 
 const routes = [
   // 예시
@@ -77,6 +87,11 @@ const routes = [
     component: SignIn,
   },
   {
+    path: "/Productionplan",
+    name: "Production plan",
+    component: Productionplan,
+  },
+  {
     path: "/orders",
     name: "OrderList",
     component: OrderList,
@@ -117,6 +132,33 @@ const routes = [
     path: "/materlist",
     name: "Material List",
     component: MaterialList,
+  },
+  //business (영업)
+  {
+    path: "/orders",
+    name: "OrderList",
+    component: OrderList,
+  },
+  {
+    path: "/delivs",
+    name: "DelivList",
+    component: DelivList,
+  },
+  //basic (기준관리)
+  {
+    path: "/basicprod",
+    name: "BasicProd",
+    component: BasicProd,
+  },
+  {
+    path: "/basicbom",
+    name: "BasicBom",
+    component: BasicBom,
+  },
+  {
+    path: "/basicmate",
+    name: "BasicMate",
+    component: BasicMate,
   },
   {
     path: "/matma",
