@@ -42,6 +42,8 @@
 import MaterialAvatar from "@/components/MaterialAvatar.vue";
 
 import img1 from "../../assets/img/logos/mastercard.png";
+import { mapState } from "pinia";
+import { useEventStore} from "@/stores/event";
 
 export default {
   name: "MasterCard",
@@ -73,7 +75,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["isRTL"]),
+    ...mapState(useEventStore, ["isRTL"]),
   },
 };
 </script>
