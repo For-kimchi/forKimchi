@@ -23,6 +23,17 @@ import Prodprocess from "../views/prod/Prodprocess.vue";
 import Prodprocwork from "../views/prod/Prodprocwork.vue";
 import Orderprod from "../views/prod/Orderprods.vue";
 
+
+
+// 김어진 (자재발주)
+import MaterialList from "../views/material/MaterialList.vue";
+import MaterialManagement from "../views/material/MaterialManagement.vue";
+
+// 김어진 (입고)
+import StoreList from "../views/material/StoreList.vue";
+import StoreManagement from "../views/material/StoreManagement.vue";
+
+
 const routes = [
   // 예시
   {
@@ -101,11 +112,36 @@ const routes = [
     name: "Orderprod",
     component: Orderprod,
   },
+  // 김어진 (자재발주)
+  {
+    path: "/materlist",
+    name: "Material List",
+    component: MaterialList,
+  },
+  {
+    path: "/matma",
+    name: "Material Management",
+    component: MaterialManagement,
+  },
+  // 김어진(입고)
+  {
+    path: "/storeList",
+    name: "StoreList",
+    component: StoreList,
+  },
+  {
+    path: "/storema",
+    name: "StoreManagement",
+    component: StoreManagement,
+  },
+  
+
   {
     path: "/mateQuality",
     name: "mateQuality",
     component: mateQuality,
   }
+
 ];
 
 const router = createRouter({
