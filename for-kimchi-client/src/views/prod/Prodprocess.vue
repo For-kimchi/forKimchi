@@ -12,7 +12,7 @@
     import axios from 'axios'
     
     export default {
-        name: "Production procwork",
+        name: "Prodprocess",
         
     }
     
