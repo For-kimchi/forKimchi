@@ -24,37 +24,37 @@ export const useEventStore = defineStore('event', {
 
   },
   actions: {
-    toggleConfigurator(state) {
-      state.showConfig = !state.showConfig;
+    toggleConfigurator() {
+      this.showConfig = !this.showConfig;
     },
-    navbarMinimize(state) {
+    navbarMinimize() {
       const sidenav_show = document.querySelector(".g-sidenav-show");
 
       if (sidenav_show.classList.contains("g-sidenav-pinned")) {
         sidenav_show.classList.remove("g-sidenav-pinned");
-        state.isPinned = true;
+        this.isPinned = true;
       } else {
         sidenav_show.classList.add("g-sidenav-pinned");
-        state.isPinned = false;
+        this.isPinned = false;
       }
     },
-    navbarFixed(state) {
-      if (state.isNavFixed === false) {
-        state.isNavFixed = true;
+    navbarFixed() {
+      if (this.isNavFixed === false) {
+        this.isNavFixed = true;
       } else {
-        state.isNavFixed = false;
+        this.isNavFixed = false;
       }
     },
-    toggleEveryDisplay(state) {
-      state.showNavbar = !state.showNavbar;
-      state.showSidenav = !state.showSidenav;
-      state.showFooter = !state.showFooter;
+    toggleEveryDisplay() {
+      this.showNavbar = !this.showNavbar;
+      this.showSidenav = !this.showSidenav;
+      this.showFooter = !this.showFooter;
     },
-    toggleHideConfig(state) {
-      state.hideConfigButton = !state.hideConfigButton;
+    toggleHideConfig() {
+      this.hideConfigButton = !this.hideConfigButton;
     },
-    color(state, payload) {
-      state.color = payload;
+    color(payload) {
+      this.color = payload;
     },
     setColor({ commit }, payload) {
       commit("color", payload);

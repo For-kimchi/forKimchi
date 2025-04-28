@@ -34,12 +34,45 @@
     </div>
   </div>
 </div>
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <MaterialAlert>Alert</MaterialAlert>
+      <MaterialButton>Button</MaterialButton>
+      <MaterialCheckbox></MaterialCheckbox>
+      <MaterialInput></MaterialInput>
+      <MaterialRadio></MaterialRadio>
+      <MaterialSwitch></MaterialSwitch>
+      <MaterialTextarea></MaterialTextarea>
+    </div>
+    </div>
+    </div>
 </template>
 
 <script>
 import axios from 'axios';
+import MaterialAlert from '../../components/MaterialAlert.vue';
+import MaterialAvatar from '../../components/MaterialAvatar.vue';
+import MaterialBadge from '../../components/MaterialBadge.vue';
+import MaterialButton from '../../components/MaterialButton.vue';
+import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
+import MaterialInput from '../../components/MaterialInput.vue';
+import MaterialRadio from '../../components/MaterialRadio.vue';
+import MaterialSwitch from '../../components/MaterialSwitch.vue';
+import MaterialTextarea from '../../components/MaterialTextarea.vue';
 
 export default {
+  components: {
+    MaterialAlert,
+    MaterialAvatar,
+    MaterialBadge,
+    MaterialButton,
+    MaterialCheckbox,
+    MaterialInput,
+    MaterialRadio,
+    MaterialSwitch,
+    MaterialTextarea,
+  },
   data() {
     return {
       customerList: [],
