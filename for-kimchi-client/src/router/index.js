@@ -9,8 +9,13 @@ import SignUp from "../views/SignUp.vue";
 import SignIn from "../views/SignIn.vue";
 import OrderList from "../views/business/OrderList.vue";
 import DelivList from "../views/business/DelivList.vue";
+import Productionplan from "../views/Productionplan.vue";
+import Productionorder from "../views/Productionorder.vue";
+import Productionprocess from "../views/Productionprocess.vue";
+import Productionprocwork from "../views/Productionprocwork.vue";
 
 const routes = [
+  // 예시
   {
     path: "/",
     name: "/",
@@ -60,7 +65,27 @@ const routes = [
     path: "/delivs",
     name: "DelivList",
     component: DelivList,
-  }
+  },
+  {
+    path: "/Productionplan",
+    name: "Production plan",
+    component: Productionplan,
+  },
+  {
+    path: "/Productionorder",
+    name: "Production order",
+    component: Productionorder,
+  },
+  {
+    path: "/Productionprocess",
+    name: "Production process",
+    component: Productionprocess,
+  },
+  {
+    path: "/Productionprocwork",
+    name: "Production procwork",
+    component: Productionprocwork,
+  },
 ];
 
 const router = createRouter({
