@@ -3,6 +3,29 @@
     <div class="row">
       <div class="col-12">
         <MaterialAlert>자재검사결과</MaterialAlert>
+
+        <!-- 드롭다운시작-->
+        <div class="d-flex align-items-center mb-3 px-3">
+          <select v-model="selectedMaterial" class="form-select me-2" style="max-width: 200px;">
+            <option value="">전체</option>
+            <option v-for="(item, idx) in materialNames" :key="idx" :value="item">
+              {{ item }}
+            </option>
+          </select>
+
+          <input
+            v-model="searchKeyword"
+            type="text"
+            placeholder="검색어를 입력하세요"
+            class="form-control me-2"
+            style="max-width: 300px;"
+          />
+
+          <button @click="search" class="btn btn-primary">
+            검색
+          </button>
+        </div>
+        <!--드롭다운끝-->
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
@@ -41,6 +64,26 @@
     <div class="row">
       <div class="col-12">
         <MaterialAlert>자재검사상세</MaterialAlert>
+
+    <!--영역 -->
+    <div class="d-flex align-items-center mb-3 px-3">
+        <MaterialButton
+          color="primary"
+          class="me-2"
+          @click="handleIncoming"
+        >
+          입고
+        </MaterialButton>
+
+        <MaterialButton
+          color="success"
+          @click="handleInspection"
+        >
+          전수검사
+        </MaterialButton>
+    </div>
+    <!--까지 -->
+
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
@@ -105,6 +148,8 @@
     data() {
       return {
         customerList: [],
+        selectedMaterial: '',
+        searchKeyword: '',
       }
     },
     computed: {
