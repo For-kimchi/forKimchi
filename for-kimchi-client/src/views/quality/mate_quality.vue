@@ -2,16 +2,18 @@
   <div class="container-fluid py-4">
     <div class="row">
       <div class="col-12">
+        <MaterialAlert>자재검사결과</MaterialAlert>
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th>No</th>
-                    <th>아이디</th>
-                    <th>이름</th>
-                    <th>연락처</th>
+                    <th>검사일자</th>
+                    <th>자재명</th>
+                    <th>자재번호</th>
+                    <th>LOT</th>
+                    <th>검사결과</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -34,19 +36,46 @@
       </div>
     </div>
   </div>
+
   <div class="container-fluid py-4">
     <div class="row">
       <div class="col-12">
-        <MaterialAlert>Alert</MaterialAlert>
-        <MaterialButton>Button</MaterialButton>
-        <MaterialCheckbox></MaterialCheckbox>
-        <MaterialInput></MaterialInput>
-        <MaterialRadio></MaterialRadio>
-        <MaterialSwitch></MaterialSwitch>
-        <MaterialTextarea></MaterialTextarea>
+        <MaterialAlert>자재검사상세</MaterialAlert>
+        <div class="card my-4">
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th>검사일자</th>
+                    <th>항목</th>
+                    <th>규격</th>
+                    <th>방법</th>
+                    <th>검사결과</th>
+                    <th><MaterialCheckbox></MaterialCheckbox></th>
+                    <th>상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="count > 0">
+                    <tr v-for="(info, index) in customerList" v-bind:key="info.id">
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ info.equip_id }}</td>
+                      <td>{{ info.equip_name }}</td>
+                      <td>{{ info.equip_type }}</td>
+                    </tr>
+                  </template>
+                  <tr v-else>
+                    <td colspan="4">현재 데이터가 존재하지 않습니다</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-      </div>
-      </div>
+    </div>
+  </div>
   </template>
   
   <script>
