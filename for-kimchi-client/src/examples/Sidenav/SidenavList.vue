@@ -50,7 +50,10 @@
           </template>
           <!-- slot 에 하위 컴포넌트 추가 -->
           <template v-slot:list>
-            <SidenavCollapseItem refer="notifications" text="test"></SidenavCollapseItem>
+            <SidenavCollapseItem refer="Productionplan" text="생산계획관리"></SidenavCollapseItem>
+            <SidenavCollapseItem refer="Productionorder" text="생산지시관리"></SidenavCollapseItem>
+            <SidenavCollapseItem refer="Productionprocess" text="생산공정관리"></SidenavCollapseItem>
+            <SidenavCollapseItem refer="Productionprocwork" text="생산공정운영"></SidenavCollapseItem>
           </template>
         </sidenav-collapse>
       </li>

@@ -12,7 +12,7 @@ const connectionPool = mariaDB.createPool({
   database: process.env.DB_DATABASE,
   connectionLimit: process.env.DB_LIMIT,
   // 선택
-  // 객체를 파라미터에 맞게 수정해줌.
+  // 객체를 파라미터에 맞게 수정해줌.wew
   permitSetMultiParamEntries: true,
   // InsertId가 넘어올때 Number타입으로 바꿔달라는 애기.
   insertIdAsNumber: true,
