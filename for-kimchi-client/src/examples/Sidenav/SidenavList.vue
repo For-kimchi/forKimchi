@@ -79,7 +79,6 @@
         <!-- collapseRef : router 에 등록된 path name 등록 ( '/' 는 제외 )-->
         <!-- navText : 화면에 표시될 이름 -->
         <!-- collapse : 확장 여부 true/false-->
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="영업">
         <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="생산">
 
           <template v-slot:icon>
@@ -255,7 +254,11 @@
             <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="basicmate" navText="자재관리">
               <template v-slot:icon>
                 <i class="material-icons-round opacity-10 fs-5"></i>
-
+              </template>
+            </sidenav-collapse>
+          </template>
+        </sidenav-collapse>
+      </li>
       <li class="nav-item">
         <!-- collapseRef : router 에 등록된 path name 등록 ( '/' 는 제외 )-->
         <!-- navText : 화면에 표시될 이름 -->

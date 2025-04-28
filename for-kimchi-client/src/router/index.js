@@ -8,13 +8,6 @@ import Profile from "../views/Profile.vue";
 import SignUp from "../views/SignUp.vue";
 import SignIn from "../views/SignIn.vue";
 
-import OrderList from "../views/business/OrderList.vue";
-import DelivList from "../views/business/DelivList.vue";
-
-import Productionplan from "../views/Productionplan.vue";
-import Productionorder from "../views/Productionorder.vue";
-import Productionprocess from "../views/Productionprocess.vue";
-import Productionprocwork from "../views/Productionprocwork.vue";
 //혁진
 import mateQuality from "../views/quality/mate_quality.vue"; 
 // 유환
@@ -24,8 +17,6 @@ import Prodprocess from "../views/prod/Prodprocess.vue";
 import Prodprocwork from "../views/prod/Prodprocwork.vue";
 import Orderprod from "../views/prod/Orderprods.vue";
 
-
-
 // 김어진 (자재발주)
 import MaterialList from "../views/material/MaterialList.vue";
 import MaterialManagement from "../views/material/MaterialManagement.vue";
@@ -33,7 +24,6 @@ import MaterialManagement from "../views/material/MaterialManagement.vue";
 // 김어진 (입고)
 import StoreList from "../views/material/StoreList.vue";
 import StoreManagement from "../views/material/StoreManagement.vue";
-
 
 //business (영업)
 import OrderList from "../views/business/OrderList.vue"
@@ -85,11 +75,6 @@ const routes = [
     path: "/signIn",
     name: "SignIn",
     component: SignIn,
-  },
-  {
-    path: "/Productionplan",
-    name: "Production plan",
-    component: Productionplan,
   },
   {
     path: "/orders",

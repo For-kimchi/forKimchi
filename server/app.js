@@ -8,12 +8,12 @@ const session = require('express-session');
 // router 등록
 const custRouter = require('./router/customer_router.js');
 
-
+// basic
 const basicRouter = require('./router/basic_router.js')
+
 // 어진 
 const materialRouter = require('./router/material_router.js');
 
-const basicRouter = require('./router/basic_router.js');
 // 유환
 const prodRouter = require('./router/prod_router.js');
 

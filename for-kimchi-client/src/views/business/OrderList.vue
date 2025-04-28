@@ -52,8 +52,6 @@
 <script>
 import axios from 'axios';
 import MaterialAlert from '../../components/MaterialAlert.vue';
-import MaterialAvatar from '../../components/MaterialAvatar.vue';
-import MaterialBadge from '../../components/MaterialBadge.vue';
 import MaterialButton from '../../components/MaterialButton.vue';
 import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
 import MaterialInput from '../../components/MaterialInput.vue';
@@ -64,8 +62,6 @@ import MaterialTextarea from '../../components/MaterialTextarea.vue';
 export default {
   components: {
     MaterialAlert,
-    MaterialAvatar,
-    MaterialBadge,
     MaterialButton,
     MaterialCheckbox,
     MaterialInput,
