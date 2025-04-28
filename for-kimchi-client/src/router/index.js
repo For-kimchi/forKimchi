@@ -112,12 +112,6 @@ const routes = [
     name: "Orderprod",
     component: Orderprod,
   },
-  // 김어진 (자재발주)
-  {
-    path: "/materlist",
-    name: "Material List",
-    component: MaterialList,
-  },
   //business (영업)
   {
     path: "/orders",
@@ -145,11 +139,17 @@ const routes = [
     name: "BasicMate",
     component: BasicMate,
   },
-  {
-    path: "/matma",
-    name: "Material Management",
-    component: MaterialManagement,
-  },
+    // 김어진 (자재발주)
+    {
+      path: "/materlist",
+      name: "Material List",
+      component: MaterialList,
+    },
+    {
+      path: "/matma",
+      name: "Material Management",
+      component: MaterialManagement,
+    },
   // 김어진(입고)
   {
     path: "/storeList",
