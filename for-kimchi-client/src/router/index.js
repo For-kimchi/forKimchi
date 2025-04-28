@@ -9,12 +9,20 @@ import SignUp from "../views/SignUp.vue";
 import SignIn from "../views/SignIn.vue";
 import OrderList from "../views/business/OrderList.vue";
 import DelivList from "../views/business/DelivList.vue";
+
 import Productionplan from "../views/Productionplan.vue";
 import Productionorder from "../views/Productionorder.vue";
 import Productionprocess from "../views/Productionprocess.vue";
 import Productionprocwork from "../views/Productionprocwork.vue";
 //혁진
 import mateQuality from "../views/quality/mate_quality.vue"; 
+// 유환
+import Prodplan from "../views/prod/Prodplan.vue";
+import Prodorder from "../views/prod/Prodorder.vue";
+import Prodprocess from "../views/prod/Prodprocess.vue";
+import Prodprocwork from "../views/prod/Prodprocwork.vue";
+import Orderprod from "../views/prod/Orderprods.vue";
+
 const routes = [
   // 예시
   {
@@ -67,25 +75,31 @@ const routes = [
     name: "DelivList",
     component: DelivList,
   },
+  // 유환(prod)
   {
-    path: "/Productionplan",
-    name: "Production plan",
-    component: Productionplan,
+    path: "/prodplan",
+    name: "Prodplan",
+    component: Prodplan,
   },
   {
-    path: "/Productionorder",
-    name: "Production order",
-    component: Productionorder,
+    path: "/prodorder",
+    name: "Prodorder",
+    component: Prodorder,
   },
   {
-    path: "/Productionprocess",
-    name: "Production process",
-    component: Productionprocess,
+    path: "/prodprocess",
+    name: "Prodprocess",
+    component: Prodprocess,
   },
   {
-    path: "/Productionprocwork",
-    name: "Production procwork",
-    component: Productionprocwork,
+    path: "/prodprocwork",
+    name: "Prodprocwork",
+    component: Prodprocwork,
+  },
+  {
+    path: "/orderprod",
+    name: "Orderprod",
+    component: Orderprod,
   },
   {
     path: "/mateQuality",
