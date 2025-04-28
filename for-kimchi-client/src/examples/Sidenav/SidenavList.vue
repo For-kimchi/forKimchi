@@ -166,6 +166,35 @@
           </template>
         </sidenav-collapse>
       </li> -->
+
+      <!-- 기준관리 -->
+      <li class="nav-item">
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="기준관리">
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">table_view</i>
+          </template>
+          <template v-slot:list>
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="basicprod" navText="제품관리">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5"></i>
+              </template>
+            </sidenav-collapse>
+
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="basicbom" navText="BOM관리">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5"></i>
+              </template>
+            </sidenav-collapse>
+
+            
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="basicmate" navText="자재관리">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5"></i>
+              </template>
+            </sidenav-collapse>
+          </template>
+        </sidenav-collapse>
+      </li>
     </ul>
   </div>
 </template>

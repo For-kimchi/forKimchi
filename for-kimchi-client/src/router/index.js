@@ -7,12 +7,19 @@ import Dashboard from "../views/Dashboard.vue";
 import Profile from "../views/Profile.vue";
 import SignUp from "../views/SignUp.vue";
 import SignIn from "../views/SignIn.vue";
-import OrderList from "../views/business/OrderList.vue";
-import DelivList from "../views/business/DelivList.vue";
 import Productionplan from "../views/Productionplan.vue";
 import Productionorder from "../views/Productionorder.vue";
 import Productionprocess from "../views/Productionprocess.vue";
 import Productionprocwork from "../views/Productionprocwork.vue";
+
+//business (영업)
+import OrderList from "../views/business/OrderList.vue"
+import DelivList from "../views/business/DelivList.vue"
+
+//basic (기준관리)
+import BasicProd from "../views/basic/BasicProd.vue"
+import BasicBom from "../views/basic/BasicBom.vue"
+import BasicMate from "../views/basic/BasicMate.vue"
 
 const routes = [
   // 예시
@@ -57,16 +64,6 @@ const routes = [
     component: SignIn,
   },
   {
-    path: "/orders",
-    name: "OrderList",
-    component: OrderList,
-  },
-  {
-    path: "/delivs",
-    name: "DelivList",
-    component: DelivList,
-  },
-  {
     path: "/Productionplan",
     name: "Production plan",
     component: Productionplan,
@@ -85,6 +82,33 @@ const routes = [
     path: "/Productionprocwork",
     name: "Production procwork",
     component: Productionprocwork,
+  },
+  //business (영업)
+  {
+    path: "/orders",
+    name: "OrderList",
+    component: OrderList,
+  },
+  {
+    path: "/delivs",
+    name: "DelivList",
+    component: DelivList,
+  },
+  //basic (기준관리)
+  {
+    path: "/basicprod",
+    name: "BasicProd",
+    component: BasicProd,
+  },
+  {
+    path: "/basicbom",
+    name: "BasicBom",
+    component: BasicBom,
+  },
+  {
+    path: "/basicmate",
+    name: "BasicMate",
+    component: BasicMate,
   },
 ];
 
