@@ -192,6 +192,57 @@
           </template>
         </sidenav-collapse>
       </li> -->
+
+      <li class="nav-item">
+        <!-- collapseRef : router 에 등록된 path name 등록 ( '/' 는 제외 )-->
+        <!-- navText : 화면에 표시될 이름 -->
+        <!-- collapse : 확장 여부 true/false-->
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="검사">
+          <template v-slot:icon>
+            <!-- 표시될 아이콘 이름 -->
+            <i class="material-icons-round opacity-10 fs-5">table_view</i>
+          </template>
+          <!-- slot 에 하위 컴포넌트 추가 -->
+          <template v-slot:list>
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="mateQuality" navText="자재수입검사조회">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5">table_view</i>
+              </template>
+            </sidenav-collapse>
+
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="delivs" navText="자재수입검사관리">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5">table_view</i>
+              </template>
+            </sidenav-collapse>
+
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="delivs" navText="제품검사조회">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5">table_view</i>
+              </template>
+            </sidenav-collapse>
+
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="delivs" navText="제품검사관리">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5">table_view</i>
+              </template>
+            </sidenav-collapse>
+
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="orders" navText="검사기준관리">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5">table_view</i>
+              </template>
+            </sidenav-collapse>
+
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="orders" navText="검사항목관리">
+              <template v-slot:icon>
+                <i class="material-icons-round opacity-10 fs-5">table_view</i>
+              </template>
+            </sidenav-collapse>
+          </template>
+        </sidenav-collapse>
+      </li>
+
     </ul>
   </div>
 </template>

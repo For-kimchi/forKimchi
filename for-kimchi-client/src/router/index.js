@@ -9,6 +9,13 @@ import SignUp from "../views/SignUp.vue";
 import SignIn from "../views/SignIn.vue";
 import OrderList from "../views/business/OrderList.vue";
 import DelivList from "../views/business/DelivList.vue";
+
+import Productionplan from "../views/Productionplan.vue";
+import Productionorder from "../views/Productionorder.vue";
+import Productionprocess from "../views/Productionprocess.vue";
+import Productionprocwork from "../views/Productionprocwork.vue";
+//혁진
+import mateQuality from "../views/quality/mate_quality.vue"; 
 // 유환
 import Prodplan from "../views/prod/Prodplan.vue";
 import Prodorder from "../views/prod/Prodorder.vue";
@@ -94,6 +101,11 @@ const routes = [
     name: "Orderprod",
     component: Orderprod,
   },
+  {
+    path: "/mateQuality",
+    name: "mateQuality",
+    component: mateQuality,
+  }
 ];
 
 const router = createRouter({
