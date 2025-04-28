@@ -13,8 +13,8 @@ import Productionplan from "../views/Productionplan.vue";
 import Productionorder from "../views/Productionorder.vue";
 import Productionprocess from "../views/Productionprocess.vue";
 import Productionprocwork from "../views/Productionprocwork.vue";
-
-
+//혁진
+import mateQuality from "../views/quality/mate_quality.vue"; 
 
 // 김어진 (자재발주)
 import MaterialList from "../views/material/MaterialList.vue";
@@ -23,7 +23,6 @@ import MaterialManagement from "../views/material/MaterialManagement.vue";
 // 김어진 (입고)
 import StoreList from "../views/material/StoreList.vue";
 import StoreManagement from "../views/material/StoreManagement.vue";
-
 
 const routes = [
   // 예시
@@ -97,7 +96,11 @@ const routes = [
     name: "Production procwork",
     component: Productionprocwork,
   },
-
+  {
+    path: "/mateQuality",
+    name: "mateQuality",
+    component: mateQuality,
+  }
   // 김어진 (자재발주)
   {
     path: "/materlist",
