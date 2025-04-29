@@ -171,65 +171,7 @@
 
           </template>
         </sidenav-collapse>
-
       </li>
-
-      <!-- <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="tables" navText="Tables">
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
-          </template>
-        </sidenav-collapse>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="notifications" navText="Notifications">
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
-          </template>
-        </sidenav-collapse>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="billing" navText="Billing">
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
-          </template>
-        </sidenav-collapse>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="dashboard"
-          navText="Dashboard">
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
-          </template>
-        </sidenav-collapse>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="profile" navText="Profile">
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
-          </template>
-        </sidenav-collapse>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="signIn" navText="SignIn">
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
-          </template>
-        </sidenav-collapse>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="signUp" navText="SignUp">
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
-          </template>
-        </sidenav-collapse>
-      </li> -->
 
       <!-- 기준관리 -->
       <li class="nav-item">
@@ -238,24 +180,11 @@
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
           </template>
           <template v-slot:list>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="basicprod" navText="제품관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5"></i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="basicbom" navText="BOM관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5"></i>
-              </template>
-            </sidenav-collapse>
-
-            
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="basicmate" navText="자재관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5"></i>
-              </template>
-            </sidenav-collapse>
+            <SidenavCollapseItem refer="/basicprod" miniIcon="" text="제품관리"/>
+            <SidenavCollapseItem refer="/basicmate" miniIcon="" text="자재관리"/>
+            <!-- <SidenavCollapseItem refer="/basicbom" miniIcon="P" text="BOM관리"/> -->
+            <SidenavCollapseItem refer="/basicproc" miniIcon="" text="공정관리"/>
+            <SidenavCollapseItem refer="/basicemp" miniIcon="" text="사원관리"/>
           </template>
         </sidenav-collapse>
       </li>
