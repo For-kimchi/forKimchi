@@ -1,11 +1,24 @@
 const mariaDB = require('../mapper/mapper');
-// 자바스크립트에서 기능은 전부 함수.
-// 전체조회
-const findAll = async()=>{
- let list = await mariaDB.query('selectAllEquip');
- return list;
+const {
+  convertObjToQuery,
+} = require('../utils/converts');
+
+// 제품 조건 조회
+const selectProd = async (params) => {
+  let keyword = Object.keys(params).length > 0 ? convertObjToQuery(params) : '';
+  let list = await mariaDB.query("selectProd", keyword);
+  return list;
 };
 
+
+
+// 코드 조회
+const selectCode = async (mainCode) => {
+  let list = await mariaDB.query("selectCode", mainCode);
+  return list;
+}
+
 module.exports = {
-  findAll,
+  selectProd,
+  selectCode,
 }
