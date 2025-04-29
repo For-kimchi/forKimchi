@@ -4,9 +4,9 @@
       <div class="col-12">
         <MaterialAlert>자재검사결과</MaterialAlert>
 
-        <!-- 드롭다운-->
+        <!--드롭다운-->
         <div class="d-flex align-items-center mb-3 px-3">
-          <select v-model="selectedMaterial" class="form-select me-2" style="max-width: 200px; ">
+          <select v-model="selectedMaterial" class="form-select me-2" style="max-width: 200px;">
             <option value="">전체</option>
             <option v-for="(item, idx) in materialNames" :key="idx" :value="item">
               {{ item }}
@@ -14,7 +14,7 @@
           </select>
 
           <input v-model="searchKeyword" type="text" placeholder="검색어를 입력하세요" class="form-control me-2"
-            style="max-width: 300px; border: 1px solid gray;" />
+            style="max-width: 300px;" />
 
           <button @click="search" class="btn btn-primary">
             검색
@@ -39,7 +39,7 @@
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
                     <template v-if="count > 0">
-                      <tr v-for="(info, index) in mateQuality" :key="info.id" @click="getQualityDetail(info.id)" style="cursor: pointer;">
+                      <tr v-for="(info, index) in mateQuality" :key="info.id">
                         <td>{{ info.quality_date }}</td>
                         <td>{{ info.mate_name }}</td>
                         <td>{{ info.mate_lot }}</td>
@@ -77,13 +77,12 @@
         <!--까지 -->
 
         <div class="card my-4">
-          <div class="card-body px-0 pb-2" >
+          <div class="card-body px-0 pb-2" style=" height: 200px; overflow-y: scroll;">
             <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
+              <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
                     <th>검사일자</th>
-                  
                     <th>항목</th>
                     <th>규격</th>
                     <th>방법</th>
@@ -94,29 +93,22 @@
                     <th>상태</th>
                   </tr>
                 </thead>
-              </table>
-              <div style="max-height: 200px; overflow-y: auto;">
-                <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
-                  <tbody>
-                    <template v-if="count > 0">
-                      <tr v-for="(info, index) in mateQualityDetail" :key="info.id">
-                        <td>{{ info.quality_date }}</td>
-                        <td>{{ info.option_name }}</td>
-                        <td>{{ info.option_standard }}</td>
-                        <td>{{ info.option_spec}}</td>
-                        <td>{{ info.option_method}}</td>
-                        <td>
-                          <MaterialCheckbox></MaterialCheckbox>
-                        </td>
-                        <td>{{info.quality_result}}</td>
-                      </tr>
-                    </template>
-                    <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
+                <tbody>
+                  <template v-if="count > 0">
+                    <tr v-for="(info, index) in mateQuality" v-bind:key="info.id" >
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ info.equip_id }}</td>
+                      <td>{{ info.equip_name }}</td>
+                      <td>{{ info.equip_type }}</td>
+                      <td><MaterialCheckbox></MaterialCheckbox></td>
+                      <td>{{info.quality_result}}</td>
                     </tr>
-                  </tbody>
-                </table>
-              </div>
+                  </template>
+                  <tr v-else>
+                    <td colspan="4">현재 데이터가 존재하지 않습니다</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -152,9 +144,9 @@
     data() {
       return {
         mateQuality: [],
-        mateQualityDetail: [],
         selectedMaterial: '',
         searchKeyword: '',
+        materialNames: [],
       }
     },
     computed: {
@@ -176,7 +168,7 @@
     },
     created() {
       this.getQuality();
-
+      
     }
   }
 </script>

@@ -10,6 +10,8 @@ import SignIn from "../views/SignIn.vue";
 
 //혁진
 import mateQuality from "../views/quality/mate_quality.vue"; 
+import prodQuality from "../views/quality/prod_quality.vue";
+
 // 유환
 import Prodplan from "../views/prod/Prodplan.vue";
 import Prodorder from "../views/prod/Prodorder.vue";
@@ -118,10 +120,16 @@ const routes = [
     name: "OrderList",
     component: OrderList,
   },
+  // 이혁진
   {
     path: "/mateQuality",
     name: "mateQuality",
     component: mateQuality,
+  },
+  {
+    path: "/prodQuality",
+    name: "prodQuality",
+    component: prodQuality,
   },
   // 김어진 (자재발주)
   {
