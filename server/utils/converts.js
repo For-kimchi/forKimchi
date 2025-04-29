@@ -51,6 +51,8 @@ const queryFormat = function (query, values) {
     // 다시 작성된 SQL문을 반환
     return rewriteQuery;
 };
+// 키는 3종류
+// 자재는 날짜 정보가 필요없어서 제외
 
 // 최초 Key ID 생성
 // LOT 생성 시 제품ID, 자재ID 전달
@@ -61,7 +63,8 @@ const getFirstKeyId = (prefix) => {
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     const todayStr = `${yyyy}${mm}${dd}`;
-
+    // 자재테이블 + 오늘날짜 + 순서
+    // 제품테이블 + 오늘날짜 + 순서
     return `${prefix}-${todayStr}-001`;
 }
 

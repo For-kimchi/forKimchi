@@ -63,10 +63,12 @@ app.use('/', basicRouter);
 // 어진
 app.use('/', materialRouter);
 
+
+// 유환
+app.use('/', prodRouter);
 // 혁진
 app.use('/', qualityRouter);
 
-app.use('/', prodRouter);
 
 // service를 먼저 만들어야함.
 // 아직은 구조익숙해지기위해서 거꾸러 작업함.

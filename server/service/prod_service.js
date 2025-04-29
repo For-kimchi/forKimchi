@@ -5,7 +5,17 @@ const order_list = async()=>{
  let list = await mariaDB.query('selectorder');
  return list;
 };
+const prodlist = async()=>{
+    let list = await mariaDB.query('selectprod');
+    return list;
+};
+const proddtlist = async()=>{
+    let list = await mariaDB.query('selectproddetail');
+    return list;
+}
 
 module.exports = {
     order_list,
+    prodlist,
+    proddtlist,
 }
