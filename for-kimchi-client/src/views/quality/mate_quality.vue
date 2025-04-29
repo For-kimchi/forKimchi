@@ -1,121 +1,171 @@
 <template>
-  <div class="p-4">
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <MaterialAlert>자재검사결과</MaterialAlert>
 
-    <!-- 검색 영역 -->
-    <div class="mb-3 d-flex align-items-center">
-      <label class="me-2">자재명</label>
-      <input v-model="search" type="text" class="form-control w-25 me-2">
-      <button @click="searchData" class="btn btn-primary">검색</button>
-    </div>
+        <!-- 드롭다운시작-->
+        <div class="d-flex align-items-center mb-3 px-3">
+          <select v-model="selectedMaterial" class="form-select me-2" style="max-width: 200px;">
+            <option value="">전체</option>
+            <option v-for="(item, idx) in materialNames" :key="idx" :value="item">
+              {{ item }}
+            </option>
+          </select>
 
-    <!-- 검사결과 테이블 -->
-    <h5 class="mb-2">자재검사결과</h5>
-    <table class="table table-bordered text-center align-middle">
-      <thead class="table-light">
-        <tr>
-          <th>검사일자</th>
-          <th>자재명</th>
-          <th>자재번호</th>
-          <th>LOT</th>
-          <th>검사결과</th>
-          <th>상태</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, idx) in filteredList" :key="idx" @click="selectItem(item)" :class="{'table-primary': selectedItem && selectedItem.lot === item.lot}">
-          <td>{{ item.date }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.number }}</td>
-          <td>{{ item.lot }}</td>
-          <td>{{ item.result }}</td>
-          <td>{{ item.status }}</td>
-        </tr>
-      </tbody>
-    </table>
+          <input
+            v-model="searchKeyword"
+            type="text"
+            placeholder="검색어를 입력하세요"
+            class="form-control me-2"
+            style="max-width: 300px;"
+          />
 
-    <!-- 버튼 그룹 -->
-    <div class="my-3">
-      <button class="btn btn-success me-2">입고</button>
-      <button class="btn btn-info">전수검사</button>
-    </div>
-
-    <!-- 상세 테이블 -->
-    <h5 class="mb-2">자재검사상세</h5>
-    <table class="table table-bordered text-center align-middle">
-      <thead class="table-light">
-        <tr>
-          <th>검사일자</th>
-          <th>항목</th>
-          <th>규격</th>
-          <th>방법</th>
-          <th>검사결과</th>
-          <th>상태</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(detail, idx) in selectedDetails" :key="idx">
-          <td>{{ detail.date }}</td>
-          <td>{{ detail.item }}</td>
-          <td>{{ detail.standard }}</td>
-          <td>{{ detail.method }}</td>
-          <td>{{ detail.result }}</td>
-          <td>
-            <div v-if="detail.status === '검사중'" class="badge bg-warning text-dark">검사중</div>
-            <div v-else class="form-check">
-              <input class="form-check-input" type="checkbox" :checked="detail.checked">
+          <button @click="search" class="btn btn-primary">
+            검색
+          </button>
+        </div>
+        <!--드롭다운끝-->
+        <div class="card my-4">
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th>검사일자</th>
+                    <th>자재명</th>
+                    <th>자재번호</th>
+                    <th>LOT</th>
+                    <th>검사결과</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="count > 0">
+                    <tr v-for="(info, index) in customerList" v-bind:key="info.id">
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ info.equip_id }}</td>
+                      <td>{{ info.equip_name }}</td>
+                      <td>{{ info.equip_type }}</td>
+                    </tr>
+                  </template>
+                  <tr v-else>
+                    <td colspan="4">현재 데이터가 존재하지 않습니다</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</template>
 
-<script setup>
-import { ref, computed } from 'vue';
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <MaterialAlert>자재검사상세</MaterialAlert>
 
-const search = ref('');
-const selectedItem = ref(null);
+    <!--영역 -->
+    <div class="d-flex align-items-center mb-3 px-3">
+        <MaterialButton
+          color="primary"
+          class="me-2"
+          @click="handleIncoming"
+        >
+          입고
+        </MaterialButton>
 
-const list = ref([
-  { date: '2024-03-21', name: '소금', number: '001', lot: 'M06', result: '정상', status: '입고' },
-  { date: '2024-03-21', name: '엿젓', number: '002', lot: 'M07', result: '불량', status: '대기' },
-  { date: '2024-03-21', name: '배추', number: '003', lot: 'M08', result: '정상', status: '검사완료' },
-  { date: '2024-09-10', name: '엿젓', number: '002', lot: 'M07', result: '불량', status: '검사중' },
-  { date: '2024-03-21', name: '배추', number: '003', lot: 'M08', result: '정상', status: '검사완료' },
-  { date: '2024-03-21', name: '소금', number: '001', lot: 'M06', result: '불량', status: '폐기' },
-]);
+        <MaterialButton
+          color="success"
+          @click="handleInspection"
+        >
+          전수검사
+        </MaterialButton>
+    </div>
+    <!--까지 -->
 
-const details = ref({
-  'M07': [
-    { date: '2024-09-10', item: '염도', standard: '20% ~ 25%', method: '전기전도도 측정', result: '등록', status: '' },
-    { date: '2024-09-10', item: 'ph', standard: '4.2 ~ 4.5', method: 'PH 측정', result: '등록', status: '검사중', checked: true },
-    { date: '2024-09-10', item: '이물검사', standard: '없음', method: '육안 검사', result: '등록', status: '', checked: false },
-  ]
-});
-
-const filteredList = computed(() => {
-  if (!search.value) return list.value;
-  return list.value.filter(item => item.name.includes(search.value));
-});
-
-const selectedDetails = computed(() => {
-  if (!selectedItem.value) return [];
-  return details.value[selectedItem.value.lot] || [];
-});
-
-function selectItem(item) {
-  selectedItem.value = item;
-}
-
-function searchData() {
-  // 검색 버튼은 computed에서 자동 갱신되기 때문에 별도 처리 필요 없음
-}
-</script>
-
-<style scoped>
-.table-primary {
-  background-color: #cfe2ff !important;
-}
-</style>
+        <div class="card my-4">
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th>검사일자</th>
+                    <th>항목</th>
+                    <th>규격</th>
+                    <th>방법</th>
+                    <th>검사결과</th>
+                    <th><MaterialCheckbox></MaterialCheckbox></th>
+                    <th>상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="count > 0">
+                    <tr v-for="(info, index) in customerList" v-bind:key="info.id">
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ info.equip_id }}</td>
+                      <td>{{ info.equip_name }}</td>
+                      <td>{{ info.equip_type }}</td>
+                    </tr>
+                  </template>
+                  <tr v-else>
+                    <td colspan="4">현재 데이터가 존재하지 않습니다</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </template>
+  
+  <script>
+  import axios from 'axios';
+  import MaterialAlert from '../../components/MaterialAlert.vue';
+  import MaterialAvatar from '../../components/MaterialAvatar.vue';
+  import MaterialBadge from '../../components/MaterialBadge.vue';
+  import MaterialButton from '../../components/MaterialButton.vue';
+  import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
+  import MaterialInput from '../../components/MaterialInput.vue';
+  import MaterialRadio from '../../components/MaterialRadio.vue';
+  import MaterialSwitch from '../../components/MaterialSwitch.vue';
+  import MaterialTextarea from '../../components/MaterialTextarea.vue';
+  
+  export default {
+    components: {
+      MaterialAlert,
+      MaterialAvatar,
+      MaterialBadge,
+      MaterialButton,
+      MaterialCheckbox,
+      MaterialInput,
+      MaterialRadio,
+      MaterialSwitch,
+      MaterialTextarea,
+    },
+    data() {
+      return {
+        customerList: [],
+        selectedMaterial: '',
+        searchKeyword: '',
+      }
+    },
+    computed: {
+      count() {
+        return this.customerList.length;
+      }
+    }
+    ,methods: {
+      async getCustomers() {
+        let res = await axios.get('/api/equips')
+        .catch(err => console.log(err));
+        this.customerList = res.data;
+      },
+    }
+    ,created() {
+      // this.getCustomers();
+    }
+  }
+  </script>

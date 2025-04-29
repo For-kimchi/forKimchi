@@ -303,12 +303,12 @@
             <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="orders" navText="검사항목관리">
               <template v-slot:icon>
                 <i class="material-icons-round opacity-10 fs-5">table_view</i>
-
               </template>
             </sidenav-collapse>
           </template>
         </sidenav-collapse>
       </li>
+
     </ul>
   </div>
 </template>

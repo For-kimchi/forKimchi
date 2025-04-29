@@ -119,6 +119,12 @@ const routes = [
     component: OrderList,
   },
   {
+    path: "/mateQuality",
+    name: "mateQuality",
+    component: mateQuality,
+  },
+  // 김어진 (자재발주)
+  {
     path: "/delivs",
     name: "DelivList",
     component: DelivList,
