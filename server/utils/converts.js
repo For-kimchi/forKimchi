@@ -51,6 +51,8 @@ const queryFormat = function (query, values) {
     // 다시 작성된 SQL문을 반환
     return rewriteQuery;
 };
+// 키는 3종류
+// 자재는 날짜 정보가 필요없어서 제외
 
 module.exports = {
     convertObjToAry,

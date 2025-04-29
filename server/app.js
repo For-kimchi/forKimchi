@@ -14,8 +14,12 @@ const basicRouter = require('./router/basic_router.js')
 // 어진 
 const materialRouter = require('./router/material_router.js');
 
+// 혁진
+const qualityRouter = require('./router/quality_router.js');
+
 // 유환
 const prodRouter = require('./router/prod_router.js');
+const { quaReqAll } = require('./service/quality_service.js');
 
 
 // 미들웨어
@@ -60,7 +64,11 @@ app.use('/', basicRouter);
 app.use('/', materialRouter);
 
 
+// 유환
 app.use('/', prodRouter);
+// 혁진
+app.use('/', qualityRouter);
+
 
 // service를 먼저 만들어야함.
 // 아직은 구조익숙해지기위해서 거꾸러 작업함.

@@ -5,10 +5,6 @@
       <button class="btn btn-success ms-2 me-2">주문서조회</button>
       <router-link to="/prodplan"><button class="btn btn-info ms-2 me-2">생산계획</button></router-link>
     </nav>
-     <div class="text-end">
-        <!-- <button class="btn btn-success ms-2 me-2">주문서조회</button> -->
-        <button class="btn btn-success ms-2 me-2">조회</button>
-     </div>
     <div class="row">
         <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -24,6 +20,7 @@
                 <li class="list-group-item"><input type="text"></li>
                 <li class="list-group-item">일정</li>
                 <li class="list-group-item"><input type="date"> ~ <input type="date"></li>
+                <li class="list-group-item"><button class="btn btn-success ms-2 me-2">조회</button></li>
             </ul>
             </div>
         </div>
@@ -44,6 +41,7 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문서 작성</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문일자</th>
@@ -58,7 +56,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info) in orderList">
+                  <tr v-for="(info) in orderList" v-bind:key="info.order_id">
+                    <td class="align-middle text-center"><button class="btn btn-warning p-1 m-1" v-on:click="goToplanInfo(info)">주문서 추가</button></td>
                     <td class="align-middle text-center">{{ info.order_id }}</td>
                     <td class="align-middle text-center">{{ info.order_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.order_date }}</td>
@@ -79,45 +78,6 @@
       </div>
     <!-- row div-->
     </div>
-    <!-- <div class="row">
-      <div class="col-12">
-        <div class="card my-4">
-          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div
-              class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3"
-            >
-              <h6 class="text-white text-capitalize ps-3">상세 주문</h6>
-            </div>
-          </div>
-          <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center justify-content-center mb-0">
-                <thead>
-                  <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상세ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품예정일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="align-middle text-center">or2022-12-22</td>
-                    <td class="align-middle text-center">주문ID</td>
-                    <td class="align-middle text-center">제품ID</td>
-                    <td class="align-middle text-center">3000</td>
-                    <td class="align-middle text-center">2022-12-22</td>
-                    <td class="align-middle text-center">비고</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 <script>
@@ -133,6 +93,7 @@ export default {
     created(){
       this.getOrderList();
     },
+
     methods :{
       async getOrderList(){
         let ajaxRes =
@@ -140,6 +101,8 @@ export default {
                    .catch(err => console.log(err));
         this.orderList = ajaxRes.data;
       },
+      goToplanInfo(infos){
+      }
     }
 }
 

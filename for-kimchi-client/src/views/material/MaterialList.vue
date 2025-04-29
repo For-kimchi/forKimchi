@@ -2,7 +2,7 @@
 
   <div class="text-end">
     <button @click="handleSearch" class="btn btn-success">조회</button>
-    <button class="btn btn-danger">신규</button>
+    <button class="btn btn-danger" @click="goToMatmaPage" >신규</button>
     <button class="btn btn-info">수정</button>
   </div> 
 
@@ -17,26 +17,39 @@
 
       <div class="card-body">
         <ul class="list-group list-group-horizontal">
-          <li class="list-group-item">회사</li>
+          <li class="list-group-item" style="margin-left: 10px;">회사</li>
           <li class="list-group-item"><input type="text" v-model="search.company"></li>
-          <li class="list-group-item">등록일</li>
+          <li class="list-group-item" style="margin-left: 20px;">등록일</li>
           <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date" v-model="search.endDate"></li>
-          <li class="list-group-item">발주번호</li>
+          <li class="list-group-item" style="margin-left: 20px;">발주번호</li>
           <li class="list-group-item"><input type="text" v-model="search.orderNumber"></li>
         </ul>
 
         <ul class="list-group list-group-horizontal flex-wrap mt-3">
-          <li class="list-group-item me-3" style="border-left: 1px solid #ccc;">품목</li>
+          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">품목</li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
             <input type="text" v-model="search.item" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;">
             <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
           </li>
-
-          <li class="list-group-item me-3" style="border-left: 1px solid #ccc;">거래처</li>
+          <!-- 거래처 -->
+          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">거래처</li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-            <input type="text" v-model="search.supplier" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;">
+              <input type="text" v-model="search.supplier" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;"/>
             <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
           </li>
+
+            <!-- 발주상태 -->
+          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">발주상태</li>
+          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
+          <select v-model="search.orderStatus" class="form-select" style="min-width: 130px;">
+            <option disabled value="" style="text-align: center;">선택하세요</option>
+            <option value="진행중">승인대기</option>
+            <option value="발주마감">진행중</option>
+            <option value="승인대기">발주마감</option>
+          </select>
+          </li>
+            <!-- 검색 아이콘 -->
+          <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer;"></i>
         </ul>
       </div>
     </div>
@@ -59,30 +72,30 @@
                     <th>거래처</th>
                     <th>사용자명</th>
                     <th>품목수</th>
-                    <th>발주서</th>
+                    <th>발주상태</th>
                     <th>비고</th>
                     <th>승인일자</th>
                     <th>승인자</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-if="customerList.length > 0">
-                    <tr v-for="(info, index) in customerList" :key="info.id">
+                  <template v-if="matReqList.length > 0">
+                    <tr v-for="(info, index) in matReqList" :key="info.id" @click="handleRowClick(info)">
                       <td>{{ index + 1 }}</td>
                       <td><MaterialCheckbox></MaterialCheckbox></td>
-                      <td>{{ info.orderDate }}</td>
-                      <td>{{ info.orderNumber }}</td>
-                      <td>{{ info.supplier }}</td>
-                      <td>{{ info.user }}</td>
-                      <td>{{ info.itemCount }}</td>
-                      <td>{{ info.orderDocument }}</td>
-                      <td>{{ info.remark }}</td>
-                      <td>{{ info.approvalDate }}</td>
-                      <td>{{ info.approver }}</td>
+                      <td>{{ info.req_date }}</td>
+                      <td>{{ info.req_id }}</td>
+                      <td>{{ info.vendor_id }}</td>
+                      <td>{{ info.employee_id }}</td>
+                      <td>{{ info.req_amount }}</td>
+                      <td>{{ info.req_status }}</td>
+                      <td>{{ info.memo }}</td>
+                      <td>{{ info.confirm_date }}</td>
+                      <td>{{ info.manager_id }}</td>
                     </tr>
                   </template>
                   <tr v-else>
-                    <td colspan="11">현재 데이터가 존재하지 않습니다</td>
+                    <td colspan="11" style="text-align: center;">검색어를 입력하세요.</td>
                   </tr>
                 </tbody>
               </table>
@@ -107,26 +120,26 @@
                       <th>품목코드</th>
                       <th>품목명</th>
                       <th>납품예정일</th>
-                      <th>창고</th>
                       <th>수량</th>
                       <th>단위</th>
-                      <th>검사여부</th>
                       <th>비고</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <template v-if="count > 0">
-                      <tr v-for="(info, index) in customerList" v-bind:key="info.id">
+                    <!-- <template v-if="count > 0 "> -->
+                      <tr v-for="(info, index) in mateList" :key="info.id" style="cursor: pointer;">
                         <td>{{ index + 1 }}</td>
-                        <td><MaterialCheckbox></MaterialCheckbox></td>
-                        <td>{{ info.equip_id }}</td>
-                        <td>{{ info.equip_name }}</td>
-                        <td>{{ info.equip_type }}</td>
+                        <td>{{ info.mate_id }}</td>
+                        <td>{{ info.mate_name }}</td>
+                        <td>{{ info.req_due_date }}</td>
+                        <td>{{ info.req_amount }}</td>
+                        <td>{{ info.mate_unit }}</td>
+                        <td>{{ info.memo }}</td>
                       </tr>
-                    </template>
-                    <tr v-else>
+                    <!-- </template> -->
+                    <!-- <tr v-else>
                       <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                    </tr>
+                    </tr> -->
                   </tbody>
                 </table>
               </div>
@@ -135,9 +148,9 @@
         </div>
       </div>
     </div>
-    </template>
+</template>
     
-    <script>
+<script>
 import axios from 'axios';
 import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
 
@@ -155,24 +168,42 @@ export default {
         orderNumber: '',
         item: '',
         supplier: '',
+        orderStatus: '',
       },
-      customerList: [],
+      matReqList: [],
+      selectedInfo: {},        // 클릭한 상세 데이터
+      mateList: [],
     };
   },
   methods: {
     handleSearch() {
       // 검색 조건을 사용하여 API 요청을 보냅니다.
       axios
-        .get('http://localhost:3000/materials', {
+        .get('/api/materials', {
           params: this.search,
         })
         .then((response) => {
-          this.customerList = response.data;
+          this.matReqList = response.data;
         })
         .catch((error) => {
           console.error('검색 실패:', error);
         });
     },
+    handleRowClick(info) {
+      this.selectedInfo = info;
+      axios
+        .get(`/api/materials/${info.req_id}`,{
+        })
+        .then((response) => {
+          this.mateList = response.data;
+        })
+        .catch((error) => {
+          console.log('검색 실패:', error);
+        });
+    },
+    goToMatmaPage() {
+      this.$router.push('/matma'); // Vue Router를 사용하여 페이지 이동
+    }
   },
 };
-    </script>
+</script>
