@@ -195,8 +195,16 @@ VALUES
 (?, ?, ?, CURRENT_TIMESTAMP, '1v')`;
 
 // 공정 흐름도 갱신
+const updateProcFlow =
+  `UPDATE t_proc_flow
+SET ?
+WHERE proc_flow_id = ?`;
 
 // 공정 흐름도 상세 갱신
+const updateProcFlowDetail =
+  `UPDATE t_proc_flow_detail
+SET ?
+WHERE proc_flow_detail_id = ?`;
 
 // 공정 흐름도 삭제
 

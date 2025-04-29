@@ -2,23 +2,22 @@
   <div class="container-fluid py-4">
     <!-- 검색 -->
      <div class="text-end">
-        <button class="btn btn-success">조회</button> |
-        <button class="btn btn-info">저장</button> |
-        <button class="btn btn-danger">삭제</button> |
+        <button class="btn btn-success" @click="search()">조회</button> |
+        <button class="btn btn-info" @click="save()">저장</button> |
+        <button class="btn btn-danger" @click="remove()">삭제</button> |
      </div>
     <div class="row">
         <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                 <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-                    <h6 class="text-white text-capitalize ps-3">제품검색</h6>
+                    <h6 class="text-white text-capitalize ps-3">제품조회</h6>
                 </div>
             </div>
             <div>
             <ul class="list-group list-group-horizontal list-group-flush">
                 <li class="list-group-item"><MaterialInput type="text" label="제품ID"></MaterialInput></li>
                 <li class="list-group-item"><MaterialInput type="text" label="제품명"></MaterialInput></li>
-                <li class="list-group-item"><MaterialInput type="date" label="시작일자"></MaterialInput></li>
-                <li class="list-group-item"><MaterialInput type="date" label="종료일자" ></MaterialInput></li>
+                <li class="list-group-item"><MaterialSelect :options="selectList"></MaterialSelect></li>
             </ul>
             </div>
         </div>
@@ -40,10 +39,10 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                      제품ID
+                      순서
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                      제품분류
+                      제품ID
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                       제품명
@@ -60,22 +59,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td class="align-middle text-center">1</td>
-                    <td class="align-middle text-center">
-                      <p class="text-xs font-weight-bold mb-0">어디꺼</p>
-                      <p class="text-xs text-secondary mb-0">제품코드</p>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                      포기김치10kg
-                    </td>
-                    <td class="align-middle text-center">
-                      23/04/18
-                    </td>
-                    <td class="align-middle text-center">
-                        수량
-                    </td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">주문 등록</span></td>
+                  <tr v-for="(info, index) in basicProdList" v-bind:key="info.prod_id">
+                    <td class="align-middle text-center">{{ index }}</td>
+                    <td class="align-middle text-center">{{ info.prod_id }}</td>
+                    <td class="align-middle text-center">{{ info.prod_name }}</td>
+                    <td class="align-middle text-center">{{ info.prod_size }}</td>
+                    <td class="align-middle text-center">{{ info.prod_unit }}</td>
+                    <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -94,11 +84,7 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item"><MaterialInput type="text" label="제품ID"></MaterialInput></li>
-                    <li class="list-group-item"><MaterialSelect :options="[
-    { label: '사과', value: 'apple' },
-    { label: '바나나', value: 'banana' },
-    { label: '체리', value: 'cherry' }
-  ]"></MaterialSelect></li>
+                    <li class="list-group-item"><MaterialSelect :options="selectList"></MaterialSelect></li>
                     <li class="list-group-item"><MaterialInput type="text" label="제품명"></MaterialInput></li>
                     <li class="list-group-item"><MaterialInput type="number" label="제품규격"></MaterialInput></li>
                     <li class="list-group-item"><MaterialInput type="text" label="제품단위"></MaterialInput></li>
@@ -138,23 +124,62 @@ export default {
   },
   data() {
     return {
-      customerList: [],
+      basicProdList: [],
+      codesList: [],
+      search_id : '',
+      search_name : ''
     }
   },
   computed: {
-    count() {
-      return this.customerList.length;
+    selectList() {
+      return this.selectFormat('sub_code_name', 'sub_code');
     }
-  }
-  ,methods: {
-    async getCustomers() {
-      let res = await axios.get('/api/equips')
-      .catch(err => console.log(err));
-      this.customerList = res.data;
+  },
+  methods: {
+    async getBasicProd() {
+      let res = await axios.get('/api/basicProd')
+        .catch(err => console.log(err));
+      this.basicProdList = res.data;
     },
-  }
-  ,created() {
-    // this.getCustomers();
+    async getProdType() {
+      let res = await axios.get(`/api/codes/F1`)
+        .catch(err => console.log(err));
+      this.codesList = res.data;
+    },
+    
+    selectFormat(label, value) {
+      let selectArray = [];
+
+      for (let item of this.codesList) {
+        let newItem = {
+          label: item[label],
+          value: item[value],
+        }
+
+        selectArray.push(newItem);
+      }
+      return selectArray;
+    },
+    async search() {
+      let res = await axios.get('/api/basicProd', {
+        params: {
+          prod_id : this.search_id,
+          prod_name : this.search_name,
+        }
+      })
+        .catch(err => console.log(err));
+      this.basicProdList = res.data;
+    },
+    save() {
+      
+    },
+    remove() {
+
+    }
+  },
+  created() {
+    // this.getBasicProd();
+    this.getProdType();
   }
 }
 </script>
