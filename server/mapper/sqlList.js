@@ -33,6 +33,6 @@ module.exports = {
     ...vendor,
     //영업
     ...business,
-  
+    //검사
     ...quality,
 }

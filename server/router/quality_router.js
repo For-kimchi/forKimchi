@@ -13,5 +13,10 @@ router.get('/quality', async(req, res)=> {
   res.send(dropDownList);
 });
 
+router.get('/quality-detail', async(req, res)=> {
+  let detailList = await mateService.qualityDetail();
+  res.send(detailList);
+})
+
 
 module.exports = router;
