@@ -5,7 +5,7 @@
     <div class="text-end mb-3">
       <button class="btn btn-success">저장</button>
       <button class="btn btn-danger">삭제</button>
-      <button class="btn btn-info">닫기</button>
+      <button class="btn btn-info" @click="goBack">닫기</button>
     </div>
   
     <!-- 검색 카드 -->
@@ -19,22 +19,20 @@
       </div> <!-- card-header 끝 -->
       
       <div class="card-body">
-        <ul class="list-group list-group-horizontal">
-          <li class="list-group-item">회사</li>
-          <li class="list-group-item"><input type="text"></li>
-          
-          <li class="list-group-item me-3" style="border-left: 1px solid #ccc;">담당자</li>
+    <ul class="list-group list-group-horizontal">
+      <li class="list-group-item d-flex align-items-center">회사</li>
+      <li class="list-group-item d-flex align-items-center">
+        <input type="text" v-model="search.company">
+        <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="openCompanySearchModal"></i>
+      </li>
+          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc; margin-left: 20px;">담당자</li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-            <input type="text" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;">
-            <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
+            <input type="text" class="form-control me-2 d-flex align-items-center" style="border: 1px solid #ccc; box-sizing: border-box;">
           </li>
 
-          <li class="list-group-item">발주번호</li>
-          <li class="list-group-item"><input type="text"></li>
-
-          <li class="list-group-item">등록일</li>
-          <li class="list-group-item">
-            <input type="date"> ~ <input type="date">
+          <li class="list-group-item d-flex align-items-center" style="margin-left: 10px;">납기일</li>
+          <li class="list-group-item d-flex align-items-center">
+            <input type="date">
           </li>
         </ul>
       </div> <!-- card-body 끝 -->
@@ -139,13 +137,37 @@
             </div>
           </div>
         </div>
-      
-    </div>
-  
+      </div>
     </div> <!-- row 끝 -->
-  
   </div>
-  </template>
+  <div class="card-body">
+  <ul class="list-group list-group-horizontal">
+    <li class="list-group-item d-flex align-items-center">회사</li>
+    <li class="list-group-item d-flex align-items-center">
+      <input type="text">
+      <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="openCompanySearchModal"></i>
+    </li>
+  </ul>
+</div>
+
+<!-- 회사 검색 모달 -->
+<div v-if="isModalVisible" class="modal-backdrop" @click.self="closeCompanySearchModal">
+      <div class="modal-content-box">
+        <div class="modal-header">
+          <h5 class="modal-title">회사 검색</h5>
+          <button type="button" class="btn-close" @click="closeCompanySearchModal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control" v-model="search.company" placeholder="회사를 입력하세요">
+          <ul>
+            <li v-for="company in filteredCompanies" :key="company.id">{{ company.name }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    
+</template>
   
   
   
@@ -166,7 +188,17 @@ export default {
         { id: 2, equip_id: 'B002', equip_name: '품목B', equip_type: 'EA', selected: false },
       ],
       selectedList: [],
-    }
+
+      isModalVisible: false,
+      search: {
+        company: '',
+      },
+      companies: [
+        { id: 1, name: '회사1' },
+        { id: 2, name: '회사2' },
+        { id: 3, name: '회사3' },
+      ]
+    };
   },
   methods: {
     // 전체선택 토글
@@ -189,8 +221,55 @@ export default {
       const movingItems = this.selectedList.filter(item => item.selected);
       this.customerList.push(...movingItems.map(item => ({ ...item, selected: false })));
       this.selectedList = this.selectedList.filter(item => !item.selected);
+    },
+    goBack() {
+      this.$router.push('/materlist');; // 페이지 이동
+    },
+    openCompanySearchModal() {
+      this.isModalVisible = true;
+    },
+    closeCompanySearchModal() {
+      this.isModalVisible = false;
+    }
+},
+computed: {
+  filteredCompanies() {
+      return this.companies.filter(company =>
+        company.name.toLowerCase().includes(this.search.company.toLowerCase())
+      );
     }
 }
 }
-
 </script>
+
+<style scoped>
+/* 모달 배경 */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+/* 모달 본문 */
+.modal-content-box {
+  background: white;
+  border-radius: 8px;
+  padding: 100px;
+  width: 1000px;
+  max-width: 90%;
+}
+
+/* 모달 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
