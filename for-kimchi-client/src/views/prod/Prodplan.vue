@@ -6,7 +6,6 @@
     </nav>
     <!-- 검색 -->
      <div class="text-end">
-        <!-- <button class="btn btn-success ms-2 me-2">주문서조회</button> -->
         <button class="btn btn-success ms-2 me-2">조회</button>
         <button class="btn btn-danger ms-2 me-2">삭제</button>
      </div>
@@ -59,8 +58,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- v-for="(planInfo, index) in detailList" -->
-                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="detailDisyplay(planInfo.detailList)">
+                  <!-- v-on:click="detailDisyplay(info.order_id) -->
+                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id">
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.plan_id}}</td>
@@ -79,22 +78,6 @@
           </div>
         </div>
       </div>
-      <!-- 저장 수정 공간-->
-      <!-- <div class="col-4">
-            <div class="card my-4">
-                상단-->
-              <!--<div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                  <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-                  <h6 class="text-white text-capitalize ps-3">생산 상세등록</h6>
-                  </div>
-              </div>
-              <ul class="list-group list-group-flush">
-                  <li class="list-group-item">제품명<p><input type="text"></p></li>
-                  <li class="list-group-item">생산수량<p><input type="number"></p></li>
-                  <li class="list-group-item">일정<p><input type="date"> ~ <input type="date"></p></li>
-              </ul>
-          </div>
-      </div> -->
     <!-- row div-->
     </div>
     <div class="row">
@@ -128,7 +111,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in proddtlist" v-bind:key="order_detail_id">
+                  <!-- <tr v-for="(info,index) in proddtlist" v-bind:key="order_detail_id">
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.order_detail_id }}</td>
@@ -138,7 +121,7 @@
                     <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
                     <td class="align-middle text-center">{{ info.plan_start_date }}</td>
                     <td class="align-middle text-center">{{ info.plan_end_date }}</td>
-                  </tr>
+                  </tr> -->
                 </tbody>
               </table>
             </div>
@@ -155,7 +138,7 @@ export default {
     name: "Prodplan",
     data(){
       return {
-        planList : [
+        plandtList : [
           { no : '',
             planId : '',
             orderId : '',
@@ -164,14 +147,15 @@ export default {
           }
         ],
         selectedDetail : [],
-        prodlist : [],
-        proddtlist : []
+        prodlist : []
+        // proddtlist : []
       }
     },
     created(){
       this.prodList();
-      this.proddtList();
+      // this.proddtList();
     },
+    // 생산계획 조회
     methods : {
       async prodList(){
         let ajaxRes =
@@ -179,18 +163,16 @@ export default {
                   .catch(err => console.log(err));
                   this.prodlist = ajaxRes.data;
       },
-      async proddtList(){
-        let  ajaxRes =
-        await axios.get(`/api/proddtlist`)
-                   .catch(err => console.log(err));
-                   this.proddtlist = ajaxRes.data;
-      },
-      addRow(){
-        this.planList.push({})
-      },
-      detailDisyplay(detail){
-        this.selectedDetail = detail;
-      }
+      // 생산계획 상세 조회
+      // async proddtList(){
+      //   let  ajaxRes =
+      //   await axios.get(`/api/proddtlist/${orderid}`)
+      //              .catch(err => console.log(err));
+      //   this.proddtlist = ajaxRes.data;
+      // },
+      // addRow(){
+      //   this.proddtlist.push({})
+      // }
     }
     
 }

@@ -5,12 +5,14 @@ const order_list = async()=>{
  let list = await mariaDB.query('selectorder');
  return list;
 };
+// 생산계획조회
 const prodlist = async()=>{
     let list = await mariaDB.query('selectprod');
     return list;
 };
-const proddtlist = async()=>{
-    let list = await mariaDB.query('selectproddetail');
+// 생산상세계획조회
+const proddtlist = async(orderId)=>{
+    let list = await mariaDB.query('selectproddetail', orderId);
     return list;
 }
 
