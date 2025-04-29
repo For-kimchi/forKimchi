@@ -1,22 +1,12 @@
 <template>
   <li class="nav-item">
-    <a
+    <router-link
       class="nav-link text-white"
-      data-bs-toggle=""
-      aria-expanded="false"
-      :href="`${refer}`"
-      @click="isExpanded = !isExpanded"
+      :to="refer"
     >
-      <span class="sidenav-mini-icon"> {{ miniIcon }} </span>
-      <span class="sidenav-normal me-3 ms-2 ps-1">
-        {{ text }} <b class="caret"></b
-      ></span>
-    </a>
-    <div :class="isExpanded ? 'collapse show' : 'collapse'">
-      <ul class="nav nav-sm flex-column">
-        <slot name="nav-child-item" />
-      </ul>
-    </div>
+      <span class="sidenav-mini-icon">{{ miniIcon }}</span>
+      <span class="sidenav-normal me-3 ms-2 ps-1">{{ text }}</span>
+    </router-link>
   </li>
 </template>
 
@@ -24,23 +14,9 @@
 export default {
   name: "SidenavCollapseItem",
   props: {
-    refer: {
-      type: String,
-      required: true,
-    },
-    miniIcon: {
-      type: String,
-      required: true,
-    },
-    text: {
-      type: String,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      isExpanded: false,
-    };
-  },
+    refer: { type: String, required: true },
+    miniIcon: { type: String, required: true },
+    text: { type: String, required: true },
+  }
 };
 </script>
