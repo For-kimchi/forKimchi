@@ -282,7 +282,7 @@
               </template>
             </sidenav-collapse>
 
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="delivs" navText="제품검사조회">
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="prodQuality" navText="제품검사조회">
               <template v-slot:icon>
                 <i class="material-icons-round opacity-10 fs-5">table_view</i>
               </template>
