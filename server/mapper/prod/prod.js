@@ -16,7 +16,7 @@ const selectorder =
  FROM t_order_detail s join t_order m
                          on (s.order_id = m.order_id)
  WHERE m.order_status = '2a' and '3a'
- ORDER BY order_status, delivery_due_date`;
+ ORDER BY order_status, deliv_due_date`;
 
 // 생산계획 목록(지시완료 제외) 
 const selectprod =
@@ -48,7 +48,9 @@ const selectproddetail =
  FROM t_prod_plan_detail d JOIN t_prod_plan t
                          ON (d.plan_id = t.plan_id)
                          JOIN t_order_detail p
-                         ON (t.order_id = p.order_id)`;
+                         ON (t.order_id = p.order_id)
+ WHERE p.order_id = ?
+ GROUP BY order_detail_id`;
  // 생산계획에 들어갈 주문 등록
  const insertprod =
  `INSERT INTO `;

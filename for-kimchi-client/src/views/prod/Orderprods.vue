@@ -66,7 +66,7 @@
                     <td class="align-middle text-center">{{ info.reg_date }}</td>
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
                     <td class="align-middle text-center">{{ info.order_amount }}</td>
-                    <td class="align-middle text-center">{{ info.delivery_due_date }}</td>
+                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
                     <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_status }}</span></td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>

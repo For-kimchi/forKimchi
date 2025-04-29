@@ -13,8 +13,9 @@ router.get('/prodlist', async(req, res)=>{
   res.send(prodList);
 });
 // 생산계획상세조회
-router.get('/proddtlist', async(req, res)=>{
-  let prodList = await prod_service.proddtlist();
+router.get('/proddtlist/:id', async(req, res)=>{
+  let orderId = req.params.id
+  let prodList = await prod_service.proddtlist(orderId);
   res.send(prodList);
 });
 
