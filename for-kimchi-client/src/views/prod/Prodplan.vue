@@ -58,8 +58,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- v-on:click="detailDisyplay(info.order_id) -->
-                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id">
+                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(info.order_id)">
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.plan_id}}</td>
@@ -111,17 +110,17 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- <tr v-for="(info,index) in proddtlist" v-bind:key="order_detail_id">
+                  <tr v-for="(info,index) in proddtlist" v-bind:key="order_detail_id">
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
-                    <td class="align-middle text-center">{{ info.order_detail_id }}</td>
+                    <td class="align-middle text-center"><input type="text" v-model="info.order_detail_id"></td>
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
                     <td class="align-middle text-center">{{ info.order_amount }}</td>
                     <td class="align-middle text-center">{{ info.plan_amount }}</td>
                     <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
                     <td class="align-middle text-center">{{ info.plan_start_date }}</td>
                     <td class="align-middle text-center">{{ info.plan_end_date }}</td>
-                  </tr> -->
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -138,22 +137,22 @@ export default {
     name: "Prodplan",
     data(){
       return {
-        plandtList : [
-          { no : '',
-            planId : '',
-            orderId : '',
-            planStatus :'',
-            detailList : [{}, {}],
-          }
-        ],
+        // plandtList : [
+        //   { no : '',
+        //     planId : '',
+        //     orderId : '',
+        //     planStatus :'',
+        //     detailList : [{}, {}],
+        //   }
+        // ],
         selectedDetail : [],
-        prodlist : []
-        // proddtlist : []
+        prodlist : [],
+        proddtlist : []
       }
     },
     created(){
       this.prodList();
-      // this.proddtList();
+      // this.proddtList(orderId);
     },
     // 생산계획 조회
     methods : {
@@ -164,15 +163,15 @@ export default {
                   this.prodlist = ajaxRes.data;
       },
       // 생산계획 상세 조회
-      // async proddtList(){
-      //   let  ajaxRes =
-      //   await axios.get(`/api/proddtlist/${orderid}`)
-      //              .catch(err => console.log(err));
-      //   this.proddtlist = ajaxRes.data;
-      // },
-      // addRow(){
-      //   this.proddtlist.push({})
-      // }
+      async proddtList(orderid){
+        let  ajaxRes =
+        await axios.get(`/api/proddtlist/${orderid}`)
+                   .catch(err => console.log(err));
+        this.proddtlist = ajaxRes.data;
+      },
+      addRow(){
+        this.proddtlist.push({});
+      }
     }
     
 }

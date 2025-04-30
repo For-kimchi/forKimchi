@@ -33,7 +33,8 @@ const selectprod =
    FROM t_prod_plan t join t_order o
                         on (t.order_id = o.order_id)
                       join t_order_detail d
-                        on (t.order_id = d.order_id)`;
+                        on (t.order_id = d.order_id)
+   GROUP BY t.plan_id, order_id`;
 
 // 상세생산계획 조회
 const selectproddetail =
