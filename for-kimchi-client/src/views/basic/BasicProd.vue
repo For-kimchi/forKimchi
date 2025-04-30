@@ -16,19 +16,27 @@
       </div>
       <div class="row g-3 mt-3">
         <div class="col-md-3">
-          제품명<input v-model="searchName" type="text" class="form-control" placeholder="제품명" />
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품명</label>
+            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="제품명" />
+          </div>
         </div>
         <div class="col-md-3">
-          제품ID<input v-model="searchId" type="text" class="form-control" placeholder="제품ID" />
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품ID</label>
+            <input v-model="searchId" type="text" class="form-control border text-center" placeholder="제품ID" />
+          </div>
         </div>
         <div class="col-md-3">
-          제품분류
-          <select v-model="searchType" class="form-select">
-            <option value="">전체</option>
-            <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품분류</label>
+            <select v-model="searchType" class="form-select text-center">
+              <option value="">전체</option>
+              <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
-            </option>
-          </select>
+              </option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -75,25 +83,25 @@
 
       <div class="col-md-4">
         <div class="card p-3">
-          <div class="mb-3">
-            <label class="form-label">제품코드</label>
-            <input v-model="selectedProduct.prod_id" type="text" class="form-control" />
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품ID</label>
+            <input v-model="selectedProduct.prod_id" type="text" class="form-control border text-center" readonly/>
           </div>
-          <div class="mb-3">
-            <label class="form-label">제품명</label>
-            <input v-model="selectedProduct.prod_name" type="text" class="form-control" />
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품코드</label>
+            <input v-model="selectedProduct.prod_name" type="text" class="form-control border text-center" />
           </div>
-          <div class="mb-3">
-            <label class="form-label">규격</label>
-            <input v-model="selectedProduct.prod_size" type="text" class="form-control" />
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">규격</label>
+            <input v-model="selectedProduct.prod_size" type="text" class="form-control border text-center" />
           </div>
-          <div class="mb-3">
-            <label class="form-label">단위</label>
-            <input v-model="selectedProduct.prod_unit" type="text" class="form-control" />
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">단위</label>
+            <input v-model="selectedProduct.prod_unit" type="text" class="form-control border text-center" />
           </div>
-          <div class="mb-3">
-            <label class="form-label">제품분류</label>
-            <select v-model="selectedProduct.prod_type" class="form-select">
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품분류</label>
+            <select v-model="selectedProduct.prod_type" class="form-select text-center">
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
               </option>
@@ -122,13 +130,22 @@
         products: [],
         codes: [],
         selectedProduct: {},
+        isEdit: false,
       };
     },
     computed: {
     },
     methods: {
     async getBasicProd() {
-      let res = await axios.get('/api/basicProd')
+      const params = {};
+      
+      if (this.searchName) params.prod_name = this.searchName;
+      if (this.searchId) params.prod_id = this.searchId;
+      if (this.searchType) params.prod_type = this.searchType;
+
+      let res = await axios.get('/api/basicProd', {
+        params
+      })
         .catch(err => console.log(err));
       this.products = res.data;
     },
@@ -149,9 +166,17 @@
         this.selectedProduct = {
         };
       },
-      save() {
+      async save() {
+        const body = {
+        };
+
+        let res = await axios.post('/api/basicProd', body)
+          .catch(err => console.log(err));
+        console.log(res);
         this.resetForm();
       },
+      checkForm() {
+      }
     },
     created() {
       this.getProdType();
