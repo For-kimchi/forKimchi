@@ -2,24 +2,26 @@
   <div class="container-fluid py-4">
     <div class="row">
       <div class="col-12">
-        <MaterialAlert>자재검사결과</MaterialAlert>
+        <MaterialAlert>제품검사결과</MaterialAlert>
 
-        <!--드롭다운-->
+        <!-- 드롭다운-->
         <div class="d-flex align-items-center mb-3 px-3">
-          <select v-model="selectedMaterial" class="form-select me-2" style="max-width: 200px;">
-            <option value="">전체</option>
-            <option v-for="(item, idx) in materialNames" :key="idx" :value="item">
+          <select v-model="selectedMaterial" class="form-select me-2 text-center"
+           style="max-width: 200px; border: 1px solid gray; text-align-last: center;">
+              <option value="">전체</option>
+              <option v-for="(item, idx) in materialNames" :key="idx" :value="item">
               {{ item }}
-            </option>
+              </option> 
           </select>
 
-          <input v-model="searchKeyword" type="text" placeholder="검색어를 입력하세요" class="form-control me-2"
-            style="max-width: 300px;" />
-
-          <button @click="search" class="btn btn-primary">
+      <input
+        v-model="searchKeyword" type="text" placeholder="검색어를 입력하세요" class="form-control me-2 text-center"
+          style="max-width: 300px; border: 1px solid gray;" />
+          <button @click="search" class="btn btn-primary" style="margin: 10px 20px 11px 2px;">
             검색
           </button>
         </div>
+        
         <!--드롭다운-->
 
         <div class="card my-4">
@@ -29,9 +31,10 @@
                 <thead class="table-header">
                   <tr>
                     <th>검사일자</th>
-                    <th>자재명</th>
-                    <th>자재LOT</th>
+                    <th>제품명</th>
+                    <th>제품LOT</th>
                     <th>검사결과</th>
+                    <th>상태</th>
                   </tr>
                 </thead>
               </table>
@@ -39,11 +42,13 @@
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
                     <template v-if="count > 0">
-                      <tr v-for="(info, index) in mateQuality" :key="info.id">
+                      <tr v-for="(info, index) in mateQuality" :key="info.id" @click="" style="cursor: pointer;">  <!--클릭안에 -> getQualityDetail(info.id)-->
                         <td>{{ info.quality_date }}</td>
                         <td>{{ info.mate_name }}</td>
                         <td>{{ info.mate_lot }}</td>
-                        <td>{{ info.quality_result }}</td>
+                        <td>{{ info.sub_code_name }}</td>
+                        <td>{{ info.result }}</td>
+
                       </tr>
                     </template>
                     <tr v-else>
@@ -61,11 +66,8 @@
 
   <div class="container-fluid py-4">
     <div class="row">
-      <div class="col-12">
-        <MaterialAlert>자재검사상세</MaterialAlert>
-
-        <!--영역 -->
-        <div class="d-flex align-items-center mb-3 px-3">
+      <!-- 영역 -->
+      <div class="d-flex align-items-center justify-content-end mb-3 px-3 ">
           <MaterialButton color="primary" class="me-2" @click="handleIncoming">
             입고
           </MaterialButton>
@@ -75,11 +77,12 @@
           </MaterialButton>
         </div>
         <!--까지 -->
-
+      <div class="col-12">
+        <MaterialAlert>제품검사상세</MaterialAlert>
         <div class="card my-4">
-          <div class="card-body px-0 pb-2" style=" height: 200px; overflow-y: scroll;">
+          <div class="card-body px-0 pb-2" >
             <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead>
                   <tr>
                     <th>검사일자</th>
@@ -93,22 +96,29 @@
                     <th>상태</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <template v-if="count > 0">
-                    <tr v-for="(info, index) in mateQuality" v-bind:key="info.id" >
-                      <td>{{ index + 1 }}</td>
-                      <td>{{ info.equip_id }}</td>
-                      <td>{{ info.equip_name }}</td>
-                      <td>{{ info.equip_type }}</td>
-                      <td><MaterialCheckbox></MaterialCheckbox></td>
-                      <td>{{info.quality_result}}</td>
-                    </tr>
-                  </template>
-                  <tr v-else>
-                    <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                  </tr>
-                </tbody>
               </table>
+              <div style="max-height: 200px; overflow-y: auto;">
+                <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
+                  <tbody>
+                    <template v-if="count > 0">
+                      <tr v-for="(info, index) in mateQualityDetail" :key="info.id">
+                        <td>{{ info.quality_date }}</td>
+                        <td>{{ info.option_name }}</td>
+                        <td>{{ info.option_standard }}</td>
+                        <td>{{ info.option_spec}}</td>
+                        <td>{{ info.option_method}}</td>
+                        <td>
+                          <MaterialCheckbox></MaterialCheckbox>
+                        </td>
+                        <td>{{info.quality_result}}</td>
+                      </tr>
+                    </template>
+                    <tr v-else>
+                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -144,14 +154,15 @@
     data() {
       return {
         mateQuality: [],
+        mateQualityDetail: [],
         selectedMaterial: '',
         searchKeyword: '',
-        materialNames: [],
       }
     },
     computed: {
       count() {
         return this.mateQuality.length;
+        return this.mateQualityDetail.length;
       }
     },
     methods: {
@@ -160,15 +171,14 @@
           .catch(err => console.log(err));
         this.mateQuality = res.data;
       },
-      async getQualityDetail(selected) {
-        let res = await axios.get(`/api/quality/${selected}`)
+      async getQualityDetail() {
+        let res = await axios.get(`/api/quality`)
           .catch(err => console.log(err));
-        this.mateQuality = res.data;
+        this.mateQualityDetail = res.data;
       },
     },
     created() {
       this.getQuality();
-      
     }
   }
 </script>
