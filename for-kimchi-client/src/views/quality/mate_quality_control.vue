@@ -7,7 +7,7 @@
             추가
           </MaterialButton>
         </div>
-        <MaterialAlert>자재검사</MaterialAlert>
+        <Material-Alert>자재검사</Material-Alert>
         <h4>검사요청</h4>
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
@@ -15,31 +15,25 @@
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead class="table-header">
                   <tr>
-                    <th>발주번호</th>
-                    <th>자재명</th>
-                    <th>자재번호</th>
-                    <th>LOT</th>
-                    <MaterialCheckbox></MaterialCheckbox>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">발주번호</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재번호</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">LOT</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox"/></th>
                   </tr>
                 </thead>
               </table>
               <div style="max-height: 200px; overflow-y: auto;">
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
-                    <template v-if="mateCount > 0">
-                      <tr v-for="(info, index) in mateQuality" :key="info.id" @click="" style="cursor: pointer;">
+                      <tr v-for="(info, index) in matelists" :key="info.id" @click="" style="cursor: pointer;">
                         <!--클릭안에 -> getQualityDetail(info.id)-->
-                        <td>{{ info.quality_date }}</td>
-                        <td>{{ info.mate_name }}</td>
-                        <td>{{ info.mate_lot }}</td>
-                        <td>{{ info.sub_code_name }}</td>
-                        <td>{{ info.result }}</td>
-
+                        <td class="align-middle text-center">{{ info.req_id }}</td>
+                        <td class="align-middle text-center">{{ info.mate_name }}</td>
+                        <td class="align-middle text-center">{{ info.mate_id }}</td>
+                        <td class="align-middle text-center">{{ info.mate_lot }}</td>
+                        <td class="align-middle text-center"><input type="checkbox"/></td>
                       </tr>
-                    </template>
-                    <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -64,44 +58,39 @@
       </div>
       <!--까지 -->
       <div class="col-12">
-        <h4>검사대기</h4>
+        <materialAlert><span>검사대기</span></materialAlert>
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead>
                   <tr>
-                    <th>검사일자</th>
-                    <th>항목</th>
-                    <th>규격</th>
-                    <th>방법</th>
-                    <th>검사결과</th>
-                    <th>
-                      <MaterialCheckbox></MaterialCheckbox>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">항목</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">규격</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">기준</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">방법</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      <input type="checkbox"/>
                     </th>
-                    <th>상태</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th> -->
                   </tr>
                 </thead>
               </table>
               <div style="max-height: 200px; overflow-y: auto;">
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
-                    <template v-if="detailCount > 0">
                       <tr v-for="(info, index) in mateQualityDetail" :key="info.id" @click="" style="cursor: pointer;">
-                        <td>{{ info.quality_date }}</td>
-                        <td>{{ info.option_name }}</td>
-                        <td>{{ info.option_standard }}</td>
-                        <td>{{ info.option_spec}}</td>
-                        <td>{{ info.sub_code_name}}</td>
-                        <td>
-                          <MaterialCheckbox></MaterialCheckbox>
+                        <td class="align-middle text-center">{{ info.quality_date }}</td>
+                        <td class="align-middle text-center">{{ info.option_name }}</td>
+                        <td class="align-middle text-center">{{ info.option_standard }}</td>
+                        <td class="align-middle text-center">{{ info.option_spec}}</td>
+                        <td class="align-middle text-center"><input type="text"></td>
+                        <td class="align-middle text-center">
+                          <input type="checkbox"/>
                         </td>
-                        <td>{{info.quality_result}}</td>
+                        <!-- <td>{{info.quality_result}}</td> -->
                       </tr>
-                    </template>
-                    <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -142,6 +131,7 @@
         mateQuality: [],
         mateQualityDetail: [],
         mateLotDetail: [],
+        matelists: [],
         selectedMaterial: '',
         searchKeyword: '',
       }
@@ -150,37 +140,32 @@
       mateCount() {
         return this.mateQuality.length;
       },
-      detailCount() {
-        return this.mateQualityDetail.length;
-      },
       mateLot() {
         return this.mateLotDetail.length;
+      },
+      matelist() {
+        return this.matelists.length;
       }
+
     },
     methods: {
-      async getQuality() {
-        let res = await axios.get('/api/quality')
-          .catch(err => console.log(err));
-        this.mateQuality = res.data;
-      },
       async getQualityDetail() {
         let res = await axios.get(`/api/quality-detail`)
           .catch(err => console.log(err));
         this.mateQualityDetail = res.data;
       },
-      async getMateLot() {
-        let res = await axios.get(`/api/quality-lot`)
-          .catch(err => console.log(err));
-        this.mateLotDetail = res.data;
-      },
       search() {
 
       },
+      async getMate() {
+        let res = await axios.get(`/api/quality-mate`)
+        .catch(err => console.log(err));
+        this.matelists= res.data;
+      }
     },
     created() {
-      this.getQuality();
       this.getQualityDetail();
-      this.getMateLot();
+      this.getMate();
     }
   }
 </script>

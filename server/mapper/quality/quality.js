@@ -1,7 +1,8 @@
 // 자재수입검사관리 조회
 //드롭다운
 const mate_dropdown =
-`select mate_lot from t_mate_warehouse`;
+`select mate_lot 
+from t_mate_warehouse`;
 
 const selectQuality =
 `select date_type(quality_date) quality_date, mate_name, mate_lot, sub_code_name,
@@ -26,14 +27,22 @@ from t_quality_option
 join t_quality_mate 
 join t_quality_mate_detail d
 join t_sub_code s on d.quality_result = s.sub_code
-join t_mate_warehouse
-`
+join t_mate_warehouse`
 
 // 자재수입검사관리 등록
+const quality_control = 
+`select i.req_id, mate_name, td.mate_id, mate_lot
+from t_mate_inbound_detail td
+join t_mate tm on (tm.mate_id = td.mate_id)
+join t_mate_warehouse
+join t_mate_inbound i
+join t_mate_req_detail r on (i.req_id = r.req_id)
+join t_mate_req`
 
 
 module.exports = {
   selectQuality,
   quality_detail,
   mate_dropdown,
+  quality_control,
 };

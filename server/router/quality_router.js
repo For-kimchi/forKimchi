@@ -16,6 +16,11 @@ router.get('/quality-lot', async(req, res)=> {
 router.get('/quality-detail', async(req, res)=> {
   let detailList = await mateService.qualityDetail();
   res.send(detailList);
+});
+
+router.get('/quality-mate', async(req, res)=> {
+  let mate = await mateService.qualityControl();
+  res.send(mate);
 })
 
 
