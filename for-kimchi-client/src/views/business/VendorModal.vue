@@ -4,7 +4,7 @@
         <div class="custom-modal">
           <!-- 제목 -->
           <div class="modal-header mb-3">
-            <h5 class="modal-title">제품검색</h5>
+            <h5 class="modal-title">Item Search</h5>
           </div>
   
 <!-- 검색 영역 -->
@@ -14,15 +14,15 @@
     <input
       v-model="search"
       type="text"
-      class="form-control border"
-      placeholder="제품명"
+      class="form-control"
+      placeholder="Search..."
     />
   </div>
 
   <!-- 오른쪽: 버튼 -->
   <div class="d-flex gap-2">
-    <button type="button" class="btn btn-primary" @click="doSearch">검색</button>
-    <button type="button" class="btn btn-secondary" @click="$emit('close')">닫기</button>
+    <button class="btn btn-primary" @click="doSearch">Search</button>
+    <button class="btn btn-outline-secondary" @click="$emit('close')">Close</button>
   </div>
 </div>
 
@@ -32,8 +32,8 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th>제품ID</th>
-                <th>제품명</th>
+                <th>Key</th>
+                <th>Name</th>
               </tr>
             </thead>
             <tbody>
@@ -43,8 +43,8 @@
                 @click="selectItem(item)"
                 style="cursor: pointer"
               >
-                <td>{{ item.prod_id }}</td>
-                <td>{{ item.prod_name }}</td>
+                <td>{{ item.key }}</td>
+                <td>{{ item.name }}</td>
               </tr>
             </tbody>
           </table>
@@ -54,8 +54,6 @@
   </template>
   
   <script>
-  import axios from 'axios';
-
   export default {
     name: 'SearchModal',
     props: {
@@ -68,37 +66,22 @@
       };
     },
     methods: {
-      async searchProd() {
-        let params = {
-          prod_name : this.search
-        }
-
-        let list = await axios.get('/api/basicProd', {
-          params
-        }).catch(err => console.log(err));
-
-        this.results = list.data;
-      },
       doSearch() {
-        this.searchProd();
+        // 임시 검색 데이터
+        this.results = [
+          { key: 'A001', name: 'Apple' },
+          { key: 'B002', name: 'Banana' },
+          { key: 'C003', name: 'Cherry' },
+        ].filter((item) =>
+          item.name.toLowerCase().includes(this.search.toLowerCase())
+        );
       },
       selectItem(item) {
-        this.$emit('select', item);
+        this.$emit('select', item.key);
         this.$emit('close');
       },
-      resetState() {
-        this.search = ''
-        this.results = []
-      },
     },
-    emits: ['close', 'select'],
-    watch: {
-    visible(newVal) {
-      if (newVal) {
-        this.resetState()
-      }
-    }
-  },
+    emits: ['close', 'select']
   };
   </script>
   

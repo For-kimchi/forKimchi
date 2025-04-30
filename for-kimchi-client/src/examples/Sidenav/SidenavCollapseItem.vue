@@ -4,7 +4,9 @@
       class="nav-link text-white"
       :to="refer"
     >
-      <span class="sidenav-mini-icon">{{ miniIcon }}</span>
+      <div class="text-center d-flex align-items-center justify-content-center me-2">
+        <i class="material-icons-round opacity-10 fs-5">{{ miniIcon }}</i>
+      </div>
       <span class="sidenav-normal me-3 ms-2 ps-1">{{ text }}</span>
     </router-link>
   </li>
