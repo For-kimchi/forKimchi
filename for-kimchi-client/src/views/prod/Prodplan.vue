@@ -4,11 +4,10 @@
       <router-link to="/orderprod"><button class="btn btn-info ms-2 me-2">주문서조회</button></router-link>
       <button class="btn btn-success ms-2 me-2">생산계획</button>
     </nav>
-    <!-- 검색 -->
+    <!-- 검색
      <div class="text-end">
         <button class="btn btn-success ms-2 me-2">조회</button>
-        <button class="btn btn-danger ms-2 me-2">삭제</button>
-     </div>
+     </div> -->
     <div class="row">
         <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -24,6 +23,7 @@
                 <li class="list-group-item"><input type="text"></li>
                 <li class="list-group-item">일정</li>
                 <li class="list-group-item"><input type="date"> ~ <input type="date"></li>
+                <button class="btn btn-success ms-2 me-2">조회</button>
             </ul>
             </div>
         </div>
@@ -44,7 +44,6 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox"></th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산계획ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
@@ -59,7 +58,6 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(info.order_id)">
-                    <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.plan_id}}</td>
                     <td class="align-middle text-center">{{ info.order_id}}</td>
@@ -83,15 +81,14 @@
       <div class="col-12">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div
-              class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3"
-            >
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
               <h6 class="text-white text-capitalize ps-3">생산계획상세</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
             <div class="text-end pe-3 ">
-              <button class="btn btn-success" v-on:click="addRow">추가</button>
+              <button class="btn btn-success ms-2 me-2" v-on:click="">승인</button>
+              <!-- <button class="btn btn-success" v-on:click="addRow">추가</button> -->
               <button class="btn btn-info ms-2 me-2">저장</button>
             </div>
             <div class="table-responsive p-0">
@@ -104,6 +101,8 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산필요수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">추가생산수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세계획상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">시작일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">종료일자</th>
@@ -113,13 +112,19 @@
                   <tr v-for="(info,index) in proddtlist" v-bind:key="order_detail_id">
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
-                    <td class="align-middle text-center"><input type="text" v-model="info.order_detail_id"></td>
-                    <td class="align-middle text-center">{{ info.prod_id }}</td>
-                    <td class="align-middle text-center">{{ info.order_amount }}</td>
-                    <td class="align-middle text-center">{{ info.plan_amount }}</td>
+                    <td class="align-middle text-center">{{ info.order_detail_id }}</td>
+                    <td class="align-middle text-center"><input class="text-center" type="select" v-model="info.prod_id" ></td>
+                    <td class="align-middle text-center">{{info.order_amount}}</td>
+                    <td class="align-middle text-center"><input class="text-center" type="number" v-model="info.plan_amount"></td>
+
+                    <td class="align-middle text-center" v-if="info.order_amount - info.plan_amount <= 0">0</td>
+                    <td class="align-middle text-center" v-else>{{info.order_amount - info.plan_amount}}</td>
+                    
+                    <td class="align-middle text-center" v-if="info.plan_amount - info.order_amount <= 0">0</td>
+                    <td class="align-middle text-center" v-else>{{info.plan_amount - info.order_amount}}</td>
                     <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
-                    <td class="align-middle text-center">{{ info.plan_start_date }}</td>
-                    <td class="align-middle text-center">{{ info.plan_end_date }}</td>
+                    <td class="align-middle text-center"><input class="text-center" type="date" v-model="info.plan_start_date"></td>
+                    <td class="align-middle text-center"><input class="text-center" type="date" v-model="info.plan_end_date"></td>
                   </tr>
                 </tbody>
               </table>
@@ -168,10 +173,10 @@ export default {
         await axios.get(`/api/proddtlist/${orderid}`)
                    .catch(err => console.log(err));
         this.proddtlist = ajaxRes.data;
-      },
-      addRow(){
-        this.proddtlist.push({});
       }
+      // ,addRow(){
+      //   this.proddtlist.push({});
+      // }
     }
     
 }
