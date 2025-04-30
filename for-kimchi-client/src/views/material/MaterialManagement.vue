@@ -32,11 +32,11 @@
     </div>
   </div>
 </div>
-<div class="row">
+<!-- <div class="row">
   <div class="col-12 text-left mb-4">
     <button class="btn btn-primary">품목조회</button>
   </div>
-</div>
+</div> -->
   
     <!-- 거래처, 이동버튼, 품목정보 테이블 -->
     <div class="row">
@@ -45,7 +45,18 @@
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">거래처</h6>
+              
+              <div class="card-body">
+    <ul class="list-group list-group-horizontal">
+      <li class="list-group-item d-flex align-items-center">자재명</li>
+      <li class="list-group-item d-flex align-items-center">
+        <input type="text" :value="selectedCompany" readonly>
+        <i class="fas fa-search d-flex align-items-center"
+         style="font-size: 20px; cursor: pointer; margin-left: 10px;"
+         @click="openCompanySearchModal"></i>
+      </li>
+    </ul>
+      </div>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -136,26 +147,35 @@
 
 
 <!-- 회사 검색 모달 -->
-<div v-if="isModalVisible" class="modal-backdrop" @click.self="closeCompanySearchModal">
-      <div class="modal-content-box">
-        <div class="modal-header">
-          <h5 class="modal-title">회사 검색</h5>
-          <button type="button" class="btn-close" @click="closeCompanySearchModal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="text" class="form-control mb-2" v-model="searchText" placeholder="회사명 검색">
-          <ul class="list-group">
-            <li v-for="company in filteredCompanies"
-                :key="company.id"
-                class="list-group-item list-group-item-action"
-                :class="{ active: company.name === selectedCompany }"
-                @click="selectCompany(company.name)">
-              {{ company.name }}
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+<!-- 회사 검색 인풋 -->
+<input type="text" :value="selectedCompany" readonly>
+<i class="fas fa-search" @click="openCompanySearchModal"></i>
+
+<!-- 자재 검색 인풋 -->
+<input type="text" :value="selectedMaterial" readonly>
+<i class="fas fa-search" @click="openMaterialSearchModal"></i>
+
+<!-- 회사 검색 모달 -->
+<Modal
+  :visible="isCompanyModalVisible"
+  title="회사 검색"
+  placeholder="회사명 검색"
+  :list="companies"
+  :selectedValue="selectedCompany"
+  @close="closeCompanySearchModal"
+  @select="selectCompany"
+/>
+
+<!-- 자재 검색 모달 -->
+<Modal
+  :visible="isMaterialModalVisible"
+  title="자재 검색"
+  placeholder="자재명 검색"
+  :list="materials"
+  :selectedValue="selectedMaterial"
+  @close="closeMaterialSearchModal"
+  @select="selectMaterial"
+/>
 
     
 </template>
@@ -166,11 +186,12 @@
 <script>
 import axios from 'axios'
 import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
-
+import Modal from '@/views/modal/Modal.vue'
 export default {
     name: "Material Management",
     components: {
       MaterialCheckbox,
+      Modal,
     },
     data() {
     return {
@@ -182,11 +203,17 @@ export default {
 
       isModalVisible: false,
       searchText: '',
-      selectedCompany: '', // 최종 선택된 회사명
+      selectedCompany: '',
+      selectedMaterial: '',
+      isCompanyModalVisible: false,
+      isMaterialModalVisible: false,
       companies: [
         { id: 1, name: '회사1' },
-        { id: 2, name: '회사2' },
-        { id: 3, name: '회사3' },
+        { id: 2, name: '회사2' }
+      ],
+      materials: [
+        { id: 1, name: '자재A' },
+        { id: 2, name: '자재B' }
       ],
       search: {
       company: '',
@@ -219,17 +246,13 @@ export default {
     goBack() {
       this.$router.push('/materlist');; // 페이지 이동
     },
-    openCompanySearchModal() {
-      this.isModalVisible = true;
-      this.searchText = '';
-    },
-    closeCompanySearchModal() {
-      this.isModalVisible = false;
-    },
-    selectCompany(name) {
-    this.selectedCompany = name;
-    this.closeCompanySearchModal();
-    },
+    openCompanySearchModal() { this.isCompanyModalVisible = true; },
+    closeCompanySearchModal() { this.isCompanyModalVisible = false; },
+    selectCompany(name) { this.selectedCompany = name; },
+
+    openMaterialSearchModal() { this.isMaterialModalVisible = true; },
+    closeMaterialSearchModal() { this.isMaterialModalVisible = false; },
+    selectMaterial(name) { this.selectedMaterial = name; },
 },
 computed: {
   filteredCompanies() {
@@ -237,11 +260,11 @@ computed: {
         company.name.toLowerCase().includes(this.search.company.toLowerCase())
       );
     }
-}
+  }
 }
 </script>
 
-<style scoped>
+<!-- <style scoped>
 /* 모달 배경 */
 .modal-backdrop {
   position: fixed;
@@ -280,4 +303,4 @@ computed: {
   background-color: #0d6efd;
   color: white;
 }
-</style>
+</style> -->

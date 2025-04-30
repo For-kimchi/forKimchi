@@ -8,8 +8,8 @@ router.get('/quality', async(req, res)=> {
   res.send(quaList);
 });
 
-router.get('/quality', async(req, res)=> {
-  let dropDownList = await mateService.dropDownAll();
+router.get('/quality-lot', async(req, res)=> {
+  let dropDownList = await mateService.dropDown();
   res.send(dropDownList);
 });
 

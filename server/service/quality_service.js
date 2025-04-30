@@ -5,7 +5,7 @@ const quaReqAll = async() => {
   return list;
 };
 
-const dropDownAll = async() => {
+const dropDown = async() => {
   let list = await mariaDB.query('mate_dropdown');
   return list;
 };
@@ -17,6 +17,6 @@ const qualityDetail = async() => {
 
 module.exports = {
   quaReqAll,
-  dropDownAll,
+  dropDown,
   qualityDetail,
 }

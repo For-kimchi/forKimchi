@@ -52,6 +52,8 @@ const convertObjToQueryLike = (target, selected = []) => {
         searchKeyword: queryWhere
     };
 }
+
+// SELECT * FROM test WHERE 1=1 :searchKeyword; 
 const queryFormat = function (query, values) {
     // query  : SQL문
     // values : 대체값
