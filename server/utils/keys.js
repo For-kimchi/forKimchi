@@ -1,9 +1,9 @@
-// 최초 제품/자재 ID 생성
+// 최초 제품/자재 ID 생성 시간정보없는애들 키
 // 제품 : P, 자재 : M
 const getFirstUniqueId = (prefix) => {
   return `${prefix}-001`;
 }
-
+// 최신키 매개변수로 추가
 const getNextUniqueId = (uniqueId) => {
   const parts = uniqueId.split('-');
   if (parts.length < 2) {

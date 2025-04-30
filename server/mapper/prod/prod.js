@@ -52,7 +52,31 @@ const selectproddetail =
                          ON (t.order_id = p.order_id)
  WHERE p.order_id = ?
  GROUP BY order_detail_id`;
- // 생산계획에 들어갈 주문 등록
+
+ // 주문서를 통한 plan등록
+ const insertorpl =
+ `
+ INSERT INTO t_prod_plan(plan_id,
+						             order_id,
+                         plan_final_status,
+                         employee_id,
+                         reg_date,
+                         manager_id,
+                         memo)
+VALUES(?, ?, '1i', ?,SYSDATE(), ?, ?)
+ `;
+ // 주문서를 통한 detail등록
+ const insertorprdt =
+ `
+ INSERT INTO t_prod_plan_detail(plan_detail_id,
+                                plan_id,
+                                prod_id,
+                                plan_status)
+ VALUES(?,?,?,'1c')
+ `;
+
+
+ // 생산계획 최종 등록
  const insertprod =
  `INSERT INTO `;
 
@@ -60,4 +84,6 @@ module.exports = {
     selectorder,
     selectprod,
     selectproddetail,
+    insertorpl,
+    insertorprdt,
 }
