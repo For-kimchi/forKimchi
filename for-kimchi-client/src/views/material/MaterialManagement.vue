@@ -5,7 +5,7 @@
     <div class="text-end mb-3">
       <button class="btn btn-success">저장</button>
       <button class="btn btn-danger">삭제</button>
-      <button class="btn btn-info">닫기</button>
+      <button class="btn btn-info" @click="goBack">닫기</button>
     </div>
   
     <!-- 검색 카드 -->
@@ -19,33 +19,24 @@
       </div> <!-- card-header 끝 -->
       
       <div class="card-body">
-        <ul class="list-group list-group-horizontal">
-          <li class="list-group-item">회사</li>
-          <li class="list-group-item"><input type="text"></li>
-          
-          <li class="list-group-item me-3" style="border-left: 1px solid #ccc;">담당자</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-            <input type="text" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;">
-            <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
-          </li>
-
-          <li class="list-group-item">발주번호</li>
-          <li class="list-group-item"><input type="text"></li>
-
-          <li class="list-group-item">등록일</li>
-          <li class="list-group-item">
-            <input type="date"> ~ <input type="date">
-          </li>
-        </ul>
+    <ul class="list-group list-group-horizontal">
+      <li class="list-group-item d-flex align-items-center">회사</li>
+      <li class="list-group-item d-flex align-items-center">
+        <input type="text" :value="selectedCompany" readonly>
+        <i class="fas fa-search d-flex align-items-center"
+           style="font-size: 20px; cursor: pointer; margin-left: 10px;"
+           @click="openCompanySearchModal"></i>
+      </li>
+    </ul>
       </div> <!-- card-body 끝 -->
     </div>
   </div>
 </div>
-<div class="row">
+<!-- <div class="row">
   <div class="col-12 text-left mb-4">
     <button class="btn btn-primary">품목조회</button>
   </div>
-</div>
+</div> -->
   
     <!-- 거래처, 이동버튼, 품목정보 테이블 -->
     <div class="row">
@@ -54,7 +45,18 @@
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">거래처</h6>
+              
+              <div class="card-body">
+    <ul class="list-group list-group-horizontal">
+      <li class="list-group-item d-flex align-items-center">자재명</li>
+      <li class="list-group-item d-flex align-items-center">
+        <input type="text" :value="selectedCompany" readonly>
+        <i class="fas fa-search d-flex align-items-center"
+         style="font-size: 20px; cursor: pointer; margin-left: 10px;"
+         @click="openCompanySearchModal"></i>
+      </li>
+    </ul>
+      </div>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -139,13 +141,44 @@
             </div>
           </div>
         </div>
-      
-    </div>
-  
+      </div>
     </div> <!-- row 끝 -->
-  
   </div>
-  </template>
+
+
+<!-- 회사 검색 모달 -->
+<!-- 회사 검색 인풋 -->
+<input type="text" :value="selectedCompany" readonly>
+<i class="fas fa-search" @click="openCompanySearchModal"></i>
+
+<!-- 자재 검색 인풋 -->
+<input type="text" :value="selectedMaterial" readonly>
+<i class="fas fa-search" @click="openMaterialSearchModal"></i>
+
+<!-- 회사 검색 모달 -->
+<Modal
+  :visible="isCompanyModalVisible"
+  title="회사 검색"
+  placeholder="회사명 검색"
+  :list="companies"
+  :selectedValue="selectedCompany"
+  @close="closeCompanySearchModal"
+  @select="selectCompany"
+/>
+
+<!-- 자재 검색 모달 -->
+<Modal
+  :visible="isMaterialModalVisible"
+  title="자재 검색"
+  placeholder="자재명 검색"
+  :list="materials"
+  :selectedValue="selectedMaterial"
+  @close="closeMaterialSearchModal"
+  @select="selectMaterial"
+/>
+
+    
+</template>
   
   
   
@@ -153,11 +186,12 @@
 <script>
 import axios from 'axios'
 import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
-
+import Modal from '@/views/modal/Modal.vue'
 export default {
     name: "Material Management",
     components: {
       MaterialCheckbox,
+      Modal,
     },
     data() {
     return {
@@ -166,7 +200,26 @@ export default {
         { id: 2, equip_id: 'B002', equip_name: '품목B', equip_type: 'EA', selected: false },
       ],
       selectedList: [],
-    }
+
+      isModalVisible: false,
+      searchText: '',
+      selectedCompany: '',
+      selectedMaterial: '',
+      isCompanyModalVisible: false,
+      isMaterialModalVisible: false,
+      companies: [
+        { id: 1, name: '회사1' },
+        { id: 2, name: '회사2' }
+      ],
+      materials: [
+        { id: 1, name: '자재A' },
+        { id: 2, name: '자재B' }
+      ],
+      search: {
+      company: '',
+      // 필요에 따라 추가로 다른 필드도 여기에 정의
+    },
+    };
   },
   methods: {
     // 전체선택 토글
@@ -189,8 +242,65 @@ export default {
       const movingItems = this.selectedList.filter(item => item.selected);
       this.customerList.push(...movingItems.map(item => ({ ...item, selected: false })));
       this.selectedList = this.selectedList.filter(item => !item.selected);
+    },
+    goBack() {
+      this.$router.push('/materlist');; // 페이지 이동
+    },
+    openCompanySearchModal() { this.isCompanyModalVisible = true; },
+    closeCompanySearchModal() { this.isCompanyModalVisible = false; },
+    selectCompany(name) { this.selectedCompany = name; },
+
+    openMaterialSearchModal() { this.isMaterialModalVisible = true; },
+    closeMaterialSearchModal() { this.isMaterialModalVisible = false; },
+    selectMaterial(name) { this.selectedMaterial = name; },
+},
+computed: {
+  filteredCompanies() {
+      return this.companies.filter(company =>
+        company.name.toLowerCase().includes(this.search.company.toLowerCase())
+      );
     }
+  }
 }
+</script>
+
+<!-- <style scoped>
+/* 모달 배경 */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
 }
 
-</script>
+/* 모달 본문 */
+.modal-content-box {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+}
+
+/* 모달 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list-group-item-action {
+  cursor: pointer;
+}
+
+.list-group-item.active {
+  background-color: #0d6efd;
+  color: white;
+}
+</style> -->

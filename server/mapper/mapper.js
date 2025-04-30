@@ -1,6 +1,9 @@
-const mariaDB = require('mariadb/callback');
+//const mariaDB = require('mariadb/callback');
+const mariaDB = require('mariadb');
 const sqlList = require('./sqlList.js');
 const { queryFormat  } = require('../utils/converts.js');
+
+
 // DB연결은 가급적 항상 connectionPool을 사용하는걸 추천.
 // 사용하지않으면 불안정하게 연결이 됨.
 const connectionPool = mariaDB.createPool({
@@ -27,7 +30,7 @@ const connectionPool = mariaDB.createPool({
 
 // let testSql = `SELECT * FROM customers`;
 // 에러가 첫번쨰 매개변수, 결과를 두번쨰 매개변수로
-const query = (alias, values) => {
+let query = (alias, values) => {
   return new Promise((resolve, reject) => {
     let executeSql = queryFormat(sqlList[alias], values);
     // 등록된 쿼리문을 볼려고 콘솔로그 찍음.
@@ -35,6 +38,7 @@ const query = (alias, values) => {
 
     // 이 값은 ajax방식이기 떄문에 프로미스안에 넣음.
     // 첫번쨰 매개변수가 쿼리, 두번쨰매개변수가 ?에 들어가는 값.
+    // await connectionPool.getConnection() ;
     connectionPool.query(executeSql, values, (err, result) => {
       if (err) {
         reject({
@@ -52,6 +56,23 @@ const query = (alias, values) => {
   })
 };
 
+query = async (alias, values) => {
+  try{
+    let executeSql = queryFormat(sqlList[alias], values);
+    let result = await connectionPool.query(executeSql, values);
+    return result;
+  }catch(err){
+    console.log(err);
+    return err;
+  }
+};
+
+// 트랜젝션 열고 닫기를 편리하게 하기위해서 작성.
+const getConnection = async () => await connectionPool.getConnection() ;
+const selectedQuery = (alias, values) => queryFormat(sqlList[alias], values) ;
+
 module.exports = {
   query,
+  getConnection,
+  selectedQuery,
 }
