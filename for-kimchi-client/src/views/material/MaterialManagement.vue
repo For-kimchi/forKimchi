@@ -22,19 +22,12 @@
     <ul class="list-group list-group-horizontal">
       <li class="list-group-item d-flex align-items-center">회사</li>
       <li class="list-group-item d-flex align-items-center">
-        <input type="text" v-model="search.company">
-        <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="openCompanySearchModal"></i>
+        <input type="text" :value="selectedCompany" readonly>
+        <i class="fas fa-search d-flex align-items-center"
+           style="font-size: 20px; cursor: pointer; margin-left: 10px;"
+           @click="openCompanySearchModal"></i>
       </li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc; margin-left: 20px;">담당자</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-            <input type="text" class="form-control me-2 d-flex align-items-center" style="border: 1px solid #ccc; box-sizing: border-box;">
-          </li>
-
-          <li class="list-group-item d-flex align-items-center" style="margin-left: 10px;">납기일</li>
-          <li class="list-group-item d-flex align-items-center">
-            <input type="date">
-          </li>
-        </ul>
+    </ul>
       </div> <!-- card-body 끝 -->
     </div>
   </div>
@@ -140,15 +133,7 @@
       </div>
     </div> <!-- row 끝 -->
   </div>
-  <div class="card-body">
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item d-flex align-items-center">회사</li>
-    <li class="list-group-item d-flex align-items-center">
-      <input type="text">
-      <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="openCompanySearchModal"></i>
-    </li>
-  </ul>
-</div>
+
 
 <!-- 회사 검색 모달 -->
 <div v-if="isModalVisible" class="modal-backdrop" @click.self="closeCompanySearchModal">
@@ -158,9 +143,15 @@
           <button type="button" class="btn-close" @click="closeCompanySearchModal"></button>
         </div>
         <div class="modal-body">
-          <input type="text" class="form-control" v-model="search.company" placeholder="회사를 입력하세요">
-          <ul>
-            <li v-for="company in filteredCompanies" :key="company.id">{{ company.name }}</li>
+          <input type="text" class="form-control mb-2" v-model="searchText" placeholder="회사명 검색">
+          <ul class="list-group">
+            <li v-for="company in filteredCompanies"
+                :key="company.id"
+                class="list-group-item list-group-item-action"
+                :class="{ active: company.name === selectedCompany }"
+                @click="selectCompany(company.name)">
+              {{ company.name }}
+            </li>
           </ul>
         </div>
       </div>
@@ -190,14 +181,17 @@ export default {
       selectedList: [],
 
       isModalVisible: false,
-      search: {
-        company: '',
-      },
+      searchText: '',
+      selectedCompany: '', // 최종 선택된 회사명
       companies: [
         { id: 1, name: '회사1' },
         { id: 2, name: '회사2' },
         { id: 3, name: '회사3' },
-      ]
+      ],
+      search: {
+      company: '',
+      // 필요에 따라 추가로 다른 필드도 여기에 정의
+    },
     };
   },
   methods: {
@@ -227,10 +221,15 @@ export default {
     },
     openCompanySearchModal() {
       this.isModalVisible = true;
+      this.searchText = '';
     },
     closeCompanySearchModal() {
       this.isModalVisible = false;
-    }
+    },
+    selectCompany(name) {
+    this.selectedCompany = name;
+    this.closeCompanySearchModal();
+    },
 },
 computed: {
   filteredCompanies() {
@@ -250,7 +249,7 @@ computed: {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -261,8 +260,8 @@ computed: {
 .modal-content-box {
   background: white;
   border-radius: 8px;
-  padding: 100px;
-  width: 1000px;
+  padding: 20px;
+  width: 400px;
   max-width: 90%;
 }
 
@@ -271,5 +270,14 @@ computed: {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.list-group-item-action {
+  cursor: pointer;
+}
+
+.list-group-item.active {
+  background-color: #0d6efd;
+  color: white;
 }
 </style>
