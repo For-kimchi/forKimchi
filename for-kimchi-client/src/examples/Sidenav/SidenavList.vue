@@ -205,7 +205,7 @@
               </template>
             </sidenav-collapse>
 
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="delivs" navText="자재수입검사관리">
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="mateQualityControl" navText="자재수입검사관리">
               <template v-slot:icon>
                 <i class="material-icons-round opacity-10 fs-5">table_view</i>
               </template>
@@ -217,13 +217,13 @@
               </template>
             </sidenav-collapse>
 
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="delivs" navText="제품검사관리">
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="prodQualityControl" navText="제품검사관리">
               <template v-slot:icon>
                 <i class="material-icons-round opacity-10 fs-5">table_view</i>
               </template>
             </sidenav-collapse>
 
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="orders" navText="검사기준관리">
+            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="qualityManager" navText="검사기준관리">
               <template v-slot:icon>
                 <i class="material-icons-round opacity-10 fs-5">table_view</i>
               </template>

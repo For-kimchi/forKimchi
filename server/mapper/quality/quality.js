@@ -1,7 +1,7 @@
 // 자재수입검사관리 조회
+//드롭다운
 const mate_dropdown =
-`select mate_name
-from t_mate_warehouse join t_mate`;
+`select mate_lot from t_mate_warehouse`;
 
 const selectQuality =
 `select date_type(quality_date) quality_date, mate_name, mate_lot, sub_code_name,
@@ -20,7 +20,7 @@ const quality_detail =
 `select date_type(quality_date) quality_date ,option_name, option_standard, option_spec, sub_code_name, 
 case
 	when quality_result = '1r' then '합격'
-    when quality_result = '2r' then '검사중'
+    when quality_result = '2r' then '검사대기'
     end AS quality_result
 from t_quality_option 
 join t_quality_mate 
