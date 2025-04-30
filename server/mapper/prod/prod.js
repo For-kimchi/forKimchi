@@ -30,11 +30,12 @@ const selectprod =
        sub_code(d.order_status) order_status,
        sub_code(t.plan_final_status) plan_final_status,
        t.memo
-   FROM t_prod_plan t join t_order o
+   FROM t_prod_plan t left join t_order o
                         on (t.order_id = o.order_id)
-                      join t_order_detail d
+                      left join t_order_detail d
                         on (t.order_id = d.order_id)
-   GROUP BY t.plan_id, order_id`;
+   WHERE t.plan_final_status in ('2i','1i','3i')
+   GROUP BY t.plan_id, o.order_id`;
 
 // 상세생산계획 조회
 const selectproddetail =
@@ -48,7 +49,7 @@ const selectproddetail =
         date_type(d.plan_end_date) plan_end_date
  FROM t_prod_plan_detail d JOIN t_prod_plan t
                          ON (d.plan_id = t.plan_id)
-                         JOIN t_order_detail p
+                         left JOIN t_order_detail p
                          ON (t.order_id = p.order_id)
  WHERE p.order_id = ?
  GROUP BY order_detail_id`;
@@ -60,10 +61,8 @@ const selectproddetail =
 						             order_id,
                          plan_final_status,
                          employee_id,
-                         reg_date,
-                         manager_id,
-                         memo)
-VALUES(?, ?, '1i', ?,SYSDATE(), ?, ?)
+                         reg_date)
+VALUES(?, ?, '1i', ?,SYSDATE())
  `;
  // 주문서를 통한 detail등록
  const insertorprdt =

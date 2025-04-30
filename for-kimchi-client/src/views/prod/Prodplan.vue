@@ -113,7 +113,7 @@
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.order_detail_id }}</td>
-                    <td class="align-middle text-center"><input class="text-center" type="select" v-model="info.prod_id" ></td>
+                    <td class="align-middle text-center">{{info.prod_id}}</td>
                     <td class="align-middle text-center">{{info.order_amount}}</td>
                     <td class="align-middle text-center"><input class="text-center" type="number" v-model="info.plan_amount"></td>
 
