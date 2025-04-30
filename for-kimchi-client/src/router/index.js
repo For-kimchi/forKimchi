@@ -35,13 +35,16 @@ import StoreManagement from "../views/material/StoreManagement.vue";
 
 //business (영업)
 import OrderList from "../views/business/OrderList.vue"
+import OrderMng from "../views/business/OrderMng.vue"
 import DelivList from "../views/business/DelivList.vue"
+import DelivMng from "../views/business/DelivMng.vue"
 
 //basic (기준관리)
 import BasicProd from "../views/basic/BasicProd.vue"
-import BasicBom from "../views/basic/BasicBom.vue"
 import BasicMate from "../views/basic/BasicMate.vue"
+import BasicBom from "../views/basic/BasicBom.vue"
 import BasicProc from "../views/basic/BasicProc.vue"
+import BasicProcFlow from "../views/basic/BasicProcFlow.vue"
 import BasicEmployee from "../views/basic/BasicEmployee.vue"
 
 const routes = [
@@ -172,19 +175,24 @@ const routes = [
     component: BasicProd,
   },
   {
-    path: "/basicbom",
-    name: "BasicBom",
-    component: BasicBom,
-  },
-  {
     path: "/basicmate",
     name: "BasicMate",
     component: BasicMate,
   },
   {
+    path: "/basicbom",
+    name: "BasicBom",
+    component: BasicBom,
+  },
+  {
     path: "/basicproc",
     name: "BasicProc",
     component: BasicProc,
+  },
+  {
+    path: "/basicprocflow",
+    name: "BasicProcFlow",
+    component: BasicProcFlow,
   },
   {
     path: "/basicemp",
@@ -198,10 +206,20 @@ const routes = [
     component: OrderList,
   },
   {
+    path: "/ordersmng",
+    name: "OrderMng",
+    component: OrderMng,
+  },
+  {
     path: "/delivs",
     name: "DelivList",
     component: DelivList,
-  }
+  },
+  {
+    path: "/delivsmng",
+    name: "DelivMng",
+    component: DelivMng,
+  },
 ];
 
 const router = createRouter({

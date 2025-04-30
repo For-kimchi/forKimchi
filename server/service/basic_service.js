@@ -15,7 +15,7 @@ const selectProd = async (params) => {
 
     keyword = convertObjToQueryLike(params, selected);
   } else {
-    keyword = '';
+    keyword = {};
   }
 
   let list = await mariaDB.query("selectProd", keyword);
