@@ -14,6 +14,9 @@ import SignIn from "../views/SignIn.vue";
 //혁진
 import mateQuality from "../views/quality/mate_quality.vue";
 import prodQuality from "../views/quality/prod_quality.vue";
+import mateQualityControl from "../views/quality/mate_quality_control.vue";
+import prodQualityControl from "../views/quality/prod_quality_control.vue";
+import  qualityManager from "../views/quality/quality_manager.vue";
 
 // 유환
 import Prodplan from "../views/prod/Prodplan.vue";
@@ -119,6 +122,21 @@ const routes = [
     path: "/prodQuality",
     name: "prodQuality",
     component: prodQuality,
+  },
+  {
+    path: "/mateQualityControl",
+    name: "mateQualityControl",
+    component: mateQualityControl,
+  },
+  {
+    path: "/prodQualityControl",
+    name: "prodQualityControl",
+    component: prodQualityControl,
+  },
+  {
+    path: "/qualityManager",
+    name: "qualityManager",
+    component: qualityManager,
   },
   // 김어진 (자재발주)
   {
