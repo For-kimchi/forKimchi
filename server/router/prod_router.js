@@ -24,5 +24,19 @@ router.post('/planinsert', async(req, res)=>{
   let result = await prod_service.orpldtinsert(planInfo);
   res.send(result);
 });
+// 저장버튼(수정)
+router.put('/plandt/:id', async (req, res)=>{
+  let pldtId = req.params.id;
+  let pldtInfo = req.body;
+  let result = await prod_service.modifypldt(pldtInfo, pldtId);
+  res.send(result);
+});
+
+// pldt 승인버튼(수정)
+router.put('/plandtbtn/:id', async(req, res)=>{
+  let planId = req.params.id
+  let plInfo = await prod_service.pldtperm(planId);
+  res.send(plInfo);
+});
 
 module.exports = router;

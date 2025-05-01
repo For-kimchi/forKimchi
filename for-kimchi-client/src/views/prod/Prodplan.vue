@@ -87,7 +87,8 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="text-end pe-3 ">
-              <button class="btn btn-success ms-2 me-2" v-on:click="">승인</button>
+              <!-- 승인버튼에 세션값을 통해 권한이 있을경우에만 작동하도록 조건을 넣어줘야함 -->
+              <button class="btn btn-success ms-2 me-2" v-on:click="permibtn()">승인</button>
               <!-- <button class="btn btn-success" v-on:click="addRow">추가</button> -->
               <button class="btn btn-info ms-2 me-2">저장</button>
             </div>
@@ -113,8 +114,8 @@
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.order_detail_id }}</td>
-                    <td class="align-middle text-center">{{info.prod_id}}</td>
-                    <td class="align-middle text-center">{{info.order_amount}}</td>
+                    <td class="align-middle text-center">{{ info.prod_id }}</td>
+                    <td class="align-middle text-center">{{ info.order_amount }}</td>
                     <td class="align-middle text-center"><input class="text-center" type="number" v-model="info.plan_amount"></td>
 
                     <td class="align-middle text-center" v-if="info.order_amount - info.plan_amount <= 0">0</td>
@@ -150,7 +151,8 @@ export default {
         //     detailList : [{}, {}],
         //   }
         // ],
-        selectedDetail : [],
+        checkAll: false,
+        check:[],
         prodlist : [],
         proddtlist : []
       }
@@ -161,6 +163,9 @@ export default {
     },
     // 생산계획 조회
     methods : {
+      // subCheck(){
+      //   this.checkAll = this.
+      // },
       async prodList(){
         let ajaxRes =
         await axios.get(`/api/prodlist`)
@@ -174,6 +179,7 @@ export default {
                    .catch(err => console.log(err));
         this.proddtlist = ajaxRes.data;
       }
+      
       // ,addRow(){
       //   this.proddtlist.push({});
       // }
