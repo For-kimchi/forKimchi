@@ -20,19 +20,19 @@
         <div class="col-md-2">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
-            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="거래처" />
+            <input v-model="vendor.vendor_name" type="text" class="form-control border text-center" readonly @click="showVendor = true" placeholder="거래처명" />
           </div>
         </div>
         <div class="col-md-2">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">주문일자</label>
-            <input v-model="searchStartDate" type="Date" class="form-control border text-center" placeholder="" />
+            <input v-model="order_date" type="Date" class="form-control border text-center" placeholder="" />
           </div>
         </div>
         <div class="col-md-2">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">담당자</label>
-            <span class="form-control border text-center" readonly>{{ '담당자' }}</span>
+            <label class="form-label me-2 mb-0 " style="width: 100px;">담당자명</label>
+            <input v-model="employee_id" type="text" class="form-control border text-center" readonly placeholder="담당자명" />
           </div>
         </div>
       </div>
@@ -69,11 +69,15 @@
                 <tbody>
                   <tr v-for="(info, index) in orderDetails" v-bind:key="order_detail_id">
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" :value="selectedProduct?.name || ''" readonly></td>
-                    <td class="align-middle text-center"><span class="form-control border text-center" readonly>{{ info.prod_id ?? '-' }}</span></td>
-                    <td class="align-middle text-center"><input class="form-control border text-center" type="number" v-model="info.order_amount"></td>
-                    <td class="align-middle text-center"><input class="form-control border text-center" type="date" v-model="info.deliv_due_date"></td>
-                    <td class="align-middle text-center"><button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
+                      <input class="form-control border text-center" type="text" v-model="info.prod_name" readonly  @click="openProdModal(index)" placeholder="제품명"></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.prod_id" readonly></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="number" v-model="info.order_amount"></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="date" v-model="info.deliv_due_date"></td>
+                    <td class="align-middle text-center">
+                      <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -84,19 +88,37 @@
     </div>
   </div>
 
-  <ProdModal @selected="handleProductSelected" />
+  <VendorModal
+      :visible="showVendor"
+      @close="showVendor = false"
+      @select="onSelectVendor"
+    />
+  <ProdModal
+      :visible="showProd"
+      @close="showProd = false"
+      @select="onSelectProd"
+    />
 </template>
 <script>
 import axios from 'axios';
-import ProdModal from "./ProdModal.vue";
+import ProdModal from './ProdModal.vue';
+import VendorModal from './VendorModal.vue';
 
 export default {
     name: "주문관리",
-    components: { ProdModal },
+    components: {
+      ProdModal,
+      VendorModal,
+    },
     data(){
       return {
         orderDetails : [],
-        selectedProduct: null,
+        selectedIndex: null,
+        showVendor: false,
+        showProd: false,
+        vendor: {},
+        order_date: null,
+        employee_id: '',
       }
     },
     created(){
@@ -108,12 +130,22 @@ export default {
       removeRows(index) {
         this.orderDetails.splice(index, 1);
       },
-      openModal() {
-        const modal = new bootstrap.Modal(document.getElementById("productLookupModal"));
-        modal.show();
-      },
       handleProductSelected(product) {
         this.selectedProduct = product;
+      },
+      onSelectProd(prod) {
+        this.orderDetails[this.selectedIndex].prod_id = prod.prod_id
+        this.orderDetails[this.selectedIndex].prod_name = prod.prod_name
+      },
+      openProdModal(index) {
+        this.showProd = true;
+        this.selectedIndex = index;
+      },
+      onSelectVendor(vendor) {
+        this.vendor = vendor
+      },
+      openProdVendor() {
+        this.showVendor = true;
       },
     }
 }
