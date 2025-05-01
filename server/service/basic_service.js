@@ -22,6 +22,26 @@ const selectProd = async (params) => {
   return list;
 };
 
+// 거래처 조건 조회
+const selectVendor = async (params) => {
+  let count = Object.keys(params).length;
+  let keyword;
+  if (count > 0) {
+    let selected = [];
+    for (let i = 0; i < (count - 1); i++) {
+      selected.push('AND ');
+    }
+
+    keyword = convertObjToQueryLike(params, selected);
+  } else {
+    keyword = {};
+  }
+
+  let list = await mariaDB.query("selectVendor", keyword);
+  return list;
+};
+
+
 // 코드 조회
 const selectCode = async (mainCode) => {
   let list = await mariaDB.query("selectCode", mainCode);
@@ -30,5 +50,6 @@ const selectCode = async (mainCode) => {
 
 module.exports = {
   selectProd,
+  selectVendor,
   selectCode,
 }
