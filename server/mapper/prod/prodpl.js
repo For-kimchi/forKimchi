@@ -1,9 +1,16 @@
 // production 쿼리문
+// key생성을 위한 조회
+// const selectLastOrder =
+//   `SELECT prod_id
+// FROM t_prod_plan
+// ORDER BY order_id DESC
+// LIMIT 1
+// `;
+
 // 주문목록 확인(수주 승인상태)
 const selectorder =
 `SELECT 
         m.order_id,
-        s.order_detail_id,
         date_type(m.order_date) order_date,
         vendor_id(m.vendor_id) vendor_id,
         employee_id(m.employee_id) employee_id,
@@ -16,7 +23,19 @@ const selectorder =
  FROM t_order_detail s join t_order m
                          on (s.order_id = m.order_id)
  WHERE m.order_final_status = '2a'
+ GROUP BY order_id
  ORDER BY order_status, deliv_due_date`;
+
+ // 주문 상세 조회
+ const selectorderdt =`
+ SELECT 
+       order_detail_id,
+       prod_id(prod_id) prod_id,
+       order_amount,
+       date_type(deliv_due_date) deliv_due_date,
+       memo
+  FROM t_order_detail
+  WHERE order_id = ?`;
 
 // 생산계획 목록(지시완료 제외) 
 const selectprod =
@@ -40,8 +59,8 @@ const selectprod =
 // 상세생산계획 조회
 const selectproddetail =
 `SELECT
-        p.order_detail_id,
-        prod_id(p.prod_id) prod_id,
+        d.plan_detail_id,
+        prod_id(d.prod_id) prod_id,
         p.order_amount,
         d.plan_amount,
         sub_code(d.plan_status) plan_status,
@@ -52,7 +71,7 @@ const selectproddetail =
                          left JOIN t_order_detail p
                          ON (t.order_id = p.order_id)
  WHERE p.order_id = ?
- GROUP BY order_detail_id`;
+ GROUP BY plan_detail_id`;
 
  // 주문서를 통한 plan등록
  const insertorpl =
@@ -100,4 +119,5 @@ module.exports = {
     updateod,
     updateprod,
     updateplandt,
+    selectorderdt,
 }

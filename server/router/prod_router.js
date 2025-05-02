@@ -2,11 +2,18 @@ const express = require('express');
 const router = express.Router();
 
 const prod_service = require('../service/prod_service.js');
-// 주문 상세조회
-router.get('/orderlisit', async(req, res)=>{
+// 주문조회
+router.get('/orderList', async(req, res)=>{
   let orderList = await prod_service.order_list();
   res.send(orderList);
 });
+// 주문 상세조회
+router.get('/orderList/:id', async(req, res)=>{
+  let orderId = req.params.id
+  let orderList = await prod_service.orderdtlist(orderId);
+  res.send(orderList);
+});
+
 // 생산계획조회
 router.get('/prodlist', async(req, res)=>{
   let prodList = await prod_service.prodlist();
