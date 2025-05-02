@@ -190,7 +190,7 @@ export default {
         });
     },
     handleRowClick(info) {
-      this.selectedInfo = info;;
+      this.selectedInfo = info;
       axios
         .get(`/api/materials/${info.req_id}`,{
         })

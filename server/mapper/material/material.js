@@ -44,6 +44,19 @@ const insertVenId =
 FROM t_mate_req
 ORDER BY vendor_id`;
 
+// 자재발주 상세조회
+const searchMateList = 
+`SELECT 
+        p.mate_id
+        ,p.mate_name
+        ,mrd.req_amount
+        ,p.mate_unit
+FROM t_mate_req_detail mrd
+LEFT JOIN
+    t_mate p ON mrd.mate_id = p.mate_id
+WHERE 1=1
+ORDER BY p.mate_id`;
+
 // 자재발주 상세등록
 const detailMateInsert = 
 `SELECT
@@ -51,7 +64,9 @@ const detailMateInsert =
         ,`
 
 // 자재발주삭제
-
+const deleteMate =
+`DELETE FROM t_mate_req
+WHERE req_id = ?`;
 
 // 자재발주 상세삭제
 
@@ -74,4 +89,5 @@ module.exports = {
     selectMateReq,
     selectMateDetail,
     insertVenId,
+    searchMateList,
 }

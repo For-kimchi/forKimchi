@@ -20,21 +20,11 @@
             <ul class="list-group list-group-horizontal">
               <li class="list-group-item d-flex align-items-center">
                 회사
-                <Modal
-                  :visible="isCompanyModalVisible"
-                  title="회사 검색"
-                  placeholder="회사명 검색"
-                  :list="companies"
-                  :selectedValue="selectedCompany"
-                  @close="closeCompanySearchModal"
-                  @select="selectCompany"
-                />
+                <Modal :visible="isCompanyModalVisible" title="회사 검색" placeholder="회사명 검색" :list="companies" :selectedValue="selectedCompany" @close="closeCompanySearchModal" @select="selectCompany"/>
               </li>
               <li class="list-group-item d-flex align-items-center">
-                <input type="text" :value="selectedCompany" readonly>
-                <i class="fas fa-search d-flex align-items-center"
-                   style="font-size: 20px; cursor: pointer; margin-left: 10px;"
-                   @click="openCompanySearchModal"></i>
+                <input type="text" readonly v-model="vendor.vendor_name">
+                <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="openProdVendor"></i>
               </li>
             </ul>
           </div>
@@ -51,13 +41,10 @@
                 <ul class="list-group list-group-horizontal">
                   <li class="list-group-item d-flex align-items-center">
                     자재
-                    <Modal :visible="isMaterialModalVisible"title="자재 검색"placeholder="자재명 검색":list="materials":selectedValue="selectedMaterial"@close="closeMaterialSearchModal"@select="selectMaterial"/>
                   </li>
                   <li class="list-group-item d-flex align-items-center">
-                    <input type="text" :value="selectedMaterial" readonly>
-                    <i class="fas fa-search d-flex align-items-center"
-                       style="font-size: 20px; cursor: pointer; margin-left: 10px;"
-                       @click="openMaterialSearchModal"></i>
+                    <input type="text" :value="selectedMaterial" >
+                    <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click ="handleClick(info)"></i>
                   </li>
                 </ul>
               </div>
@@ -68,7 +55,7 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th><input type="checkbox" @change="toggleAll('customerList', $event)"></th>
+                    <th><input type="checkbox" @change="toggleAll('searchMate', $event)"></th>
                     <th>품목코드</th>
                     <th>품목명</th>
                     <th>수량</th>
@@ -76,13 +63,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-if="customerList.length > 0">
-                    <tr v-for="(info, index) in customerList" :key="info.id">
-                      <td><input type="checkbox" v-model="info.selected"></td>
-                      <td>{{ index + 1 }}</td>
-                      <td>{{ info.equip_id }}</td>
-                      <td>{{ info.equip_name }}</td>
-                      <td>{{ info.equip_type }}</td>
+                  <template v-if="searchMate.length > 0">
+                    <tr v-for="(info, index) in searchMate" :key="info.mate_name">
+                      <td><input type="checkbox" v-model="info.searchMateId"></td>
+                      <td>{{ info.mate_id }}</td>
+                      <td>{{ info.mate_name }}</td>
+                      <td>{{ info.req_amount }}</td>
+                      <td>{{ info.mate_unit }}</td>
                     </tr>
                   </template>
                   <tr v-else>
@@ -144,40 +131,34 @@
       </div>
     </div>
   </div>
+  <VendorModal :visible="showVendor" @close="showVendor = false" @select="onSelectVendor" />
 </template>
 
 <script>
 import axios from 'axios';
 import Modal from '@/views/modal/Modal.vue'
+import VendorModal from '../business/VendorModal.vue';
 
 export default {
   name: "Material Management",
   components: {
     Modal,
+    VendorModal,
   },
   data() {
-    return {
-      customerList: [
-        { id: 1, equip_id: 'A001', equip_name: '품목A', equip_type: 'EA', selected: false },
-        { id: 2, equip_id: 'B002', equip_name: '품목B', equip_type: 'EA', selected: false },
-      ],
+    return { 
       selectedList: [],
       selectedCompany: '',
       selectedMaterial: '',
       isCompanyModalVisible: false,
       isMaterialModalVisible: false,
-      companies: [
-        { id: 1, name: '회사1' },
-        { id: 2, name: '회사2' }
-      ],
-      materials: [
-        { id: 1, name: '자재A' },
-        { id: 2, name: '자재B' }
-      ],
       search: {
         company: '',
       },
+      searchMate: [],
       venList: [],
+      showVendor: false,
+      vendor : {},
     };
   },
   methods: {
@@ -187,10 +168,23 @@ export default {
         item.selected = isChecked;
       });
     },
+     handleClick() {
+      axios
+      .get('/api/mateList', {
+          params: this.search,
+        })
+        .then((response) => {
+          this.searchMate = response.data;
+        })
+        .catch((error) => {
+          console.error('검색 실패:', error);
+        });
+    },
+
     moveToSelected() {
-      const movingItems = this.customerList.filter(item => item.selected);
+      const movingItems = this.searchMate.filter(item => item.selected);
       this.selectedList.push(...movingItems.map(item => ({ ...item, selected: false })));
-      this.customerList = this.customerList.filter(item => !item.selected);
+      this.searchMate = this.searchMate.filter(item => !item.selected);
     },
     moveToCustomer() {
       const movingItems = this.selectedList.filter(item => item.selected);
@@ -217,6 +211,12 @@ export default {
     },
     selectMaterial(name) {
       this.selectedMaterial = name;
+    },
+    onSelectVendor(vendor) {
+      this.vendor = vendor
+    },
+    openProdVendor() {
+      this.showVendor = true;
     },
     async fetchCompanies() {
     try {
