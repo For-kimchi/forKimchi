@@ -43,9 +43,9 @@
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
           <select v-model="search.orderStatus" class="form-select" style="min-width: 130px;">
             <option disabled value="" style="text-align: center;">선택하세요</option>
-            <option value="진행중">승인대기</option>
-            <option value="발주마감">진행중</option>
-            <option value="승인대기">발주마감</option>
+            <option value="승인대기">승인대기</option>
+            <option value="진행중">진행중</option>
+            <option value="발주마감">발주마감</option>
           </select>
           </li>
             <!-- 검색 아이콘 -->
@@ -198,7 +198,7 @@ export default {
           this.mateList = response.data;
         })
         .catch((error) => {
-          console.log('검색 실패:', error);
+          console.log('검색 실패:', error.response?.data || error.message);
         });
     },
     goToMatmaPage() {

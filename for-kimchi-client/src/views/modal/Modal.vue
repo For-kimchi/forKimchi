@@ -29,6 +29,7 @@ export default {
     placeholder: String,
     list: Array,
     selectedValue: String,
+    vendor_Id: String,
   },
   data() {
     return {
@@ -38,7 +39,7 @@ export default {
   computed: {
     filteredList() {
       return this.list.filter(item =>
-        item.name.toLowerCase().includes(this.search.toLowerCase())
+        (item.name ?? '').toLowerCase().includes(this.search.toLowerCase())
       );
     }
   },
