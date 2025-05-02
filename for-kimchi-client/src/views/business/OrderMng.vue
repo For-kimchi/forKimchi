@@ -110,7 +110,7 @@ export default {
         vendor: {},
         order_date: this.getTodayDate(),
         employee: {
-          employee_id: 'EMP001',
+          employee_id: 'EMP-001',
           employee_name: '김영업',
         },
       }

@@ -19,19 +19,19 @@
           <div class="row g-3 mt-3">
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0">거래처명</label>
+                <label class="form-label me-2 mb-0">거래처명 :</label>
                 {{ orderDetail.vendor_name }}
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0">납품일자</label>
+                <label class="form-label me-2 mb-0">납품일자 : </label>
                 {{ orderDetail.deliv_due_date ? yyyyMMdd(orderDetail.deliv_due_date) : '' }}
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0">담당자명</label>
+                <label class="form-label me-2 mb-0">담당자명 : </label>
                 {{ employee.employee_name }}
               </div>
             </div>
@@ -51,26 +51,26 @@
           <div class="row g-3 mt-3">
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0 ">제품명</label>
+                <label class="form-label me-2 mb-0 ">제품명 : </label>
                 {{ orderDetail.prod_name }}
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0">제품ID</label>
+                <label class="form-label me-2 mb-0">제품ID : </label>
                 {{ orderDetail.prod_id }}
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0">주문수량</label>
+                <label class="form-label me-2 mb-0">주문수량 : </label>
                 {{ orderDetail.order_amount }}
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0">잔여수량</label>
-                {{ orderDetail.order_amount }}
+                <label class="form-label me-2 mb-0">잔여수량 : </label>
+                {{ remain }}
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in prods" v-bind:key="order_detail_id">
+                  <tr v-for="(info, index) in prods" v-bind:key="info.prod_lot">
                     <td class="align-middle text-center">
                       {{ info.prod_lot }}
                     </td>
@@ -141,10 +141,23 @@ export default {
         prods : [],
         showOrderDetail: false,
         employee: {
-          employee_id: 'EMP001',
+          employee_id: 'EMP-001',
           employee_name: '김영업',
         },
-        orderDetail: {}
+        orderDetail: {},
+      }
+    },
+    computed: {
+      remain() {
+        if (this.orderDetail.order_amount) {
+          let sum = 0;
+          for (let prod of this.prods) {
+            sum += prod.deliv_amount;
+          }
+          return this.orderDetail.order_amount - sum;
+        } else {
+          return 0;
+        }
       }
     },
     created(){

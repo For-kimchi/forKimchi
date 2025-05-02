@@ -61,7 +61,9 @@ const selectDelivProdTarget =
   FROM t_prod_warehouse PW
   JOIN t_prod PR ON PW.prod_id = PR.prod_id
   JOIN t_warehouse WA ON PW.warehouse_id = WA.warehouse_id
-  WHERE lot_status <> '1aa'
+  WHERE PW.lot_status <> '1aa'
+  AND PW.prod_id = ?
+  ORDER BY PW.prod_lot
 `;
 //기존에 납품된 수량으로 입고수량과 비교해야 함
 
