@@ -45,7 +45,10 @@ FROM t_mate_req
 ORDER BY vendor_id`;
 
 // 자재발주 상세등록
-
+const detailMateInsert = 
+`SELECT
+        mate_id
+        ,`
 
 // 자재발주삭제
 
