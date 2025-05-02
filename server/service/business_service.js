@@ -22,7 +22,7 @@ const postOrder = async (orderInfo) => {
     let lastOrderId = lastOrder[0].order_id;
 
     // order key 생성
-    let newOrderId = keys.getNextKeyIdDummy(lastOrderId, 'ORD');
+    let newOrderId = keys.getNextKeyId(lastOrderId);
     order.order_id = newOrderId;
 
     // order column 정보 배열
@@ -46,7 +46,7 @@ const postOrder = async (orderInfo) => {
     for (let detail of order_details) {
       
       // order detail key 생성
-      let newOrderDetailId = keys.getNextKeyIdDummy(lastOrderDetailId, 'OD');
+      let newOrderDetailId = keys.getNextKeyId(lastOrderDetailId, 'OD');
       detail.order_detail_id = newOrderDetailId;
       detail.order_id = newOrderId;
 
