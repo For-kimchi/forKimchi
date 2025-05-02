@@ -90,7 +90,7 @@
               <!-- 승인버튼에 세션값을 통해 권한이 있을경우에만 작동하도록 조건을 넣어줘야함 -->
               <button class="btn btn-success ms-2 me-2" v-on:click="permibtn()">승인</button>
               <!-- <button class="btn btn-success" v-on:click="addRow">추가</button> -->
-              <button class="btn btn-info ms-2 me-2">저장</button>
+              <button class="btn btn-info ms-2 me-2"  @click="pldtsave(proddtlist)">저장</button>
             </div>
             <div class="table-responsive p-0">
               <table class="table align-items-center justify-content-center mb-0">
@@ -113,7 +113,7 @@
                   <tr v-for="(info,index) in proddtlist" v-bind:key="order_detail_id">
                     <td class="align-middle text-center"><input type="checkbox"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
-                    <td class="align-middle text-center">{{ info.order_detail_id }}</td>
+                    <td class="align-middle text-center">{{ info.plan_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
                     <td class="align-middle text-center">{{ info.order_amount }}</td>
                     <td class="align-middle text-center"><input class="text-center" type="number" v-model="info.plan_amount"></td>
@@ -151,8 +151,6 @@ export default {
         //     detailList : [{}, {}],
         //   }
         // ],
-        checkAll: false,
-        check:[],
         prodlist : [],
         proddtlist : []
       }
@@ -178,6 +176,9 @@ export default {
         await axios.get(`/api/proddtlist/${orderid}`)
                    .catch(err => console.log(err));
         this.proddtlist = ajaxRes.data;
+      },
+      pldtsave(ee){
+        console.log(ee);
       }
       
       // ,addRow(){

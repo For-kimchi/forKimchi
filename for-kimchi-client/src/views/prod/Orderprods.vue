@@ -20,7 +20,7 @@
                 <li class="list-group-item"><input type="text"></li>
                 <li class="list-group-item">일정</li>
                 <li class="list-group-item"><input type="date"> ~ <input type="date"></li>
-                <li class="list-group-item"><button class="btn btn-success ms-2 me-2">조회</button></li>
+                <li class="list-group-item"><button class="btn btn-success ms-2 me-2" @:click="test">조회</button></li>
             </ul>
             </div>
         </div>
@@ -43,7 +43,7 @@
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문서 작성</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">담당자</th>
@@ -56,10 +56,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info) in orderList" v-bind:key="info.order_id">
-                    <td class="align-middle text-center"><button class="btn btn-warning p-1 m-1" v-on:click="planadd(info)">주문서 추가</button></td>
+                  <tr v-for="(info,index) in orderList" v-bind:key="info.order_id" v-on:click="getorderdtList(info.order_id)">
+                    <td class="align-middle text-center"><button class="btn btn-warning p-1 m-1" v-on:click="planadd(index)">주문서 추가</button></td>
+                    <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.order_id }}</td>
-                    <td class="align-middle text-center">{{ info.order_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.order_date }}</td>
                     <td class="align-middle text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle text-center">{{ info.employee_id }}</td>
@@ -78,6 +78,43 @@
       </div>
     <!-- row div-->
     </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">주문상세</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(info,index) in orderdtList" v-bind:key="order_detail_id">
+                    <td class="align-middle text-center">{{ index + 1 }}</td>
+                    <td class="align-middle text-center">{{ info.order_detail_id }}</td>
+                    <td class="align-middle text-center">{{ info.prod_id }}</td>
+                    <td class="align-middle text-center">{{ info.order_amount }}</td>
+                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
+                    <td class="align-middle text-center">{{ info.memo }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -88,22 +125,38 @@ export default {
     data() {
       return{
         orderList : [],
+        orderdtList:[],
+        test: '',
       }
     },
     created(){
       this.getOrderList();
     },
-
     methods :{
       async getOrderList(){
         let ajaxRes =
-        await axios.get(`/api/orderLisit`)
+        await axios.get(`/api/orderList`)
                    .catch(err => console.log(err));
         this.orderList = ajaxRes.data;
       },
-      async planadd(info){
+      // 주문 상세 조회
+      async getorderdtList(orderid){
+        let  ajaxRes =
+        await axios.get(`/api/orderList/${orderid}`)
+                    .catch(err => console.log(err));
+        this.orderdtList = ajaxRes.data;
+        
+        // "order_detail_id": "OD20250428003",
+        // "prod_id": "P003",
+        // "order_amount": 200,
+        // "deliv_due_date": "2025-05-09T15:00:00.000Z",
+        // "memo": "대량 발주",
+      },
+     async planadd(idx){
         // 모든값을 가져오는게 아니기떄문에 받은 매개변수에서
         // 원하는값만 따로 분리시켜서 이걸 body에 담어서 보냄
+        let info = this.orderList[idx];
+
         let orderinfo = {
           order_id:       info.order_id,
           vendor_id:      info.vendor_id,
@@ -115,14 +168,17 @@ export default {
                                   .catch(err => console.log(err));
         let sqlRes = ajaxRes.data;
         let planInfo = sqlRes.affectedRows;
+
+        // 상세계획
+        await this.getorderdtList(info.order_id);
+
         // 성공적으로 등록 시 페이지 이동 실패하면 안내
         if(planInfo > 0){
           alert('계획이 생성되었습니다.');
-          this.$router.push('/prodplan');
+          // this.$router.push('/prodplan');
         }else{
           alert('계획이 등록되지 않았습니다.');
         }
-
       }
     }
 }

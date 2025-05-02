@@ -32,6 +32,11 @@ const order_list = async()=>{
  let list = await mariaDB.query('selectorder');
  return list;
 };
+// 주문 상세조회
+const orderdtlist = async(orderId)=>{
+    let list = await mariaDB.query('selectorderdt', orderId);
+    return list;
+}
 
 // 생산계획조회
 const prodlist = async()=>{
@@ -45,14 +50,14 @@ const proddtlist = async(orderId)=>{
         return list;
 };
 
-// plandt저장버튼
+// plandt저장버튼 모든 상세항목에 반영
 const modifypldt = async(pldtinfo, pldtId)=>{
     let updateInfo = [pldtinfo, pldtId];
     let result = await mariaDB.query('updateprod', updateInfo);
     return result;
 };
 
-// plandt승인버튼
+// plandt승인버튼 체크표시된것만
 const pldtperm = async(pldtId)=>{
     let result = await mariaDB.query('updateplandt', pldtId);
     return result;
@@ -62,14 +67,22 @@ const pldtperm = async(pldtId)=>{
 let prodcode = 0;
 const orpldtinsert = async(orderInfo)=>{
     // orderInfo에 들어있는값의 형식
-    // { 
+    // [{ 
     //     "id": 1,
     //     "first_name": "Rudy",
     //     "last_name": "Castillon",
     //     "email": "rcastillon0@aol.com",
     //     "gender": "Male",
     //     "ip_address": "77.118.135.69"
-    //   }
+    //   },
+    //    { 
+    //     "id": 2,
+    //     "first_name": "Rudy",
+    //     "last_name": "Castillon",
+    //     "email": "rcastillon0@aol.com",
+    //     "gender": "Male",
+    //     "ip_address": "77.118.135.69"
+    //   }]
     let conn;
     
     // 오늘 날짜 구하기 (yyyymmdd)
@@ -89,6 +102,25 @@ const orpldtinsert = async(orderInfo)=>{
         await conn.beginTransaction();
         // 세션등록되면 employee_id가 session값으로 추가되어야함.(버튼누른사람)
         // 매개변수 나눠서 저장
+        // order_list_detil 정보
+        // [
+        //     {
+        //       "order_detail_id": "ORDD-20250502-001",
+        //       "prod_id": "배추김치",
+        //       "order_amount": 100,
+        //       "deliv_due_date": null,
+        //       "memo": null
+        //     },
+        //     {
+        //       "order_detail_id": "ORDD-20250502-002",
+        //       "prod_id": "총각김치",
+        //       "order_amount": 50,
+        //       "deliv_due_date": null,
+        //       "memo": null
+        //     }
+        //  ]
+        // 
+
         // order 상태정보 변경
         let target_id = orderInfo.order_id;
         // plan정보
@@ -108,6 +140,7 @@ const orpldtinsert = async(orderInfo)=>{
         // 두번쨰 쿼리
         // plan_id는 키를 생성해서 추가.
         // order_id는 주문서에서 값을 가져와서 추가.
+        // 같은 plan_id키
         let procloumn = ['plan_id','order_id','employee_id'];
         // 컬럼값과 넘겨받은 값을 배열로 저장.
         let addInfo = converts.convertObjToAry(orplInfo, procloumn);
@@ -143,4 +176,5 @@ module.exports = {
     orpldtinsert,
     modifypldt,
     pldtperm,
+    orderdtlist,
 }

@@ -1,5 +1,5 @@
 // 각 테이블 별로 실행한 SQL문을 별도 파일로 작성
-const prod = require('./prod/prod.js');
+const prod = require('./prod/prodpl.js');
 const material = require('./material/material.js');
 const store = require('./material/store.js');
 
