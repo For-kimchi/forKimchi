@@ -37,12 +37,18 @@ LEFT JOIN
 WHERE mrd.req_id=?`;
 
 
-// 자재발주등록
-const insertMateInfo = 
-``
+// 거래처 검색
+const insertVenId = 
+`SELECT DISTINCT 
+        vendor_id
+FROM t_mate_req
+ORDER BY vendor_id`;
 
 // 자재발주 상세등록
-
+const detailMateInsert = 
+`SELECT
+        mate_id
+        ,`
 
 // 자재발주삭제
 
@@ -67,4 +73,5 @@ const insertMateInfo =
 module.exports = {
     selectMateReq,
     selectMateDetail,
+    insertVenId,
 }
