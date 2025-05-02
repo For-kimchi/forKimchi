@@ -1,112 +1,114 @@
 <template>
-    <teleport to="body">
-      <div v-if="visible" class="modal-backdrop">
-        <div class="custom-modal">
-          <!-- 제목 -->
-          <div class="modal-header mb-3">
-            <h5 class="modal-title">Item Search</h5>
-          </div>
-  
-<!-- 검색 영역 -->
-<div class="d-flex align-items-center justify-content-between mb-3">
-  <!-- 왼쪽: input -->
-  <div class="flex-grow-1 me-3">
-    <input
-      v-model="search"
-      type="text"
-      class="form-control"
-      placeholder="Search..."
-    />
-  </div>
-
-  <!-- 오른쪽: 버튼 -->
-  <div class="d-flex gap-2">
-    <button class="btn btn-primary" @click="doSearch">Search</button>
-    <button class="btn btn-outline-secondary" @click="$emit('close')">Close</button>
-  </div>
-</div>
-
-
-  
-          <!-- 검색 결과 테이블 -->
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Key</th>
-                <th>Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in results"
-                :key="item.key"
-                @click="selectItem(item)"
-                style="cursor: pointer"
-              >
-                <td>{{ item.key }}</td>
-                <td>{{ item.name }}</td>
-              </tr>
-            </tbody>
-          </table>
+  <teleport to="body">
+    <div v-if="visible" class="modal-backdrop">
+      <div class="custom-modal">
+        <!-- 제목 -->
+        <div class="modal-header mb-3">
+          <h5 class="modal-title">거래처 조회</h5>
         </div>
+
+        <!-- 검색 영역 -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <!-- 왼쪽: input -->
+          <div class="flex-grow-1 me-3">
+            <input v-model="search" type="text" class="form-control border" placeholder="거래처명" @keyup.enter="doSearch"/>
+          </div>
+
+          <!-- 오른쪽: 버튼 -->
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-primary" @click="doSearch">조회</button>
+            <button type="button" class="btn btn-secondary" @click="$emit('close')">닫기</button>
+          </div>
+        </div>
+        <!-- 검색 결과 테이블 -->
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>거래처ID</th>
+              <th>거래처명</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in results" :key="item.key" @click="selectItem(item)" style="cursor: pointer">
+              <td>{{ item.vendor_id }}</td>
+              <td>{{ item.vendor_name }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </teleport>
-  </template>
-  
-  <script>
-  export default {
-    name: 'SearchModal',
-    props: {
-      visible: Boolean,
+    </div>
+  </teleport>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  props: {
+    visible: Boolean,
+  },
+  data() {
+    return {
+      search: '',
+      results: [],
+    };
+  },
+  methods: {
+    async searchProd() {
+      let params = {
+        vendor_name: this.search
+      }
+
+      let list = await axios.get('/api/basicVendor', {
+        params
+      }).catch(err => console.log(err));
+
+      this.results = list.data;
     },
-    data() {
-      return {
-        search: '',
-        results: [],
-      };
+    doSearch() {
+      this.searchProd();
     },
-    methods: {
-      doSearch() {
-        // 임시 검색 데이터
-        this.results = [
-          { key: 'A001', name: 'Apple' },
-          { key: 'B002', name: 'Banana' },
-          { key: 'C003', name: 'Cherry' },
-        ].filter((item) =>
-          item.name.toLowerCase().includes(this.search.toLowerCase())
-        );
-      },
-      selectItem(item) {
-        this.$emit('select', item.key);
-        this.$emit('close');
-      },
+    selectItem(item) {
+      this.$emit('select', item);
+      this.$emit('close');
     },
-    emits: ['close', 'select']
-  };
-  </script>
-  
-  <style scoped>
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 1050;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .custom-modal {
-    background: white;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    width: 50vw;
-    max-width: 600px;
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
-  }
-  
-  .modal-header {
-    border-bottom: 1px solid #dee2e6;
-  }
-  </style>
-  
+    resetState() {
+      this.search = ''
+      this.results = []
+    },
+  },
+  emits: ['close', 'select'],
+  watch: {
+    visible(newVal) {
+      if (newVal) {
+        this.resetState()
+      }
+    }
+  },
+};
+</script>
+
+<style scoped>
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-modal {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  width: 50vw;
+  max-width: 600px;
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  border-bottom: 1px solid #dee2e6;
+}
+</style>

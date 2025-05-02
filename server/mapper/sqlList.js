@@ -9,7 +9,6 @@ const employee = require('./basic/employee.js');
 const etc = require('./basic/etc.js');
 const mate = require('./basic/mate.js');
 const proc = require('./basic/proc.js');
-// 이름 중복 때문에 수정
 const product = require('./basic/prod.js');
 const vendor = require('./basic/vendor.js');
 // 영업

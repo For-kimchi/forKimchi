@@ -1,67 +1,194 @@
 <template>
-  <div>
-    <button class="btn bg-gradient-primary text-white" @click="showModal = true">
-      Open Modal
-    </button>
+  <div class="container-fluid">
+    <!-- 검색 -->
+    <div class="row mt-3">
+      <div class="col text-end">
+        <button class="btn btn-success ms-2"  @click="openOrderDetailModal">납품대상조회</button>
+        <button class="btn btn-info ms-2" @click="register">등록</button>
+      </div>
+    </div>
 
-    <teleport to="body">
-      <div v-if="showModal" class="modal-backdrop">
-        <div class="custom-modal">
-          <!-- 헤더 -->
-          <div class="modal-header d-flex justify-content-between">
-            <h4 class="modal-title">Centered Modal</h4>
-            <button class="btn-close" @click="showModal = false"></button>
+    <div class="row">
+      <div class="col-12">
+        <div class="card ps-2 my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+              <h6 class="text-white text-capitalize ps-3">납품정보</h6>
+            </div>
           </div>
-
-          <!-- 바디 -->
-          <div class="modal-body">
-            <p>This modal is 50% of screen width.</p>
-          </div>
-
-          <!-- 푸터 -->
-          <div class="modal-footer">
-            <button class="btn btn-secondary" @click="showModal = false">Cancel</button>
-            <button class="btn bg-gradient-success text-white" @click="confirmAction">Confirm</button>
+          <div class="row g-3 mt-3">
+            <div class="col-md-2">
+              <div class="mb-3 d-flex align-items-center">
+                <label class="form-label me-2 mb-0">거래처명</label>
+                {{ orderDetail.vendor_name }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-3 d-flex align-items-center">
+                <label class="form-label me-2 mb-0">납품일자</label>
+                {{ orderDetail.deliv_due_date ? yyyyMMdd(orderDetail.deliv_due_date) : '' }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-3 d-flex align-items-center">
+                <label class="form-label me-2 mb-0">담당자명</label>
+                {{ employee.employee_name }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </teleport>
+    </div>
+    
+    <div class="row">
+      <div class="col-12">
+        <div class="card ps-2 my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+              <h6 class="text-white text-capitalize ps-3">납품대상제품</h6>
+            </div>
+          </div>
+          <div class="row g-3 mt-3">
+            <div class="col-md-2">
+              <div class="mb-3 d-flex align-items-center">
+                <label class="form-label me-2 mb-0 ">제품명</label>
+                {{ orderDetail.prod_name }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-3 d-flex align-items-center">
+                <label class="form-label me-2 mb-0">제품ID</label>
+                {{ orderDetail.prod_id }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-3 d-flex align-items-center">
+                <label class="form-label me-2 mb-0">주문수량</label>
+                {{ orderDetail.order_amount }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-3 d-flex align-items-center">
+                <label class="form-label me-2 mb-0">잔여수량</label>
+                {{ orderDetail.order_amount }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card ps-2 my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+              <h6 class="text-white text-capitalize ps-3">납품가능제품</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0" style="max-height: 300px;">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">제품LOT</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">제품명</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">재고</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">납품수량</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(info, index) in prods" v-bind:key="order_detail_id">
+                    <td class="align-middle text-center">
+                      {{ info.prod_lot }}
+                    </td>
+                    <td class="align-middle text-center">
+                      {{ info.prod_name }}
+                    </td>
+                    <td class="align-middle text-center">
+                      {{ info.prod_amount }}
+                    </td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="number" v-model="info.deliv_amount">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <OrderDetailModal :visible="showOrderDetail" @close="showOrderDetail = false" @select="onSelectOrderDetail" />
 </template>
-
 <script>
+import axios from 'axios';
+import ProdModal from './ProdModal.vue';
+import VendorModal from './VendorModal.vue';
+import OrderDetailModal from './OrderDetailModal.vue';
+
 export default {
-  data() {
-    return {
-      showModal: false,
-    };
-  },
-  methods: {
-    confirmAction() {
-      this.showModal = false;
-      alert("Confirmed!");
+    name: "주문관리",
+    components: {
+      ProdModal,
+      VendorModal,
+      OrderDetailModal,
     },
-  },
-};
+    data(){
+      return {
+        prods : [],
+        showOrderDetail: false,
+        employee: {
+          employee_id: 'EMP001',
+          employee_name: '김영업',
+        },
+        orderDetail: {}
+      }
+    },
+    created(){
+    },
+    methods : {
+      async register() {
+        let params = {
+        }
+
+        let result = await axios.post('', params)
+        .catch(err => console.log(err));
+
+        alert(result.data);
+      },
+      async getProd() {
+
+        let result = await axios.get('/api/delivProdTarget', {
+          params: {
+            prod_id: this.orderDetail.prod_id
+          }
+        })
+        .catch(err => console.log(err));
+
+        this.prods = result.data;
+      },
+      getTodayDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      },
+      yyyyMMdd(fullDateTime) { 
+        let date = new Date(fullDateTime);
+        return date.toISOString().split('T')[0]
+      },
+      openOrderDetailModal() {
+        this.showOrderDetail = true;
+      },
+      onSelectOrderDetail(orderDetail) {
+        this.orderDetail = orderDetail;
+        this.getProd();
+      },
+    }
+}
+
 </script>
-
-<style scoped>
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1050;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.custom-modal {
-  background-color: white;
-  border-radius: 0.5rem;
-  width: 50vw;
-  max-width: 600px;
-  padding: 1.5rem;
-  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
-}
-</style>

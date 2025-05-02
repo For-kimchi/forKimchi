@@ -3,8 +3,9 @@
 
 //거래처
 // 거래처 조건 조회
-const selectVender =
-`SELECT t_vendor
+const selectVendor =
+`SELECT 
+vendor_id,
 vendor_name,
 vendor_number,
 vendor_manager_name,
@@ -15,7 +16,7 @@ vendor_type
 FROM t_vendor
 WHERE 1=1
 :searchKeyword
-ORDER BY vender_id`;
+ORDER BY vendor_id`;
 
 // 거래처 등록
 const insertVendor =
@@ -42,7 +43,7 @@ const deleteVendor =
 WHERE vendor_id = ?`;
 
 module.exports = {
-  selectVender,
+  selectVendor,
   insertVendor,
   updateVendor,
   deleteVendor,
