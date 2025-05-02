@@ -17,4 +17,11 @@ router.get('/materials/:id', async(req, res)=> {
   res.send(mateInfo);
 })
 
+router.get('/vendors', async(req,res) => {
+  let search = req.query;
+  let venList = await mateService.vendorId(search)
+                                .catch(err => console.log(err));
+  res.send(venList);
+});
+
 module.exports = router;

@@ -12,8 +12,14 @@ const  mateReqById = async(mateNo) => {
   return list;
 };
 
+const vendorId = async() => {
+  let list = await mariaDB.query('insertVenId');
+  return list;
+};
+
 
 module.exports = {
   mateReqAll,
   mateReqById,
+  vendorId,
 }
