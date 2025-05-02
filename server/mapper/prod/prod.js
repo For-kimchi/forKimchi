@@ -11,11 +11,11 @@ const selectorder =
         prod_id(s.prod_id) prod_id,
         s.order_amount,
         date_type(s.deliv_due_date) deliv_due_date,
-        sub_code(m.order_status) order_status,
+        sub_code(m.order_final_status) order_final_status,
         s.memo
  FROM t_order_detail s join t_order m
                          on (s.order_id = m.order_id)
- WHERE m.order_status = '2a' and '3a'
+ WHERE m.order_final_status = '2a'
  ORDER BY order_status, deliv_due_date`;
 
 // 생산계획 목록(지시완료 제외) 
@@ -58,11 +58,11 @@ const selectproddetail =
  const insertorpl =
  `
  INSERT INTO t_prod_plan(plan_id,
-						             order_id,
+						 order_id,
                          plan_final_status,
                          employee_id,
                          reg_date)
-VALUES(?, ?, '1i', ?,SYSDATE())
+VALUES(?, ?, '1i', employee_name(?),SYSDATE())
  `;
  // 주문서를 통한 detail등록
  const insertorprdt =
@@ -71,13 +71,25 @@ VALUES(?, ?, '1i', ?,SYSDATE())
                                 plan_id,
                                 prod_id,
                                 plan_status)
- VALUES(?,?,?,'1c')
+ VALUES(?,?,prod_name(?),'1c')
  `;
+// 계획추가한 주문 상태값변경
+const updateod = `
+UPDATE t_order
+SET order_final_status = '3a'
+WHERE order_id = ?`;
 
+// 디테일저장버튼
+const updateprod = `
+UPDATE t_prod_plan_detail
+SET ?
+WHERE plan_detail_id = ?`
 
- // 생산계획 최종 등록
- const insertprod =
- `INSERT INTO `;
+// 승인버튼
+const updateplandt = `
+UPDATE t_prod_plan_detail
+SET plan_status = '2i'
+WHERE plan_detail_id = ?`
 
 module.exports = {
     selectorder,
@@ -85,4 +97,7 @@ module.exports = {
     selectproddetail,
     insertorpl,
     insertorprdt,
+    updateod,
+    updateprod,
+    updateplandt,
 }

@@ -57,7 +57,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info) in orderList" v-bind:key="info.order_id">
-                    <td class="align-middle text-center"><button class="btn btn-warning p-1 m-1" v-on:click="goToplanInfo(info)">주문서 추가</button></td>
+                    <td class="align-middle text-center"><button class="btn btn-warning p-1 m-1" v-on:click="planadd(info)">주문서 추가</button></td>
                     <td class="align-middle text-center">{{ info.order_id }}</td>
                     <td class="align-middle text-center">{{ info.order_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.order_date }}</td>
@@ -67,7 +67,7 @@
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
                     <td class="align-middle text-center">{{ info.order_amount }}</td>
                     <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_status }}</span></td>
+                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_final_status }}</span></td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
@@ -101,7 +101,28 @@ export default {
                    .catch(err => console.log(err));
         this.orderList = ajaxRes.data;
       },
-      goToplanInfo(infos){
+      async planadd(info){
+        // 모든값을 가져오는게 아니기떄문에 받은 매개변수에서
+        // 원하는값만 따로 분리시켜서 이걸 body에 담어서 보냄
+        let orderinfo = {
+          order_id:       info.order_id,
+          vendor_id:      info.vendor_id,
+          prod_id:        info.prod_id,
+          order_amount:   info.order_amount,
+          deliv_due_date: info.deliv_due_date
+        };
+        let ajaxRes = await axios.post(`/api/planinsert`, orderinfo)
+                                  .catch(err => console.log(err));
+        let sqlRes = ajaxRes.data;
+        let planInfo = sqlRes.affectedRows;
+        // 성공적으로 등록 시 페이지 이동 실패하면 안내
+        if(planInfo > 0){
+          alert('계획이 생성되었습니다.');
+          this.$router.push('/prodplan');
+        }else{
+          alert('계획이 등록되지 않았습니다.');
+        }
+
       }
     }
 }
