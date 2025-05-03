@@ -2,8 +2,8 @@
   <div class="container-fluid py-4">
     <!-- 검색 -->
     <nav class="text-center">
-      <button class="btn btn-success ms-2 me-2">주문서조회</button>
       <router-link to="/prodplan"><button class="btn btn-info ms-2 me-2">생산계획</button></router-link>
+      <button class="btn btn-primary ms-1 me-1">주문서</button>
     </nav>
     <div class="row">
         <div class="card my-4">
@@ -42,32 +42,26 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문서 작성</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">담당자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품예정일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문담당자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문등록일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세비고</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in orderList" v-bind:key="info.order_id" v-on:click="getorderdtList(info.order_id)">
-                    <td class="align-middle text-center"><button class="btn btn-warning p-1 m-1" v-on:click="planadd(index)">주문서 추가</button></td>
+                  <tr v-for="(info,index) in orderList" v-bind:key="info.order_id" v-on:click="getOrderDtList(info.order_id)">
+                    <td class="align-middle text-center"><button class="btn btn-warning p-3 m-3" v-on:click="planAdd(index)">주문서 추가</button></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.order_id }}</td>
                     <td class="align-middle text-center">{{ info.order_date }}</td>
+                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_final_status }}</span></td>
                     <td class="align-middle text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle text-center">{{ info.employee_id }}</td>
                     <td class="align-middle text-center">{{ info.reg_date }}</td>
-                    <td class="align-middle text-center">{{ info.prod_id }}</td>
-                    <td class="align-middle text-center">{{ info.order_amount }}</td>
-                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_final_status }}</span></td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
@@ -95,12 +89,12 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품예정일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in orderdtList" v-bind:key="order_detail_id">
+                  <tr v-for="(info,index) in orderDtList" v-bind:key="order_detail_id">
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.order_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
@@ -125,7 +119,7 @@ export default {
     data() {
       return{
         orderList : [],
-        orderdtList:[],
+        orderDtList:[],
         test: '',
       }
     },
@@ -140,11 +134,11 @@ export default {
         this.orderList = ajaxRes.data;
       },
       // 주문 상세 조회
-      async getorderdtList(orderid){
+      async getOrderDtList(orderId){
         let  ajaxRes =
-        await axios.get(`/api/orderList/${orderid}`)
+        await axios.get(`/api/orderList/${orderId}`)
                     .catch(err => console.log(err));
-        this.orderdtList = ajaxRes.data;
+        this.orderDtList = ajaxRes.data;
         
         // "order_detail_id": "OD20250428003",
         // "prod_id": "P003",
@@ -152,29 +146,31 @@ export default {
         // "deliv_due_date": "2025-05-09T15:00:00.000Z",
         // "memo": "대량 발주",
       },
-     async planadd(idx){
+      // 주문데이터를 통해서 생산계획등록 매서드
+     async planAdd(idx){
         // 모든값을 가져오는게 아니기떄문에 받은 매개변수에서
         // 원하는값만 따로 분리시켜서 이걸 body에 담어서 보냄
-        let info = this.orderList[idx];
 
-        let orderinfo = {
+        // orderList의 index번호를 기준으로 info에 값이 저장됨
+        let info = this.orderList[idx];
+        let orderInfo = {
           order_id:       info.order_id,
-          vendor_id:      info.vendor_id,
           prod_id:        info.prod_id,
           order_amount:   info.order_amount,
           deliv_due_date: info.deliv_due_date
         };
-        let ajaxRes = await axios.post(`/api/planinsert`, orderinfo)
+        let ajaxRes = await axios.post(`/api/planinsert`, orderInfo)
                                   .catch(err => console.log(err));
         let sqlRes = ajaxRes.data;
         let planInfo = sqlRes.affectedRows;
 
-        // 상세계획
-        await this.getorderdtList(info.order_id);
+        // 등록이 끝난 후 상세계획을 다시 불러옴.
+        await this.getOrderDtList(info.order_id);
 
         // 성공적으로 등록 시 페이지 이동 실패하면 안내
         if(planInfo > 0){
           alert('계획이 생성되었습니다.');
+          
           // this.$router.push('/prodplan');
         }else{
           alert('계획이 등록되지 않았습니다.');

@@ -1,30 +1,31 @@
 // production 쿼리문
-// key생성을 위한 조회
-// const selectLastOrder =
-//   `SELECT prod_id
-// FROM t_prod_plan
-// ORDER BY order_id DESC
-// LIMIT 1
-// `;
+// planKey생성을 위한 조회
+const sltPlanKey =
+  `SELECT plan_id
+FROM t_prod_plan
+ORDER BY plan_id DESC
+LIMIT 1
+`;
+// plandetail Key
+const sltPlanDetailKey =
+  `SELECT plan_detail_id
+FROM t_prod_plan_detail
+ORDER BY plan_detail_id DESC
+LIMIT 1
+`;
 
 // 주문목록 확인(수주 승인상태)
 const selectorder =
 `SELECT 
-        m.order_id,
-        date_type(m.order_date) order_date,
-        vendor_id(m.vendor_id) vendor_id,
-        employee_id(m.employee_id) employee_id,
-        date_type(m.reg_date) reg_date,
-        prod_id(s.prod_id) prod_id,
-        s.order_amount,
-        date_type(s.deliv_due_date) deliv_due_date,
-        sub_code(m.order_final_status) order_final_status,
-        s.memo
- FROM t_order_detail s join t_order m
-                         on (s.order_id = m.order_id)
- WHERE m.order_final_status = '2a'
- GROUP BY order_id
- ORDER BY order_status, deliv_due_date`;
+        order_id,
+        date_type(order_date) order_date,
+        sub_code(order_final_status) order_final_status,
+        vendor_id(vendor_id) vendor_id,
+        employee_id(employee_id) employee_id,
+        date_type(reg_date) reg_date,
+        memo
+ FROM  t_order 
+ WHERE order_final_status = '2a'`;
 
  // 주문 상세 조회
  const selectorderdt =`
@@ -41,20 +42,16 @@ const selectorder =
 const selectprod =
 `SELECT
        t.plan_id,
-       o.order_id,
        vendor_id(o.vendor_id) vendor_id,
-       employee_id(o.employee_id) employee_id,
+       employee_id(t.employee_id) employee_id,
+       employee_id(t.manager_id) manager_id,
        date_type(t.reg_date) reg_date,
-       date_type(d.deliv_due_date) deliv_due_date,
-       sub_code(d.order_status) order_status,
        sub_code(t.plan_final_status) plan_final_status,
        t.memo
    FROM t_prod_plan t left join t_order o
                         on (t.order_id = o.order_id)
-                      left join t_order_detail d
-                        on (t.order_id = d.order_id)
    WHERE t.plan_final_status in ('2i','1i','3i')
-   GROUP BY t.plan_id, o.order_id`;
+   GROUP BY t.plan_id`;
 
 // 상세생산계획 조회
 const selectproddetail =
@@ -64,24 +61,26 @@ const selectproddetail =
         p.order_amount,
         d.plan_amount,
         sub_code(d.plan_status) plan_status,
+        date_type(p.deliv_due_date) deliv_due_date,
         date_type(d.plan_start_date) plan_start_date,
         date_type(d.plan_end_date) plan_end_date
- FROM t_prod_plan_detail d JOIN t_prod_plan t
+ FROM t_prod_plan_detail d left JOIN t_prod_plan t
                          ON (d.plan_id = t.plan_id)
                          left JOIN t_order_detail p
                          ON (t.order_id = p.order_id)
- WHERE p.order_id = ?
+ WHERE t.plan_id = ?
  GROUP BY plan_detail_id`;
 
  // 주문서를 통한 plan등록
+ // session 등록되면 그값을 emp_id에 저장해야함.
+ // 아직안했기때문에 제외시킴.
  const insertorpl =
  `
  INSERT INTO t_prod_plan(plan_id,
-						 order_id,
+						             order_id,
                          plan_final_status,
-                         employee_id,
                          reg_date)
-VALUES(?, ?, '1i', employee_name(?),SYSDATE())
+VALUES(?, ?, '1i',SYSDATE())
  `;
  // 주문서를 통한 detail등록
  const insertorprdt =
@@ -89,8 +88,10 @@ VALUES(?, ?, '1i', employee_name(?),SYSDATE())
  INSERT INTO t_prod_plan_detail(plan_detail_id,
                                 plan_id,
                                 prod_id,
+                                order_amount,
+                                deliv_due_date,
                                 plan_status)
- VALUES(?,?,prod_name(?),'1c')
+ VALUES(?, ?, ?, ?, ?, '1c')
  `;
 // 계획추가한 주문 상태값변경
 const updateod = `
@@ -120,4 +121,6 @@ module.exports = {
     updateprod,
     updateplandt,
     selectorderdt,
+    sltPlanDetailKey,
+    sltPlanKey,
 }

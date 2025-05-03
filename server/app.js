@@ -18,7 +18,7 @@ const materialRouter = require('./router/material_router.js');
 const qualityRouter = require('./router/quality_router.js');
 
 // 유환
-const prodRouter = require('./router/prod_router.js');
+const prodRouter = require('./router/plan_router.js');
 const { quaReqAll } = require('./service/quality_service.js');
 
 // 미들웨어
