@@ -155,9 +155,6 @@ export default {
       onSelectVendor(vendor) {
         this.vendor = vendor
       },
-      openProdVendor() {
-        this.showVendor = true;
-      },
     }
 }
 
