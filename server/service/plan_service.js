@@ -84,8 +84,10 @@ const orpldtinsert = async(orderInfo)=>{
         await conn.beginTransaction();
 
         // detail 분리
-        const {order_details, ...orplInfo} = orderInfo;
-
+        const {order_detail_list, ...orplInfo} = orderInfo;
+        console.log(orderInfo);
+        console.log(order_detail_list);
+        console.log(orplInfo);
         // plan 등록
         // plan key 정보 조회
         selectedSql = await mariaDB.selectedQuery('sltPlanKey', {});
@@ -111,27 +113,39 @@ const orpldtinsert = async(orderInfo)=>{
         let lastPlanDetail = await conn.query(selectedSql, {});
         let lastPlanDetailId = lastPlanDetail[0].plan_detail_id;
 
-        for(let DetailInfo of order_details){
+        for(let DetailInfo of order_detail_list){
         // order key 생성
-        let newPlanDetailId = keys.getNextKeyId(lastPlanDetailId, 'PRPD');
-        DetailInfo.planDetailId = newPlanDetailId;
+        let newPlanDetailId = keys.getNextKeyId(lastPlanDetailId);
+        DetailInfo.plan_detail_id = newPlanDetailId;
+        DetailInfo.plan_id = newPlanId;
+        delete DetailInfo.order_detail_id;
+
+        // prod_id 처리.. 해냈다
+        let prod = DetailInfo.prod_id;
+        console.log(prod);
+        selectedSql = await mariaDB.selectedQuery('prodCode', prod);
+        let prodId = await conn.query(selectedSql, prod);
+        DetailInfo.prod_id = prodId[0].prod_id;
+        
 
         // planDetail 등록
-        let dtcloumn = ['plan_detail_id', 'plan_id', 'prod_id', 'order_amount', 'deliv_due_date'];
-        addInfo = converts.convertObjToAry(pldtInfo, dtcloumn);
+        let detailCloumn = ['plan_detail_id', 'plan_id', 'prod_id'];
+        let addInfo = converts.convertObjToAry(DetailInfo, detailCloumn);
         selectedSql = await mariaDB.selectedQuery('insertorprdt', addInfo);
         let result = await conn.query(selectedSql, addInfo);
+        lastPlanDetailId = newPlanDetailId;
         };
 
         // 주문의 상태값 변경시키는 쿼리
-        selectedSql = await mariaDB.selectedQuery('updateod', target_id);
-        let orstatus = await conn.query(selectedSql, target_id);
+        selectedSql = await mariaDB.selectedQuery('updateod', orplInfo.order_id);
+        let orstatus = await conn.query(selectedSql, orplInfo.order_id);
         conn.commit();
  
-        return result;
+        return orstatus;
     //  에러 뜨면 rollback
     }catch(err){
         if(conn) conn.rollback();
+        console.log(err);
     // 커넥션 초기화
     }finally{
         if(conn) conn.release();

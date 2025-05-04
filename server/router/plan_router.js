@@ -28,6 +28,7 @@ router.get('/proddtlist/:id', async(req, res)=>{
 // 주문서를 통한 생산계획 등록
 router.post('/planinsert', async(req, res)=>{
   let planInfo = req.body;
+  console.log(planInfo);
   let result = await prod_service.orpldtinsert(planInfo);
   res.send(result);
 });

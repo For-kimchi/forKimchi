@@ -14,6 +14,15 @@ ORDER BY plan_detail_id DESC
 LIMIT 1
 `;
 
+// prod_id 조회
+const prodCode =`
+SELECT prod_id
+FROM t_prod
+WHERE prod_name = ?
+ORDER BY prod_id DESC
+LIMIT 1
+`;
+
 // 주문목록 확인(수주 승인상태)
 const selectorder =
 `SELECT 
@@ -78,9 +87,10 @@ const selectproddetail =
  `
  INSERT INTO t_prod_plan(plan_id,
 						             order_id,
+                         employee_id,
                          plan_final_status,
                          reg_date)
-VALUES(?, ?, '1i',SYSDATE())
+VALUES(?, ?, '세션Id', '1i',SYSDATE())
  `;
  // 주문서를 통한 detail등록
  const insertorprdt =
@@ -88,10 +98,8 @@ VALUES(?, ?, '1i',SYSDATE())
  INSERT INTO t_prod_plan_detail(plan_detail_id,
                                 plan_id,
                                 prod_id,
-                                order_amount,
-                                deliv_due_date,
                                 plan_status)
- VALUES(?, ?, ?, ?, ?, '1c')
+ VALUES(?, ?, ?, '1c')
  `;
 // 계획추가한 주문 상태값변경
 const updateod = `
@@ -123,4 +131,5 @@ module.exports = {
     selectorderdt,
     sltPlanDetailKey,
     sltPlanKey,
+    prodCode,
 }
