@@ -52,9 +52,28 @@ const proddtlist = async(orderId)=>{
 };
 
 // plandt저장버튼 모든 상세항목에 반영
-const modifypldt = async(pldtinfo, pldtId)=>{
-    let updateInfo = [pldtinfo, pldtId];
-    let result = await mariaDB.query('updateprod', updateInfo);
+const modifypldt = async(planDetailInfo)=>{
+    console.log(planDetailInfo);
+    let updateInfo = [planDetailInfo];
+    let conn;
+
+    try{
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
+
+
+        for(let plandetail of planDetailInfo){
+
+        }
+        //  에러 뜨면 rollback
+        }catch(err){
+            if(conn) conn.rollback();
+            console.log(err);
+        // 커넥션 초기화
+        }finally{
+            if(conn) conn.release();
+        }
+    // let result = await mariaDB.query('updateprod', updateInfo);
     return result;
 };
 
@@ -85,9 +104,6 @@ const orpldtinsert = async(orderInfo)=>{
 
         // detail 분리
         const {order_detail_list, ...orplInfo} = orderInfo;
-        console.log(orderInfo);
-        console.log(order_detail_list);
-        console.log(orplInfo);
         // plan 등록
         // plan key 정보 조회
         selectedSql = await mariaDB.selectedQuery('sltPlanKey', {});
@@ -120,7 +136,7 @@ const orpldtinsert = async(orderInfo)=>{
         DetailInfo.plan_id = newPlanId;
         delete DetailInfo.order_detail_id;
 
-        // prod_id 처리.. 해냈다
+        // prod_id 처리
         let prod = DetailInfo.prod_id;
         console.log(prod);
         selectedSql = await mariaDB.selectedQuery('prodCode', prod);

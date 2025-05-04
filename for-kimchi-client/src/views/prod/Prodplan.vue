@@ -169,15 +169,11 @@ export default {
       async planDetailSave(planDetailList){
         // 항목선택여부 알림.
         if(Object.keys(planDetailList).length > 0){
-
             let  ajaxRes =
-            await axios.put(`/api/plandt`, planDetailList)
+            await axios.put(`/api/planDetailSave`, planDetailList)
                        .catch(err => console.log(err));
             this.update = ajaxRes.data;
-            
-
-
-
+            alert('저장 완료');
         }else{
           alert('항목이 선택되지 않았습니다.')
         };
