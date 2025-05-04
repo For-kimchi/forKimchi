@@ -1,8 +1,8 @@
 <template>
   <div class="container-fluid py-4">
     <nav class="text-center">
-      <router-link to="/orderprod"><button class="btn btn-info ms-2 me-2">주문서조회</button></router-link>
-      <button class="btn btn-success ms-2 me-2">생산계획</button>
+      <button class="btn btn-primary ms-1 me-1">생산계획</button>
+      <router-link to="/orderprod"><button class="btn btn-info ms-2 me-2">주문서</button></router-link>
     </nav>
     <!-- 검색
      <div class="text-end">
@@ -46,26 +46,23 @@
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산계획ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">담당자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">승인자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">계획등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품예정일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">최종계획상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(info.order_id)">
+                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(info.plan_id)">
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.plan_id}}</td>
-                    <td class="align-middle text-center">{{ info.order_id}}</td>
                     <td class="align-middle text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle text-center">{{ info.employee_id }}</td>
+                    <td class="align-middle text-center">{{ info.manager_id }}</td>
                     <td class="align-middle text-center">{{ info.reg_date }}</td>
-                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-info">{{ info.order_status }}</span></td>
                     <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_final_status }}</span></td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
@@ -105,6 +102,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산필요수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">추가생산수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세계획상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품예정일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">시작일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">종료일자</th>
                   </tr>
@@ -124,6 +122,7 @@
                     <td class="align-middle text-center" v-if="info.plan_amount - info.order_amount <= 0">0</td>
                     <td class="align-middle text-center" v-else>{{info.plan_amount - info.order_amount}}</td>
                     <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
+                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
                     <td class="align-middle text-center"><input class="text-center" type="date" v-model="info.plan_start_date"></td>
                     <td class="align-middle text-center"><input class="text-center" type="date" v-model="info.plan_end_date"></td>
                   </tr>
@@ -143,16 +142,8 @@ export default {
     name: "Prodplan",
     data(){
       return {
-        // plandtList : [
-        //   { no : '',
-        //     planId : '',
-        //     orderId : '',
-        //     planStatus :'',
-        //     detailList : [{}, {}],
-        //   }
-        // ],
         prodlist : [],
-        proddtlist : []
+        proddtlist : [],
       }
     },
     created(){
@@ -161,9 +152,6 @@ export default {
     },
     // 생산계획 조회
     methods : {
-      // subCheck(){
-      //   this.checkAll = this.
-      // },
       async prodList(){
         let ajaxRes =
         await axios.get(`/api/prodlist`)
@@ -176,14 +164,7 @@ export default {
         await axios.get(`/api/proddtlist/${orderid}`)
                    .catch(err => console.log(err));
         this.proddtlist = ajaxRes.data;
-      },
-      pldtsave(ee){
-        console.log(ee);
       }
-      
-      // ,addRow(){
-      //   this.proddtlist.push({});
-      // }
     }
     
 }

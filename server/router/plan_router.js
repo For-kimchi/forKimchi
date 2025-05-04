@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const prod_service = require('../service/prod_service.js');
+const prod_service = require('../service/plan_service.js');
 // 주문조회
 router.get('/orderList', async(req, res)=>{
   let orderList = await prod_service.order_list();

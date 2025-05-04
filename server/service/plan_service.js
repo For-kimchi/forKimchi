@@ -1,5 +1,6 @@
 const mariaDB = require('../mapper/mapper');
 const converts = require('../utils/converts');
+const keys = require('../utils/keys');
 
 // 참고용 코드
 // 트랜젝션 열고닫는거 컨트롤하는 코드.
@@ -64,84 +65,38 @@ const pldtperm = async(pldtId)=>{
 };
 
 // 주문을 생산계획에 추가(order상태변경, plan추가, plan_detail추가)
-let prodcode = 0;
+// let prodcode = 0;
 const orpldtinsert = async(orderInfo)=>{
-    // orderInfo에 들어있는값의 형식
-    // [{ 
-    //     "id": 1,
-    //     "first_name": "Rudy",
-    //     "last_name": "Castillon",
-    //     "email": "rcastillon0@aol.com",
-    //     "gender": "Male",
-    //     "ip_address": "77.118.135.69"
-    //   },
-    //    { 
-    //     "id": 2,
-    //     "first_name": "Rudy",
-    //     "last_name": "Castillon",
-    //     "email": "rcastillon0@aol.com",
-    //     "gender": "Male",
-    //     "ip_address": "77.118.135.69"
-    //   }]
+  // planInfo
+  // {
+  //   order_id: 'ORD-20250503-002',
+  //   deliv_due_date: '2025-05-15',
+  //   order_details: [
+  //     { order_detail_id: 'ORDD-...', prod_name: '절임배추', order_amount: 200 },
+  //     { order_detail_id: 'ORDD-...', prod_name: '총각김치', order_amount: 100 },
+  //     ...
+  //   ]
+  // }
     let conn;
-    
-    // 오늘 날짜 구하기 (yyyymmdd)
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${yyyy}${mm}${dd}`;
-
-    // 임시 키생성
-    prodcode ++;
-    let plankey = 'PLAN' + todayStr + prodcode;
-    let plandtkey = 'PLANDT' + todayStr + prodcode;
 
     try{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
-        // 세션등록되면 employee_id가 session값으로 추가되어야함.(버튼누른사람)
-        // 매개변수 나눠서 저장
-        // order_list_detil 정보
-        // [
-        //     {
-        //       "order_detail_id": "ORDD-20250502-001",
-        //       "prod_id": "배추김치",
-        //       "order_amount": 100,
-        //       "deliv_due_date": null,
-        //       "memo": null
-        //     },
-        //     {
-        //       "order_detail_id": "ORDD-20250502-002",
-        //       "prod_id": "총각김치",
-        //       "order_amount": 50,
-        //       "deliv_due_date": null,
-        //       "memo": null
-        //     }
-        //  ]
-        // 
 
-        // order 상태정보 변경
-        let target_id = orderInfo.order_id;
-        // plan정보
-        let orplInfo = {plan_id: plankey,
-                        order_id: orderInfo.order_id,
-                        employee_id: orderInfo.employee_id
-                        };
-        // plan_detail정보
-        let pldtInfo = {plan_detail_id: plandtkey,
-                        plan_id: plankey,
-                        prod_id: orderInfo.prod_id
-                        };
-        // 첫번쨰 쿼리
-        selectedSql = await mariaDB.selectedQuery('updateod', target_id);
-        let orstatus = await conn.query(selectedSql, target_id);
+        // detail 분리
+        const {order_details, ...orplInfo} = orderInfo;
 
-        // 두번쨰 쿼리
-        // plan_id는 키를 생성해서 추가.
-        // order_id는 주문서에서 값을 가져와서 추가.
-        // 같은 plan_id키
-        let procloumn = ['plan_id','order_id','employee_id'];
+        // plan 등록
+        // plan key 정보 조회
+        selectedSql = await mariaDB.selectedQuery('sltPlanKey', {});
+        let lastPlan = await conn.query(selectedSql, {});
+        let lastPlanId = lastPlan[0].plan_id;
+    
+        // order key 생성
+        let newPlanId = keys.getNextKeyId(lastPlanId);
+        orplInfo.plan_id = newPlanId;
+
+        let procloumn = ['plan_id','order_id'];
         // 컬럼값과 넘겨받은 값을 배열로 저장.
         let addInfo = converts.convertObjToAry(orplInfo, procloumn);
         // 실제 SQL문을 가지고 오는 작업
@@ -149,11 +104,28 @@ const orpldtinsert = async(orderInfo)=>{
         // 해당 connection을 기반으로 실제 SQL문을 실행하는 메서드
         let insertInfo = await conn.query(selectedSql, addInfo);
 
-        // 세번쨰 쿼리
-        let dtcloumn = ['plan_detail_id', 'plan_id', 'prod_id'];
+
+
+        // planDetail key 정보 조회
+        selectedSql = await mariaDB.selectedQuery('sltPlanDetailKey', {});
+        let lastPlanDetail = await conn.query(selectedSql, {});
+        let lastPlanDetailId = lastPlanDetail[0].plan_detail_id;
+
+        for(let DetailInfo of order_details){
+        // order key 생성
+        let newPlanDetailId = keys.getNextKeyId(lastPlanDetailId, 'PRPD');
+        DetailInfo.planDetailId = newPlanDetailId;
+
+        // planDetail 등록
+        let dtcloumn = ['plan_detail_id', 'plan_id', 'prod_id', 'order_amount', 'deliv_due_date'];
         addInfo = converts.convertObjToAry(pldtInfo, dtcloumn);
         selectedSql = await mariaDB.selectedQuery('insertorprdt', addInfo);
         let result = await conn.query(selectedSql, addInfo);
+        };
+
+        // 주문의 상태값 변경시키는 쿼리
+        selectedSql = await mariaDB.selectedQuery('updateod', target_id);
+        let orstatus = await conn.query(selectedSql, target_id);
         conn.commit();
  
         return result;
@@ -165,9 +137,6 @@ const orpldtinsert = async(orderInfo)=>{
         if(conn) conn.release();
     }
 };
-
-
-
 
 module.exports = {
     order_list,
