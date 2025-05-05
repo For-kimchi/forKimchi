@@ -1,33 +1,7 @@
 // 영업 sql
-// business.js
+// deliv.js
 
-// 주문
-const selectLastOrder =
-  `SELECT order_id
-FROM t_order
-ORDER BY order_id DESC
-LIMIT 1
-`;
-
-const selectLastOrderDetail =
-  `SELECT order_detail_id
-FROM t_order_detail
-ORDER BY order_detail_id DESC
-LIMIT 1
-`;
-
-const insertOrder =
-  `INSERT INTO t_order
-(order_id, order_date, order_final_status, vendor_id, employee_id, reg_date, manager_id, confirm_date, memo)
-VALUES
-(?, ?, '1a', ?, ?, CURRENT_TIMESTAMP, null, null, null)`;
-
-const insertOrderDetail =
-  `INSERT INTO t_order_detail
-(order_detail_id, order_id, prod_id, order_amount, deliv_due_date, order_status, memo)
-VALUES
-(?, ?, ?, ?, ?, '1z', null)
-`;
+const { selectLastOrder } = require("./order");
 
 // 납품
 const selectDelivTarget =
@@ -67,11 +41,35 @@ const selectDelivProdTarget =
 `;
 //기존에 납품된 수량으로 입고수량과 비교해야 함
 
+const selectLastDeliv = 
+`SELECT deliv_id
+FROM t_deliv
+ORDER BY deliv_id DESC
+LIMIT 1`;
+
+const insertDeliv = 
+`INSERT INTO t_deliv
+(deliv_id, order_detail_id, deliv_status, deliv_date, employee_id, memo)
+VALUES
+(?, ?, '2b', CURRENT_TIMESTAMP, ?, ?)`;
+
+const selectLastDelivDetail =
+`SELECT deliv_detail_id
+FROM t_deliv_detail
+ORDER BY deliv_detail_id DESC
+LIMIT 1`;
+
+const insertDelivDetail =
+`INSERT INTO t_deliv_detail
+(deliv_detail_id, prod_lot, deliv_id, prod_id, deliv_amount, memo)
+VALUES
+(?, ?, ?, ?, ?, ?)`;
+
 module.exports = {
-  selectLastOrder,
-  selectLastOrderDetail,
-  insertOrder,
-  insertOrderDetail,
   selectDelivTarget,
   selectDelivProdTarget,
+  selectLastDeliv,
+  insertDeliv,
+  selectLastDelivDetail,
+  insertDelivDetail,
 }

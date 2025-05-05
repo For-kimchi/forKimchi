@@ -33,24 +33,21 @@
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">제품명</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">제품ID</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">납품일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재명</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재수량</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재단위</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in orderDetails" v-bind:key="info.order_detail_id">
+                  <tr v-for="(info, index) in bom.bom_detail" v-bind:key="info.bom_detail_id">
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.prod_name" readonly
-                        @click="openProdModal(index)" placeholder="제품명"></td>
+                      <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.prod_id" readonly></td>
+                      <input class="form-control border text-center" type="number" v-model="info.mate_amount"></td>
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="number" v-model="info.order_amount"></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="date" v-model="info.deliv_due_date"></td>
+                      <input class="form-control border text-center" type="text" v-model="info.mate_unit" readonly></td>
                     <td class="align-middle text-center">
                       <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
                   </tr>
@@ -74,7 +71,7 @@
           <div class="card-body px-0 pb-2">
             <div class="row g-3 mt-2">
             <div class="col-md-6">
-            <input v-model="materialSearch" type="text" class="form-control border text-center" placeholder="자재명" />
+            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명" />
             </div>
             <div class="col-md-3">
               <button class="btn btn-primary" @click="searchMaterial">검색</button>
@@ -92,18 +89,17 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in orderDetails" v-bind:key="info.order_detail_id">
+                  <tr v-for="(info, index) in materials" v-bind:key="info.order_detail_id">
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.prod_name" readonly
-                        @click="openProdModal(index)" placeholder="제품명"></td>
+                      <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.prod_id" readonly></td>
+                      <input class="form-control border text-center" type="text" v-model="info.mate_name" readonly></td>
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="number" v-model="info.order_amount"></td>
+                      <input class="form-control border text-center" type="text" v-model="info.mate_unit"></td>
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="date" v-model="info.deliv_due_date"></td>
+                      <input class="form-control border text-center" type="text" v-model="info.mate_type"></td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
+                      <button class="btn btn-success ms-2" @click="addRows(index)">추가</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -121,6 +117,7 @@
 
 <script>
 import ProdModal from '../business/ProdModal.vue';
+import axios from 'axios';
 
 export default {
   components: {
@@ -129,111 +126,62 @@ export default {
   data() {
     return {
       showProd: false,
-      searchName: "",
-      searchId: "",
-      searchType: "",
-      products: [],
-      boms: [],
+      searchName: '',
+      bom: {},
       materials: [],
-      selectedProduct: {},
-      selectedBOM: {},
-      selectedMaterial: {},
-      newBOM: {
-        componentCode: '',
-        componentName: '',
-      },
-      newMaterial: {
-        materialCode: '',
-        materialName: '',
-        quantity: 0,
-        unit: '',
-      },
       prod:{},
-      materialSearch: '',
     };
   },
   computed: {
-    filteredMaterials() {
-    if (!this.selectedBOM.id) return [];
-    return this.materials
-      .filter(m => m.bomId === this.selectedBOM.id)
-      .filter(m => {
-        return this.materialSearch
-          ? m.materialName.toLowerCase().includes(this.materialSearch.toLowerCase())
-          : true;
-      });
-  },
-    filteredProducts() {
-      return this.products.filter((p) => {
-        const matchesName = this.searchName ? p.name.includes(this.searchName) : true;
-        const matchesId = this.searchId ? p.code.includes(this.searchId) : true;
-        const matchesType = this.searchType ? p.type === this.searchType : true;
-        return matchesName && matchesId && matchesType;
-      });
-    },
-    selectedBOMs() {
-      if (!this.selectedProduct.id) return [];
-      return this.boms.filter(b => b.productId === this.selectedProduct.id);
-    },
-    selectedMaterials() {
-      if (!this.selectedBOM.id) return [];
-      return this.materials.filter(m => m.bomId === this.selectedBOM.id);
-    },
   },
   methods: {
-    fetchProducts() {
-      this.products = [
-        { id: 1, code: "P001", name: "Product A", type: "Standard" },
-        { id: 2, code: "P002", name: "Product B", type: "Premium" },
-      ];
+    async getBom() {
+
+      let result = await axios.get('/api/basicBom', {
+        params: {
+          prod_id : this.prod.prod_id
+        }
+      })
+
+      this.bom = result.data;
     },
-    selectProduct(product) {
-      this.selectedProduct = product;
-      this.selectedBOM = {};
-      this.selectedMaterial = {};
-      this.fetchBOMs(product.id);
+    async getMate() {
+
+      let result = await axios.get('/api/basicMate', {
+        params: {
+          mate_name : this.searchName
+        }
+      })
+
+      this.materials = result.data;
+    }
+    ,
+    onSelectProd(prod) {
+      this.prod = prod;
+      this.getBom();
+    }, 
+    searchMaterial() {
+      this.getMate();
     },
-    fetchBOMs(productId) {
-      this.boms = [
-        { id: 1, productId: 1, componentCode: "C001", componentName: "Component A" },
-        { id: 2, productId: 1, componentCode: "C002", componentName: "Component B" },
-        { id: 3, productId: 2, componentCode: "C003", componentName: "Component C" },
-      ];
+    removeRows(index) {
+      this.bom.bom_detail.splice(index, 1);
     },
-    selectBOM(bom) {
-      this.selectedBOM = bom;
-      this.selectedMaterial = {};
-      this.fetchMaterials(bom.id);
-    },
-    fetchMaterials(bomId) {
-      this.materials = [
-        { id: 1, bomId: 1, materialCode: "M001", materialName: "Material A", quantity: 2, unit: "pcs" },
-        { id: 2, bomId: 1, materialCode: "M002", materialName: "Material B", quantity: 5, unit: "pcs" },
-        { id: 3, bomId: 2, materialCode: "M003", materialName: "Material C", quantity: 1, unit: "pcs" },
-      ];
-    },
-    addBOM() {
-      if (!this.selectedProduct.id || !this.newBOM.componentCode) return;
-      const newId = this.boms.length ? Math.max(...this.boms.map(b => b.id)) + 1 : 1;
-      this.boms.push({ id: newId, productId: this.selectedProduct.id, ...this.newBOM });
-      this.newBOM = { componentCode: '', componentName: '' };
-    },
-    addMaterial() {
-      if (!this.selectedBOM.id || !this.newMaterial.materialCode) return;
-      const newId = this.materials.length ? Math.max(...this.materials.map(m => m.id)) + 1 : 1;
-      this.materials.push({ id: newId, bomId: this.selectedBOM.id, ...this.newMaterial });
-      this.newMaterial = { materialCode: '', materialName: '', quantity: 0, unit: '' };
-    },
-      onSelectProd(prod) {
-        this.prod = prod;
-      }, 
-      searchMaterial() {
-    // 버튼 클릭 시 computed 강제 반영용 (v-model이니까 사실 없어도 작동)
-    this.materialSearch = this.materialSearch.trim();
-  },
+    addRows(index) {
+      
+      let exist = this.bom.bom_detail.some(item => item.mate_id === this.materials[index].mate_id);
+
+      if (!exist) {
+        this.bom.bom_detail.push({
+          mate_id: this.materials[index].mate_id,
+          mate_amount: 0,
+          mate_unitL: this.materials[index].mate_unit,
+        })
+      } else {
+        alert('이미 추가된 자재입니다')
+      }
+    }
   },
   mounted() {
-    this.fetchProducts();
   },
 };
 </script>

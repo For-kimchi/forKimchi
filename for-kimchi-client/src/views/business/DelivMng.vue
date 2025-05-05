@@ -152,7 +152,7 @@ export default {
         if (this.orderDetail.order_amount) {
           let sum = 0;
           for (let prod of this.prods) {
-            sum += prod.deliv_amount;
+            sum += prod.deliv_amount ? prod.deliv_amount : 0;
           }
           return this.orderDetail.order_amount - sum;
         } else {
@@ -164,10 +164,23 @@ export default {
     },
     methods : {
       async register() {
-        let params = {
+
+        let delivDetails = []
+
+        for (let prod of this.prods) {
+          if (prod.deliv_amount) {
+            delivDetails.push(prod);
+          }
         }
 
-        let result = await axios.post('', params)
+        let params = {
+          order_detail_id : this.orderDetail.order_detail_id,
+          employee_id : this.employee.employee_id,
+          memo : '',
+          deliv_details: delivDetails,
+        }
+
+        let result = await axios.post('/api/deliv', params)
         .catch(err => console.log(err));
 
         alert(result.data);

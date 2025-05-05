@@ -4,10 +4,10 @@
 // 자재
 // 자재 조건 조회
 const selectMate =
-  `SELECT mate_id
+  `SELECT mate_id,
         mate_name,
         mate_unit,
-        mate_min_quality,
+        mate_min_quantity,
         mate_type
  FROM t_mate
  WHERE 1=1

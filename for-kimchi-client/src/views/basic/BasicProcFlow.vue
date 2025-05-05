@@ -1,89 +1,65 @@
 <template>
   <div class="container my-4">
-    <h2 class="mb-4">Product Master Management</h2>
-
     <!-- Search Filter -->
     <div class="card p-3 mb-4">
       <div class="row g-3">
-        <div class="col-md-4">
-          <input v-model="searchName" type="text" class="form-control" placeholder="Search Product Name" />
+        <div class="col-md-3">
+          <input v-model="prod.prod_name" type="text" class="form-control border text-center" @keydown.prevent
+            @click="showProd = true" placeholder="제품명" />
         </div>
-        <div class="col-md-4">
-          <input v-model="searchId" type="text" class="form-control" placeholder="Search Product ID" />
+        <div class="col-md-3">
+          <input v-model="prod.prod_id" type="text" class="form-control border text-center" placeholder="제품ID" />
         </div>
-        <div class="col-md-4">
-          <select v-model="searchType" class="form-select">
-            <option value="">All Types</option>
-            <option value="Standard">Standard</option>
-            <option value="Premium">Premium</option>
-          </select>
+        <div class="col-md-3">
+          <input v-model="prod.prod_type" type="text" class="form-control border text-center" placeholder="제품분류" />
         </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col text-end">
-          <button class="btn btn-primary" @click="fetchProducts">Search</button>
+        <div class="col-md-3">
+          <button class="btn btn-primary">저장</button>
         </div>
       </div>
     </div>
 
     <div class="row">
-      <!-- Left Side: Products and BOMs -->
+      <!-- Left Side: Products -->
       <div class="col-md-6">
-        <div class="mb-4">
-          <h5>Product List</h5>
-          <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-            <table class="table table-bordered">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Product Code</th>
-                  <th>Product Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(product, idx) in filteredProducts" :key="product.id" @click="selectProduct(product)" style="cursor: pointer;">
-                  <td>{{ idx + 1 }}</td>
-                  <td>{{ product.code }}</td>
-                  <td>{{ product.name }}</td>
-                </tr>
-                <tr v-if="filteredProducts.length === 0">
-                  <td colspan="3" class="text-center">No search results found.</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="card p-3 mb-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+              <h6 class="text-white text-capitalize ps-3">공정흐름도 정보</h6>
+            </div>
           </div>
-        </div>
-
-        <div class="mb-4">
-          <h5>BOM List</h5>
-          <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-            <table class="table table-bordered">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Component Code</th>
-                  <th>Component Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(bom, idx) in selectedBOMs" :key="bom.id" @click="selectBOM(bom)" style="cursor: pointer;">
-                  <td>{{ idx + 1 }}</td>
-                  <td>{{ bom.componentCode }}</td>
-                  <td>{{ bom.componentName }}</td>
-                </tr>
-                <tr v-if="selectedBOMs.length === 0">
-                  <td colspan="3" class="text-center">No BOM data found.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- BOM Add Form -->
-          <div class="mt-3">
-            <input v-model="newBOM.componentCode" class="form-control mb-2" placeholder="Component Code" />
-            <input v-model="newBOM.componentName" class="form-control mb-2" placeholder="Component Name" />
-            <div class="text-end">
-              <button class="btn btn-success btn-sm" @click="addBOM">Add BOM</button>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0" style="max-height: 300px;">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">순번</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정명</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정순번</th>
+                  </tr>
+                </thead>
+                <!-- <tbody>
+                  <tr v-for="(info, index) in bom.bom_detail" v-bind:key="info.bom_detail_id">
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="number" v-model="info.mate_amount"></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.mate_unit" readonly></td>
+                    <td class="align-middle text-center">
+                      <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
+                  </tr>
+                </tbody> -->
+                <draggable tag="tbody" :list="procFlow.flow_detail" item-key="id" @end="updateRowNumbers">
+                  <template #item="{ element, index }">
+                    <tr>
+                      <td class="text-center">{{ index + 1 }}</td>
+                      <td class="text-center">{{ element.proc_id }}</td>
+                      <td class="text-center"><button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
+                    </tr>
+                  </template>
+                </draggable>
+              </table>
             </div>
           </div>
         </div>
@@ -91,141 +67,122 @@
 
       <!-- Right Side: Materials -->
       <div class="col-md-6">
-        <h5>Material List</h5>
-        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-          <table class="table table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th>#</th>
-                <th>Material Code</th>
-                <th>Material Name</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(material, idx) in selectedMaterials" :key="material.id">
-                <td>{{ idx + 1 }}</td>
-                <td>{{ material.materialCode }}</td>
-                <td>{{ material.materialName }}</td>
-                <td>{{ material.quantity }}</td>
-                <td>{{ material.unit }}</td>
-              </tr>
-              <tr v-if="selectedMaterials.length === 0">
-                <td colspan="5" class="text-center">No materials found.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="card p-3 mb-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+              <h6 class="text-white text-capitalize ps-3">공정 정보</h6>
+            </div>
+          </div>
 
-        <!-- Material Add Form -->
-        <div class="mt-3">
-          <input v-model="newMaterial.materialCode" class="form-control mb-2" placeholder="Material Code" />
-          <input v-model="newMaterial.materialName" class="form-control mb-2" placeholder="Material Name" />
-          <input v-model.number="newMaterial.quantity" class="form-control mb-2" type="number" placeholder="Quantity" />
-          <input v-model="newMaterial.unit" class="form-control mb-2" placeholder="Unit" />
-          <div class="text-end">
-            <button class="btn btn-success btn-sm" @click="addMaterial">Add Material</button>
+          <div class="card-body px-0 pb-2">
+            <div class="row g-3 mt-2">
+              <div class="col-md-6">
+                <input v-model="searchName" type="text" class="form-control border text-center" placeholder="공정명" />
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-primary" @click="searchFlow">검색</button>
+              </div>
+            </div>
+            <div class="table-responsive p-0" style="max-height: 300px;">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정ID</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정명</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(info, index) in procs" v-bind:key="info.order_detail_id">
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.proc_id" readonly>
+                    </td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.proc_name" readonly>
+                    </td>
+                    <td class="align-middle text-center">
+                      <button class="btn btn-success ms-2" @click="addRows(index)">추가</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <ProdModal :visible="showProd" @close="showProd = false" @select="onSelectProd" />
   </div>
 </template>
 
-
 <script>
-export default {
-  name: "ProductMaster",
-  data() {
-    return {
-      searchName: "",
-      searchId: "",
-      searchType: "",
-      products: [],
-      boms: [],
-      materials: [],
-      selectedProduct: {},
-      selectedBOM: {},
-      selectedMaterial: {},
-      newBOM: {
-        componentCode: '',
-        componentName: '',
-      },
-      newMaterial: {
-        materialCode: '',
-        materialName: '',
-        quantity: 0,
-        unit: '',
-      },
-    };
-  },
-  computed: {
-    filteredProducts() {
-      return this.products.filter((p) => {
-        const matchesName = this.searchName ? p.name.includes(this.searchName) : true;
-        const matchesId = this.searchId ? p.code.includes(this.searchId) : true;
-        const matchesType = this.searchType ? p.type === this.searchType : true;
-        return matchesName && matchesId && matchesType;
-      });
-    },
-    selectedBOMs() {
-      if (!this.selectedProduct.id) return [];
-      return this.boms.filter(b => b.productId === this.selectedProduct.id);
-    },
-    selectedMaterials() {
-      if (!this.selectedBOM.id) return [];
-      return this.materials.filter(m => m.bomId === this.selectedBOM.id);
-    },
-  },
-  methods: {
-    fetchProducts() {
-      this.products = [
-        { id: 1, code: "P001", name: "Product A", type: "Standard" },
-        { id: 2, code: "P002", name: "Product B", type: "Premium" },
-      ];
-    },
-    selectProduct(product) {
-      this.selectedProduct = product;
-      this.selectedBOM = {};
-      this.selectedMaterial = {};
-      this.fetchBOMs(product.id);
-    },
-    fetchBOMs(productId) {
-      this.boms = [
-        { id: 1, productId: 1, componentCode: "C001", componentName: "Component A" },
-        { id: 2, productId: 1, componentCode: "C002", componentName: "Component B" },
-        { id: 3, productId: 2, componentCode: "C003", componentName: "Component C" },
-      ];
-    },
-    selectBOM(bom) {
-      this.selectedBOM = bom;
-      this.selectedMaterial = {};
-      this.fetchMaterials(bom.id);
-    },
-    fetchMaterials(bomId) {
-      this.materials = [
-        { id: 1, bomId: 1, materialCode: "M001", materialName: "Material A", quantity: 2, unit: "pcs" },
-        { id: 2, bomId: 1, materialCode: "M002", materialName: "Material B", quantity: 5, unit: "pcs" },
-        { id: 3, bomId: 2, materialCode: "M003", materialName: "Material C", quantity: 1, unit: "pcs" },
-      ];
-    },
-    addBOM() {
-      if (!this.selectedProduct.id || !this.newBOM.componentCode) return;
-      const newId = this.boms.length ? Math.max(...this.boms.map(b => b.id)) + 1 : 1;
-      this.boms.push({ id: newId, productId: this.selectedProduct.id, ...this.newBOM });
-      this.newBOM = { componentCode: '', componentName: '' };
-    },
-    addMaterial() {
-      if (!this.selectedBOM.id || !this.newMaterial.materialCode) return;
-      const newId = this.materials.length ? Math.max(...this.materials.map(m => m.id)) + 1 : 1;
-      this.materials.push({ id: newId, bomId: this.selectedBOM.id, ...this.newMaterial });
-      this.newMaterial = { materialCode: '', materialName: '', quantity: 0, unit: '' };
-    },
-  },
-  mounted() {
-    this.fetchProducts();
-  },
-};
-</script>
+  import ProdModal from '../business/ProdModal.vue';
+  import axios from 'axios';
+  import draggable from 'vuedraggable'
 
+  export default {
+    components: {
+      ProdModal,
+      draggable,
+    },
+    data() {
+      return {
+        showProd: false,
+        searchName: '',
+        procFlow: {},
+        procs: [],
+        prod: {},
+      };
+    },
+    computed: {},
+    methods: {
+      async getProcFlow() {
+
+        let result = await axios.get('/api/basicProcFlow', {
+          params: {
+            prod_id: this.prod.prod_id
+          }
+        })
+
+        this.procFlow = result.data;
+      },
+      async getFlow() {
+
+        let result = await axios.get('/api/basicProc', {
+          params: {
+            proc_name : this.searchName
+          }
+        })
+
+        this.procs = result.data;
+      },
+      onSelectProd(prod) {
+        this.prod = prod;
+        this.getProcFlow();
+      },
+      searchFlow() {
+        this.getFlow();
+      },
+      removeRows(index) {
+        this.procFlow.flow_detail.splice(index, 1);
+      },
+      addRows(index) {
+
+        let exist = this.procFlow.flow_detail.some(item => item.proc_id === this.procs[index].proc_id);
+
+        if (!exist) {
+          this.procFlow.flow_detail.push({
+            proc_id: this.procs[index].proc_id,
+          })
+        } else {
+          alert('이미 추가된 공정입니다')
+        }
+      },
+      updateRowNumbers() {
+
+      }
+    },
+    mounted() {},
+  };
+</script>

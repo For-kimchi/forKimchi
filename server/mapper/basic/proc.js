@@ -4,7 +4,7 @@
 // 공정
 // 공정 조건 조회
 const selectProc =
-  `SELECT proc_id
+  `SELECT proc_id,
         proc_name,
         proc_type
  FROM t_proc
