@@ -87,7 +87,7 @@
               <!-- 승인버튼에 세션값을 통해 권한이 있을경우에만 작동하도록 조건을 넣어줘야함 -->
               <button class="btn btn-success ms-2 me-2" v-on:click="permibtn()">승인</button>
               <!-- <button class="btn btn-success" v-on:click="addRow">추가</button> -->
-              <button class="btn btn-info ms-2 me-2"  @click="pldtsave(proddtlist)">저장</button>
+              <button class="btn btn-info ms-2 me-2"  @click="planDetailSave(proddtlist)">저장</button>
             </div>
             <div class="table-responsive p-0">
               <table class="table align-items-center justify-content-center mb-0">
@@ -143,7 +143,8 @@ export default {
     data(){
       return {
         prodlist : [],
-        proddtlist : [],
+        proddtlist :[],
+        order_detail_id:'',
       }
     },
     created(){
@@ -164,8 +165,22 @@ export default {
         await axios.get(`/api/proddtlist/${orderid}`)
                    .catch(err => console.log(err));
         this.proddtlist = ajaxRes.data;
+      },
+      async planDetailSave(planDetailList){
+        // 항목선택여부 알림.
+        if(Object.keys(planDetailList).length > 0){
+            let  ajaxRes =
+            await axios.put(`/api/planDetailSave`, planDetailList)
+                       .catch(err => console.log(err));
+            this.update = ajaxRes.data;
+            alert('저장 완료');
+        }else{
+          alert('항목이 선택되지 않았습니다.')
+        };
+
+
       }
-    }
+    },
     
 }
 

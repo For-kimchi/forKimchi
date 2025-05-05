@@ -28,14 +28,14 @@ router.get('/proddtlist/:id', async(req, res)=>{
 // 주문서를 통한 생산계획 등록
 router.post('/planinsert', async(req, res)=>{
   let planInfo = req.body;
+  console.log(planInfo);
   let result = await prod_service.orpldtinsert(planInfo);
   res.send(result);
 });
 // 저장버튼(수정)
-router.put('/plandt/:id', async (req, res)=>{
-  let pldtId = req.params.id;
-  let pldtInfo = req.body;
-  let result = await prod_service.modifypldt(pldtInfo, pldtId);
+router.put('/planDetailSave', async (req, res)=>{
+  let planDetailInfo = req.body;
+  let result = await prod_service.modifypldt(planDetailInfo);
   res.send(result);
 });
 

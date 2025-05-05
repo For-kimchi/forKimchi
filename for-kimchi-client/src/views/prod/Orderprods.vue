@@ -49,12 +49,12 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문담당자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info,index) in orderList" v-bind:key="info.order_id" v-on:click="getOrderDtList(info.order_id)">
-                    <td class="align-middle text-center"><button class="btn btn-warning p-3 m-3" v-on:click="planAdd(index)">주문서 추가</button></td>
+                    <td class="align-middle text-center"><button class="btn btn-warning p-3 m-3" v-on:click.stop="planAdd(index)">주문서 추가</button></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.order_id }}</td>
                     <td class="align-middle text-center">{{ info.order_date }}</td>
@@ -120,7 +120,7 @@ export default {
       return{
         orderList : [],
         orderDtList:[],
-        test: '',
+        order_detail_id:'',
       }
     },
     created(){
@@ -150,28 +150,29 @@ export default {
      async planAdd(idx){
         // 모든값을 가져오는게 아니기떄문에 받은 매개변수에서
         // 원하는값만 따로 분리시켜서 이걸 body에 담어서 보냄
-
         // orderList의 index번호를 기준으로 info에 값이 저장됨
         let info = this.orderList[idx];
+
+        await this.getOrderDtList(info.order_id);
+
         let orderInfo = {
           order_id:       info.order_id,
-          prod_id:        info.prod_id,
-          order_amount:   info.order_amount,
-          deliv_due_date: info.deliv_due_date
+          order_detail_list: this.orderDtList
         };
+        
         let ajaxRes = await axios.post(`/api/planinsert`, orderInfo)
                                   .catch(err => console.log(err));
         let sqlRes = ajaxRes.data;
         let planInfo = sqlRes.affectedRows;
 
         // 등록이 끝난 후 상세계획을 다시 불러옴.
-        await this.getOrderDtList(info.order_id);
+        // 페이지 이동할꺼라서 불러올필요없음.
+        // await this.getOrderDtList(info.order_id);
 
         // 성공적으로 등록 시 페이지 이동 실패하면 안내
         if(planInfo > 0){
           alert('계획이 생성되었습니다.');
-          
-          // this.$router.push('/prodplan');
+          this.$router.push('/prodplan');
         }else{
           alert('계획이 등록되지 않았습니다.');
         }
