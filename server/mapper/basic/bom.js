@@ -10,7 +10,8 @@ const selectBom =
         reg_date,
         bom_status
  FROM t_bom
- WHERE prod_id = ?`;
+ WHERE prod_id = ?
+ AND bom_status = '1t'`;
 
 // BOM 상세 조회
 const selectBomDetail =
@@ -60,6 +61,27 @@ const deleteBomDetail =
 `DELETE FROM t_bom_detail
 WHERE bom_detail_id = ?`;
 
+// BOM 비활성화
+const updateBomStatus =
+  `UPDATE t_bom
+SET bom_status = '2t'
+WHERE prod_id = ?`;
+
+// 최근 BOM 조회
+const selectLastBom =
+`SELECT bom_id
+FROM t_bom
+ORDER BY bom_id DESC
+LIMIT 1`;
+
+// 최근 BOM 상세 조회회
+const selectLastBomDetail =
+`SELECT bom_detail_id
+FROM t_bom_detail
+ORDER BY bom_detail_id DESC
+LIMIT 1`;
+
+
 module.exports = {
   selectBom,
   selectBomDetail,
@@ -69,4 +91,7 @@ module.exports = {
   updateBomDetail,
   deleteBom,
   deleteBomDetail,
+  updateBomStatus,
+  selectLastBom,
+  selectLastBomDetail,
 }

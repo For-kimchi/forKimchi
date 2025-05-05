@@ -83,12 +83,13 @@
 
       <div class="col-md-4">
         <div class="card p-3">
+          <h5>{{ action }}</h5>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">제품ID</label>
             <input v-model="selectedProduct.prod_id" type="text" class="form-control border text-center" readonly/>
           </div>
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">제품코드</label>
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품명</label>
             <input v-model="selectedProduct.prod_name" type="text" class="form-control border text-center" />
           </div>
           <div class="mb-3 d-flex align-items-center">
@@ -131,6 +132,7 @@
         codes: [],
         selectedProduct: {},
         isEdit: false,
+        action: '등록',
       };
     },
     computed: {
@@ -158,22 +160,29 @@
         this.getBasicProd();
       },
       editProduct(product) {
+        this.action = '수정',
         this.selectedProduct = {
           ...product
         };
       },
       resetForm() {
+        this.action = '등록',
         this.selectedProduct = {
         };
       },
       async save() {
-        const body = {
-        };
-
-        let res = await axios.post('/api/basicProd', body)
+        let result = await axios.post('/api/basicProd', this.selectedProduct)
           .catch(err => console.log(err));
-        console.log(res);
-        this.resetForm();
+        console.log(result);
+
+        if (result.data.affectedRows > 0) {
+          alert('저장이 완료되었습니다');
+          this.getBasicProd();
+          this.resetForm();
+        } else {
+          alert('저장 과정에서 오류가 발생했습니다');
+        }
+
       },
       checkForm() {
       }

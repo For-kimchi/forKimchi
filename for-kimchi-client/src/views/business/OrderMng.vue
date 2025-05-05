@@ -18,6 +18,12 @@
           <div class="row g-3 mt-3">
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
+                <label class="form-label me-2 mb-0 " style="width: 100px;">주문일자</label>
+                <input v-model="order_date" type="Date" class="form-control border text-center" placeholder="" />
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
                 <input v-model="vendor.vendor_name" type="text" class="form-control border text-center" @keydown.prevent
                   @click="showVendor = true" placeholder="거래처명" />
@@ -25,15 +31,16 @@
             </div>
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">주문일자</label>
-                <input v-model="order_date" type="Date" class="form-control border text-center" placeholder="" />
+                <label class="form-label me-2 mb-0 " style="width: 100px;">담당자명</label>
+                <input v-model="employee.employee_name" type="text" class="form-control border text-center" readonly
+                  placeholder="담당자명" />
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">담당자명</label>
-                <input v-model="employee.employee_name" type="text" class="form-control border text-center" readonly
-                  placeholder="담당자명" />
+                <label class="form-label me-2 mb-0 " style="width: 100px;">비고</label>
+                <input v-model="memo" type="text" class="form-control border text-center"
+                  placeholder="비고" />
               </div>
             </div>
           </div>
@@ -108,11 +115,12 @@ export default {
         showVendor: false,
         showProd: false,
         vendor: {},
-        order_date: this.getTodayDate(),
+        order_date: this.getTodayDate(0),
         employee: {
           employee_id: 'EMP-001',
           employee_name: '김영업',
         },
+        memo: '',
       }
     },
     created(){
@@ -124,6 +132,7 @@ export default {
           employee_id : this.employee.employee_id,
           order_date: this.order_date,
           order_details: this.orderDetails,
+          memo: this.memo,
         }
 
         let result = await axios.post('/api/order', params)
@@ -131,15 +140,17 @@ export default {
 
         alert(result.data);
       },
-      getTodayDate() {
+      getTodayDate(differ) {
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
+        const day = String(today.getDate() + differ).padStart(2, '0');
         return `${year}-${month}-${day}`;
       },
       addRow(){
-        this.orderDetails.push({});
+        this.orderDetails.push({
+          deliv_due_date: this.getTodayDate(14),
+        });
       },
       removeRows(index) {
         this.orderDetails.splice(index, 1);

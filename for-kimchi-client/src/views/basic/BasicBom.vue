@@ -14,7 +14,7 @@
           <input v-model="prod.prod_type" type="text" class="form-control border text-center" placeholder="제품분류" />
         </div>
         <div class="col-md-3">
-          <button class="btn btn-primary">저장</button>
+          <button class="btn btn-primary" @click="save">저장</button>
         </div>
       </div>
     </div>
@@ -41,7 +41,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in bom.bom_detail" v-bind:key="info.bom_detail_id">
+                  <tr v-for="(info, index) in bom.bom_details" v-bind:key="info.bom_detail_id">
                     <td class="align-middle text-center">
                       <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
                     <td class="align-middle text-center">
@@ -130,6 +130,10 @@ export default {
       bom: {},
       materials: [],
       prod:{},
+      employee: {
+        employee_id: 'EMP-001',
+        employee_name: '홍길동',
+      }
     };
   },
   computed: {
@@ -141,7 +145,7 @@ export default {
         params: {
           prod_id : this.prod.prod_id
         }
-      })
+      }).catch(err => console.log(err));
 
       this.bom = result.data;
     },
@@ -151,7 +155,7 @@ export default {
         params: {
           mate_name : this.searchName
         }
-      })
+      }).catch(err => console.log(err));
 
       this.materials = result.data;
     }
@@ -164,21 +168,31 @@ export default {
       this.getMate();
     },
     removeRows(index) {
-      this.bom.bom_detail.splice(index, 1);
+      this.bom.bom_details.splice(index, 1);
     },
     addRows(index) {
       
-      let exist = this.bom.bom_detail.some(item => item.mate_id === this.materials[index].mate_id);
+      let exist = this.bom.bom_details.some(item => item.mate_id === this.materials[index].mate_id);
 
       if (!exist) {
-        this.bom.bom_detail.push({
+        this.bom.bom_details.push({
           mate_id: this.materials[index].mate_id,
           mate_amount: 0,
-          mate_unitL: this.materials[index].mate_unit,
+          mate_unit: this.materials[index].mate_unit,
         })
       } else {
         alert('이미 추가된 자재입니다')
       }
+    },
+    async save() {
+
+      this.bom.employee_id = this.employee.employee_id;
+
+      let result = await axios.post('/api/basicBom', this.bom)
+      .catch(err => console.log(err));
+      
+      alert(result.data);
+
     }
   },
   mounted() {

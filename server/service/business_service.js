@@ -2,7 +2,7 @@ const mariaDB = require('../mapper/mapper');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts')
 
-const postdeliv = async (delivInfo) => {
+const postDeliv = async (delivInfo) => {
 
   try {
     conn = await mariaDB.getConnection();
@@ -17,20 +17,20 @@ const postdeliv = async (delivInfo) => {
     } = delivInfo;
 
     // 최근 key 정보 조회
-    let selectedSql = await mariaDB.selectedQuery('selectLastdeliv', {});
-    let lastdeliv = await conn.query(selectedSql, {});
-    let lastdelivId = lastdeliv[0].deliv_id;
+    let selectedSql = await mariaDB.selectedQuery('selectLastDeliv', {});
+    let lastDeliv = await conn.query(selectedSql, {});
+    let lastDelivId = lastDeliv[0].deliv_id;
 
     // deliv key 생성
-    let newdelivId = keys.getNextKeyId(lastdelivId);
-    deliv.deliv_id = newdelivId;
+    let newDelivId = keys.getNextKeyId(lastDelivId);
+    deliv.deliv_id = newDelivId;
 
     // deliv column 정보 배열
     let delivColumn = ['deliv_id', 'deliv_date', 'vendor_id', 'employee_id'];
     let delivParam = converts.convertObjToAry(deliv, delivColumn);
 
     // deliv insert
-    selectedSql = await mariaDB.selectedQuery('insertdeliv', delivParam);
+    selectedSql = await mariaDB.selectedQuery('insertDeliv', delivParam);
     let result = await conn.query(selectedSql, delivParam);
 
     console.log(result);
@@ -39,27 +39,27 @@ const postdeliv = async (delivInfo) => {
     let delivDetailColumn = ['deliv_detail_id', 'deliv_id', 'prod_id', 'deliv_amount', 'deliv_due_date'];
 
     // 최근 key 정보 조회
-    selectedSql = await mariaDB.selectedQuery('selectLastdelivDetail', {});
+    selectedSql = await mariaDB.selectedQuery('selectLastDelivDetail', {});
     let lastdelivDetail = await conn.query(selectedSql, {});
     let lastdelivDetailId = lastdelivDetail[0].deliv_detail_id;
 
     for (let detail of deliv_details) {
       
       // deliv detail key 생성
-      let newdelivDetailId = keys.getNextKeyId(lastdelivDetailId);
-      detail.deliv_detail_id = newdelivDetailId;
-      detail.deliv_id = newdelivId;
+      let newDelivDetailId = keys.getNextKeyId(lastdelivDetailId);
+      detail.deliv_detail_id = newDelivDetailId;
+      detail.deliv_id = newDelivId;
 
       // deliv detail insert
       let delivDetailParam = converts.convertObjToAry(detail, delivDetailColumn);
 
-      let selectedSql = await mariaDB.selectedQuery('insertdelivDetail', delivDetailParam);
+      let selectedSql = await mariaDB.selectedQuery('insertDelivDetail', delivDetailParam);
       result = await conn.query(selectedSql, delivDetailParam);
 
       console.log(result);
 
       // deliv detail insert 완료 시 최근 key 정보 갱신
-      lastdelivDetailId = newdelivDetailId;
+      lastdelivDetailId = newDelivDetailId;
     }
 
     // 정상 완료 시 commit
@@ -173,7 +173,7 @@ const postDeilv = async (delivInfo) => {
 };
 
 module.exports = {
-  postdeliv,
+  postDeliv,
   getDelivTarget,
   getDelivProdTarget,
   postDeilv,
