@@ -1,89 +1,61 @@
 <template>
   <div class="container my-4">
-    <h2 class="mb-4">Product Master Management</h2>
-
     <!-- Search Filter -->
     <div class="card p-3 mb-4">
       <div class="row g-3">
-        <div class="col-md-4">
-          <input v-model="searchName" type="text" class="form-control" placeholder="Search Product Name" />
+        <div class="col-md-3">
+          <input v-model="prod.prod_name" type="text" class="form-control border text-center" @keydown.prevent
+                  @click="showProd = true" placeholder="제품명" />
         </div>
-        <div class="col-md-4">
-          <input v-model="searchId" type="text" class="form-control" placeholder="Search Product ID" />
+        <div class="col-md-3">
+          <input v-model="prod.prod_id" type="text" class="form-control border text-center" placeholder="제품ID" />
         </div>
-        <div class="col-md-4">
-          <select v-model="searchType" class="form-select">
-            <option value="">All Types</option>
-            <option value="Standard">Standard</option>
-            <option value="Premium">Premium</option>
-          </select>
+        <div class="col-md-3">
+          <input v-model="prod.prod_type" type="text" class="form-control border text-center" placeholder="제품분류" />
         </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col text-end">
-          <button class="btn btn-primary" @click="fetchProducts">Search</button>
+        <div class="col-md-3">
+          <button class="btn btn-primary">저장</button>
         </div>
       </div>
     </div>
 
     <div class="row">
-      <!-- Left Side: Products and BOMs -->
+      <!-- Left Side: Products -->
       <div class="col-md-6">
-        <div class="mb-4">
-          <h5>Product List</h5>
-          <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-            <table class="table table-bordered">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Product Code</th>
-                  <th>Product Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(product, idx) in filteredProducts" :key="product.id" @click="selectProduct(product)" style="cursor: pointer;">
-                  <td>{{ idx + 1 }}</td>
-                  <td>{{ product.code }}</td>
-                  <td>{{ product.name }}</td>
-                </tr>
-                <tr v-if="filteredProducts.length === 0">
-                  <td colspan="3" class="text-center">No search results found.</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="card p-3 mb-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+              <h6 class="text-white text-capitalize ps-3">BOM 정보</h6>
+            </div>
           </div>
-        </div>
-
-        <div class="mb-4">
-          <h5>BOM List</h5>
-          <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-            <table class="table table-bordered">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>Component Code</th>
-                  <th>Component Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(bom, idx) in selectedBOMs" :key="bom.id" @click="selectBOM(bom)" style="cursor: pointer;">
-                  <td>{{ idx + 1 }}</td>
-                  <td>{{ bom.componentCode }}</td>
-                  <td>{{ bom.componentName }}</td>
-                </tr>
-                <tr v-if="selectedBOMs.length === 0">
-                  <td colspan="3" class="text-center">No BOM data found.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- BOM Add Form -->
-          <div class="mt-3">
-            <input v-model="newBOM.componentCode" class="form-control mb-2" placeholder="Component Code" />
-            <input v-model="newBOM.componentName" class="form-control mb-2" placeholder="Component Name" />
-            <div class="text-end">
-              <button class="btn btn-success btn-sm" @click="addBOM">Add BOM</button>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0" style="max-height: 300px;">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">제품명</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">제품ID</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">주문수량</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">납품일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(info, index) in orderDetails" v-bind:key="info.order_detail_id">
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.prod_name" readonly
+                        @click="openProdModal(index)" placeholder="제품명"></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.prod_id" readonly></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="number" v-model="info.order_amount"></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="date" v-model="info.deliv_due_date"></td>
+                    <td class="align-middle text-center">
+                      <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -91,54 +63,72 @@
 
       <!-- Right Side: Materials -->
       <div class="col-md-6">
-        <h5>Material List</h5>
-        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-          <table class="table table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th>#</th>
-                <th>Material Code</th>
-                <th>Material Name</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(material, idx) in selectedMaterials" :key="material.id">
-                <td>{{ idx + 1 }}</td>
-                <td>{{ material.materialCode }}</td>
-                <td>{{ material.materialName }}</td>
-                <td>{{ material.quantity }}</td>
-                <td>{{ material.unit }}</td>
-              </tr>
-              <tr v-if="selectedMaterials.length === 0">
-                <td colspan="5" class="text-center">No materials found.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="card p-3 mb-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+              <h6 class="text-white text-capitalize ps-3">자재 정보</h6>
+            </div>
+          </div>
 
-        <!-- Material Add Form -->
-        <div class="mt-3">
-          <input v-model="newMaterial.materialCode" class="form-control mb-2" placeholder="Material Code" />
-          <input v-model="newMaterial.materialName" class="form-control mb-2" placeholder="Material Name" />
-          <input v-model.number="newMaterial.quantity" class="form-control mb-2" type="number" placeholder="Quantity" />
-          <input v-model="newMaterial.unit" class="form-control mb-2" placeholder="Unit" />
-          <div class="text-end">
-            <button class="btn btn-success btn-sm" @click="addMaterial">Add Material</button>
+
+          <div class="card-body px-0 pb-2">
+            <div class="row g-3 mt-2">
+            <div class="col-md-6">
+            <input v-model="materialSearch" type="text" class="form-control border text-center" placeholder="자재명" />
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary" @click="searchMaterial">검색</button>
+            </div>
+          </div>
+            <div class="table-responsive p-0" style="max-height: 300px;">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재명</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재ID</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">주문수량</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">납품일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(info, index) in orderDetails" v-bind:key="info.order_detail_id">
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.prod_name" readonly
+                        @click="openProdModal(index)" placeholder="제품명"></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.prod_id" readonly></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="number" v-model="info.order_amount"></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="date" v-model="info.deliv_due_date"></td>
+                    <td class="align-middle text-center">
+                      <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <ProdModal :visible="showProd" @close="showProd = false" @select="onSelectProd" />
   </div>
 </template>
 
 
+
 <script>
+import ProdModal from '../business/ProdModal.vue';
+
 export default {
-  name: "ProductMaster",
+  components: {
+    ProdModal,
+  },
   data() {
     return {
+      showProd: false,
       searchName: "",
       searchId: "",
       searchType: "",
@@ -158,9 +148,21 @@ export default {
         quantity: 0,
         unit: '',
       },
+      prod:{},
+      materialSearch: '',
     };
   },
   computed: {
+    filteredMaterials() {
+    if (!this.selectedBOM.id) return [];
+    return this.materials
+      .filter(m => m.bomId === this.selectedBOM.id)
+      .filter(m => {
+        return this.materialSearch
+          ? m.materialName.toLowerCase().includes(this.materialSearch.toLowerCase())
+          : true;
+      });
+  },
     filteredProducts() {
       return this.products.filter((p) => {
         const matchesName = this.searchName ? p.name.includes(this.searchName) : true;
@@ -222,6 +224,13 @@ export default {
       this.materials.push({ id: newId, bomId: this.selectedBOM.id, ...this.newMaterial });
       this.newMaterial = { materialCode: '', materialName: '', quantity: 0, unit: '' };
     },
+      onSelectProd(prod) {
+        this.prod = prod;
+      }, 
+      searchMaterial() {
+    // 버튼 클릭 시 computed 강제 반영용 (v-model이니까 사실 없어도 작동)
+    this.materialSearch = this.materialSearch.trim();
+  },
   },
   mounted() {
     this.fetchProducts();
