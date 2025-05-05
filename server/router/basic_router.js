@@ -10,6 +10,7 @@ router.get('/basicProd', async(req, res)=>{
   res.send(list);
 });
 
+// 제품 등록
 router.post('/basicProd', async(req, res)=>{
   let body = req.body;
   let result = await basicService.postProd(body);
@@ -28,6 +29,13 @@ router.get('/basicMate', async(req, res)=>{
   let params = req.query;
   let list = await basicService.getMate(params);
   res.send(list);
+});
+
+// 자재 등록
+router.post('/basicMate', async(req, res)=>{
+  let body = req.body;
+  let result = await basicService.postMate(body);
+  res.send(result);
 });
 
 // 공정 조건 조회
@@ -55,6 +63,13 @@ router.get('/basicProcFlow', async(req, res)=>{
   let params = req.query;
   let bom = await basicService.getProcFlow(params);
   res.send(bom);
+});
+
+// 공정흐름도 등록
+router.post('/basicProcFlow', async(req, res)=>{
+  let body = req.body;
+  let result = await basicService.postProcFlow(body);
+  res.send(result);
 });
 
 // 코드 조회 (main -> sub)

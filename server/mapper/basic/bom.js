@@ -74,13 +74,12 @@ FROM t_bom
 ORDER BY bom_id DESC
 LIMIT 1`;
 
-// 최근 BOM 상세 조회회
+// 최근 BOM 상세 조회
 const selectLastBomDetail =
 `SELECT bom_detail_id
 FROM t_bom_detail
 ORDER BY bom_detail_id DESC
 LIMIT 1`;
-
 
 module.exports = {
   selectBom,

@@ -89,7 +89,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in materials" v-bind:key="info.order_detail_id">
+                  <tr v-for="(info, index) in materials" v-bind:key="info.mate_id">
                     <td class="align-middle text-center">
                       <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
                     <td class="align-middle text-center">
@@ -116,7 +116,7 @@
 
 
 <script>
-import ProdModal from '../business/ProdModal.vue';
+import ProdModal from '../modal/ProdModal.vue';
 import axios from 'axios';
 
 export default {

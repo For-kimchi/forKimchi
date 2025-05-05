@@ -14,7 +14,7 @@
           <input v-model="prod.prod_type" type="text" class="form-control border text-center" placeholder="제품분류" />
         </div>
         <div class="col-md-3">
-          <button class="btn btn-primary">저장</button>
+          <button class="btn btn-primary" @click="save">저장</button>
         </div>
       </div>
     </div>
@@ -34,8 +34,9 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">순번</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정ID</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정명</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정순번</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
                   </tr>
                 </thead>
                 <!-- <tbody>
@@ -50,11 +51,12 @@
                       <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
                   </tr>
                 </tbody> -->
-                <draggable tag="tbody" :list="procFlow.flow_detail" item-key="id" @end="updateRowNumbers">
+                <draggable tag="tbody" :list="procFlow.flow_details" item-key="id" @end="updateRowNumbers">
                   <template #item="{ element, index }">
                     <tr>
                       <td class="text-center">{{ index + 1 }}</td>
                       <td class="text-center">{{ element.proc_id }}</td>
+                      <td class="text-center">{{ element.proc_name }}</td>
                       <td class="text-center"><button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
                     </tr>
                   </template>
@@ -93,16 +95,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in procs" v-bind:key="info.order_detail_id">
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.proc_id" readonly>
-                    </td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.proc_name" readonly>
-                    </td>
-                    <td class="align-middle text-center">
-                      <button class="btn btn-success ms-2" @click="addRows(index)">추가</button>
-                    </td>
+                  <tr v-for="(info, index) in procs" v-bind:key="info.proc_id">
+                    <td class="text-center">{{ info.proc_id }}</td>
+                    <td class="text-center">{{ info.proc_name }}</td>
+                    <td class="text-center"><button class="btn btn-success ms-2" @click="addRows(index)">추가</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -117,7 +113,7 @@
 </template>
 
 <script>
-  import ProdModal from '../business/ProdModal.vue';
+  import ProdModal from '../modal/ProdModal.vue';
   import axios from 'axios';
   import draggable from 'vuedraggable'
 
@@ -130,9 +126,15 @@
       return {
         showProd: false,
         searchName: '',
-        procFlow: {},
+        procFlow: {
+          flow_details: [],
+        },
         procs: [],
         prod: {},
+        employee: {
+          employee_id: 'EMP-001',
+          employee_name: '홍길동',
+        }
       };
     },
     computed: {},
@@ -143,7 +145,7 @@
           params: {
             prod_id: this.prod.prod_id
           }
-        })
+        }).catch(err => console.log(err));
 
         this.procFlow = result.data;
       },
@@ -153,7 +155,7 @@
           params: {
             proc_name : this.searchName
           }
-        })
+        }).catch(err => console.log(err));
 
         this.procs = result.data;
       },
@@ -165,15 +167,16 @@
         this.getFlow();
       },
       removeRows(index) {
-        this.procFlow.flow_detail.splice(index, 1);
+        this.procFlow.flow_details.splice(index, 1);
       },
       addRows(index) {
 
-        let exist = this.procFlow.flow_detail.some(item => item.proc_id === this.procs[index].proc_id);
+        let exist = this.procFlow.flow_details.some(item => item.proc_id === this.procs[index].proc_id);
 
         if (!exist) {
-          this.procFlow.flow_detail.push({
+          this.procFlow.flow_details.push({
             proc_id: this.procs[index].proc_id,
+            proc_name: this.procs[index].proc_name,
           })
         } else {
           alert('이미 추가된 공정입니다')
@@ -181,7 +184,16 @@
       },
       updateRowNumbers() {
 
-      }
+      },
+      async save() {
+
+        this.procFlow.employee_id = this.employee.employee_id;
+
+        let result = await axios.post('/api/basicProcFlow', this.procFlow)
+        .catch(err => console.log(err));
+
+        alert(result);
+      },
     },
     mounted() {},
   };

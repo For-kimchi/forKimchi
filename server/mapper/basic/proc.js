@@ -38,15 +38,18 @@ const selectProcFlow =
         reg_date,
         proc_flow_status
  FROM t_proc_flow
- WHERE prod_id = ?`;
+ WHERE prod_id = ?
+ AND proc_flow_status = '1v'`;
 
 // 공정 흐름도 상세 조회
 const selectProcFlowDetail =
-  `SELECT proc_flow_detail_id,
-        proc_flow_id,
-        proc_id,
-        proc_seq
- FROM t_proc_flow_detail
+  `SELECT pfd.proc_flow_detail_id,
+        pfd.proc_flow_id,
+        pfd.proc_id,
+        p.proc_name,
+        pfd.proc_seq
+ FROM t_proc_flow_detail pfd
+ JOIN t_proc p ON pfd.proc_id = p.proc_id
  WHERE proc_flow_id = ?`;
 
 // 공정 흐름도 등록
@@ -61,7 +64,7 @@ const insertProcFlowDetail =
   `INSERT INTO t_proc_flow_detail
 (proc_flow_detail_id, proc_flow_id, proc_id, proc_seq)
 VALUES
-(?, ?, ?, CURRENT_TIMESTAMP, '1v')`;
+(?, ?, ?, ?)`;
 
 // 공정 흐름도 갱신
 const updateProcFlow =
@@ -85,6 +88,28 @@ const deleteProcFlowDetail =
   `DELETE FROM t_proc_flow_detail
 WHERE proc_flow_detail_id = ?`;
 
+// 공정흐름도 비활성화화
+const updateProcFlowStatus =
+`UPDATE t_proc_flow
+SET proc_flow_status = '2v'
+WHERE prod_id = ?
+`;
+
+// 최근 공정흐름도도 조회
+const selectLastProcFlow =
+`SELECT proc_flow_id
+FROM t_proc_flow
+ORDER BY proc_flow_id DESC
+LIMIT 1`;
+
+// 최근 공정흐름도 상세 조회
+const selectLastProcFlowDetail =
+`SELECT proc_flow_detail_id
+FROM t_proc_flow_detail
+ORDER BY proc_flow_detail_id DESC
+LIMIT 1`;
+
+
 module.exports = {
   selectProc,
   insertProc,
@@ -98,4 +123,7 @@ module.exports = {
   updateProcFlowDetail,
   deleteProcFlow,
   deleteProcFlowDetail,
+  updateProcFlowStatus,
+  selectLastProcFlow,
+  selectLastProcFlowDetail
 }

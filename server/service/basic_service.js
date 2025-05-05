@@ -21,6 +21,7 @@ const getProd = async (params) => {
   return list;
 };
 
+// 제품 등록
 const postProd = async (body) => {
 
   console.log(body);
@@ -87,6 +88,35 @@ const getMate = async (params) => {
   return list;
 };
 
+// 자재 등록
+const postMate = async (body) => {
+
+  console.log(body);
+
+  let result;
+  if (body.mate_id) {
+
+    result = await mariaDB.query("updateMate", [body, body.mate_id]);
+
+  } else {
+
+    let last = await mariaDB.query("selectLastMate", {});
+    let lastId = last[0].mate_id;
+
+    let newId = keys.getNextUniqueId(lastId);
+
+    body.mate_id = newId;
+
+    let column = ['mate_id', 'mate_name', 'mate_unit', 'mate_type'];
+    let param = converts.convertObjToAry(body, column);
+
+    result = await mariaDB.query("insertMate", param);
+
+  }
+
+  return result;
+};
+
 // 공정 조건 조회
 const getProc = async (params) => {
   let count = Object.keys(params).length;
@@ -137,6 +167,10 @@ const getBom = async (params) => {
 
 const postBom = async (body) => {
 
+  let res = {
+    success: true,
+  };
+
   try {
       conn = await mariaDB.getConnection();
       await conn.beginTransaction();
@@ -150,6 +184,8 @@ const postBom = async (body) => {
 
       let selectedSql = await mariaDB.selectedQuery('updateBomStatus', bom.prod_id);
       let result = await conn.query(selectedSql, bom.prod_id);
+
+      console.log(result);
   
       selectedSql = await mariaDB.selectedQuery('selectLastBom', {});
       let lastItem = await conn.query(selectedSql, {});
@@ -191,11 +227,15 @@ const postBom = async (body) => {
       // 정상 완료 시 commit
       conn.commit();
   
-      return result;
+      return res;
     } catch (err) {
       // error 발생 시 console 출력 및 rollback
       console.log(err);
       if (conn) conn.rollback();
+
+      res.success = false;
+      
+      return res;
     } finally {
       // connection 반환
       if (conn) conn.release();
@@ -208,17 +248,109 @@ const postBom = async (body) => {
 const getProcFlow = async (params) => {
   let param = params.prod_id;
   let procFlowList = await mariaDB.query("selectProcFlow", param);
-  let procFlow = procFlowList[0];
 
-  if (procFlow.proc_flow_id) {
+  let procFlow;
+  if (procFlowList.length > 0) {
 
-    let procFlowDetailList = await mariaDB.query("selectProcFlowDetail", procFlow.proc_flow_id);
+    procFlow = procFlowList[0];
 
-    procFlow.flow_detail = procFlowDetailList;
+    if (procFlow.proc_flow_id) {
+
+      let procFlowDetailList = await mariaDB.query("selectProcFlowDetail", procFlow.proc_flow_id);
+  
+      procFlow.flow_details = procFlowDetailList;
+    }
+
+  } else {
+
+    procFlow = {
+      prod_id: params.prod_id,
+      flow_details: [],
+    }
+
   }
 
   return procFlow;
 };
+
+const postProcFlow = async (body) => {
+
+  let res = {
+    success: true,
+  };
+
+  try {
+      conn = await mariaDB.getConnection();
+      await conn.beginTransaction();
+  
+      console.log(body);
+  
+      const {
+        flow_details,
+        ...procFlow
+      } = body;
+
+      let selectedSql = await mariaDB.selectedQuery('updateProcFlowStatus', procFlow.prod_id);
+      let result = await conn.query(selectedSql, procFlow.prod_id);
+      
+      console.log(result);
+  
+      selectedSql = await mariaDB.selectedQuery('selectLastProcFlow', {});
+      let lastItem = await conn.query(selectedSql, {});
+      let lastKey = lastItem[0].proc_flow_id;
+  
+      let newKey = keys.getNextUniqueId(lastKey);
+      procFlow.proc_flow_id = newKey;
+  
+      let column = ['proc_flow_id', 'prod_id', 'employee_id'];
+      let param = converts.convertObjToAry(procFlow, column);
+  
+      selectedSql = await mariaDB.selectedQuery('insertProcFlow', param);
+      result = await conn.query(selectedSql, param);
+  
+      console.log(result);
+  
+      column = ['proc_flow_detail_id', 'proc_flow_id', 'proc_id', 'proc_seq'];
+  
+      selectedSql = await mariaDB.selectedQuery('selectLastProcFlowDetail', {});
+      lastItem = await conn.query(selectedSql, {});
+      lastKey = lastItem[0].proc_flow_detail_id;
+  
+      for (let i = 0; i < flow_details.length; i++) {
+        
+        newKey = keys.getNextUniqueId(lastKey);
+        flow_details[i].proc_flow_detail_id = newKey;
+        flow_details[i].proc_flow_id = procFlow.proc_flow_id;
+        flow_details[i].proc_seq = i + 1; 
+  
+        param = converts.convertObjToAry(flow_details[i], column);
+  
+        let selectedSql = await mariaDB.selectedQuery('insertProcFlowDetail', param);
+        result = await conn.query(selectedSql, param);
+  
+        console.log(result);
+  
+        lastKey = newKey;
+      }
+  
+      // 정상 완료 시 commit
+      conn.commit();
+      
+      return res;
+    } catch (err) {
+      // error 발생 시 console 출력 및 rollback
+      console.log(err);
+      if (conn) conn.rollback();
+
+      res.success = false;
+
+      return res;
+    } finally {
+      // connection 반환
+      if (conn) conn.release();
+    }
+
+}
 
 // 코드 조회
 const getCode = async (mainCode) => {
@@ -231,9 +363,11 @@ module.exports = {
   postProd,
   getVendor,
   getMate,
+  postMate,
   getProc,
   getBom,
   postBom,
   getProcFlow,
+  postProcFlow,
   getCode,
 }
