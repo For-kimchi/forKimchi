@@ -40,10 +40,10 @@ router.put('/planDetailSave', async (req, res)=>{
 });
 
 // pldt 승인버튼(수정)
-router.put('/plandtbtn/:id', async(req, res)=>{
-  let planId = req.params.id
-  let plInfo = await prod_service.pldtperm(planId);
-  res.send(plInfo);
+router.put('/plandtbtn', async(req, res)=>{
+  let planDetailList = req.body
+  let result = await prod_service.pldtperm(planDetailList);
+  res.send(result);
 });
 
 module.exports = router;
