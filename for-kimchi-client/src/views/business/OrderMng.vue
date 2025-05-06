@@ -15,25 +15,32 @@
               <h6 class="text-white text-capitalize ps-3">주문정보</h6>
             </div>
           </div>
-          <div class="row g-3 mt-3">
-            <div class="col-md-2">
-              <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
+          <div class="row g-3 mt-3 mb-3 pe-3">
+            <div class="col-md-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label mb-0 " style="width: 100px;">주문일자</label>
+                <input v-model="order_date" type="Date" class="form-control border text-center" placeholder="" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label mb-0 " style="width: 100px;">거래처명</label>
                 <input v-model="vendor.vendor_name" type="text" class="form-control border text-center" @keydown.prevent
                   @click="showVendor = true" placeholder="거래처명" />
               </div>
             </div>
-            <div class="col-md-2">
-              <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">주문일자</label>
-                <input v-model="order_date" type="Date" class="form-control border text-center" placeholder="" />
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-3 d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">담당자명</label>
+            <div class="col-md-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label mb-0 " style="width: 100px;">담당자명</label>
                 <input v-model="employee.employee_name" type="text" class="form-control border text-center" readonly
                   placeholder="담당자명" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label mb-0 " style="width: 100px;">비고</label>
+                <input v-model="memo" type="text" class="form-control border text-center"
+                  placeholder="비고" />
               </div>
             </div>
           </div>
@@ -92,8 +99,8 @@
 </template>
 <script>
 import axios from 'axios';
-import ProdModal from './ProdModal.vue';
-import VendorModal from './VendorModal.vue';
+import ProdModal from '../modal/ProdModal.vue';
+import VendorModal from '../modal/VendorModal.vue';
 
 export default {
     name: "주문관리",
@@ -113,6 +120,7 @@ export default {
           employee_id: 'EMP-001',
           employee_name: '김영업',
         },
+        memo: '',
       }
     },
     created(){
@@ -124,6 +132,7 @@ export default {
           employee_id : this.employee.employee_id,
           order_date: this.order_date,
           order_details: this.orderDetails,
+          memo: this.memo,
         }
 
         let result = await axios.post('/api/order', params)
@@ -138,8 +147,20 @@ export default {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       },
+      getDifferDate() {
+        const baseDate = new Date(this.order_date);
+
+        baseDate.setDate(baseDate.getDate() + 14);
+        
+        const year = baseDate.getFullYear();
+        const month = String(baseDate.getMonth() + 1).padStart(2, '0');
+        const day = String(baseDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      },
       addRow(){
-        this.orderDetails.push({});
+        this.orderDetails.push({
+          deliv_due_date: this.getDifferDate(),
+        });
       },
       removeRows(index) {
         this.orderDetails.splice(index, 1);

@@ -11,7 +11,8 @@ const proc = require('./basic/proc.js');
 const product = require('./basic/prod.js');
 const vendor = require('./basic/vendor.js');
 // 영업
-const business = require('./business/business.js');
+const order = require('./business/order.js');
+const deliv = require('./business/deliv.js');
 // 생산
 const plan = require('./production/prodpl.js');
 // 검사
@@ -32,7 +33,8 @@ module.exports = {
     ...product,
     ...vendor,
     //영업
-    ...business,
+    ...order,
+    ...deliv,
     // 생산
     ...plan,
     //검사

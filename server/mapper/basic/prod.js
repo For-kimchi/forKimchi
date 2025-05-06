@@ -22,15 +22,9 @@ const insertProd =
  prod_type, 
  prod_name, 
  prod_size, 
- prod_unit, 
- prod_pack_size, 
- prod_pack_unit, 
- expired_date_size, 
- expired_date_unit, 
- prod_min_qunatity, 
- memo)
+ prod_unit)
  VALUES
- (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+ (?, ?, ?, ?, ?)`;
 
 // 제품 갱신
 const updateProd =
@@ -43,9 +37,18 @@ const deleteProd =
   `DELETE FROM t_prod
  WHERE prod_id = ?`;
 
+ // 최근 제품 조회
+ const selectLastProd =
+  `SELECT prod_id
+FROM t_prod
+ORDER BY prod_id DESC
+LIMIT 1`;
+
+
 module.exports = {
   selectProd,
   insertProd,
   updateProd,
   deleteProd,
+  selectLastProd,
 }
