@@ -11,7 +11,7 @@ const selectDelivTarget =
  ORD.vendor_id,
  VE.vendor_name,
  PR.prod_name,
- ORDD.order_amount,
+(ORDD.order_amount - PRD_DELIV(ORDD.order_detail_id)) order_amount,
  ORDD.deliv_due_date,
  ORDD.order_status,
  ORDD.memo
@@ -30,12 +30,12 @@ const selectDelivProdTarget =
   PR.prod_name,
   WA.warehouse_id,
   WA.warehouse_name,
-  PW.prod_amount,
+  (PW.prod_amount - PLOT_USED(PW.prod_lot)) prod_amount,
   PW.expired_date
   FROM t_prod_warehouse PW
   JOIN t_prod PR ON PW.prod_id = PR.prod_id
   JOIN t_warehouse WA ON PW.warehouse_id = WA.warehouse_id
-  WHERE PW.lot_status <> '1aa'
+  WHERE PW.lot_status <> '3aa'
   AND PW.prod_id = ?
   ORDER BY PW.prod_lot
 `;
@@ -65,6 +65,16 @@ const insertDelivDetail =
 VALUES
 (?, ?, ?, ?, ?, ?)`;
 
+const updatePlotStatus = 
+`UPDATE t_prod_warehouse
+SET lot_status = '3aa'
+WHERE prod_lot = ?`;
+
+const updateOrderDetailStatus = 
+`UPDATE t_order_detail
+SET order_status = '4z'
+WHERE order_detail_id = ?`;
+
 module.exports = {
   selectDelivTarget,
   selectDelivProdTarget,
@@ -72,4 +82,6 @@ module.exports = {
   insertDeliv,
   selectLastDelivDetail,
   insertDelivDetail,
+  updatePlotStatus,
+  updateOrderDetailStatus,
 }

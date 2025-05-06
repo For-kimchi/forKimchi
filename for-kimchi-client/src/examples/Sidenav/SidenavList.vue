@@ -88,9 +88,10 @@
           <template v-slot:list>
             <SidenavCollapseItem refer="/basicprod" miniIcon="" text="제품관리"/>
             <SidenavCollapseItem refer="/basicmate" miniIcon="" text="자재관리"/>
-            <SidenavCollapseItem refer="/basicbom" miniIcon="" text="BOM등록"/>
+            <SidenavCollapseItem refer="/basicbom" miniIcon="" text="BOM관리"/>
             <SidenavCollapseItem refer="/basicproc" miniIcon="" text="공정관리"/>
-            <SidenavCollapseItem refer="/basicprocflow" miniIcon="" text="공정흐름도등록"/>
+            <SidenavCollapseItem refer="/basicprocflow" miniIcon="" text="공정흐름도관리"/>
+            <SidenavCollapseItem refer="/basicvendor" miniIcon="" text="거래처관리"/>
             <sidenav-collapse-item refer="/basicemp" miniIcon="" text="사원관리"/>
           </template>
         </sidenav-collapse>

@@ -1,10 +1,10 @@
 <template>
-  <div class="container-fluid py-4">
+  <div class="container-fluid">
     <!-- 검색 -->
     <div class="row mt-3">
       <div class="col text-end">
-        <button class="btn btn-success" @click="search">조회</button>
-        <button class="btn btn-info ms-2" @click="resetForm">등록</button>
+        <button class="btn btn-success" @click="getOrders">조회</button>
+        <button class="btn btn-info ms-2" @click="showSelected">승인</button>
       </div>
     </div>
 
@@ -35,60 +35,54 @@
         <div class="col-md-2">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">시작일자</label>
-            <input v-model="searchStartDate" type="Date" class="form-control border text-center" placeholder="" />
+            <input v-model="searchStartDate" type="date" class="form-control border text-center" placeholder="" />
           </div>
         </div>
         <div class="col-md-2">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">종료일자</label>
-            <input v-model="searchStartDate" type="Date" class="form-control border text-center" placeholder="" />
+            <input v-model="searchEndDate" type="date" class="form-control border text-center" placeholder="" />
           </div>
         </div>
       </div>
     </div>
 
-    
     <div class="row">
-        <!-- 행 영역 div-->
       <div class="col-12">
-        <!-- 테이블 div-->
         <div class="card my-4">
-            <!--항목명 div-->
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">생산계획</h6>
+              <h6 class="text-white text-capitalize ps-3">주문내역</h6>
             </div>
           </div>
-          <div class="card-body px-0 pb-2">
+          <div class="card-body px-0 pb-2" style="max-height: 300px; overflow: auto;">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox"></th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산계획ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">담당자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">계획등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품예정일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">최종계획상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">
+                      <input type="checkbox" v-model="allSelected" @change="toggleAll" >
+                    </th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">주문ID</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">주문일자</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">거래처</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">담당자</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">승인자</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">주문상태</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(info.order_id)">
-                    <td class="align-middle text-center"><input type="checkbox"></td>
-                    <td class="align-middle text-center">{{ index + 1 }}</td>
-                    <td class="align-middle text-center">{{ info.plan_id}}</td>
+                  <tr v-for="(info, index) in orders" v-bind:key="info.order_id" @click="getOrderDetails(info.order_id)">
+                    <td class="align-middle text-center">
+                      <input type="checkbox" v-if="info.order_final_status === '1a'" v-model="info.selected" @change="check">
+                    </td>
                     <td class="align-middle text-center">{{ info.order_id}}</td>
+                    <td class="align-middle text-center">{{ info.order_date}}</td>
                     <td class="align-middle text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle text-center">{{ info.employee_id }}</td>
-                    <td class="align-middle text-center">{{ info.reg_date }}</td>
-                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-info">{{ info.order_status }}</span></td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_final_status }}</span></td>
+                    <td class="align-middle text-center">{{ info.manager_id }}</td>
+                    <td class="align-middle text-center">{{ info.order_final_status }}</td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
@@ -97,49 +91,34 @@
           </div>
         </div>
       </div>
-    <!-- row div-->
     </div>
+
     <div class="row">
       <div class="col-12">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div
-              class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3"
-            >
-              <h6 class="text-white text-capitalize ps-3">생산계획상세</h6>
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">주문상세내역</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="text-end pe-3 ">
-              <button class="btn btn-success" v-on:click="addRow">추가</button>
-              <button class="btn btn-info ms-2 me-2">저장</button>
-            </div>
-            <div class="table-responsive p-0">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox"></th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세계획상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">시작일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">종료일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in proddtlist" v-bind:key="order_detail_id">
-                    <td class="align-middle text-center"><input type="checkbox"></td>
-                    <td class="align-middle text-center">{{ index + 1 }}</td>
-                    <td class="align-middle text-center"><input type="text" v-model="info.order_detail_id"></td>
+                  <tr v-for="(info, index) in orderDetails" v-bind:key="info.order_detail_id">
+                    <td class="align-middle text-center">{{ info.order_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
                     <td class="align-middle text-center">{{ info.order_amount }}</td>
-                    <td class="align-middle text-center">{{ info.plan_amount }}</td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
-                    <td class="align-middle text-center">{{ info.plan_start_date }}</td>
-                    <td class="align-middle text-center">{{ info.plan_end_date }}</td>
+                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
+                    <td class="align-middle text-center">{{ info.order_status }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -148,52 +127,87 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 <script>
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
-    name: "Prodplan",
+    name: "주문조회",
     data(){
       return {
-        // plandtList : [
-        //   { no : '',
-        //     planId : '',
-        //     orderId : '',
-        //     planStatus :'',
-        //     detailList : [{}, {}],
-        //   }
-        // ],
-        selectedDetail : [],
-        prodlist : [],
-        proddtlist : []
+        searchName: "",
+        searchType: "",
+        searchStartDate: this.getTodayDate(),
+        searchEndDate: this.getTodayDate(),
+        orders : [],
+        orderDetails : [],
+        codes: [],
+        allSelected: false,
       }
     },
-    created(){
-      this.prodList();
-      // this.proddtList(orderId);
-    },
-    // 생산계획 조회
     methods : {
-      async prodList(){
-        let ajaxRes =
-        await axios.get(`/api/prodlist`)
+      async getOrders(){
+        const params = {};
+      
+        if (this.searchName) params.vendor_name = this.searchName;
+        if (this.searchType) params.order_final_status = this.searchType;
+        if (this.searchStartDate) params.startDate = this.searchStartDate;
+        if (this.searchEndDate) params.endDate = this.searchEndDate;
+
+        console.log(params);
+
+        let result =
+        await axios.get(`/api/order`, {
+                    params
+                  })
                   .catch(err => console.log(err));
-                  this.prodlist = ajaxRes.data;
+
+        this.orders = result.data.map(item => ({ ...item, selected: false}));
+        this.allSelected = false;
       },
-      // 생산계획 상세 조회
-      async proddtList(orderid){
-        let  ajaxRes =
-        await axios.get(`/api/proddtlist/${orderid}`)
+      async getOrderDetails(orderid) {
+        let  result =
+        await axios.get(`/api/order/${orderid}`)
                    .catch(err => console.log(err));
-        this.proddtlist = ajaxRes.data;
+        this.orderDetails = result.data;
       },
-      addRow(){
-        this.proddtlist.push({});
+      async getOrderType() {
+      let res = await axios.get(`/api/codes/A1`)
+        .catch(err => console.log(err));
+      this.codes = res.data;
+      },
+      async confirm() {
+
+      },
+      getTodayDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      },
+      yyyyMMdd(fullDateTime) { 
+        let date = new Date(fullDateTime);
+        return date.toISOString().split('T')[0]
+      },
+      toggleAll() {
+        this.orders.forEach(item => {
+          if (item.order_final_status == '1a') {
+            item.selected = this.allSelected;
+          }
+        });
+      },
+      check() {
+        this.allSelected = this.orders.every(item => item.selected);
+      },
+      showSelected() {
+        const selectedItems = this.orders.filter(item => item.selected);
+        console.log('선택된 항목:', selectedItems);
       }
+    },
+    created() {
+      this.getOrderType();
     }
-    
 }
 
 </script>

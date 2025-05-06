@@ -9,6 +9,20 @@ router.post('/order', async(req, res)=>{
   res.send(result);
 });
 
+// 주문서 조회
+router.get('/order', async(req, res)=>{
+  let params = req.query;
+  let result = await business_service.getOrder(params);
+  res.send(result);
+});
+
+// 주문서 조회
+router.get('/order/:id', async(req, res)=>{
+  let id = req.params.id;
+  let result = await business_service.getOrderDetail(id);
+  res.send(result);
+});
+
 // 납품대상 조회
 router.get('/delivTarget', async(req, res)=>{
   let params = req.query;

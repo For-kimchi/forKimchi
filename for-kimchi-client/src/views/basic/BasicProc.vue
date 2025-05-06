@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <div class="card p-3 mb-4">
+    <div class="card p-3 mb-3">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
           <h6 class="text-white text-capitalize ps-3">공정조회</h6>
@@ -16,19 +16,27 @@
       </div>
       <div class="row g-3 mt-3">
         <div class="col-md-3">
-          공정명<input v-model="searchName" type="text" class="form-control" placeholder="공정명" />
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">공정명</label>
+            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="공정명" />
+          </div>
         </div>
         <div class="col-md-3">
-          공정ID<input v-model="searchId" type="text" class="form-control" placeholder="공정ID" />
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">공정ID</label>
+            <input v-model="searchId" type="text" class="form-control border text-center" placeholder="공정ID" />
+          </div>
         </div>
         <div class="col-md-3">
-          공정분류
-          <select v-model="searchType" class="form-select">
-            <option value="">전체</option>
-            <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">공정분류</label>
+            <select v-model="searchType" class="form-select text-center">
+              <option value="">전체</option>
+              <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
-            </option>
-          </select>
+              </option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -38,7 +46,7 @@
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">제품목록</h6>
+              <h6 class="text-white text-capitalize ps-3">공정목록</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -46,22 +54,16 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="align-middle text-center">No</th>
-                    <th class="align-middle text-center">제품코드</th>
-                    <th class="align-middle text-center">제품명</th>
-                    <th class="align-middle text-center">규격</th>
-                    <th class="align-middle text-center">단위</th>
-                    <th class="align-middle text-center">제품분류</th>
+                    <th class="align-middle text-center">공정ID</th>
+                    <th class="align-middle text-center">공정명</th>
+                    <th class="align-middle text-center">공정분류</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, idx) in items" :key="item.prod_id" @click="editItem(item)">
-                    <td class="align-middle text-center">{{ idx + 1 }}</td>
-                    <td class="align-middle text-center">{{ item.prod_id }}</td>
-                    <td class="align-middle text-center">{{ item.prod_name }}</td>
-                    <td class="align-middle text-center">{{ item.prod_size }}</td>
-                    <td class="align-middle text-center">{{ item.prod_unit }}</td>
-                    <td class="align-middle text-center">{{ item.prod_type }}</td>
+                  <tr v-for="(item, idx) in items" :key="item.proc_id" @click="editItem(item)">
+                    <td class="align-middle text-center">{{ item.proc_id }}</td>
+                    <td class="align-middle text-center">{{ item.proc_name }}</td>
+                    <td class="align-middle text-center">{{ item.proc_type }}</td>
                   </tr>
                   <tr v-if="items.length === 0">
                     <td colspan="6" class="text-center">검색된 결과가 없습니다</td>
@@ -75,25 +77,18 @@
 
       <div class="col-md-4">
         <div class="card p-3">
-          <div class="mb-3">
-            <label class="form-label">제품코드</label>
-            <input v-model="selected.prod_id" type="text" class="form-control" />
+          <h5>{{ action }}</h5>
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">공정ID</label>
+            <input v-model="selected.proc_id" type="text" class="form-control border text-center" readonly/>
           </div>
-          <div class="mb-3">
-            <label class="form-label">제품명</label>
-            <input v-model="selected.prod_name" type="text" class="form-control" />
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">공정명</label>
+            <input v-model="selected.proc_name" type="text" class="form-control border text-center" />
           </div>
-          <div class="mb-3">
-            <label class="form-label">규격</label>
-            <input v-model="selected.prod_size" type="text" class="form-control" />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">단위</label>
-            <input v-model="selected.prod_unit" type="text" class="form-control" />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">제품분류</label>
-            <select v-model="selected.prod_type" class="form-select">
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">공정분류</label>
+            <select v-model="selected.proc_type" class="form-select text-center">
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
               </option>
@@ -122,39 +117,61 @@
         items: [],
         codes: [],
         selected: {},
+        action: '등록',
       };
     },
     computed: {
     },
     methods: {
-    async getBasicProd() {
-      let res = await axios.get('/api/basicProd')
+    async getBasicProc() {
+      const params = {};
+      
+      if (this.searchName) params.proc_name = this.searchName;
+      if (this.searchId) params.proc_id = this.searchId;
+      if (this.searchType) params.proc_type = this.searchType;
+
+      let res = await axios.get('/api/basicProc', {
+        params
+      })
         .catch(err => console.log(err));
       this.items = res.data;
     },
-    async getProdType() {
-      let res = await axios.get(`/api/codes/F1`)
+    async getProcType() {
+      let res = await axios.get(`/api/codes/G1`)
         .catch(err => console.log(err));
       this.codes = res.data;
     },
       search() {
-        this.getBasicProd();
+        this.getBasicProc();
       },
       editItem(item) {
+        this.action = '수정',
         this.selected = {
           ...item
         };
       },
       resetForm() {
+        this.action = '등록',
         this.selected = {
         };
       },
-      save() {
-        this.resetForm();
+      async save() {
+        let result = await axios.post('/api/basicProc', this.selected)
+          .catch(err => console.log(err));
+        console.log(result);
+
+        if (result.data.affectedRows > 0) {
+          alert('저장이 완료되었습니다');
+          this.getBasicProc();
+          this.resetForm();
+        } else {
+          alert('저장 과정에서 오류가 발생했습니다');
+        }
+
       },
     },
     created() {
-      this.getProdType();
+      this.getProcType();
     }
   };
 </script>

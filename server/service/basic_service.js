@@ -69,6 +69,8 @@ const getVendor = async (params) => {
   return list;
 };
 
+// 거래처 등록
+
 // 자재 조건 조회
 const getMate = async (params) => {
   let count = Object.keys(params).length;
@@ -135,6 +137,36 @@ const getProc = async (params) => {
   let list = await mariaDB.query("selectProc", keyword);
   return list;
 };
+
+// 공정 등록
+const postProc = async (body) => {
+
+  console.log(body);
+
+  let result;
+  if (body.proc_id) {
+
+    result = await mariaDB.query("updateProc", [body, body.proc_id]);
+
+  } else {
+
+    let last = await mariaDB.query("selectLastProc", {});
+    let lastId = last[0].proc_id;
+
+    let newId = keys.getNextUniqueId(lastId);
+
+    body.proc_id = newId;
+
+    let column = ['proc_id', 'proc_name', 'proc_type'];
+    let param = converts.convertObjToAry(body, column);
+
+    result = await mariaDB.query("insertProc", param);
+
+  }
+
+  return result;
+};
+
 
 // BOM
 // BOM 조회
@@ -365,6 +397,7 @@ module.exports = {
   getMate,
   postMate,
   getProc,
+  postProc,
   getBom,
   postBom,
   getProcFlow,
