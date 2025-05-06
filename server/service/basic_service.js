@@ -70,6 +70,34 @@ const getVendor = async (params) => {
 };
 
 // 거래처 등록
+const postVendor = async (body) => {
+
+  console.log(body);
+
+  let result;
+  if (body.vendor_id) {
+
+    result = await mariaDB.query("updateVendor", [body, body.vendor_id]);
+
+  } else {
+
+    let last = await mariaDB.query("selectLastVendor", {});
+    let lastId = last[0].vendor_id;
+
+    let newId = keys.getNextUniqueId(lastId);
+
+    body.vendor_id = newId;
+
+    let column = ['vendor_id', 'vendor_name', 'vendor_number', 'vendor_tel', 'vendor_addr', 'vendor_type'];
+    let arrayParam = converts.convertObjToAry(body, column);
+
+    result = await mariaDB.query("insertVendor", arrayParam);
+
+  }
+
+  return result;
+};
+
 
 // 자재 조건 조회
 const getMate = async (params) => {
@@ -394,6 +422,7 @@ module.exports = {
   getProd,
   postProd,
   getVendor,
+  postVendor,
   getMate,
   postMate,
   getProc,

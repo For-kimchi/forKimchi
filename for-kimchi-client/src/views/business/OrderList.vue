@@ -1,24 +1,24 @@
 <template>
   <div class="container-fluid">
     <!-- 검색 -->
-    <div class="row mt-3">
+    <div class="row">
       <div class="col text-end">
         <button class="btn btn-success" @click="getOrders">조회</button>
-        <button class="btn btn-info ms-2" @click="showSelected">승인</button>
+        <button class="btn btn-info ms-2" @click="confirm">승인</button>
       </div>
     </div>
 
-    <div class="card p-3 mb-4">
+    <div class="card mt-3 mb-5">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+        <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
           <h6 class="text-white text-capitalize ps-3">주문조회</h6>
         </div>
       </div>
-      <div class="row g-3 mt-3">
+      <div class="row g-3 mt-3 ms-3">
         <div class="col-md-2">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
-            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="제품명" />
+            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="거래처명" />
           </div>
         </div>
         <div class="col-md-2">
@@ -47,11 +47,9 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-12">
-        <div class="card my-4">
+        <div class="card mb-5">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">주문내역</h6>
             </div>
           </div>
@@ -78,7 +76,7 @@
                       <input type="checkbox" v-if="info.order_final_status === '1a'" v-model="info.selected" @change="check">
                     </td>
                     <td class="align-middle text-center">{{ info.order_id}}</td>
-                    <td class="align-middle text-center">{{ info.order_date}}</td>
+                    <td class="align-middle text-center">{{ yyyyMMdd(info.order_date)}}</td>
                     <td class="align-middle text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle text-center">{{ info.employee_id }}</td>
                     <td class="align-middle text-center">{{ info.manager_id }}</td>
@@ -90,14 +88,10 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-12">
-        <div class="card my-4">
+        <div class="card mb-5">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">주문상세내역</h6>
             </div>
           </div>
@@ -105,11 +99,11 @@
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상세ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">주문상세ID</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">제품명</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">주문수량</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">납품일자</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">주문상태</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -117,7 +111,7 @@
                     <td class="align-middle text-center">{{ info.order_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
                     <td class="align-middle text-center">{{ info.order_amount }}</td>
-                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
+                    <td class="align-middle text-center">{{ yyyyMMdd(info.deliv_due_date) }}</td>
                     <td class="align-middle text-center">{{ info.order_status }}</td>
                   </tr>
                 </tbody>
@@ -125,8 +119,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
 </template>
 <script>
 import axios from 'axios';
@@ -172,12 +164,22 @@ export default {
         this.orderDetails = result.data;
       },
       async getOrderType() {
-      let res = await axios.get(`/api/codes/A1`)
-        .catch(err => console.log(err));
-      this.codes = res.data;
+        let res = await axios.get(`/api/codes/A1`)
+          .catch(err => console.log(err));
+        this.codes = res.data;
       },
       async confirm() {
+        const selectedItems = this.orders.filter(item => item.selected);
 
+        if (selectedItems.length > 0 ) {
+          let res = await axios.post(`/api/orderConfirm`, selectedItems)
+          .catch(err => console.log(err));
+        
+          console.log(res.data);
+
+          this.getOrders();
+          this.orderDetails = [];
+        }
       },
       getTodayDate() {
         const today = new Date();
@@ -200,10 +202,6 @@ export default {
       check() {
         this.allSelected = this.orders.every(item => item.selected);
       },
-      showSelected() {
-        const selectedItems = this.orders.filter(item => item.selected);
-        console.log('선택된 항목:', selectedItems);
-      }
     },
     created() {
       this.getOrderType();

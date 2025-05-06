@@ -77,7 +77,6 @@ const getOrder = async(params) => {
     ...others
   } = params;
 
-
   let count = Object.keys(others).length;
   let keyword;
   if (count > 0) {
@@ -104,6 +103,51 @@ const getOrderDetail = async(id) => {
   let list = await mariaDB.query("selectOrderDetail", id);
   return list;
 }
+
+const postOrderConfirm = async (orderInfo) => {
+
+  let res = {
+    success: true,
+  }
+
+  try {
+    conn = await mariaDB.getConnection();
+    await conn.beginTransaction();
+
+    console.log(orderInfo);
+
+    for (let order of orderInfo) {
+  
+      let selectedSql = await mariaDB.selectedQuery('updateOrderStatus', {});
+      let result = await conn.query(selectedSql, ['2a', order.order_id]);
+
+      selectedSql = await mariaDB.selectedQuery('selectOrderDetail', {});
+      result = await conn.query(selectedSql, order.order_id);
+
+      let orderDetail = result;
+
+      for (let detail of orderDetail) {
+
+        let selectedSql = await mariaDB.selectedQuery('updateOrderDetailStatus', {});
+        result = await conn.query(selectedSql, ['2z', detail.order_detail_id]);
+
+      }
+
+    }
+
+    conn.commit();
+
+    return res;
+  } catch (err) {
+    console.log(err);
+    if (conn) conn.rollback();
+
+    res.success = false
+    return res;
+  } finally {
+    if (conn) conn.release();
+  }
+};
 
 const getDelivTarget = async (params) => {
 
@@ -188,7 +232,7 @@ const postDeilv = async (delivInfo) => {
       // LOT 사용 처리
       if (detail.prod_amount == detail.deliv_amount) {
           selectedSql = await mariaDB.selectedQuery('updatePlotStatus', {});
-          result = await conn.query(selectedSql, detail.prod_lot);
+          result = await conn.query(selectedSql, ['3aa', detail.prod_lot]);
       }
 
       // deliv detail insert 완료 시 최근 key 정보 갱신
@@ -198,7 +242,7 @@ const postDeilv = async (delivInfo) => {
     // 납품 완료 확인
     if (deliv.remain == 0) {
       selectedSql = await mariaDB.selectedQuery('updateOrderDetailStatus', {});
-      result = await conn.query(selectedSql, deliv.order_detail_id);
+      result = await conn.query(selectedSql, ['4z', deliv.order_detail_id]);
     }
 
     // 정상 완료 시 commit
@@ -215,11 +259,49 @@ const postDeilv = async (delivInfo) => {
   }
 };
 
+const getDeliv = async(params) => {
+
+  const {
+    startDate,
+    endDate,
+    ...others
+  } = params;
+
+  let count = Object.keys(others).length;
+  let keyword;
+  if (count > 0) {
+    let selected = [];
+    for (let i = 0; i < (count - 1); i++) {
+      selected.push('AND ');
+    }
+
+    keyword = converts.convertObjToQueryLike(others, selected);
+  } else {
+    keyword = {
+      searchKeyword: '',
+    };
+  }
+
+  keyword.searchKeyword = ` AND deliv_date BETWEEN '${startDate}' AND '${endDate}'` 
+  + keyword.searchKeyword;
+  
+  let list = await mariaDB.query("selectDeliv", keyword);
+  return list;
+}
+
+const getDelivDetail = async(id) => {
+  let list = await mariaDB.query("selectDelivDetail", id);
+  return list;
+}
+
 module.exports = {
   postOrder,
   getOrder,
   getOrderDetail,
+  postOrderConfirm,
   getDelivTarget,
   getDelivProdTarget,
   postDeilv,
+  getDeliv,
+  getDelivDetail,
 }

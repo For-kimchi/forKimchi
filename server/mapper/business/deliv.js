@@ -67,13 +67,38 @@ VALUES
 
 const updatePlotStatus = 
 `UPDATE t_prod_warehouse
-SET lot_status = '3aa'
+SET lot_status = ?
 WHERE prod_lot = ?`;
 
-const updateOrderDetailStatus = 
-`UPDATE t_order_detail
-SET order_status = '4z'
-WHERE order_detail_id = ?`;
+const selectDeliv =
+`SELECT deliv_id,
+        d.order_detail_id,
+        deliv_status,
+        deliv_date,
+        o.vendor_id,
+        v.vendor_name,
+        d.employee_id,
+        d.memo
+ FROM t_deliv d
+ JOIN t_order_detail od ON d.order_detail_id = od.order_detail_id
+ JOIN t_order o ON od.order_id = o.order_id
+ JOIN t_vendor v ON o.vendor_id = v.vendor_id
+ WHERE 1=1
+ :searchKeyword
+ ORDER BY deliv_id DESC`;
+
+ const selectDelivDetail =
+`SELECT deliv_detail_id,
+        deliv_id,
+        prod_lot,
+        dd.prod_id,
+        p.prod_name,
+        deliv_amount,
+        dd.memo
+ FROM t_deliv_detail dd
+ JOIN t_prod p ON dd.prod_id = p.prod_id
+ WHERE deliv_id = ?
+ ORDER BY deliv_detail_id DESC`;
 
 module.exports = {
   selectDelivTarget,
@@ -83,5 +108,6 @@ module.exports = {
   selectLastDelivDetail,
   insertDelivDetail,
   updatePlotStatus,
-  updateOrderDetailStatus,
+  selectDeliv,
+  selectDelivDetail,
 }

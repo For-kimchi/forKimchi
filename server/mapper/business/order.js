@@ -33,13 +33,15 @@ const selectOrder =
   `SELECT order_id,
         order_date,
         order_final_status,
-        vendor_id,
+        o.vendor_id,
+        v.vendor_name,
         employee_id,
         reg_date,
         manager_id,
         confirm_date,
         memo
- FROM t_order
+ FROM t_order o 
+ JOIN t_vendor v ON o.vendor_id = v.vendor_id
  WHERE 1=1
  :searchKeyword
  ORDER BY order_id DESC`;
@@ -55,6 +57,16 @@ const selectOrder =
  FROM t_order_detail
  WHERE order_id = ?`;
 
+ const updateOrderStatus = 
+ `UPDATE t_order
+ SET order_final_status = ?
+ WHERE order_id = ?`;
+
+ const updateOrderDetailStatus = 
+ `UPDATE t_order_detail
+ SET order_status = ?
+ WHERE order_detail_id = ?`;
+
 module.exports = {
   selectLastOrder,
   selectLastOrderDetail,
@@ -62,5 +74,6 @@ module.exports = {
   insertOrderDetail,
   selectOrder,
   selectOrderDetail,
-
+  updateOrderStatus,
+  updateOrderDetailStatus,
 }

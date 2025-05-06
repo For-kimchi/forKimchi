@@ -185,6 +185,9 @@ export default {
         .catch(err => console.log(err));
 
         alert(result.data);
+
+        this.prods = [];
+        this.orderDetail = {};
       },
       async getProd() {
 
