@@ -44,38 +44,53 @@ const insertVenId =
 FROM t_mate_req
 ORDER BY vendor_id`;
 
-// 자재발주 상세조회
-const searchMateList = 
-`SELECT 
-        p.mate_id
-        ,p.mate_name
-        ,mrd.req_amount
-        ,p.mate_unit
-FROM t_mate_req_detail mrd
-LEFT JOIN
-    t_mate p ON mrd.mate_id = p.mate_id
-WHERE 1=1
-ORDER BY p.mate_id`;
-
 // 자재발주 상세등록
 const detailMateInsert = 
 `SELECT
-        mate_id
-        ,`
+        p.mate_id
+        ,p.mate_name
+        ,req_amount
+        ,p.mate_unit
+FROM t_mate_req_detail mrd
+LEFT JOIN
+    t_mate p ON mrd.mate.id = p.mate_id
+WHERE mrd.req_id=?`;
 
-// 자재발주삭제
-const deleteMate =
-`DELETE FROM t_mate_req
+// 자재발주 상세삭제(자재발주상세부터 삭제해야 오류가 안난다.)
+const deleteDetailMate =
+`DELETE 
+FROM t_mate_req_detail
 WHERE req_id = ?`;
 
-// 자재발주 상세삭제
-
+// 자재발주삭제
+const deleteMate = 
+`DELETE
+FROM t_mate_req
+WHERE req_id =?`;
 
 // 자재발주수정
-
+const updateMate = 
+`UPDATE t_mate_req
+SET
+    req_date = ?, 
+    vendor_id = ?, 
+    employee_id = ?, 
+    memo = ?, 
+    confirm_date = ?, 
+    manager_id = ?
+WHERE req_id = ?;`
 
 // 자재발주 상세수정
-
+const updateDetailMate = 
+`UPDATE t_mate_req_detail
+SET 
+  mate_id = ?, 
+  req_due_date = ?, 
+  req_amount = ?, 
+  memo = ?
+WHERE req_id = ? 
+AND mate_id = ?;
+`
 
 
 // 자재창고 입고 //
@@ -89,5 +104,4 @@ module.exports = {
     selectMateReq,
     selectMateDetail,
     insertVenId,
-    searchMateList,
 }
