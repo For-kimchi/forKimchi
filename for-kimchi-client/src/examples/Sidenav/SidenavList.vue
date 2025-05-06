@@ -66,7 +66,7 @@
       <li class="nav-item">
         <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="검사">
           <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
+            <i class="material-icons-round opacity-10 fs-5">checklist</i>
           </template>
           <template v-slot:list>
             <sidenav-collapse-item refer="/mateQuality" miniIcon="" text="자재수입검사조회"/>
@@ -100,7 +100,7 @@
       <li class="nav-item">
         <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="Examples">
           <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
+            <i class="material-icons-round opacity-10 fs-5">close</i>
           </template>
           <template v-slot:list>
             <SidenavCollapseItem refer="/tables" miniIcon="" text="Tables"/>
