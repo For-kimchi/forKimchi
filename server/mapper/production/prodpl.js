@@ -59,7 +59,7 @@ const selectprod =
        t.memo
    FROM t_prod_plan t left join t_order o
                         on (t.order_id = o.order_id)
-   WHERE t.plan_final_status in ('2i','1i','3i')
+   WHERE t.plan_final_status in ('2i','1i')
    GROUP BY t.plan_id`;
 
 // 상세생산계획 조회
@@ -116,9 +116,22 @@ WHERE plan_detail_id = ?`
 // 승인버튼
 const updateplandt = `
 UPDATE t_prod_plan_detail
-SET plan_status = '2i'
+SET plan_status = '2c'
 WHERE plan_detail_id = ?`
 
+// plan_id값 가져오기
+const selectPlan_id =`
+SELECT plan_id
+FROM t_prod_plan
+WHERE plan_detail_id = ?
+`;
+
+// 승인버튼 확인
+const updatePlan =`
+SELECT plan_status
+FROM t_prod_plan_detail
+WHERE plan_id = ?
+`;
 module.exports = {
     selectorder,
     selectprod,
@@ -132,4 +145,6 @@ module.exports = {
     sltPlanDetailKey,
     sltPlanKey,
     prodCode,
+    selectPlan_id,
+    updatePlan,
 }

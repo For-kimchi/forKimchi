@@ -52,7 +52,6 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">계획등록일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">최종계획상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -64,7 +63,6 @@
                     <td class="align-middle text-center">{{ info.manager_id }}</td>
                     <td class="align-middle text-center">{{ info.reg_date }}</td>
                     <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_final_status }}</span></td>
-                    <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -85,15 +83,14 @@
           <div class="card-body px-0 pb-2">
             <div class="text-end pe-3 ">
               <!-- 승인버튼에 세션값을 통해 권한이 있을경우에만 작동하도록 조건을 넣어줘야함 -->
-              <button class="btn btn-success ms-2 me-2" v-on:click="permibtn()">승인</button>
-              <!-- <button class="btn btn-success" v-on:click="addRow">추가</button> -->
+              <button class="btn btn-success ms-2 me-2" @click="permiBtn()">승인</button>
               <button class="btn btn-info ms-2 me-2"  @click="planDetailSave(proddtlist)">저장</button>
             </div>
             <div class="table-responsive p-0">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox"></th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox" v-model="checkAll" @change="checkeds"></th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
@@ -108,8 +105,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in proddtlist" v-bind:key="order_detail_id">
-                    <td class="align-middle text-center"><input type="checkbox"></td>
+                  <tr v-for="(info,index) in proddtlist" v-bind:key="plan_detail_id">
+                    <td class="align-middle text-center"><input type="checkbox" v-model="info.check"></td>
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.plan_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
@@ -144,7 +141,10 @@ export default {
       return {
         prodlist : [],
         proddtlist :[],
-        order_detail_id:'',
+        plan_detail_id:'',
+        checkAll: false,
+        check:false,
+        
       }
     },
     created(){
@@ -164,9 +164,13 @@ export default {
         let  ajaxRes =
         await axios.get(`/api/proddtlist/${orderid}`)
                    .catch(err => console.log(err));
-        this.proddtlist = ajaxRes.data;
+        this.proddtlist = ajaxRes.data.map(item => ({
+          ...item,
+          check: false,
+        }));
       },
       async planDetailSave(planDetailList){
+
         // 항목선택여부 알림.
         if(Object.keys(planDetailList).length > 0){
             let  ajaxRes =
@@ -174,12 +178,31 @@ export default {
                        .catch(err => console.log(err));
             this.update = ajaxRes.data;
             alert('저장 완료');
+
         }else{
           alert('항목이 선택되지 않았습니다.')
         };
-
-
-      }
+      },
+      checkeds(){
+        this.proddtlist.forEach(item => {
+          item.check = this.checkAll;
+        });
+      },
+      async permiBtn(){
+        let param = [];
+        for(let planDetail of this.proddtlist){
+          if(planDetail.check === true){
+            // console.log(planDetail.plan_detail_id);
+            param.push({ plan_detail_id: planDetail.plan_detail_id });
+            console.log(param);
+          }
+        }
+        // let param = this.proddtlist.filter(item => item.check === true);
+        let  ajaxRes =
+        await axios.put(`/api/plandtbtn`, param)
+                   .catch(err => console.log(err));
+        this.proddtlist = ajaxRes.data
+      },
     },
     
 }
