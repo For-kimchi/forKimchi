@@ -122,16 +122,25 @@ WHERE plan_detail_id = ?`
 // plan_id값 가져오기
 const selectPlan_id =`
 SELECT plan_id
-FROM t_prod_plan
+FROM t_prod_plan_detail
 WHERE plan_detail_id = ?
+LIMIT 1
 `;
 
 // 승인버튼 확인
-const updatePlan =`
+const selectPlanDetail =`
 SELECT plan_status
 FROM t_prod_plan_detail
 WHERE plan_id = ?
 `;
+
+// 최종 승인
+const updatePlan =`
+UPDATE t_prod_plan
+SET plan_final_status = '2i'
+WHERE plan_id = ?
+`;
+
 module.exports = {
     selectorder,
     selectprod,
@@ -147,4 +156,5 @@ module.exports = {
     prodCode,
     selectPlan_id,
     updatePlan,
+    selectPlanDetail,
 }

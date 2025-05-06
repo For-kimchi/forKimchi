@@ -41,28 +41,28 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문서 작성</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">거래처ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문담당자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문서 작성</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문담당자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문등록일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info,index) in orderList" v-bind:key="info.order_id" v-on:click="getOrderDtList(info.order_id)">
-                    <td class="align-middle text-center"><button class="btn btn-warning p-3 m-3" v-on:click.stop="planAdd(index)">주문서 추가</button></td>
-                    <td class="align-middle text-center">{{ index + 1 }}</td>
-                    <td class="align-middle text-center">{{ info.order_id }}</td>
-                    <td class="align-middle text-center">{{ info.order_date }}</td>
-                    <td class="align-middle text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_final_status }}</span></td>
-                    <td class="align-middle text-center">{{ info.vendor_id }}</td>
-                    <td class="align-middle text-center">{{ info.employee_id }}</td>
-                    <td class="align-middle text-center">{{ info.reg_date }}</td>
-                    <td class="align-middle text-center">{{ info.memo }}</td>
+                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-warning p-2 m-2" v-on:click.stop="planAdd(index)">주문서 추가</button></td>
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.order_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.order_date }}</td>
+                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.reg_date }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -85,22 +85,22 @@
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상세ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">납품예정일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">제품명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">납품예정일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info,index) in orderDtList" v-bind:key="order_detail_id">
-                    <td class="align-middle text-center">{{ index + 1 }}</td>
-                    <td class="align-middle text-center">{{ info.order_detail_id }}</td>
-                    <td class="align-middle text-center">{{ info.prod_id }}</td>
-                    <td class="align-middle text-center">{{ info.order_amount }}</td>
-                    <td class="align-middle text-center">{{ info.deliv_due_date }}</td>
-                    <td class="align-middle text-center">{{ info.memo }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.order_detail_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.prod_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.order_amount }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.deliv_due_date }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
