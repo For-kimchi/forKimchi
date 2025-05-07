@@ -1,7 +1,7 @@
 // 생산지시 조회
 // prodOrder 조회문
 const selectOrders =`
-SELECT prod_order_id,
+SELECT
 plan_detail_id,
 prod_order_lot,
 prod_id(prod_id) prod_id,
@@ -14,6 +14,18 @@ FROM   t_prod_order;
 // ----------------------------------------------------------------
 
 // LOT를 위한 쿼리
+const selectProdOrderLimit =`
+SELECT prod_order_lot
+FROM t_prod_order
+ORDER BY prod_order_lot DESC
+LIMIT 1
+`;
+// prod_id 변환
+const selectProdName =`
+SELECT prod_id
+FROM t_prod
+WHERE prod_name = ?
+`;
 // ----------------------------------------------------------------
 
 // 생산지시등록을 위한 쿼리
@@ -37,7 +49,6 @@ SELECT
 // 생산지시상세 조회
 const selectplanOrderInfo = `
 SELECT 
-        prod_order_id,
         prod_order_lot,
         prod_id(prod_id) prod_id,
         date_type(order_date) order_date,
@@ -62,6 +73,18 @@ VALUES (?, ?, ?, ?, ?, '1d')
 // ----------------------------------------------------------------
 
 // 선출창고관리
+const selectProdMate = `
+SELECT 
+        prod_mate_id,
+        mate_lot,
+        prod_order_id,
+        mate_id,
+        mate_amount,
+        inbound_date,
+        employee_id,
+        memo
+FROM t_prod_mate
+`;
 // ----------------------------------------------------------------
 
 
@@ -70,4 +93,6 @@ module.exports = {
     selectPlanDetail,
     selectplanOrderInfo,
     insertProdOrderInfo,
+    selectProdOrderLimit,
+    selectProdName,
 }

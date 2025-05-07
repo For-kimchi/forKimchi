@@ -32,27 +32,37 @@ const selectProdOrderInfoList = async(planDtId) =>{
 // 생산지시 등록
 const insertProdOrder = async(prodOrder) =>{
 
-    // let conn;
-    // try{
-    //     conn = await mariaDB.getConnection();
-    //     await conn.beginTransaction();
+    let conn;
+    try{
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
+        
+        selectedSql = await mariaDB.selectedQuery('selectProdOrderLimit', {});
+        let lastLot = await conn.query(selectedSql, {});
 
-        console.log(prodOrder);
+        let prodName = prodOrder.prod_id
+        selectedSql = await mariaDB.selectedQuery('selectProdName', prodName);
+        let prodId = await conn.query(selectedSql, prodName);
+        prodId = prodId[0].prod_id
+        let lastOrderLot = lastLot[0].prod_order_lot;
+        let newOrderLot = keys.getNextKeyId(lastOrderLot);
+
+        prodOrder.prod_order_lot = newOrderLot;
+        prodOrder.prod_id = prodId;
+
         let cloumn = ['plan_detail_id', 'prod_order_lot', 'prod_id', 'order_date', 'order_amount'];
         let convert = converts.convertObjToAry(prodOrder, cloumn);
-        console.log(convert);
         
-        // let insert = await mariaDB.query('insertProdOrderInfo')
-        // selectedSql = await mariaDB.selectedQuery('sltPlanKey', {});
-        // let lastPlan = await conn.query(selectedSql, {});
+        selectedSql = await mariaDB.selectedQuery('insertProdOrderInfo', convert);
+        let lastPlan = await conn.query(selectedSql, convert);
 
 
-    //     conn.commit();
-    // }catch(err){
-    //     if(conn) conn.rollback();
-    // }finally{
-    //     if(conn) conn.release();
-    // }
+        conn.commit();
+    }catch(err){
+        if(conn) conn.rollback();
+    }finally{
+        if(conn) conn.release();
+    }
 }
 
 module.exports = {

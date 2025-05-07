@@ -65,7 +65,7 @@ const modifypldt = async(planDetailInfo)=>{
                                   plan_end_date: planDetail.plan_end_date};
             let PlanDetailInfos = [planDetailParam, planDetailId];
             selectedSql = await mariaDB.selectedQuery('updateprod',PlanDetailInfos);
-            let reult = await conn.query(selectedSql, PlanDetailInfos);
+            let result = await conn.query(selectedSql, PlanDetailInfos);
         };
 
 
@@ -92,7 +92,7 @@ const pldtperm = async(planDetailList)=>{
         for(let planDeatillist of planDetailList){
             planDetailId = planDeatillist.plan_detail_id;
             selectedSql = await mariaDB.selectedQuery('updateplandt', planDetailId);
-            let reult = await conn.query(selectedSql, planDetailId);
+            let result = await conn.query(selectedSql, planDetailId);
         }
 
         // planId 가져오기(마지막 행의 detail_id를 통해서 조회)
