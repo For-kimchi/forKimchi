@@ -48,7 +48,7 @@ const prodlist = async()=>{
 // 생산상세계획조회
 const proddtlist = async(orderId)=>{
     let list = await mariaDB.query('selectproddetail', orderId);
-        return list;
+    return list;
 };
 
 // plandt저장버튼 모든 상세항목에 반영
@@ -88,22 +88,39 @@ const pldtperm = async(planDetailList)=>{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
         let planDetailId = '';
+        // 체크된 행의 Id를 저장시키고 업데이트시킴 
         for(let planDeatillist of planDetailList){
             planDetailId = planDeatillist.plan_detail_id;
             selectedSql = await mariaDB.selectedQuery('updateplandt', planDetailId);
             let reult = await conn.query(selectedSql, planDetailId);
         }
-        console.log(planDetailId);
-        // planId 가져오기
+
+        // planId 가져오기(마지막 행의 detail_id를 통해서 조회)
         selectedSql = await mariaDB.selectedQuery('selectPlan_id', planDetailId);
         reult = await conn.query(selectedSql, planDetailId);
 
-        // 모든detail 승인상태 확인
-        selectedSql = await mariaDB.selectedQuery('updatePlan', planDetailId);
-        reult = await conn.query(selectedSql, planDetailId);
+        const planId = reult[0].plan_id;
+
+        // 모든 detail의 승인상태 확인위한 조회
+        selectedSql = await mariaDB.selectedQuery('selectPlanDetail', planId);
+        result = await conn.query(selectedSql, planId);
+        console.log('reult = ' + result);
         console.log(reult);
-        // if(){
-        // }
+        let check = false;
+        // 모든상태값이 2c인지 확인 아니라면 check가 false
+        for(let selected of result){
+            if(selected.plan_status == '2c'){
+                check = true;
+            }else{
+                check = false;
+                return;
+            }
+        }
+        // check가 true인지 확인 후 맞으면 상태변환
+        if(check){
+            selectedSql = await mariaDB.selectedQuery('updatePlan', planId);
+            result = await conn.query(selectedSql, planId);
+        }
         conn.commit();
 
         //  에러 뜨면 rollback
@@ -114,7 +131,6 @@ const pldtperm = async(planDetailList)=>{
     }finally{
         if(conn) conn.release();
     }
-    // return result;
 };
 
 // 주문을 생산계획에 추가(order상태변경, plan추가, plan_detail추가)

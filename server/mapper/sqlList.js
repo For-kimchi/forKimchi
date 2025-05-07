@@ -14,7 +14,8 @@ const vendor = require('./basic/vendor.js');
 const order = require('./business/order.js');
 const deliv = require('./business/deliv.js');
 // 생산
-const plan = require('./production/prodpl.js');
+const plan = require('./production/prodPlan.js');
+const prodOrder = require('./production/prodOrder.js');
 // 검사
 const quality = require('./quality/quality.js');
 module.exports = {
@@ -37,6 +38,7 @@ module.exports = {
     ...deliv,
     // 생산
     ...plan,
+    ...prodOrder,
     //검사
     ...quality,
 }

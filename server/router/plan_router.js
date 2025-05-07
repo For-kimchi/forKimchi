@@ -1,49 +1,72 @@
 const express = require('express');
 const router = express.Router();
 
-const prod_service = require('../service/plan_service.js');
+const prodPlanService = require('../service/plan_service.js');
+const prodOrderService = require('../service/prod_plan_service.js');
+
+// prodPlanService 생산계획
 // 주문조회
 router.get('/orderList', async(req, res)=>{
-  let orderList = await prod_service.order_list();
+  let orderList = await prodPlanService.order_list();
   res.send(orderList);
 });
 // 주문 상세조회
 router.get('/orderList/:id', async(req, res)=>{
   let orderId = req.params.id
-  let orderList = await prod_service.orderdtlist(orderId);
+  let orderList = await prodPlanService.orderdtlist(orderId);
   res.send(orderList);
 });
 
 // 생산계획조회
 router.get('/prodlist', async(req, res)=>{
-  let prodList = await prod_service.prodlist();
+  let prodList = await prodPlanService.prodlist();
   res.send(prodList);
 });
 // 생산계획상세조회
 router.get('/proddtlist/:id', async(req, res)=>{
   let orderId = req.params.id
-  let prodList = await prod_service.proddtlist(orderId);
+  let prodList = await prodPlanService.proddtlist(orderId);
   res.send(prodList);
 });
 // 주문서를 통한 생산계획 등록
 router.post('/planinsert', async(req, res)=>{
   let planInfo = req.body;
   console.log(planInfo);
-  let result = await prod_service.orpldtinsert(planInfo);
+  let result = await prodPlanService.orpldtinsert(planInfo);
   res.send(result);
 });
 // 저장버튼(수정)
 router.put('/planDetailSave', async (req, res)=>{
   let planDetailInfo = req.body;
-  let result = await prod_service.modifypldt(planDetailInfo);
+  let result = await prodPlanService.modifypldt(planDetailInfo);
   res.send(result);
 });
 
 // pldt 승인버튼(수정)
 router.put('/plandtbtn', async(req, res)=>{
   let planDetailList = req.body
-  let result = await prod_service.pldtperm(planDetailList);
+  let result = await prodPlanService.pldtperm(planDetailList);
   res.send(result);
+});
+
+// prodOrderService 생산지시
+// 생산지시 전체조회
+router.get('/prodOrder', async(req, res)=>{
+  let OrderList = await prodOrderService.selectProdOrderList();
+  res.send(OrderList);
+});
+
+// 생산지시 등록을 위한 상세 계획 조회
+router.get('/planDetailList', async(req, res)=>{
+  let PlanDetailList = await prodOrderService.selectProdPlanDetailList();
+  res.send(PlanDetailList);
+});
+
+// 생산지시 조회
+router.get('/prodOrder/:id', async(req, res)=>{
+  let planDtId = req.params.id;
+  let PlanDetailList = await prodOrderService.selectProdOrderInfoList(planDtId);
+  res.send(PlanDetailList);
 });
 
 module.exports = router;

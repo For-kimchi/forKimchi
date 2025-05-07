@@ -19,12 +19,13 @@ import prodQualityControl from "../views/quality/prod_quality_control.vue";
 import  qualityManager from "../views/quality/quality_manager.vue";
 
 // 유환
-import Prodplan from "../views/prod/Prodplan.vue";
-import Prodorder from "../views/prod/Prodorder.vue";
-import Prodprocess from "../views/prod/Prodprocess.vue";
-import Prodprocwork from "../views/prod/Prodprocwork.vue";
-import Orderprod from "../views/prod/Orderprods.vue";
-
+import ProdPlan from "../views/prod/ProdPlans.vue";
+import ProdOrder from "../views/prod/ProdOrder.vue";
+import ProdProcess from "../views/prod/ProdProcess.vue";
+import ProdProcWork from "../views/prod/ProdProcWorks.vue";
+import OrderProd from "../views/prod/OrderProd.vue";
+import ProdOrderInfo from "../views/prod/ProdOrderInfos.vue";
+import ProdMate from "../views/prod/ProdMates.vue";
 // 김어진 (자재발주)
 import MaterialList from "../views/material/MaterialList.vue";
 import MaterialManagement from "../views/material/MaterialManagement.vue";
@@ -91,29 +92,39 @@ const routes = [
   },
   // 유환(prod)
   {
-    path: "/prodplan",
-    name: "Prodplan",
-    component: Prodplan,
+    path: "/prodPlan",
+    name: "ProdPlan",
+    component: ProdPlan,
   },
   {
-    path: "/prodorder",
-    name: "Prodorder",
-    component: Prodorder,
+    path: "/prodOrder",
+    name: "ProdOrder",
+    component: ProdOrder,
   },
   {
-    path: "/prodprocess",
-    name: "Prodprocess",
-    component: Prodprocess,
+    path: "/prodProcess",
+    name: "ProdProcess",
+    component: ProdProcess,
   },
   {
-    path: "/prodprocwork",
-    name: "Prodprocwork",
-    component: Prodprocwork,
+    path: "/prodProcWork",
+    name: "ProdProcWork",
+    component: ProdProcWork,
   },
   {
-    path: "/orderprod",
-    name: "Orderprod",
-    component: Orderprod,
+    path: "/orderProd",
+    name: "OrderProd",
+    component: OrderProd,
+  },
+  {
+    path: "/prodOrderInfo",
+    name: "ProdOrderInfo",
+    component: ProdOrderInfo,
+  },
+  {
+    path: "/prodMate",
+    name: "ProdMate",
+    component: ProdMate,
   },
   // 이혁진
   {
