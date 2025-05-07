@@ -35,10 +35,48 @@ const insertMates = async (mateSaveInfo) => {
   // let result = await mariaDB.query('insertMate', addList);
   // let addList = converterAray.convertObjToAry(mateSaveInfo, list);
   let conn;
+  
   try{
     conn = await mariaDB.getConnection();
     await conn.beginTransaction();
-    selectedSql = await mariaDB.selectedQuery()
+
+    // detail 분리
+    // const {mate_detail_list, ...mateInfosssss} = mateSaveInfo;
+
+    // 마지막 req_detail_id 조회
+    selectedSql = await mariaDB.selectedQuery('mateDetailKey', {});
+    let lastMateDetail = await conn.query(selectedSql, {});
+    let lastMateDetailId = lastMateDetail[0].req_detail_id;
+
+    for(let MateDetailInfo of mate_detail_list) {
+      // order key 생성
+      let newMateDetailId = keys.getNextKeyId(lastMateDetailId);
+      MateDetailInfo.req_detail_id = newMateDetailId;
+      // 상위에서 등록한 newMateId 사용
+      MateDetailInfo.req_id = newMateId;
+      
+      // mate_id 조회: mate_name 기반
+      let mateName = MateDetailInfo.mateName;
+      selectedSql = await mariaDB.selectedQuery('mateCode', mateName);
+      let mateResult = await conn.query(selectedSql, mateName);
+      
+      if (!mateResult[0]) {
+        throw new Error(`등록되지 않은 자재명: ${mateName}`);
+      }
+      MateDetailInfo.mate_id = mateId[0].mate_id;
+
+      // 등록할 컬럼 정의(mateDetail 등록)
+      let mateDetailCloumn = ['req_detail_id', 'req_id', 'mate_id', 'req_amount', 'memo'];
+      let addInfo = converts.convertObjToQuery(MateDetailInfo, mateDetailCloumn);
+      
+      // insert 쿼리 실행
+      selectedSql = await mariaDB.selectedQuery('insertMateDetail', addInfo);
+      await conn.query(selectedSql, addInfo);
+
+      // 다음 detail_id 생성을 위해 저장
+      lastMateDetailId = newMateDetailId;
+    }
+
     // for(let mateSave of mateSaveInfo){
     //   // let mateParam ={mate_req_id: mateSave.req_id,
     //   //                 mate_vendor_id: mateSave.vendor_id,                                  
@@ -52,12 +90,12 @@ const insertMates = async (mateSaveInfo) => {
     //           // let results = await mariaDB.query('insertMate', addList);
     //       };
   
-          conn.commit();
+          await conn.commit();
   
           //  에러 뜨면 rollback
           }catch(err){
               if(conn) conn.rollback();
-              console.log(err);
+              console.log('자재발주상세 등록 오류:', err);
           // 커넥션 초기화
           }finally{
               if(conn) conn.release();

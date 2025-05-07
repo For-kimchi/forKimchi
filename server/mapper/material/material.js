@@ -1,11 +1,38 @@
 // <자재발주> //
 
+// mateKey
 const matePlanKey =
   `SELECT req_id
 FROM t_mate_req
 ORDER BY req_id DESC
 LIMIT 1
 `;
+
+// mateDetailKey
+const mateDetailKey =
+  `SELECT req_detail_id
+FROM t_mate_req_detail
+ORDER BY req_detail_id DESC
+LIMIT 1
+`;
+
+// mate_id 조회
+const mateCode = 
+`SELECT mate_id
+FROM t_mate
+WHERE mate_name = ?
+ORDER BY mate_id DESC
+LIMIT 1`;
+
+// 발주리스트를 통한 detail등록
+const insertMateDetail = 
+`INSERT INTO t_mate_req_detail (
+  req_detail_id,
+  req_id,
+  mate_id,
+  req_amount,
+  memo
+) VALUES (?, ?, ?, ?, ?)`;
 
 // 자재발주조회(no,발주일자,발주번호,거래처,사용자명,품목수,발주서,비고,승인일자,승인자)
 const selectMateReq =
@@ -146,4 +173,7 @@ module.exports = {
     insertMates,
     insertMainMate,
     matePlanKey,
+    mateDetailKey,
+    mateCode,
+    insertMateDetail,
 }
