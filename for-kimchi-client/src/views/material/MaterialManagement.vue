@@ -268,6 +268,10 @@ export default {
       console.error('회사 목록을 불러오는데 실패했습니다:', err);
     }
   },
+
+
+
+
   async mateAdd() {
   if (this.selectedList.length === 0) {
     alert("저장할 항목이 없습니다.");
@@ -304,6 +308,7 @@ console.log('서버 응답:', ajaxRes.data);
 },
 
 
+
   // async mateAdd() {
   //     let info = this.mateList[mate_id];
 
@@ -325,6 +330,10 @@ console.log('서버 응답:', ajaxRes.data);
   //       alert ('저장이 실패하였습니다.');
   //     }
   //   }
+
+
+
+  
   },
   computed: {
     filteredCompanies() {
