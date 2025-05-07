@@ -50,7 +50,6 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">승인자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">계획등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">최종계획상태</th>
                   </tr>
                 </thead>
@@ -207,6 +206,7 @@ export default {
             await axios.put(`/api/plandtbtn`, param)
                        .catch(err => console.log(err));
             this.proddtlist = ajaxRes.data
+            await this.prodList();
           }else{
             alert('체크된 항목이 없습니다.')
           };

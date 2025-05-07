@@ -34,7 +34,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in prodDetailLists" @click="prodOrderList(info)" style="height: 80px; overflow: auto;">
+                  <tr v-for="(info,index) in prodDetailLists" @click="prodOrderList(info)" style="height: 50px; overflow: auto;">
                     <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_detail_id}}</td>
@@ -60,30 +60,30 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2" >
-            <div class="table-responsive p-0" style="height: 450px;">
-              <table class="table align-items-center justify-content-center mb-0" style="height: 400px;">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center justify-content-center mb-0">
                   <tr>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10"></th>
                     <td class="align-middle text-end">
-                      <button class="btn bg-gradient-info w-20 mb-0 m-2 p-2">추가</button>
+                      <button class="btn bg-gradient-info w-20 mb-0 m-2 p-2" @click="addOrders()">추가</button>
                       <button class="btn bg-gradient-primary w-20 mb-0 m-2 p-2">취소</button>
                     </td>
                   </tr>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산계획상세Id</th>
+                    <th class="text-lift text-uppercase text-secondary font-weight-bolder opacity-10 p-2">생산계획상세Id</th>
                     <td class="align-middle text-start"><input type="text" class="input-group-static border" v-model="planDetailId" disabled></td>
                   </tr>  
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">제품명</th>
+                    <th class="text-lift text-uppercase text-secondary font-weight-bolder opacity-10 p-2">제품명</th>
                     <td class="align-middle text-start"><input type="text" class="input-group-static border" v-model="planDetailProd" disabled></td>
                   </tr>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산지시일자</th>
-                    <td class="align-middle text-start"><input type="date" class="input-group-static border"></td>
+                    <th class="text-lift text-uppercase text-secondary font-weight-bolder opacity-10 p-2">생산일자</th>
+                    <td class="align-middle text-start"><input type="date" class="input-group-static border" v-model="prodDate"></td>
                   </tr>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산지시수량</th>
-                    <td class="align-middle text-start"><input type="number" class="input-group-static border"></td>
+                    <th class="text-lift text-uppercase text-secondary font-weight-bolder opacity-10 p-2">생산지시수량</th>
+                    <td class="align-middle text-start"><input type="number" class="input-group-static border" v-model="prodAmount"></td>
                   </tr>
               </table>
             </div>
@@ -104,7 +104,7 @@
               </div>
             </div>
             <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0" style="height: 400px;">
+              <div class="table-responsive p-0" style="height: 300px;">
                 <table class="table align-items-center justify-content-center mb-0">
                   <thead>
                     <tr>
@@ -153,6 +153,8 @@ export default {
           prodOrderLists: [],
           planDetailId: '',
           planDetailProd: '',
+          prodDate: '',
+          prodAmount: '',
         }
     },
     created(){
@@ -174,6 +176,18 @@ export default {
         this.planDetailId = planDtId.plan_detail_id;
         this.planDetailProd = planDtId.prod_id;
       },
+      // 담당자 추가해야함.
+      async addOrders(){
+        let info ={plan_detail_id: this.planDetailId,
+                  prod_id:         this.planDetailProd,
+                  order_date:      this.prodDate,
+                  order_amount:    this.prodAmount
+        };
+        let ajaxRes =
+        await axios.put(`/api/prodOrder`, info)
+                    .catch(err=> console.log(err));
+          let Order = ajaxRes.date;
+      }
 
     }
 }

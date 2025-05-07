@@ -95,7 +95,7 @@ const getOrder = async(params) => {
   keyword.searchKeyword = ` AND order_date BETWEEN '${startDate}' AND '${endDate}'` 
   + keyword.searchKeyword;
   
-  let list = await mariaDB.query("selectOrder", keyword);
+  let list = await mariaDB.query("selectOrders", keyword);
   return list;
 }
 
