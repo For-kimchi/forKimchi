@@ -60,9 +60,7 @@ export default {
       }
 
       let list = await axios.get('/api/basicVendor', {
-        params: {
-          mate_id : this.mate_id
-        }
+        params
       }).catch(err => console.log(err));
 
       this.results = list.data;

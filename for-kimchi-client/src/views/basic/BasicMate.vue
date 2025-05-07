@@ -1,5 +1,5 @@
 <template>
-  <div class="container my-4">
+  <div class="container-fluid">
 
     <div class="row mt-3">
       <div class="col text-end">
@@ -8,13 +8,13 @@
       </div>
     </div>
 
-    <div class="card p-3 mb-3">
+    <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+        <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
           <h6 class="text-white text-capitalize ps-3">자재조회</h6>
         </div>
       </div>
-      <div class="row g-3 mt-3">
+      <div class="row g-2 my-3 px-3">
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">자재명</label>
@@ -45,7 +45,7 @@
       <div class="col-md-8">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">자재목록</h6>
             </div>
           </div>

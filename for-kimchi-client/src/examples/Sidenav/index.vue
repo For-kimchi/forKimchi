@@ -25,7 +25,7 @@
         />
       </a> -->
       <div class="m-0 navbar-brand" @click="home"> 
-        <img
+        <!-- <img
           :src="
             sidebarType === 'bg-white' ||
             (sidebarType === 'bg-transparent' && !isDarkMode)
@@ -34,8 +34,8 @@
           "
           class="navbar-brand-img h-100"
           alt="main_logo"
-        />
-        <span class="ms-2 font-weight-bold text-white">For Kimchi</span>
+        /> -->
+        <span class="ms-2 font-weight-bold text-white">For 김치</span>
       </div>
     </div>
     <hr class="horizontal light mt-0 mb-2" />

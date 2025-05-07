@@ -39,6 +39,7 @@ import OrderList from "../views/business/OrderList.vue";
 import OrderMng from "../views/business/OrderMng.vue";
 import DelivList from "../views/business/DelivList.vue";
 import DelivMng from "../views/business/DelivMng.vue";
+import ProdWarehouse from "../views/business/ProdWarehouse.vue";
 
 //basic (기준관리)
 import BasicProd from "../views/basic/BasicProd.vue";
@@ -236,6 +237,11 @@ const routes = [
     path: "/delivsmng",
     name: "DelivMng",
     component: DelivMng,
+  },
+  {
+    path: "/prodwh",
+    name: "ProdWarehouse",
+    component: ProdWarehouse,
   },
 ];
 

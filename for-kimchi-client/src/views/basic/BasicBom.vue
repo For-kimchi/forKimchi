@@ -1,8 +1,19 @@
 <template>
-  <div class="container my-4">
-    <!-- Search Filter -->
-    <div class="card p-3 mb-4">
-      <div class="row g-3">
+  <div class="container-fluid">
+
+    <div class="row mt-3">
+      <div class="col text-end">
+        <button class="btn btn-success" @click="save">저장</button>
+      </div>
+    </div>
+
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+          <h6 class="text-white text-capitalize ps-3">제품정보</h6>
+        </div>
+      </div>
+      <div class="row g-2 my-3 px-3">
         <div class="col-md-3">
           <input v-model="prod.prod_name" type="text" class="form-control border text-center" @keydown.prevent
                   @click="showProd = true" placeholder="제품명" />
@@ -12,9 +23,6 @@
         </div>
         <div class="col-md-3">
           <input v-model="prod.prod_type" type="text" class="form-control border text-center" placeholder="제품분류" />
-        </div>
-        <div class="col-md-3">
-          <button class="btn btn-primary" @click="save">저장</button>
         </div>
       </div>
     </div>
