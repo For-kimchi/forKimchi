@@ -22,31 +22,14 @@
             </div>
             <div class="card-body">
               <!-- <form role="form" class="text-start mt-3"> -->
-                <div class="mb-3">
-                  <material-input
-                    id="email"
-                    type="email"
-                    label="이메일"
-                    name="email"
-                  />
+                <div class="mb-3">          
+                  <input v-model="loginInfo.email" type="email" class="form-control border px-2" placeholder="이메일" />
                 </div>
                 <div class="mb-3">
-                  <material-input
-                    id="password"
-                    type="password"
-                    label="비밀번호"
-                    name="password"
-                  />
+                  <input v-model="loginInfo.pwd" type="password" class="form-control border px-2" placeholder="비밀번호" />
                 </div>
-                <material-switch id="rememberMe" name="rememberMe">로그인 유지</material-switch>
                 <div class="text-center">
-                  <material-button
-                    class="my-4 mb-2"
-                    variant="gradient"
-                    color="success"
-                    fullWidth
-                    >로그인</material-button
-                  >
+                  <button class="btn btn-success">로그인</button>
                 </div>
               <!-- </form> -->
             </div>
@@ -76,12 +59,26 @@ export default {
   },
   data() {
     return {
-
+      loginInfo: {
+        email: '',
+        pwd: '',
+      },
     }
   },
   computed: {
   }
   ,methods: {
+    async login() {
+
+      let result = await axios.post('/api/login', this.loginInfo)
+      .catch(err => console.log(err));
+
+      if (result.data.success) {
+
+      } else {
+        
+      }
+    }
   }
   ,created() {
   }

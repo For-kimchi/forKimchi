@@ -1,5 +1,5 @@
 <template>
-  <div class="container my-4">
+  <div class="container-fluid">
     <!-- Search Filter -->
     <div class="card p-3 mb-4">
       <div class="row g-3">
