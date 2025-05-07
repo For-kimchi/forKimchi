@@ -2,25 +2,26 @@
 const mateQualityReq = 
 `
 SELECT 
-    distinct md.mate_id, 
-    mate_name, 
+    quality_id, 
+    m.mate_name, 
     inbound_amount, 
     memo
 FROM 
-    t_mate_inbound_detail md join t_mate m
+	t_quality_mate q join
+    t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id) join
+    t_mate m on(md.mate_id = m.mate_id)
 `;
 
 // 자재검사요청 (대기) [자재ID, 자재이름, 기준치, ]
 const mateQualityWait = 
 `
 SELECT DISTINCT
-	m.mate_id,q.option_id,  q.option_name, q.option_standard
+	m.quality_id, m.option_id, option_name, option_standard
 FROM 
-	t_mate_inbound_detail m JOIN
-    t_quality_mate_detail tq JOIN
-    t_quality_option q ON(tq.option_id = q.option_id) JOIN
-	t_mate mt
-    where m.mate_id= ?
+	t_quality_mate join
+    t_quality_mate_detail m join
+    t_quality_option o on (m.option_id = o.option_id)
+where m.quality_id= ?
 `;
 
 // 자재검사조회 (드롭다운)

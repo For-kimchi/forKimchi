@@ -13,7 +13,7 @@
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead class="table-header">
                   <tr>  
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재이름</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
@@ -24,9 +24,9 @@
               <div style="max-height: 200px; overflow-y: auto;">
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
-                    <tr v-for="(info, index) in mateQualityreq" v-bind:key="info.mate_id" v-on:click="mateQualityWait(info.mate_id)" style="cursor: pointer;">
+                    <tr v-for="(info, index) in mateQualityreq" v-bind:key="info.quality_id" v-on:click="mateQualityWait(info.quality_id)" style="cursor: pointer;">
                       <!--클릭안에 -> getQualityDetail(info.id)-->
-                      <td class="align-middle text-center">{{ info.mate_id }}</td>
+                      <td class="align-middle text-center">{{ info.quality_id }}</td>
                       <td class="align-middle text-center">{{ info.mate_name }}</td>
                       <td class="align-middle text-center">{{ info.inbound_amount }}</td>
                       <td class="align-middle text-center">{{ info.memo }}</td>
@@ -62,7 +62,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">기준치</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사검사</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox" /></th>
                     <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th> -->
                   </tr>
@@ -72,6 +72,7 @@
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
                     <tr v-for="(info, index) in mateQualitywait" v-bind:key="mate_detail_id"  style="cursor: pointer;">
+                      <td class="align-middle text-center">{{ info.quality_id }}</td>
                       <td class="align-middle text-center">{{ info.option_id }}</td>
                       <td class="align-middle text-center">{{ info.option_name }}</td>
                       <td class="align-middle text-center">{{ info.option_standard}}</td>
