@@ -29,7 +29,7 @@ VALUES
 (?, ?, ?, ?, ?, '1z', null)
 `;
 
-const selectOrder =
+const selectOrders =
   `SELECT order_id,
         order_date,
         order_final_status,
@@ -72,7 +72,7 @@ module.exports = {
   selectLastOrderDetail,
   insertOrder,
   insertOrderDetail,
-  selectOrder,
+  selectOrders,
   selectOrderDetail,
   updateOrderStatus,
   updateOrderDetailStatus,

@@ -1,6 +1,6 @@
 // 생산지시 조회
 // prodOrder 조회문
-const selectOrder =`
+const selectOrders =`
 SELECT prod_order_id,
 plan_detail_id,
 prod_order_lot,
@@ -47,7 +47,16 @@ SELECT
 FROM t_prod_order
 WHERE plan_detail_id = ?
 `;
-
+// 생산지시 등록
+const insertProdOrderInfo = `
+INSERT INTO t_prod_order(plan_detail_id,
+                         prod_order_lot,
+                         prod_id,
+                         order_date,
+                         order_amount,
+                         order_status)
+VALUES (?, ?, ?, ?, ?, '1d')
+`;
 
 
 // ----------------------------------------------------------------
@@ -57,7 +66,8 @@ WHERE plan_detail_id = ?
 
 
 module.exports = {
-    selectOrder,
+    selectOrders,
     selectPlanDetail,
     selectplanOrderInfo,
+    insertProdOrderInfo,
 }

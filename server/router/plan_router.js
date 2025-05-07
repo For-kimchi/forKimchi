@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const prodPlanService = require('../service/plan_service.js');
-const prodOrderService = require('../service/prod_plan_service.js');
+const prodPlanService = require('../service/prod_plan_service.js');
+const prodOrderService = require('../service/prod_order_service.js');
 
 // prodPlanService 생산계획
 // 주문조회
@@ -69,4 +69,10 @@ router.get('/prodOrder/:id', async(req, res)=>{
   res.send(PlanDetailList);
 });
 
+// 생산지시 등록
+router.put('/prodOrder', async(req, res)=>{
+  let prodOrder = req.body
+  let result = await prodOrderService.insertProdOrder(prodOrder);
+  res.send(result);
+});
 module.exports = router;

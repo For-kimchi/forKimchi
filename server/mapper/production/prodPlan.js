@@ -24,7 +24,7 @@ LIMIT 1
 `;
 
 // 주문목록 확인(수주 승인상태)
-const selectorder =
+const selectprodorders =
 `SELECT 
         order_id,
         date_type(order_date) order_date,
@@ -128,7 +128,7 @@ LIMIT 1
 `;
 
 // 승인버튼 확인
-const selectPlanDetail =`
+const selectPlanDetails =`
 SELECT plan_status
 FROM t_prod_plan_detail
 WHERE plan_id = ?
@@ -142,7 +142,7 @@ WHERE plan_id = ?
 `;
 
 module.exports = {
-    selectorder,
+    selectprodorders,
     selectprod,
     selectproddetail,
     insertorpl,
@@ -156,5 +156,5 @@ module.exports = {
     prodCode,
     selectPlan_id,
     updatePlan,
-    selectPlanDetail,
+    selectPlanDetails,
 }
