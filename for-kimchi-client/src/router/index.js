@@ -35,18 +35,19 @@ import StoreList from "../views/material/StoreList.vue";
 import StoreManagement from "../views/material/StoreManagement.vue";
 
 //business (영업)
-import OrderList from "../views/business/OrderList.vue"
-import OrderMng from "../views/business/OrderMng.vue"
-import DelivList from "../views/business/DelivList.vue"
-import DelivMng from "../views/business/DelivMng.vue"
+import OrderList from "../views/business/OrderList.vue";
+import OrderMng from "../views/business/OrderMng.vue";
+import DelivList from "../views/business/DelivList.vue";
+import DelivMng from "../views/business/DelivMng.vue";
 
 //basic (기준관리)
-import BasicProd from "../views/basic/BasicProd.vue"
-import BasicMate from "../views/basic/BasicMate.vue"
-import BasicBom from "../views/basic/BasicBom.vue"
-import BasicProc from "../views/basic/BasicProc.vue"
-import BasicProcFlow from "../views/basic/BasicProcFlow.vue"
-import BasicEmployee from "../views/basic/BasicEmployee.vue"
+import BasicProd from "../views/basic/BasicProd.vue";
+import BasicMate from "../views/basic/BasicMate.vue";
+import BasicBom from "../views/basic/BasicBom.vue";
+import BasicProc from "../views/basic/BasicProc.vue";
+import BasicProcFlow from "../views/basic/BasicProcFlow.vue";
+import BasicVendor from "../views/basic/BasicVendor.vue";
+import BasicEmployee from "../views/basic/BasicEmployee.vue";
 
 const routes = [
   // 예시
@@ -204,6 +205,11 @@ const routes = [
     path: "/basicprocflow",
     name: "BasicProcFlow",
     component: BasicProcFlow,
+  },
+  {
+    path: "/basicvendor",
+    name: "BasicVendor",
+    component: BasicVendor,
   },
   {
     path: "/basicemp",

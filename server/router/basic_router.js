@@ -24,6 +24,13 @@ router.get('/basicVendor', async(req, res)=>{
   res.send(list);
 });
 
+// 거래처 등록
+router.post('/basicVendor', async(req, res)=>{
+  let body = req.body;
+  let result = await basicService.postVendor(body);
+  res.send(result);
+});
+
 // 자재 조건 조회
 router.get('/basicMate', async(req, res)=>{
   let params = req.query;
@@ -45,6 +52,13 @@ router.get('/basicProc', async(req, res)=>{
   res.send(list);
 });
 
+// 공정 등록
+router.post('/basicProc', async(req, res)=>{
+  let body = req.body;
+  let result = await basicService.postProc(body);
+  res.send(result);
+});
+
 // BOM 조회 (제품ID)
 router.get('/basicBom', async(req, res)=>{
   let params = req.query;
@@ -52,6 +66,7 @@ router.get('/basicBom', async(req, res)=>{
   res.send(bom);
 });
 
+// BOM 등록
 router.post('/basicBom', async(req, res)=>{
   let body = req.body;
   let result = await basicService.postBom(body);
@@ -75,13 +90,13 @@ router.post('/basicProcFlow', async(req, res)=>{
 // 코드 조회 (main -> sub)
 router.get('/codes/:main_code', async(req, res)=>{
   let mainCode = req.params.main_code;
-  let list = await basicService.getCode(mainCode);
-  res.send(list);
+  let result = await basicService.getCode(mainCode);
+  res.send(result);
 });
 
 router.get('/equips', async(req, res)=>{
-  let list = await basicService.findAll();
-  res.send(list);
+  let result = await basicService.findAll();
+  res.send(result);
 });
 
 module.exports = router;

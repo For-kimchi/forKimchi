@@ -9,6 +9,26 @@ router.post('/order', async(req, res)=>{
   res.send(result);
 });
 
+// 주문서 조회
+router.get('/order', async(req, res)=>{
+  let params = req.query;
+  let result = await business_service.getOrder(params);
+  res.send(result);
+});
+
+// 주문서 상세 조회
+router.get('/order/:id', async(req, res)=>{
+  let id = req.params.id;
+  let result = await business_service.getOrderDetail(id);
+  res.send(result);
+});
+
+router.post('/orderConfirm', async(req, res)=>{
+  let orderInfo = req.body;
+  let result = await business_service.postOrderConfirm(orderInfo);
+  res.send(result);
+});
+
 // 납품대상 조회
 router.get('/delivTarget', async(req, res)=>{
   let params = req.query;
@@ -27,6 +47,19 @@ router.get('/delivProdTarget', async(req, res)=>{
 router.post('/deliv', async(req, res)=>{
   let delivInfo = req.body;
   let result = await business_service.postDeilv(delivInfo);
+  res.send(result);
+});
+
+
+router.get('/deliv', async(req, res)=>{
+  let params = req.query;
+  let result = await business_service.getDeliv(params);
+  res.send(result);
+});
+
+router.get('/deliv/:id', async(req, res)=>{
+  let id = req.params.id;
+  let result = await business_service.getDelivDetail(id);
   res.send(result);
 });
 

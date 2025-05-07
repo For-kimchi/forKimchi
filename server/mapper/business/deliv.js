@@ -11,7 +11,7 @@ const selectDelivTarget =
  ORD.vendor_id,
  VE.vendor_name,
  PR.prod_name,
- ORDD.order_amount,
+(ORDD.order_amount - PRD_DELIV(ORDD.order_detail_id)) order_amount,
  ORDD.deliv_due_date,
  ORDD.order_status,
  ORDD.memo
@@ -30,12 +30,12 @@ const selectDelivProdTarget =
   PR.prod_name,
   WA.warehouse_id,
   WA.warehouse_name,
-  PW.prod_amount,
+  (PW.prod_amount - PLOT_USED(PW.prod_lot)) prod_amount,
   PW.expired_date
   FROM t_prod_warehouse PW
   JOIN t_prod PR ON PW.prod_id = PR.prod_id
   JOIN t_warehouse WA ON PW.warehouse_id = WA.warehouse_id
-  WHERE PW.lot_status <> '1aa'
+  WHERE PW.lot_status <> '3aa'
   AND PW.prod_id = ?
   ORDER BY PW.prod_lot
 `;
@@ -65,6 +65,41 @@ const insertDelivDetail =
 VALUES
 (?, ?, ?, ?, ?, ?)`;
 
+const updatePlotStatus = 
+`UPDATE t_prod_warehouse
+SET lot_status = ?
+WHERE prod_lot = ?`;
+
+const selectDeliv =
+`SELECT deliv_id,
+        d.order_detail_id,
+        deliv_status,
+        deliv_date,
+        o.vendor_id,
+        v.vendor_name,
+        d.employee_id,
+        d.memo
+ FROM t_deliv d
+ JOIN t_order_detail od ON d.order_detail_id = od.order_detail_id
+ JOIN t_order o ON od.order_id = o.order_id
+ JOIN t_vendor v ON o.vendor_id = v.vendor_id
+ WHERE 1=1
+ :searchKeyword
+ ORDER BY deliv_id DESC`;
+
+ const selectDelivDetail =
+`SELECT deliv_detail_id,
+        deliv_id,
+        prod_lot,
+        dd.prod_id,
+        p.prod_name,
+        deliv_amount,
+        dd.memo
+ FROM t_deliv_detail dd
+ JOIN t_prod p ON dd.prod_id = p.prod_id
+ WHERE deliv_id = ?
+ ORDER BY deliv_detail_id DESC`;
+
 module.exports = {
   selectDelivTarget,
   selectDelivProdTarget,
@@ -72,4 +107,7 @@ module.exports = {
   insertDeliv,
   selectLastDelivDetail,
   insertDelivDetail,
+  updatePlotStatus,
+  selectDeliv,
+  selectDelivDetail,
 }

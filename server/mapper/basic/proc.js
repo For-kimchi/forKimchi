@@ -30,6 +30,13 @@ const deleteProc =
   `DELETE FROM t_proc
 WHERE proc_id = ?`;
 
+// 최근 공정 조회
+const selectLastProc =
+`SELECT proc_id
+FROM t_proc
+ORDER BY proc_id DESC
+LIMIT 1`;
+
 // 공정 흐름도 조회
 const selectProcFlow =
   `SELECT proc_flow_id,
@@ -115,6 +122,7 @@ module.exports = {
   insertProc,
   updateProc,
   deleteProc,
+  selectLastProc,
   selectProcFlow,
   selectProcFlowDetail,
   insertProcFlow,

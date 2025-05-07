@@ -162,9 +162,6 @@
         this.selected = {
         };
       },
-      save() {
-        this.resetForm();
-      },
       async save() {
         let result = await axios.post('/api/basicMate', this.selected)
           .catch(err => console.log(err));

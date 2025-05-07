@@ -177,6 +177,7 @@ export default {
           order_detail_id : this.orderDetail.order_detail_id,
           employee_id : this.employee.employee_id,
           memo : '',
+          remain: this.remain,
           deliv_details: delivDetails,
         }
 
@@ -184,6 +185,9 @@ export default {
         .catch(err => console.log(err));
 
         alert(result.data);
+
+        this.prods = [];
+        this.orderDetail = {};
       },
       async getProd() {
 

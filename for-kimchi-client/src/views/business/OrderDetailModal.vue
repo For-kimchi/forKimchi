@@ -44,7 +44,7 @@
               <td>{{ item.order_detail_id }}</td>
               <td>{{ item.prod_id }}</td>
               <td>{{ item.order_amount }}</td>
-              <td>{{ item.deliv_due_date }}</td>
+              <td>{{ yyyyMMdd(item.deliv_due_date) }}</td>
             </tr>
           </tbody>
         </table>
@@ -62,8 +62,8 @@ export default {
   },
   data() {
     return {
-      searchStart: this.getTodayDate(),
-      searchEnd: this.getTodayDate(),
+      searchStart: this.getTodayDate(0),
+      searchEnd: this.getTodayDate(7),
       results: [],
     };
   },
@@ -85,17 +85,24 @@ export default {
       this.$emit('close');
     },
     resetState() {
-      this.searchStart = this.getTodayDate();
-      this.searchEnd = this.getTodayDate();
+      this.searchStart = this.getTodayDate(0);
+      this.searchEnd = this.getTodayDate(7);
       this.results = []
     },
-      getTodayDate() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      },
+    getTodayDate(plus) {
+      const today = new Date();
+
+      today.setDate(today.getDate() + plus);
+
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+      yyyyMMdd(fullDateTime) { 
+        let date = new Date(fullDateTime);
+        return date.toISOString().split('T')[0]
+      }
   },
   emits: ['close', 'select'],
   watch: {

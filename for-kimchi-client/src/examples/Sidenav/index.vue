@@ -24,7 +24,7 @@
           alt="main_logo"
         />
       </a> -->
-      <div class="m-0 navbar-brand"> 
+      <div class="m-0 navbar-brand" @click="home"> 
         <img
           :src="
             sidebarType === 'bg-white' ||
@@ -35,7 +35,7 @@
           class="navbar-brand-img h-100"
           alt="main_logo"
         />
-        <span class="ms-2 font-weight-bold text-white">For김치</span>
+        <span class="ms-2 font-weight-bold text-white">For Kimchi</span>
       </div>
     </div>
     <hr class="horizontal light mt-0 mb-2" />
@@ -63,5 +63,10 @@ export default {
   computed: {
     ...mapState(useEventStore, ["isRTL", "sidebarType", "isDarkMode"]),
   },
+  methods: {
+    home() {
+      this.$router.push('/');
+    }
+  }
 };
 </script>
