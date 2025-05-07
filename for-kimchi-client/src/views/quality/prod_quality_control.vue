@@ -3,42 +3,32 @@
     <div class="row">
       <div class="col-12">
         <div class="d-flex align-items-center justify-content-end mb-3 px-3 ">
-          <MaterialButton class="btn btn-info" @click="handleInspection">
-            추가
-          </MaterialButton>
         </div>
-        <MaterialAlert>제품검사</MaterialAlert>
+        <Material-Alert>자재검사</Material-Alert>
         <h4>검사요청</h4>
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead class="table-header">
-                  <tr>
-                    <th>발주번호</th>
-                    <th>제품명</th>
-                    <th>제품번호</th>
-                    <th>LOT</th>
-                    <MaterialCheckbox></MaterialCheckbox>
+                  <tr>  
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재이름</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"><input type="checkbox" /></th>
                   </tr>
                 </thead>
               </table>
               <div style="max-height: 200px; overflow-y: auto;">
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
-                    <template v-if="mateCount > 0">
-                      <tr v-for="(info, index) in mateQuality" :key="info.id" @click="" style="cursor: pointer;">
-                        <!--클릭안에 -> getQualityDetail(info.id)-->
-                        <td>{{ info.quality_date }}</td>
-                        <td>{{ info.mate_name }}</td>
-                        <td>{{ info.mate_lot }}</td>
-                        <td>{{ info.sub_code_name }}</td>
-                        <td>{{ info.result }}</td>
-
-                      </tr>
-                    </template>
-                    <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
+                    <tr v-for="(info, index) in mateQualityreq" v-bind:key="info.quality_id" v-on:click="mateQualityWait(info.quality_id)" style="cursor: pointer;">
+                      <!--클릭안에 -> getQualityDetail(info.id)-->
+                      <td class="align-middle text-center">{{ info.quality_id }}</td>
+                      <td class="align-middle text-center">{{ info.mate_name }}</td>
+                      <td class="align-middle text-center">{{ info.inbound_amount }}</td>
+                      <td class="align-middle text-center">{{ info.memo }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -54,53 +44,35 @@
     <div class="row">
       <!-- 영역 -->
       <div class="d-flex align-items-center justify-content-end mb-3 px-3 ">
-        <MaterialButton class="btn btn-info me-2" @click="handleIncoming">
-          검사
-        </MaterialButton>
+        <button class="btn btn-info ms-2 me-2" @click="test">검사</button>
 
-        <MaterialButton class="btn btn-warning" @click="handleInspection">
-          반려
-        </MaterialButton>
+        <button class="btn btn-warning ms-2 me-2">반려</button>
       </div>
       <!--까지 -->
       <div class="col-12">
-        <h4>검사대기</h4>
+        <materialAlert><span>검사대기</span></materialAlert>
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead>
                   <tr>
-                    <th>검사일자</th>
-                    <th>항목</th>
-                    <th>규격</th>
-                    <th>방법</th>
-                    <th>검사결과</th>
-                    <th>
-                      <MaterialCheckbox></MaterialCheckbox>
-                    </th>
-                    <th>상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사이름</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th> -->
                   </tr>
                 </thead>
               </table>
               <div style="max-height: 200px; overflow-y: auto;">
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
-                    <template v-if="detailCount > 0">
-                      <tr v-for="(info, index) in mateQualityDetail" :key="info.id" @click="" style="cursor: pointer;">
-                        <td>{{ info.quality_date }}</td>
-                        <td>{{ info.option_name }}</td>
-                        <td>{{ info.option_standard }}</td>
-                        <td>{{ info.option_spec}}</td>
-                        <td>{{ info.sub_code_name}}</td>
-                        <td>
-                          <MaterialCheckbox></MaterialCheckbox>
-                        </td>
-                        <td>{{info.quality_result}}</td>
-                      </tr>
-                    </template>
-                    <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
+                    <tr v-for="(info, index) in mateQualitywait" v-bind:key="mate_detail_id"  style="cursor: pointer;">
+                      <td class="align-middle text-center">{{ info.option_id }}</td>
+                      <td class="align-middle text-center">{{ info.option_name }}</td>
+                      <td class="align-middle text-center">{{ info.option_standard}}</td>
+                      <td class="align-middle text-center"><input type="text"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -126,6 +98,7 @@
   import MaterialTextarea from '../../components/MaterialTextarea.vue';
 
   export default {
+
     components: {
       MaterialAlert,
       MaterialAvatar,
@@ -139,48 +112,37 @@
     },
     data() {
       return {
-        mateQuality: [],
-        mateQualityDetail: [],
-        mateLotDetail: [],
-        selectedMaterial: '',
-        searchKeyword: '',
+        mateQualityreq :[],
+        mateQualitywait: [],
       }
-    },
-    computed: {
-      mateCount() {
-        return this.mateQuality.length;
-      },
-      detailCount() {
-        return this.mateQualityDetail.length;
-      },
-      mateLot() {
-        return this.mateLotDetail.length;
-      }
-    },
-    methods: {
-      async getQuality() {
-        let res = await axios.get('/api/quality')
-          .catch(err => console.log(err));
-        this.mateQuality = res.data;
-      },
-      async getQualityDetail() {
-        let res = await axios.get(`/api/quality-detail`)
-          .catch(err => console.log(err));
-        this.mateQualityDetail = res.data;
-      },
-      async getMateLot() {
-        let res = await axios.get(`/api/quality-lot`)
-          .catch(err => console.log(err));
-        this.mateLotDetail = res.data;
-      },
-      search() {
-
-      },
     },
     created() {
-      this.getQuality();
-      this.getQualityDetail();
-      this.getMateLot();
+      this.mateQualityReq();
+    },
+    computed: {
+      
+    },
+    methods: {
+      // 자재검사요청 (요청)
+      async mateQualityReq(){
+        let ajaxRes = 
+        await axios.get(`/api/mateQualityReq`)
+                   .catch(err => console.log(err));
+                   this.mateQualityreq = ajaxRes.data;
+      },
+      // 자재검사요청상세 (대기)
+      async mateQualityWait(waitId) {
+        let ajaxRes = 
+        await axios.get(`api/mateQualityWait/${waitId}`)
+                   .catch(err => console.log(err));
+        this.mateQualitywait = ajaxRes.data;
+      },
+
+    
+      
+      addRow(){
+        this.mateQualitywait.push({});
+      }
     }
   }
 </script>

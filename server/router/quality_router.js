@@ -17,24 +17,51 @@ router.get('/mateQualityWait/:id', async(req, res) =>{
 });
 
 // 자재검사조회 (드롭다운)
-router.get('/dropDown', async(req, res)=> {
-  let dropDown = await material_service.dropDown();
-  res.send(dropDown);
+router.get('/mateQualityViewDropDown', async(req, res)=> {
+  let mateQualityViewDropDown = await material_service.mateQualityViewDropDown();
+  res.send(mateQualityViewDropDown);
 });
 
 // 자재검사조회
-router.get('/qualityViewAll', async(req, res)=> {
-  let qualityViewAll = await material_service.qualityViewAll();
-  res.send(qualityViewAll);
+router.get('/mateQualityViewAll', async(req, res)=> {
+  let mateQualityViewAll = await material_service.mateQualityViewAll();
+  res.send(mateQualityViewAll);
 });
 
 // 자재검사조회 (상세)
-router.get('/qualityViewDetail/:id', async(req, res) => {
+router.get('/mateQualityViewDetail/:id', async(req, res) => {
   let detailId = req.params.id;
-  let qualityViewDetail = await material_service.qualityViewDetail(detailId);
-  res.send(qualityViewDetail);
-})
+  let mateQualityViewDetail = await material_service.mateQualityViewDetail(detailId);
+  res.send(mateQualityViewDetail);
+});
 
+// 검사
+router.post('/mateQualityViewAll', async(req, res)=>{
+  let body = req.body;
+  let testList = await basicService.mateQualityViewAll(body);
+  res.send(testList);
+});
+
+//--------------------------------------------------------
+
+// 제품검사조회 (드롭다운)
+router.get('/prodQualityViewDropDown', async(req, res)=> {
+  let prodQualityViewDropDown = await material_service.prodQualityViewDropDown();
+  res.send(prodQualityViewDropDown);
+});
+
+// 제품검사조회
+router.get('/prodQualityViewAll', async(req, res)=> {
+  let prodQualityViewAll = await material_service.prodQualityViewAll();
+  res.send(prodQualityViewAll);
+});
+
+// 제품검사조회 (상세)
+router.get('/prodQualityViewDetail/:id', async(req, res) => {
+  let detailId = req.params.id;
+  let prodQualityViewDetail = await material_service.prodQualityViewDetail(detailId);
+  res.send(prodQualityViewDetail);
+});
 
 // router.get('/qualityDetail', async(req, res)=> {
 //   let qualityView = await mateService.qualityDetail();

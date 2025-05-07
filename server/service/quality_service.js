@@ -14,45 +14,52 @@ const mateQualityWait = async (waitId) => {
 
 
 // 자재검사조회 (드롭다운)
-const dropDown = async() => {
-  let list = await mariaDB.query('qualityViewDropDown');
+const mateQualityViewDropDown = async() => {
+  let list = await mariaDB.query('mateQualityViewDropDown');
   return list;
 };
 
 // 자재검사조회
-const qualityViewAll = async() => {
-  let list = await mariaDB.query('qualityViewAll');
+const mateQualityViewAll = async() => {
+  let list = await mariaDB.query('mateQualityViewAll');
   return list;
 };
 
 // 자재검사조회 (상세)
-const qualityViewDetail = async(detailId) => {
-  let list = await mariaDB.query('qualityViewDetail', detailId);
+const mateQualityViewDetail = async(detailId) => {
+  let list = await mariaDB.query('mateQualityViewDetail', detailId);
   return list;
 }
 
-// const qualityDetail = async() => {
-//   let list = await mariaDB.query('qualityViewdetail');
-//   return list; 
-// };
+// -------------------------------------------------------------------
 
-// const qualityControl = async() => {
-//   let list = await mariaDB.query('qualityMatecontrol');
-//   return list;
-// };
+// 제품검사조회 (드롭다운)
+const prodQualityViewDropDown = async() => {
+  let list = await mariaDB.query('prodQualityViewDropDown');
+  return list;
+};
 
-// const qualityMatedetail = async() => {
-//   let list = await mariaDB.query('qualityMatedetail', orderId);
-//   return list;
-// }
+// 제품검사조회
+const prodQualityViewAll = async() => {
+  let list = await mariaDB.query('prodQualityViewAll');
+  return list;
+};
 
-
+// 제품검사조회 (상세)
+const prodQualityViewDetail = async(detailId) => {
+  let list = await mariaDB.query('prodQualityViewDetail', detailId);
+  return list;
+}
 
 module.exports = {
+  // 자재
   mateQualityReq,
   mateQualityWait,
-  dropDown,
-  qualityViewAll,
-  qualityViewDetail,
-
+  mateQualityViewDropDown,
+  mateQualityViewAll,
+  mateQualityViewDetail,
+  // 제품
+  prodQualityViewDropDown,
+  prodQualityViewAll,
+  prodQualityViewDetail,
 }
