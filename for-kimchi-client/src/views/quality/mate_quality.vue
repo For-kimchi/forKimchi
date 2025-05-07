@@ -9,7 +9,7 @@
           <select v-model="selectedMaterial" class="form-select me-2 text-center"
             style="max-width: 200px; border: 1px solid gray; text-align-last: center;">
             <option value="">전체</option>
-            <option v-for="(info, idx) in dropdown" v-bind:key="idx.id" v-on:click="qualityViewAll(info.mate_id)" >
+            <option v-for="(info, idx) in mateQualityViewDropdown" v-bind:key="idx.id" v-on:click="mateQualityViewAll(info.mate_id)" >
               {{ info.mate_id }}
             </option>
           </select>
@@ -29,9 +29,9 @@
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead class="table-header">
                   <tr>
-                    <th>검사일자</th>
-                    <th>자재ID</th>
-                    <th>자재명</th>
+                    <th>검사번호</th>
+                    <th>자재이름</th>
+                    <th>자재번호</th>
                     <th>검사결과</th>
                   </tr>
                 </thead>
@@ -39,11 +39,11 @@
               <div style="max-height: 200px; overflow-y: auto;">
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
-                      <tr v-for="(info, index) in qualityViewall" :key="info.mate_id" v-on:click="qualityViewDetail(info.mate_id)" style="cursor: pointer;">
+                      <tr v-for="(info, index) in mateQualityViewall" :key="info.quality_id" v-on:click="mateQualityViewDetail(info.quality_id)" style="cursor: pointer;">
                         <!--클릭안에 -> getQualityDetail(info.id)-->
-                        <td>{{ info.quality_date }}</td>
-                        <td>{{ info.mate_id }}</td>              <!--검사아이디-->
-                        <td>{{ info.mate_name }}</td>
+                        <td>{{ info.quality_id }}</td>
+                        <td>{{ info.mate_name }}</td>              <!--검사아이디-->
+                        <td>{{ info.mate_id }}</td>
                         <td>
                           <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info" style="width: 60px; text-align: center;">
                             {{ info.result }}
@@ -84,7 +84,6 @@
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead>
                   <tr>
-                    <th>검사일자</th>
                     <th>검사번호</th>
                     <th>검사명</th>
                     <th>기준치</th>
@@ -98,11 +97,10 @@
               <div style="max-height: 200px; overflow-y: auto;">
                 <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                   <tbody>
-                      <tr v-for="(info, index) in qualityViewdetail" v-bind:key="info.id" style="cursor: pointer;">
-                        <td>{{ info.quality_date }}</td>
+                      <tr v-for="(info, index) in mateQualityViewdetail" v-bind:key="info.id" style="cursor: pointer;">
                         <td>{{ info.option_id }}</td>
                         <td>{{ info.option_name }}</td>
-                        <td>{{ info.option_standard}}</td>
+                        <td>{{ info.option_standard }}</td>
                         <td>
                           <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info" style="width: 60px; text-align: center;">
                             {{ info.result }}
@@ -153,39 +151,39 @@
     },
     data() {
       return {
-        dropdown :[],
-        qualityViewall :[],
-        qualityViewdetail :[],
+        mateQualityViewDropdown :[],
+        mateQualityViewall :[],
+        mateQualityViewdetail :[],
       }
     },
     created() {
-      this.dropDown();
-      this.qualityViewAll();
+      this.mateQualityViewDropDown();
+      this.mateQualityViewAll();
     },
     computed: {
 
     },
     methods: {
-      async dropDown() {
+      async mateQualityViewDropDown() {
         let ajaxRes =
-        await axios.get(`/api/dropDown`)
+        await axios.get(`/api/mateQualityViewDropDown`)
                    .catch(err => console.log(err));
-                   this.dropdown = ajaxRes.data;
+                   this.mateQualityViewDropdown = ajaxRes.data;
       },
-      async qualityViewAll(){
+      async mateQualityViewAll(){
         let ajaxRes = 
-        await axios.get(`/api/qualityViewAll`)
+        await axios.get(`/api/mateQualityViewAll`)
                    .catch(err => console.log(err));
-                   this.qualityViewall = ajaxRes.data;
+                   this.mateQualityViewall = ajaxRes.data;
       },
-      async qualityViewDetail(detailId){
+      async mateQualityViewDetail(detailId){
         let ajaxRes =
-        await axios.get(`api/qualityViewDetail/${detailId}`)
+        await axios.get(`api/mateQualityViewDetail/${detailId}`)
                    .catch(err => console.log(err));
-        this.qualityViewdetail = ajaxRes.data;
+        this.mateQualityViewdetail = ajaxRes.data;
       },
       addRow() {
-        this.qualityViewdetail.push({});
+        this.mateQualityViewdetail.push({});
       }
     }
   }
