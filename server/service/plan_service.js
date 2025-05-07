@@ -206,7 +206,7 @@ const orpldtinsert = async(orderInfo)=>{
         selectedSql = await mariaDB.selectedQuery('updateod', orplInfo.order_id);
         let orstatus = await conn.query(selectedSql, orplInfo.order_id);
         conn.commit();
- 
+
         return orstatus;
     //  에러 뜨면 rollback
     }catch(err){

@@ -2,8 +2,8 @@
   <div class="container-fluid py-4">
 
     <div class="text-end mb-3">
-      <button class="btn btn-success">저장</button>
-      <button class="btn btn-danger">삭제</button>
+      <button class="btn btn-success" @click="mateSave(selectedList)">저장</button>
+      <button class="btn btn-danger" >삭제</button>
       <button class="btn btn-info" @click="goBack">닫기</button>
     </div>
 
@@ -26,6 +26,8 @@
                 <input type="text" readonly v-model="vendor.vendor_name">
                 <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="openProdVendor"></i>
               </li>
+              <li class="list-group-item" style="margin-left: 20px;">납기예정일자</li>
+              <li class="list-group-item"><input type="date"></li>
             </ul>
           </div>
         </div>
@@ -43,13 +45,7 @@
                     자재
                   </li>
                   <li class="list-group-item d-flex align-items-center">
-                    <input 
-  type="text" 
-  v-model="search.material" 
-  @input="handleClick" 
-  class="form-control mb-2" 
-  placeholder="자재명 검색"
-/>
+                    <input type="text" v-model="search.material" @input="handleClick" class="form-control mb-2"placeholder="자재명 검색"/>
                     <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click ="handleClick(info)"></i>
                   </li>
                 </ul>
@@ -64,7 +60,6 @@
                     <th><input type="checkbox" @change="toggleAll('searchMate', $event)"></th>
                     <th>품목코드</th>
                     <th>품목명</th>
-                    <th>수량</th>
                     <th>단위</th>
                   </tr>
                 </thead>
@@ -74,7 +69,6 @@
                       <td><input type="checkbox" v-model="info.selected"></td>
                       <td>{{ info.mate_id }}</td>
                       <td>{{ info.mate_name }}</td>
-                      <td>{{ info.req_amount }}</td>
                       <td>{{ info.mate_unit }}</td>
                     </tr>
                   </template>
@@ -119,9 +113,9 @@
                   <template v-if="selectedList.length > 0">
                     <tr v-for="(info, index) in selectedList" :key="info.id">
                       <td><input type="checkbox" v-model="info.selected"></td>
-                      <td>{{ info.equip_id }}</td>
-                      <td>{{ info.equip_name }}</td>
-                      <td>{{ info.req_amount }}</td>      
+                      <td>{{ info.mate_id }}</td>
+                      <td>{{ info.mate_name }}</td>
+                      <td><input type="number" v-model="info.req_amount" style="width: 100px;"></td>      
                       <td>{{ info.mate_unit }}</td>      
                     </tr>
                   </template>
@@ -142,7 +136,7 @@
 <script>
 import axios from 'axios';
 import Modal from '@/views/modal/Modal.vue'
-import VendorModal from '../business/VendorModal.vue';
+import VendorModal from '../modal/VendorModal.vue';
 
 export default {
   name: "Material Management",
@@ -165,6 +159,7 @@ export default {
       venList: [],
       showVendor: false,
       vendor : {},
+      mateSaveInfo :[],
     };
   },
   methods: {
@@ -187,16 +182,39 @@ export default {
       console.error('검색 실패:', error);
     });
     },
+// 항목선택여부 알림.
+// if(Object.keys(planDetailList).length > 0){
+//     let  ajaxRes =
+//     await axios.put(`/api/planDetailSave`, planDetailList)
+//                .catch(err => console.log(err));
+//     this.update = ajaxRes.data;
+//     alert('저장 완료');
+
+// }else{
+//   alert('항목이 선택되지 않았습니다.')
+// };
+    async mateSave(mateSaveInfo) {
+      console.log(mateSaveInfo);
+      if(Object.keys(mateSaveInfo).length > 0){
+            let  ajaxRes =
+            await axios.put(`/api/mateSave`, mateSaveInfo)
+                       .catch(err => console.log(err));
+            this.update = ajaxRes.data;
+            alert('저장 완료');
+
+        }else{
+          alert('항목이 선택되지 않았습니다.')
+        };
+    },
 
     moveToSelected() {
       const movingItems = this.searchMate.filter(item => item.selected);
       this.selectedList.push(...movingItems.map(item => ({
-      id: item.mate_id,
-      equip_id: item.mate_id,
-      equip_name: item.mate_name,
-      equip_type: item.mate_unit,
-      req_amount: item.req_amount,
-      mate_unit: item.mate_unit,
+        mate_id: item.mate_id,
+        mate_name: item.mate_name,
+        mate_unit: item.mate_unit,
+        req_amount: item.req_amount,
+      // mate_unit: item.mate_unit,
       selected: false
       })));
       this.searchMate = this.searchMate.filter(item => !item.selected);

@@ -30,7 +30,6 @@ router.get('/vendors', async(req,res) => {
 // 자재검색
 router.get('/mateList', async (req, res) => {
   const { mate_name } = req.query;
-
   try {
     let mateList = await mateService.mateList(mate_name);
     // mate_name이 있을 경우 대소문자 구분 없이 포함된 항목만 필터링
@@ -42,6 +41,13 @@ router.get('/mateList', async (req, res) => {
     console.error('Error fetching mate list:', err);
     res.status(500).send('Internal Server Error');
   }
+});
+
+// 자재발주 저장버튼
+router.post('/mateSave', async (req, res) => {
+  let mateSaveInfo = req.body;
+  let result = await mateService.insertMates(mateSaveInfo);
+  res.send(result);
 });
 
 

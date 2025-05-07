@@ -71,7 +71,7 @@
                     <th>발주번호</th>
                     <th>거래처</th>
                     <th>사용자명</th>
-                    <th>품목수</th>
+                    <th>납기예정일자</th>
                     <th>발주상태</th>
                     <th>비고</th>
                     <th>승인일자</th>
@@ -87,7 +87,7 @@
                       <td>{{ info.req_id }}</td>
                       <td>{{ info.vendor_id }}</td>
                       <td>{{ info.employee_id }}</td>
-                      <td>{{ info.req_amount }}</td>
+                      <td>{{ info.req_due_date }}</td>
                       <td>{{ info.req_status }}</td>
                       <td>{{ info.memo }}</td>
                       <td>{{ info.confirm_date }}</td>
@@ -119,7 +119,6 @@
                       <th>No</th>
                       <th>품목코드</th>
                       <th>품목명</th>
-                      <th>납품예정일</th>
                       <th>수량</th>
                       <th>단위</th>
                       <th>비고</th>
@@ -131,7 +130,6 @@
                         <td>{{ index + 1 }}</td>
                         <td>{{ info.mate_id }}</td>
                         <td>{{ info.mate_name }}</td>
-                        <td>{{ info.req_due_date }}</td>
                         <td>{{ info.req_amount }}</td>
                         <td>{{ info.mate_unit }}</td>
                         <td>{{ info.memo }}</td>
