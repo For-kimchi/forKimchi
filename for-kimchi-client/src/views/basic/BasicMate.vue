@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="search">조회</button>
-        <button class="btn btn-info ms-2" @click="resetForm">등록</button>
+        <button class="btn btn-info ms-2" @click="getBasicMate">등록</button>
       </div>
     </div>
 
@@ -148,9 +148,6 @@
         .catch(err => console.log(err));
       this.codes = res.data;
     },
-      search() {
-        this.getBasicMate();
-      },
       editItem(item) {
         this.action = '수정',
         this.selected = {

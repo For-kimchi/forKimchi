@@ -1,10 +1,10 @@
 <template>
   <div class="container-fluid">
     <!-- 검색 -->
-    <div class="row mt-3">
+    <div class="row">
       <div class="col text-end">
         <button class="btn btn-success ms-2"  @click="openOrderDetailModal">납품대상조회</button>
-        <button class="btn btn-info ms-2" @click="register">등록</button>
+        <button class="btn btn-info ms-2" @click="register">저장</button>
       </div>
     </div>
 
@@ -16,20 +16,20 @@
               <h6 class="text-white text-capitalize ps-3">납품정보</h6>
             </div>
           </div>
-          <div class="row g-3 mt-3">
-            <div class="col-md-2">
+          <div class="row g-3 mt-3 ms-3">
+            <div class="col-md-3">
               <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0">거래처명 :</label>
                 {{ orderDetail.vendor_name }}
               </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0">납품일자 : </label>
                 {{ orderDetail.deliv_due_date ? yyyyMMdd(orderDetail.deliv_due_date) : '' }}
               </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0">담당자명 : </label>
                 {{ employee.employee_name }}
@@ -48,7 +48,7 @@
               <h6 class="text-white text-capitalize ps-3">납품대상제품</h6>
             </div>
           </div>
-          <div class="row g-3 mt-3">
+          <div class="row g-3 mt-3 ms-3">
             <div class="col-md-2">
               <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0 ">제품명 : </label>
@@ -127,7 +127,7 @@
 import axios from 'axios';
 import ProdModal from './ProdModal.vue';
 import VendorModal from './VendorModal.vue';
-import OrderDetailModal from './OrderDetailModal.vue';
+import OrderDetailModal from '../modal/OrderDetailModal.vue';
 
 export default {
     name: "주문관리",

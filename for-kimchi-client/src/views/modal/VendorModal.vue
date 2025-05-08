@@ -11,7 +11,7 @@
         <div class="d-flex align-items-center justify-content-between mb-3">
           <!-- 왼쪽: input -->
           <div class="flex-grow-1 me-3">
-            <input v-model="search" type="text" class="form-control border" placeholder="거래처명" @keyup.enter="doSearch"/>
+            <input v-model="search" type="text" class="form-control border text-center" placeholder="거래처명" @keyup.enter="doSearch"/>
           </div>
 
           <!-- 오른쪽: 버튼 -->

@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col text-end">
         <button class="btn btn-success" @click="getOrders">조회</button>
-        <button class="btn btn-info ms-2" @click="confirm">승인</button>
+        <button class="btn btn-info ms-2" @click="confirmOrder">승인</button>
       </div>
     </div>
 
@@ -168,17 +168,28 @@ export default {
           .catch(err => console.log(err));
         this.codes = res.data;
       },
-      async confirm() {
+      async confirmOrder() {
+
         const selectedItems = this.orders.filter(item => item.selected);
 
-        if (selectedItems.length > 0 ) {
-          let res = await axios.post(`/api/orderConfirm`, selectedItems)
-          .catch(err => console.log(err));
-        
-          console.log(res.data);
+        if (selectedItems.length > 0) {
+          if (confirm('선택한 항목을 승인하시겠습니까?')) {
+              let res = await axios.post(`/api/orderConfirm`, selectedItems)
+                .catch(err => console.log(err));
 
-          this.getOrders();
-          this.orderDetails = [];
+              console.log(res.data);
+
+              if (res.success) {
+                alert('선택된 항목이 승인되었습니다.');
+                this.getOrders();
+                this.orderDetails = [];
+
+              } else {
+                alert('승인 처리 중 오류가 발생했습니다.');
+              }
+          }
+        } else {
+          alert('선택된 항목이 없습니다.');
         }
       },
       getTodayDate() {

@@ -8,13 +8,13 @@
       </div>
     </div>
 
-    <div class="card p-3 mb-3">
+    <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+        <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
           <h6 class="text-white text-capitalize ps-3">공정조회</h6>
         </div>
       </div>
-      <div class="row g-3 mt-3">
+      <div class="row g-2 my-3 px-3">
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">공정명</label>
@@ -30,7 +30,7 @@
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">공정분류</label>
-            <select v-model="searchType" class="form-select text-center">
+            <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
@@ -45,7 +45,7 @@
       <div class="col-md-8">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">공정목록</h6>
             </div>
           </div>
@@ -88,7 +88,7 @@
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">공정분류</label>
-            <select v-model="selected.proc_type" class="form-select text-center">
+            <select v-model="selected.proc_type" class="form-select border text-center">
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
               </option>

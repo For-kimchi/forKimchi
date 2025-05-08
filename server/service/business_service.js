@@ -4,6 +4,10 @@ const converts = require('../utils/converts')
 
 const postOrder = async (orderInfo) => {
 
+  let res = {
+    success: true,
+  }
+
   try {
     conn = await mariaDB.getConnection();
     await conn.beginTransaction();
@@ -58,11 +62,14 @@ const postOrder = async (orderInfo) => {
     // 정상 완료 시 commit
     conn.commit();
 
-    return result;
+    return res;
   } catch (err) {
     // error 발생 시 console 출력 및 rollback
     console.log(err);
     if (conn) conn.rollback();
+
+    res.success = false;
+    return res;
   } finally {
     // connection 반환
     if (conn) conn.release();
@@ -95,7 +102,7 @@ const getOrder = async(params) => {
   keyword.searchKeyword = ` AND order_date BETWEEN '${startDate}' AND '${endDate}'` 
   + keyword.searchKeyword;
   
-  let list = await mariaDB.query("selectOrders", keyword);
+  let list = await mariaDB.query("selectOrder", keyword);
   return list;
 }
 

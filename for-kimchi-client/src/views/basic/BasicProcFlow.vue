@@ -1,35 +1,56 @@
 <template>
   <div class="container-fluid">
-    <!-- Search Filter -->
-    <div class="card p-3 mb-4">
-      <div class="row g-3">
-        <div class="col-md-3">
-          <input v-model="prod.prod_name" type="text" class="form-control border text-center" @keydown.prevent
-            @click="showProd = true" placeholder="제품명" />
-        </div>
-        <div class="col-md-3">
-          <input v-model="prod.prod_id" type="text" class="form-control border text-center" placeholder="제품ID" />
-        </div>
-        <div class="col-md-3">
-          <input v-model="prod.prod_type" type="text" class="form-control border text-center" placeholder="제품분류" />
-        </div>
-        <div class="col-md-3">
-          <button class="btn btn-primary" @click="save">저장</button>
-        </div>
+    
+    <div class="row mt-3">
+      <div class="col text-end">
+        <button class="btn btn-success" @click="showProd = true">조회</button>
+        <button class="btn btn-info ms-2" @click="save">등록</button>
       </div>
     </div>
+
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+          <h6 class="text-white text-capitalize ps-3">제품정보</h6>
+        </div>
+      </div>
+      <div class="row g-2 my-3 px-3">
+
+        <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품명</label>
+            <input v-model="prod.prod_name" type="text" class="form-control border text-center" @keydown.prevent
+            @click="showProd = true" placeholder="제품명" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품ID</label>
+            <input v-model="prod.prod_id" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품ID" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품분류</label>
+            <input v-model="prod.prod_type" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품분류" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
 
     <div class="row">
       <!-- Left Side: Products -->
       <div class="col-md-6">
-        <div class="card p-3 mb-4">
+        <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">공정흐름도 정보</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 300px;">
+            <div class="table-responsive p-0" style="max-height: 400px;">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
@@ -69,7 +90,7 @@
 
       <!-- Right Side: Materials -->
       <div class="col-md-6">
-        <div class="card p-3 mb-4">
+        <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">공정 정보</h6>
@@ -77,7 +98,7 @@
           </div>
 
           <div class="card-body px-0 pb-2">
-            <div class="row g-3 mt-2">
+            <div class="row g-3 px-3">
               <div class="col-md-6">
                 <input v-model="searchName" type="text" class="form-control border text-center" placeholder="공정명" />
               </div>
@@ -85,7 +106,7 @@
                 <button class="btn btn-primary" @click="searchFlow">검색</button>
               </div>
             </div>
-            <div class="table-responsive p-0" style="max-height: 300px;">
+            <div class="table-responsive p-0" style="max-height: 400px;">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
@@ -126,9 +147,7 @@
       return {
         showProd: false,
         searchName: '',
-        procFlow: {
-          flow_details: [],
-        },
+        procFlow: {},
         procs: [],
         prod: {},
         employee: {
@@ -189,10 +208,18 @@
 
         this.procFlow.employee_id = this.employee.employee_id;
 
-        let result = await axios.post('/api/basicProcFlow', this.procFlow)
+        let res = await axios.post('/api/basicProcFlow', this.procFlow)
         .catch(err => console.log(err));
 
-        alert(result);
+        if (res.data.success) {
+          alert('등록 성공');
+          this.bom = {};
+          this.materials = [];
+          this.prod = {};
+        } else {
+          alert('등록 실패');
+        }
+
       },
     },
     mounted() {},

@@ -1,21 +1,21 @@
 <template>
   <div class="container-fluid">
     <!-- 검색 -->
-    <div class="row mt-3">
+    <div class="row">
       <div class="col text-end">
-        <button class="btn btn-info ms-2" @click="register">등록</button>
+        <button class="btn btn-info ms-2" @click="register">저장</button>
       </div>
     </div>
 
     <div class="row">
       <div class="col-12">
-        <div class="card ps-2 my-4">
+        <div class="card mt-3 mb-5">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">주문정보</h6>
             </div>
           </div>
-          <div class="row g-3 mt-3 mb-3 pe-3">
+          <div class="row g-3 mt-3 mb-3 px-3">
             <div class="col-md-3">
               <div class="d-flex align-items-center">
                 <label class="form-label mb-0 " style="width: 100px;">주문일자</label>
@@ -127,7 +127,11 @@ export default {
     },
     methods : {
       async register() {
-        let params = {
+
+        if (this.orderDetails.length == 0) {
+          alert('상세 항목이 없습니다.');
+        } else {
+          let params = {
           vendor_id : this.vendor.vendor_id,
           employee_id : this.employee.employee_id,
           order_date: this.order_date,
@@ -135,10 +139,21 @@ export default {
           memo: this.memo,
         }
 
-        let result = await axios.post('/api/order', params)
+        let res = await axios.post('/api/order', params)
         .catch(err => console.log(err));
+        
+          if (res.data.success) {
+            alert('주문이 등록되었습니다');
+            this.orderDetails = [];
+            this.vendor = {};
+          } else {
+            alert('주문 등록 중 오류가 발생했습니다.');
+          }
 
-        alert(result.data);
+        }
+        
+
+
       },
       getTodayDate() {
         const today = new Date();
