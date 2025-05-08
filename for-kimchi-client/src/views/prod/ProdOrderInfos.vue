@@ -109,7 +109,6 @@
                   <thead>
                     <tr>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
-                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산지시ID</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산지시LOT</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산제품</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산수량</th>
@@ -124,7 +123,6 @@
                     </tr> -->
                     <tr v-for="(info,index) in prodOrderLists" style="height: 80px; overflow-y: auto;">
                       <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
-                      <td class="align-middle font-weight-bolder text-center">{{info.prod_order_id}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.prod_order_lot}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.prod_id}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.order_amount}}</td>
@@ -187,6 +185,10 @@ export default {
         await axios.put(`/api/prodOrder`, info)
                     .catch(err=> console.log(err));
           let Order = ajaxRes.date;
+
+         await this.prodDetailList();
+         await this.prodOrderList(info.plan_detail_id);
+
       }
 
     }

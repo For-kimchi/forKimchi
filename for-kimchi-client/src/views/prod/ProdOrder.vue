@@ -46,7 +46,6 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산지시ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산계획상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산LOT</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">제품</th>
@@ -59,7 +58,6 @@
                 <tbody>
                   <tr v-for="(info,index) in prodOrderList" v-bind:key="info.prod_order_id" >
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.prod_order_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.plan_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.prod_order_lot }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.prod_id }}</td>
