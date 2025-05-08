@@ -15,6 +15,23 @@ SELECT
 FROM t_mate_inbound_detail
 `;
 
+const mateQualityInsert =
+`
+INSERT INTO t_quality_mate
+(
+quality_id,
+inbound_detail_id,
+quality_date,
+quality_final_result,
+quality_type,
+quality_amount,
+quality_pass_amount,
+quality_fail_amount
+)
+VALUES
+(?, ?, CURRENT_TIMESTAMP, '1x', '1w', 10, 20, 30)
+`;
+
 // 자재검사요청 (대기-상세) [자재ID, 자재이름, 기준치, ]
 const mateQualityWait = 
 `
@@ -28,12 +45,12 @@ FROM
     WHERE tmi.mate_id = ?
 `;
 
-const mateQualityInsert =
+const mateWaitInsert =
 `
-INSERT INTO t_p
-(proc_id, proc_name, proc_type)
+INSERT INTO t_quality_mate_detail
+(quality_detail_id, quality_id, option_id, quality_result_value, quality_result)
 VALUES
-(?, ?, ?)
+(?, ?, ?, ?, '1r')
 `;
 
 // 자재검사조회 (드롭다운)
@@ -44,16 +61,17 @@ from t_mate_inbound_detail t JOIN t_quality_mate m on (t.inbound_detail_id = m.i
 // 자재수입검사조회
 const mateQualityViewAll =
 `
-SELECT
-    q.quality_id, 
-    m.mate_name, 
+SELECT DISTINCT
+	q.inbound_detail_id,
+    q.quality_id,
     md.mate_id,
-	sub_code(quality_result) result
+    mate_id(md.mate_id) mate_name,
+	sub_code(quality_final_result) result
 FROM 
 	t_quality_mate q join
-    t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id) join
-    t_mate m on(md.mate_id = m.mate_id) join
-    t_quality_mate_detail t on(q.quality_id = t.quality_id);
+    t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
+ORDER BY
+	quality_id DESC
 `;
 
 // 자재수입검사조회 (상세)
@@ -69,6 +87,18 @@ FROM
     t_quality_option o on (m.option_id = o.option_id)
 where m.quality_id= ?
 `;
+// key
+const selectLastmateQuality = 
+`SELECT quality_id
+FROM t_quality_mate
+ORDER BY quality_id DESC
+LIMIT 1`;
+// 상세 key
+const selectLastmateQualityDetail = 
+`SELECT quality_detail_id
+FROM t_quality_mate_detail
+ORDER BY quality_detail_id DESC
+LIMIT 1`;
 //-----------------------------------------------------------------------------
 
 // 제품검사요청 (요청)
@@ -133,10 +163,14 @@ where A.quality_id= ?
 
 module.exports = {
      mateQualityReq,
+     mateQualityInsert,
      mateQualityWait,
      mateQualityViewDropDown,
      mateQualityViewAll,
      mateQualityViewDetail,
+     selectLastmateQuality,
+     selectLastmateQualityDetail,
+     mateWaitInsert,
 
      prodQualityViewDropDown,
      prodQualityViewAll,

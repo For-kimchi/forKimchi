@@ -29,6 +29,7 @@
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead class="table-header">
                   <tr>
+                    <th>자재입고상세ID</th>
                     <th>검사번호</th>
                     <th>자재이름</th>
                     <th>자재번호</th>
@@ -41,11 +42,12 @@
                   <tbody>
                       <tr v-for="(info, index) in mateQualityViewall" :key="info.quality_id" v-on:click="mateQualityViewDetail(info.quality_id)" style="cursor: pointer;">
                         <!--클릭안에 -> getQualityDetail(info.id)-->
+                        <td>{{info.inbound_detail_id}}</td>
                         <td>{{ info.quality_id }}</td>
                         <td>{{ info.mate_name }}</td>              <!--검사아이디-->
                         <td>{{ info.mate_id }}</td>
                         <td>
-                          <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info" style="width: 60px; text-align: center;">
+                          <span v-if="info.result === '최종합격'" class="badge badge-sm bg-gradient-info" style="width: 60px; text-align: center;">
                             {{ info.result }}
                           </span>
                           <span v-else class="badge badge-sm bg-gradient-danger" style="width: 60px; text-align: center;">
@@ -65,17 +67,6 @@
 
   <div class="container-fluid py-4">
     <div class="row">
-      <!-- 영역 -->
-      <div class="d-flex align-items-center justify-content-end mb-3 px-3 ">
-        <MaterialButton color="primary" class="me-2" @click="handleIncoming">
-          입고
-        </MaterialButton>
-
-        <MaterialButton color="success" @click="handleInspection">
-          전수검사
-        </MaterialButton>
-      </div>
-      <!--까지 -->
       <div class="col-12">
         <MaterialAlert>자재검사상세</MaterialAlert>
         <div class="card my-4">
