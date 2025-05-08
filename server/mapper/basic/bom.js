@@ -19,6 +19,7 @@ const selectBomDetail =
         bd.bom_id,
         bd.mate_id,
         bd.mate_amount,
+        ma.mate_name,
         ma.mate_unit
  FROM t_bom_detail bd 
  JOIN t_mate ma

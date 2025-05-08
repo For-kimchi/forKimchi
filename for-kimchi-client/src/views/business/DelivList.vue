@@ -60,6 +60,7 @@
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">납품ID</th>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">주문상세ID</th>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">납품일자</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">거래처</th>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">담당자</th>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">납품상태</th>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">비고</th>
@@ -70,6 +71,7 @@
                     <td class="align-middle text-center">{{ info.deliv_id}}</td>
                     <td class="align-middle text-center">{{ info.order_detail_id}}</td>
                     <td class="align-middle text-center">{{ yyyyMMdd(info.deliv_date)}}</td>
+                    <td class="align-middle text-center">{{ info.vendor_name }}</td>
                     <td class="align-middle text-center">{{ info.employee_id }}</td>
                     <td class="align-middle text-center">{{ info.deliv_status }}</td>
                     <td class="align-middle text-center">{{ info.memo }}</td>

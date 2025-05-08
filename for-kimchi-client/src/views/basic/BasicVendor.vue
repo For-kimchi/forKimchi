@@ -30,7 +30,7 @@
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">거래처분류</label>
-            <select v-model="searchType" class="form-select text-center">
+            <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
@@ -42,7 +42,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-9">
+      <div class="col-md-8">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
@@ -66,7 +66,7 @@
                   <tr v-for="(item, idx) in items" :key="item.vendor_id" @click="editItem(item)">
                     <td class="align-middle text-center">{{ item.vendor_id }}</td>
                     <td class="align-middle text-center">{{ item.vendor_name }}</td>
-                    <td class="align-middle text-center">{{ item.vendor_type }}</td>
+                    <td class="align-middle text-center">{{ codeToName(item.vendor_type) }}</td>
                     <td class="align-middle text-center">{{ item.vendor_number }}</td>
                     <td class="align-middle text-center">{{ item.vendor_tel }}</td>
                     <td class="align-middle text-center">{{ item.vendor_addr }}</td>
@@ -81,7 +81,7 @@
         </div>
       </div>
 
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="card p-3">
           <h5>{{ action }}</h5>
           <div class="mb-3 d-flex align-items-center">
@@ -102,11 +102,11 @@
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">주소</label>
-            <textarea v-model="selected.vendor_addr" class="form-control border text-center"></textarea>
+            <textarea v-model="selected.vendor_addr" class="form-control border"></textarea>
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">거래처분류</label>
-            <select v-model="selected.vendor_type" class="form-select text-center">
+            <select v-model="selected.vendor_type" class="form-select border text-center">
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
               </option>
@@ -185,6 +185,12 @@
         }
 
       },
+      codeToName(code) {
+        for (let item of this.codes) {
+          if (item.sub_code == code) return item.sub_code_name;
+        }
+        return '';
+      }
     },
     created() {
       this.getVendorType();

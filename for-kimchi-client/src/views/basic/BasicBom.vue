@@ -3,7 +3,8 @@
 
     <div class="row mt-3">
       <div class="col text-end">
-        <button class="btn btn-success" @click="save">저장</button>
+        <button class="btn btn-success" @click="showProd = true">조회</button>
+        <button class="btn btn-info ms-2" @click="save">등록</button>
       </div>
     </div>
 
@@ -14,33 +15,45 @@
         </div>
       </div>
       <div class="row g-2 my-3 px-3">
+
         <div class="col-md-3">
-          <input v-model="prod.prod_name" type="text" class="form-control border text-center" @keydown.prevent
-                  @click="showProd = true" placeholder="제품명" />
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품명</label>
+            <input v-model="prod.prod_name" type="text" class="form-control border text-center" @keydown.prevent
+                  @click="showProd = true" placeholder="제품명"/>
+          </div>
         </div>
         <div class="col-md-3">
-          <input v-model="prod.prod_id" type="text" class="form-control border text-center" placeholder="제품ID" />
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품ID</label>
+            <input v-model="prod.prod_id" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품ID" />
+          </div>
         </div>
         <div class="col-md-3">
-          <input v-model="prod.prod_type" type="text" class="form-control border text-center" placeholder="제품분류" />
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품분류</label>
+            <input v-model="prod.prod_type" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품분류" />
+          </div>
         </div>
+
       </div>
     </div>
 
     <div class="row">
       <!-- Left Side: Products -->
       <div class="col-md-6">
-        <div class="card p-3 mb-4">
+        <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">BOM 정보</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 300px;">
+            <div class="table-responsive p-0" style="max-height: 400px;">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재ID</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재명</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재수량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재단위</th>
@@ -52,6 +65,8 @@
                   <tr v-for="(info, index) in bom.bom_details" v-bind:key="info.bom_detail_id">
                     <td class="align-middle text-center">
                       <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
+                    <td class="align-middle text-center">
+                      <input class="form-control border text-center" type="text" v-model="info.mate_name" readonly></td>
                     <td class="align-middle text-center">
                       <input class="form-control border text-center" type="number" v-model="info.mate_amount"></td>
                     <td class="align-middle text-center">
@@ -68,7 +83,7 @@
 
       <!-- Right Side: Materials -->
       <div class="col-md-6">
-        <div class="card p-3 mb-4">
+        <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">자재 정보</h6>
@@ -77,7 +92,7 @@
 
 
           <div class="card-body px-0 pb-2">
-            <div class="row g-3 mt-2">
+            <div class="row g-3 px-3">
             <div class="col-md-6">
             <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명" />
             </div>
@@ -85,14 +100,14 @@
               <button class="btn btn-primary" @click="searchMaterial">검색</button>
             </div>
           </div>
-            <div class="table-responsive p-0" style="max-height: 300px;">
+            <div class="table-responsive p-0" style="max-height: 400px;">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재명</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재ID</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">납품일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재단위</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재분류</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
                   </tr>
                 </thead>
@@ -103,9 +118,9 @@
                     <td class="align-middle text-center">
                       <input class="form-control border text-center" type="text" v-model="info.mate_name" readonly></td>
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_unit"></td>
+                      <input class="form-control border text-center" type="text" v-model="info.mate_unit" readonly></td>
                     <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_type"></td>
+                      <input class="form-control border text-center" type="text" v-model="info.mate_type" readonly></td>
                     <td class="align-middle text-center">
                       <button class="btn btn-success ms-2" @click="addRows(index)">추가</button></td>
                   </tr>
@@ -196,12 +211,19 @@ export default {
 
       this.bom.employee_id = this.employee.employee_id;
 
-      let result = await axios.post('/api/basicBom', this.bom)
+      let res = await axios.post('/api/basicBom', this.bom)
       .catch(err => console.log(err));
       
-      alert(result.data);
+      if (res.data.success) {
+        alert('등록 성공');
+        this.bom = {};
+        this.materials = [];
+        this.prod = {};
+      } else {
+        alert('등록 실패');
+      }
 
-    }
+    },
   },
   mounted() {
   },
