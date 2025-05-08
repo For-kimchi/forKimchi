@@ -2,7 +2,7 @@
   <div class="container-fluid py-4">
 
     <div class="text-end mb-3">
-      <button class="btn btn-success" @click="mateSave(selectedList)">저장</button>
+      <button class="btn btn-success" @click="mateAdd">저장</button>
       <button class="btn btn-danger" >삭제</button>
       <button class="btn btn-info" @click="goBack">닫기</button>
     </div>
@@ -160,6 +160,8 @@ export default {
       showVendor: false,
       vendor : {},
       mateSaveInfo :[],
+      mateList: [],
+      matReqList: [],
     };
   },
   methods: {
@@ -193,19 +195,19 @@ export default {
 // }else{
 //   alert('항목이 선택되지 않았습니다.')
 // };
-    async mateSave(mateSaveInfo) {
-      console.log(mateSaveInfo);
-      if(Object.keys(mateSaveInfo).length > 0){
-            let  ajaxRes =
-            await axios.put(`/api/mateSave`, mateSaveInfo)
-                       .catch(err => console.log(err));
-            this.update = ajaxRes.data;
-            alert('저장 완료');
+    // async mateSave(mateSaveInfo) {
+    //   console.log(mateSaveInfo);
+    //   if(Object.keys(mateSaveInfo).length > 0){
+    //         let  ajaxRes =
+    //         await axios.put(`/api/mateSave`, mateSaveInfo)
+    //                    .catch(err => console.log(err));
+    //         this.update = ajaxRes.data;
+    //         alert('저장 완료');
 
-        }else{
-          alert('항목이 선택되지 않았습니다.')
-        };
-    },
+    //     }else{
+    //       alert('항목이 선택되지 않았습니다.')
+    //     };
+    // },
 
     moveToSelected() {
       const movingItems = this.searchMate.filter(item => item.selected);
@@ -213,7 +215,7 @@ export default {
         mate_id: item.mate_id,
         mate_name: item.mate_name,
         mate_unit: item.mate_unit,
-        req_amount: item.req_amount,
+        req_amount: 0,
       // mate_unit: item.mate_unit,
       selected: false
       })));
@@ -266,6 +268,72 @@ export default {
       console.error('회사 목록을 불러오는데 실패했습니다:', err);
     }
   },
+
+
+
+
+  async mateAdd() {
+  if (this.selectedList.length === 0) {
+    alert("저장할 항목이 없습니다.");
+    return;
+  }
+
+  const mateAmounts = this.selectedList.filter(item => !item.req_amount || item.req_amount <= 0);
+  if (mateAmounts.length > 0) {
+    alert("수량을 모두 입력해주세요.");
+    return;
+  }
+
+  const mateInfo = {
+    mate_detail_list: this.selectedList.map(item => ({
+      mate_id: item.mate_id,
+      req_amount: item.req_amount
+    }))
+  };
+
+  try {
+    const ajaxRes = await axios.post(`/api/mateSave`, mateInfo);
+    console.log('보낸 데이터:', mateInfo);
+console.log('서버 응답:', ajaxRes.data);
+    if (ajaxRes.data.affectedRow > 0) {
+      alert("저장되었습니다.");
+      this.$router.push('/mateSave');
+    } else {
+      alert("저장이 실패하였습니다.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("저장 중 오류가 발생했습니다.");
+  }
+},
+
+
+
+  // async mateAdd() {
+  //     let info = this.mateList[mate_id];
+
+  //     await this.handleRowClick(info.mate_id);
+  //     let mateInfo = {
+  //       mate_id: info.mate_id,
+  //       mate_detail_list: this.matReqList
+  //     };
+
+  //     let ajaxRes = await axios.post(`/api/mateSave`, mateInfo)
+  //                               .catch(err => console.log(err));
+  //     let sqlRes = ajaxRes.data; ---> dateXXXXXXX
+  //     let mateDtInfo = sqlRes.affectedRow
+
+  //     if(mateDtInfo > 0) {
+  //       alert('저장되었습니다.');
+  //       this.$router.push('/mateSave');
+  //     } else {
+  //       alert ('저장이 실패하였습니다.');
+  //     }
+  //   }
+
+
+
+  
   },
   computed: {
     filteredCompanies() {

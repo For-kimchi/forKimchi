@@ -201,7 +201,7 @@ export default {
     },
     goToMatmaPage() {
       this.$router.push('/matma'); // Vue Router를 사용하여 페이지 이동
-    }
+    },
   },
 };
 </script>
