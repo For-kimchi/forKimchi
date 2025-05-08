@@ -27,7 +27,7 @@
                 <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="openProdVendor"></i>
               </li>
               <li class="list-group-item" style="margin-left: 20px;">납기예정일자</li>
-              <li class="list-group-item"><input type="date"></li>
+              <li class="list-group-item"><input type="date"  v-model="req_due_date"></li>
             </ul>
           </div>
         </div>
@@ -42,10 +42,10 @@
               <div class="card-body">
                 <ul class="list-group list-group-horizontal">
                   <li class="list-group-item d-flex align-items-center">
-                    자재
+                    자재명
                   </li>
                   <li class="list-group-item d-flex align-items-center">
-                    <input type="text" v-model="search.material" @input="handleClick" class="form-control mb-2"placeholder="자재명 검색"/>
+                    <input type="text" v-model="search.material" @input="handleClick" class="form-control mb-2"placeholder="자재명을 입력하세요"/>
                     <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click ="handleClick(info)"></i>
                   </li>
                 </ul>
@@ -59,7 +59,7 @@
                   <tr>
                     <th><input type="checkbox" @change="toggleAll('searchMate', $event)"></th>
                     <th>품목코드</th>
-                    <th>품목명</th>
+                    <th>자재명</th>
                     <th>단위</th>
                   </tr>
                 </thead>
@@ -162,6 +162,8 @@ export default {
       mateSaveInfo :[],
       mateList: [],
       matReqList: [],
+      req_due_date: '',
+      initialMateInfo: null
     };
   },
   methods: {
@@ -172,18 +174,16 @@ export default {
       });
     },
     handleClick() {
-      console.log('selectedMaterial:', this.selectedMaterial);
-    axios
-    .get('/api/mateList', {
-      params: { mate_name: this.selectedMaterial }, // 검색어 전달
-    })
-    .then((response) => {
-      this.searchMate = response.data;
-    })
-    .catch((error) => {
-      console.error('검색 실패:', error);
-    });
-    },
+  axios.get('/api/mateList', {
+    params: { mate_name: this.search.material }
+  })
+  .then((response) => {
+    this.searchMate = response.data;
+  })
+  .catch((error) => {
+    console.error('검색 실패:', error);
+  });
+},
 // 항목선택여부 알림.
 // if(Object.keys(planDetailList).length > 0){
 //     let  ajaxRes =
@@ -227,7 +227,7 @@ export default {
       mate_id: item.equip_id,
       mate_name: item.equip_name,
       req_amount: item.req_amount,
-      mate_unit: item.mate_unit,
+      mate_unit: item.mate_unit,  
       selected: false
       })));
       this.selectedList = this.selectedList.filter(item => !item.selected);
@@ -259,6 +259,14 @@ export default {
     openProdVendor() {
       this.showVendor = true;
     },
+    resetForm() {
+    this.selectedList = [];
+    this.searchMate = [];
+    this.vendor = {};
+    this.req_due_date = '';
+    this.selectedCompany = '';
+    },
+    
     async fetchCompanies() {
     try {
       const res = await axios.get('/api/vendors');
@@ -287,17 +295,19 @@ export default {
   const mateInfo = {
     mate_detail_list: this.selectedList.map(item => ({
       mate_id: item.mate_id,
-      req_amount: item.req_amount
-    }))
+      req_amount: item.req_amount,
+    })),
+    vendor_id: this.vendor.vendor_id,
+    employee_id: 'EMP-001',
+    req_due_date: this.req_due_date,
   };
-
   try {
     const ajaxRes = await axios.post(`/api/mateSave`, mateInfo);
-    console.log('보낸 데이터:', mateInfo);
-console.log('서버 응답:', ajaxRes.data);
-    if (ajaxRes.data.affectedRow > 0) {
+    if (ajaxRes.data.affectedRows > 0) {
       alert("저장되었습니다.");
-      this.$router.push('/mateSave');
+      this.resetForm();
+      this.$router.push('/matma');
+      
     } else {
       alert("저장이 실패하였습니다.");
     }

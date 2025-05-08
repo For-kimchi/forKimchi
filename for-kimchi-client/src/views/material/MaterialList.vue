@@ -17,12 +17,12 @@
 
       <div class="card-body">
         <ul class="list-group list-group-horizontal">
-          <li class="list-group-item" style="margin-left: 10px;">회사</li>
+          <li class="list-group-item" style="margin-left: 10px;">거래처</li>
           <li class="list-group-item"><input type="text" v-model="search.company"></li>
-          <li class="list-group-item" style="margin-left: 20px;">등록일</li>
+          <li class="list-group-item" style="margin-left: 20px;">발주일자</li>
           <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date" v-model="search.endDate"></li>
-          <li class="list-group-item" style="margin-left: 20px;">발주번호</li>
-          <li class="list-group-item"><input type="text" v-model="search.orderNumber"></li>
+          <!-- <li class="list-group-item" style="margin-left: 20px;">발주번호</li>
+          <li class="list-group-item"><input type="text" v-model="search.orderNumber"></li> -->
         </ul>
 
         <ul class="list-group list-group-horizontal flex-wrap mt-3">
@@ -43,13 +43,16 @@
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
           <select v-model="search.orderStatus" class="form-select" style="min-width: 130px;">
             <option disabled value="" style="text-align: center;">선택하세요</option>
-            <option value="승인대기">승인대기</option>
-            <option value="진행중">진행중</option>
+            <option value="발주등록">발주등록</option>
+            <option value="발주승인">발주승인</option>
+            <option value="발주중">발주중</option>
             <option value="발주마감">발주마감</option>
           </select>
-          </li>
-            <!-- 검색 아이콘 -->
+          <!-- 검색 아이콘 -->
           <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer;"></i>
+          </li>
+            
+          
         </ul>
       </div>
     </div>
@@ -117,10 +120,10 @@
                   <thead>
                     <tr>
                       <th>No</th>
-                      <th>품목코드</th>
-                      <th>품목명</th>
-                      <th>수량</th>
-                      <th>단위</th>
+                      <th>자재발주상세ID</th>
+                      <th>자재발주ID</th>
+                      <th>자재명</th>
+                      <th>발주수량</th>
                       <th>비고</th>
                     </tr>
                   </thead>
@@ -128,10 +131,10 @@
                     <!-- <template v-if="count > 0 "> -->
                       <tr v-for="(info, index) in mateList" :key="info.id" style="cursor: pointer;">
                         <td>{{ index + 1 }}</td>
+                        <td>{{ info.req_detail_id }}</td>
+                        <td>{{ info.req_id }}</td>
                         <td>{{ info.mate_id }}</td>
-                        <td>{{ info.mate_name }}</td>
                         <td>{{ info.req_amount }}</td>
-                        <td>{{ info.mate_unit }}</td>
                         <td>{{ info.memo }}</td>
                       </tr>
                     <!-- </template> -->

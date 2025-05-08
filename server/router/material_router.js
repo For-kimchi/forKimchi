@@ -45,14 +45,10 @@ router.get('/mateList', async (req, res) => {
 
 // 자재발주 저장버튼
 router.post('/mateSave', async (req, res) => {
-  const { mate_detail_list } = req.body;
-  console.log('bbbbbbboooooooooo', mate_detail_list);
-  let result = await mateService.insertMates(mate_detail_list);
+  const mate_detail_list = req.body;
+  let result = await mateService.insertMates(mate_detail_list).catch((err) => console.log(err));
   res.send(result);
 }); 
-
-
-
 
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const mariaDB = require('../mapper/mapper.js');
 const { convertObjToQuery } = require('../utils/converts');
 const keys = require('../utils/keys');
-const converterAray = require('../utils/converts.js');
+const converts = require('../utils/converts.js');
 
 // 전체발주조회
 const mateReqAll = async(searchList) => {
@@ -30,7 +30,6 @@ const mateList = async(mateName) => {
 
 // 발주저장버튼
 const insertMates = async (mateSaveInfo) => {
-  console.log(mateSaveInfo)
   let list = ['mate_id','mate_name'];
   // let result = await mariaDB.query('insertMate', addList);
   // let addList = converterAray.convertObjToAry(mateSaveInfo, list);
@@ -41,13 +40,33 @@ const insertMates = async (mateSaveInfo) => {
     await conn.beginTransaction();
 
     // detail 분리
-    // const {mate_detail_list, ...mateInfosssss} = mateSaveInfo;
+    const {mate_detail_list, ...mateInfos} = mateSaveInfo;
+
+    let selectedSql = await mariaDB.selectedQuery('matePlanKey', {});
+    let lastMate = await conn.query(selectedSql, {});
+    let lastMateId = lastMate[0].req_id;
+
+    // 부모 key 생성
+    let newMateId = keys.getNextKeyId(lastMateId);
+    mateInfos.req_id = newMateId;
+
+    // 부모테이블 column 정보 배열
+    let mateCloumn = ['req_id', 'vendor_id', 'employee_id', 'req_due_date'];
+    let mateAdd = converts.convertObjToAry(mateInfos, mateCloumn);
+
+    // 부모테이블 insert
+
+    selectedSql = await mariaDB.selectedQuery('insertMainMate', mateAdd);
+    let result = await conn.query(selectedSql, mateAdd);
+
+
 
     // 마지막 req_detail_id 조회
     selectedSql = await mariaDB.selectedQuery('mateDetailKey', {});
     let lastMateDetail = await conn.query(selectedSql, {});
     let lastMateDetailId = lastMateDetail[0].req_detail_id;
-
+    console.log(lastMateDetailId);
+    
     for(let MateDetailInfo of mate_detail_list) {
       // order key 생성
       let newMateDetailId = keys.getNextKeyId(lastMateDetailId);
@@ -55,24 +74,25 @@ const insertMates = async (mateSaveInfo) => {
       // 상위에서 등록한 newMateId 사용
       MateDetailInfo.req_id = newMateId;
       
-      // mate_id 조회: mate_name 기반
-      let mateName = MateDetailInfo.mateName;
-      selectedSql = await mariaDB.selectedQuery('mateCode', mateName);
-      let mateResult = await conn.query(selectedSql, mateName);
-      
-      if (!mateResult[0]) {
-        throw new Error(`등록되지 않은 자재명: ${mateName}`);
-      }
-      MateDetailInfo.mate_id = mateId[0].mate_id;
-
+      // mate_name을 mate_id로 변경  할필요없어서 주석
+      // mateChangeId
+      // let mate_name = MateDetailInfo.mate_id;
+      // console.log("===========================");
+      // console.log(mate_name);
+      // selectedSql = await mariaDB.selectedQuery('mateChangeId', mate_name);
+      // let mate_id = await conn.query(selectedSql, mate_name);
+      // console.log("===========================");
+      // console.log(mate_id);
+      // MateDetailInfo.mate_id = mate_id
       // 등록할 컬럼 정의(mateDetail 등록)
-      let mateDetailCloumn = ['req_detail_id', 'req_id', 'mate_id', 'req_amount', 'memo'];
-      let addInfo = converts.convertObjToQuery(MateDetailInfo, mateDetailCloumn);
-      
-      // insert 쿼리 실행
-      selectedSql = await mariaDB.selectedQuery('insertMateDetail', addInfo);
-      await conn.query(selectedSql, addInfo);
 
+      let mateDetailCloumn = ['req_detail_id', 'req_id', 'mate_id', 'req_amount', 'memo'];
+      let addInfo = converts.convertObjToAry(MateDetailInfo, mateDetailCloumn);
+      
+      // detail insert 쿼리 실행
+      selectedSql = await mariaDB.selectedQuery('insertMatese', addInfo);
+      await conn.query(selectedSql, addInfo);
+      // insertMatese
       // 다음 detail_id 생성을 위해 저장
       lastMateDetailId = newMateDetailId;
     }
@@ -91,7 +111,8 @@ const insertMates = async (mateSaveInfo) => {
     //       };
   
           await conn.commit();
-  
+
+          return result;
           //  에러 뜨면 rollback
           }catch(err){
               if(conn) conn.rollback();
