@@ -28,7 +28,12 @@ const selectProdPlanDetailList = async()=>{
 const selectProdOrderInfoList = async(planDtId) =>{
     let list = await mariaDB.query('selectplanOrderInfo', planDtId);
     return list;
-}
+};
+// 생산지시자재 요청내역
+const selectProdMateList = async() =>{
+    let list = await mariaDB.query('selectProdMate');
+    return list
+};
 // 생산지시 등록
 const insertProdOrder = async(prodOrder) =>{
 
@@ -63,11 +68,11 @@ const insertProdOrder = async(prodOrder) =>{
     }finally{
         if(conn) conn.release();
     }
-}
-
+};
 module.exports = {
     selectProdOrderList,
     selectProdPlanDetailList,
     selectProdOrderInfoList,
     insertProdOrder,
+    selectProdMateList,
 }

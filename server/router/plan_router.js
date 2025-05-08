@@ -75,4 +75,10 @@ router.put('/prodOrder', async(req, res)=>{
   let result = await prodOrderService.insertProdOrder(prodOrder);
   res.send(result);
 });
+
+// 생산지시자재 요청내역
+router.get('/prodMate', async(req, res)=>{
+  let result = await prodOrderService.selectProdMateList();
+  res.send(result);
+})
 module.exports = router;
