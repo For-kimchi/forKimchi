@@ -12,7 +12,7 @@
               <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                 <thead class="table-header">
                   <tr>  
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입력상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
@@ -25,8 +25,8 @@
                   </tr>
                 </thead>
               </table>
-              <div style="max-height: 200px; overflow-y: auto;">
-                <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
+              <div>
+                <table class="table align-items-center mb-0" >
                   <tbody>
                     <tr v-for="(info, index) in mateQualityreq" v-bind:key="info.mate_id" v-on:click="mateQualityWait(index)" style="cursor: pointer;">
                       <!--클릭안에 -> getQualityDetail(info.id)-->
@@ -57,7 +57,7 @@
       <div class="d-flex align-items-center justify-content-end mb-3 px-3 ">
         <button class="btn btn-info ms-2 me-2" @click="test">검사</button>
 
-        <button class="btn btn-warning ms-2 me-2">반려</button>
+        <button class="btn btn-warning ms-2 me-2" @click="">반려</button>
       </div>
       <!--까지 -->
       <div class="col-12">
@@ -83,7 +83,7 @@
                       <td class="align-middle text-center">{{ info.option_id }}</td>
                       <td class="align-middle text-center">{{ info.option_name }}</td>
                       <td class="align-middle text-center">{{ info.option_standard}}</td>
-                      <td class="align-middle text-center"><input type="text"></td>
+                      <td class="align-middle text-center"><input type="text" v-model="info.quality_result_value"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -152,12 +152,23 @@
         this.mateQualitywait = ajaxRes.data;
       },
       async test() {
-        let testlist = await axios.post('/api/', this.selected)
+        let param = {
+          inbound_detail_id : this.selected.inbound_detail_id,
+          details : this.mateQualitywait
+        }
+
+
+        let testlist = await axios.post('/api/mateInsert', param)
                     .catch(err => console.log(err))
                     console.log(testlist);
 
                     if (testlist.data.affectedRows > 0) {
           alert('저장이 완료되었습니다');
+
+          this.mateQualityreq = this.mateQualityreq.filter (item => item.inbound_detail_id !== this.selected.inbound_detail_id);
+          this.selected = {};
+          this.mateQualitywait = [];
+
         } else {
           alert('저장 과정에서 오류가 발생했습니다');
         }

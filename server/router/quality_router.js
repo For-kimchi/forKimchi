@@ -3,10 +3,18 @@ const router = express.Router();
 
 const material_service = require('../service/quality_service.js');
 
+
 //자재검사요청 (요청)
 router.get('/mateQualityReq', async(req, res) =>{
   let mateQualityReq = await material_service.mateQualityReq();
   res.send(mateQualityReq);
+});
+
+// 등록
+router.post('/mateInsert', async(req, res)=>{
+  let mateQualityInsert = req.body;
+  let result = await material_service.mateQualityInsert(mateQualityInsert);
+  res.send(result);
 });
 
 //자재검사요청상세 (대기)
