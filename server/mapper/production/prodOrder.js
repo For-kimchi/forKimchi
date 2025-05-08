@@ -76,14 +76,14 @@ VALUES (?, ?, ?, ?, ?, '1d')
 const selectProdMate = `
 SELECT 
         prod_mate_id,
-        mate_lot,
-        prod_order_id,
-        mate_id,
-        mate_amount,
+        prod_order_lot,
+        mate_id(mate_id) mate_id,
         inbound_date,
-        employee_id,
+        inbound_amount,
+        employee_id(employee_id) employee_id,
+        inbound_status,
         memo
-FROM t_prod_mate
+FROM t_prod_mate_order
 `;
 // ----------------------------------------------------------------
 
@@ -95,4 +95,5 @@ module.exports = {
     insertProdOrderInfo,
     selectProdOrderLimit,
     selectProdName,
+    selectProdMate,
 }

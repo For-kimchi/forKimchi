@@ -3,7 +3,7 @@
     <nav class="text-center">
       <router-link to="/ProdOrder"><button class="btn btn-info ms-1 me-1">생산지시</button></router-link>
       <router-link to="/ProdOrderInfo"><button class="btn btn-info ms-2 me-2">생산지시등록</button></router-link>
-      <button class="btn btn-primary ms-2 me-2">선출창고관리</button>
+      <button class="btn btn-primary ms-2 me-2">자재요청</button>
     </nav>
     <!-- 검색
      <div class="text-end">
@@ -37,7 +37,7 @@
             <!--항목명 div-->
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">창고내역</h6>
+              <h6 class="text-white text-capitalize ps-3">자재이동추적</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -46,24 +46,26 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산계획ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재요청ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산지시LOT</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">제품</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">승인자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">계획등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">최종계획상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">메모</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(info.plan_id)">
+                  <tr v-for="(info,index) in prodMateList" v-bind:key="info.prod_mate_id">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.plan_id}}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.prod_mate_id}}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.prod_order_lot }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_date }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.manager_id }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.reg_date }}</td>
-                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.inbound_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -155,8 +157,21 @@ export default {
     name: "Prodorder",
     data(){
         return{
+          prodMateList: [],
 
         }
+    },
+    created(){
+      this.selectMateLists();
+    },
+    methods:{
+      async selectMateLists(){
+        let ajaxRes = 
+        await axios.get(`/api/prodMate`)
+                    .catch(err => console.log(err));
+                    this .prodMateList = ajaxRes.data;
+      }
+
     }
 }
     
