@@ -1,102 +1,103 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"></link>
 <template>
-  <div class="text-end">
-    <button @click="handleSearch" class="btn btn-success">조회</button>
-    <button class="btn btn-danger" @click="goToMatmaPage" >신규</button>
-    <button class="btn btn-info">수정</button>
-    <button class="btn btn-warning">입고마감</button>
-  </div> 
-
-  <!-- 입고발주조회 -->
-  <div class="row">
-    <div class="card my-4">
-      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-          <h6 class="text-white text-capitalize ps-3"></h6>
-        </div>
-      </div>
-
-      <div class="card-body">
-        <ul class="list-group list-group-horizontal">
-          <li class="list-group-item" style="margin-left: 10px;">회사</li>
-          <li class="list-group-item"><input type="text" v-model="search.company"></li>
-          <li class="list-group-item" style="margin-left: 20px;">등록일</li>
-          <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date" v-model="search.endDate"></li>
-          <li class="list-group-item" style="margin-left: 20px;">입고번호</li>
-          <li class="list-group-item"><input type="text" v-model="search.orderNumber"></li>
-        </ul>
-
-        <ul class="list-group list-group-horizontal flex-wrap mt-3">
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">품목</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-            <input type="text" v-model="search.item" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;">
-            <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
-          </li>
-          <!-- 거래처 -->
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">거래처</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-              <input type="text" v-model="search.supplier" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;"/>
-            <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
-          </li>
-
-            <!-- 발주상태 -->
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">진행상태</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-          <select v-model="search.orderStatus" class="form-select" style="min-width: 130px;">
-            <option disabled value="" style="text-align: center;">선택하세요</option>
-            <option value="진행중">입고대기</option>
-            <option value="발주마감">진행중</option>
-            <option value="승인대기">입고마감</option>
-          </select>
-          </li>
-            <!-- 검색 아이콘 -->
-          <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer;"></i>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- 입고발주 조회리스트 -->
   <div class="container-fluid py-4">
+    <!-- 검색 -->
+
     <div class="row">
-      <div class="col-12">
         <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">검색</h6>
+                </div>
+            </div>
+            <div>
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">제품코드</li>
+                <li class="list-group-item"><input type="text"></li>
+                <li class="list-group-item">제품명</li>
+                <li class="list-group-item"><input type="text"></li>
+                <li class="list-group-item">일정</li>
+                <li class="list-group-item"><input type="date"> ~ <input type="date"></li>
+                <li class="list-group-item"><button class="btn btn-success ms-2 me-2" @:click="test">조회</button></li>
+            </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- 행 영역 div-->
+      <div class="col-12">
+        <!-- 테이블 div-->
+        <div class="card my-4">
+            <!--항목명 div-->
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">주문서</h6>
+            </div>
+          </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th>No</th>
-                    <th>선택</th>
-                    <th>입고일자</th>
-                    <th>입고번호</th>
-                    <th>거래처</th>
-                    <th>사용자명</th>
-                    <th>품목수</th>
-                    <th>비고</th>
-                    <th>수정일</th>
-                    <th>수정자</th>
-                    
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문서 작성</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문담당자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문등록일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-if="matReqList.length > 0">
-                    <tr v-for="(info, index) in matReqList" :key="info.id" @click="handleRowClick(info)">
-                      <td>{{ index + 1 }}</td>
-                      <td><MaterialCheckbox></MaterialCheckbox></td>
-                      <td>{{ info.req_date }}</td>
-                      <td>{{ info.req_id }}</td>
-                      <td>{{ info.vendor_id }}</td>
-                      <td>{{ info.employee_id }}</td>
-                      <td>{{ info.req_amount }}</td>
-                      <td>{{ info.req_status }}</td>
-                      <td>{{ info.memo }}</td>
-                      <td>{{ info.confirm_date }}</td>
-                      <td>{{ info.manager_id }}</td>
-                    </tr>
-                  </template>
-                  <tr v-else>
-                    <td colspan="11" style="text-align: center;">검색어를 입력하세요.</td>
+                  <tr v-for="(info,index) in orderList" v-bind:key="info.order_id" v-on:click="getOrderDtList(info.order_id)">
+                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-warning p-2 m-2" v-on:click.stop="planAdd(index)">주문서 추가</button></td>
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.order_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.order_date }}</td>
+                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.order_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.reg_date }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- row div-->
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">주문상세</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">제품명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">납품예정일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(info,index) in orderDtList" v-bind:key="order_detail_id">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.order_detail_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.prod_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.order_amount }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.deliv_due_date }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -106,107 +107,74 @@
       </div>
     </div>
   </div>
-
-    <!-- 입고발주 상세조회 -->
-    <div class="container-fluid py-4">
-      <div class="row">
-        <div class="col-12">
-          <div class="card my-4">
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>발주번호</th>
-                      <th>진행상태</th>
-                      <th>품목코드</th>
-                      <th>품목명</th>
-                      <th>수량</th>
-                      <th>단위</th>
-                      <th>창고</th>
-                      <th>LOT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- <template v-if="count > 0 "> -->
-                      <tr v-for="(info, index) in mateList" :key="info.id" style="cursor: pointer;">
-                        <td>{{ index + 1 }}</td>
-                        <td>{{ info.mate_id }}</td>
-                        <td>{{ info.mate_name }}</td>
-                        <td>{{ info.req_due_date }}</td>
-                        <td>{{ info.req_amount }}</td>
-                        <td>{{ info.mate_unit }}</td>
-                        <td>{{ info.memo }}</td>
-                      </tr>
-                    <!-- </template> -->
-                    <!-- <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                    </tr> -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 </template>
-    
 <script>
-import axios from 'axios';
-import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
+import axios from 'axios'
 
 export default {
-  name: 'MaterialManagement',
-  components: {
-    MaterialCheckbox,
-  },
-  data() {
-    return {
-      search: {
-        company: '',
-        startDate: '',
-        endDate: '',
-        orderNumber: '',
-        item: '',
-        supplier: '',
-        orderStatus: '',
+    name: "orderprod",
+    data() {
+      return{
+        orderList : [],
+        orderDtList:[],
+        order_detail_id:'',
+      }
+    },
+    created(){
+      this.getOrderList();
+    },
+    methods :{
+      async getOrderList(){
+        let ajaxRes =
+        await axios.get(`/api/orderList`)
+                   .catch(err => console.log(err));
+        this.orderList = ajaxRes.data;
       },
-      matReqList: [],
-      selectedInfo: {},        // 클릭한 상세 데이터
-      mateList: [],
-    };
-  },
-  methods: {
-    handleSearch() {
-      // 검색 조건을 사용하여 API 요청을 보냅니다.
-      axios
-        .get('/api/materials', {
-          params: this.search,
-        })
-        .then((response) => {
-          this.matReqList = response.data;
-        })
-        .catch((error) => {
-          console.error('검색 실패:', error);
-        });
-    },
-    handleRowClick(info) {
-      this.selectedInfo = info;
-      axios
-        .get(`/api/materials/${info.req_id}`,{
-        })
-        .then((response) => {
-          this.mateList = response.data;
-        })
-        .catch((error) => {
-          console.log('검색 실패:', error);
-        });
-    },
-    goToMatmaPage() {
-      this.$router.push('/matma'); // Vue Router를 사용하여 페이지 이동
+      // 주문 상세 조회
+      async getOrderDtList(orderId){
+        let  ajaxRes =
+        await axios.get(`/api/orderList/${orderId}`)
+                    .catch(err => console.log(err));
+        this.orderDtList = ajaxRes.data;
+        
+        // "order_detail_id": "OD20250428003",
+        // "prod_id": "P003",
+        // "order_amount": 200,
+        // "deliv_due_date": "2025-05-09T15:00:00.000Z",
+        // "memo": "대량 발주",
+      },
+      // 주문데이터를 통해서 생산계획등록 매서드
+     async planAdd(idx){
+        // 모든값을 가져오는게 아니기떄문에 받은 매개변수에서
+        // 원하는값만 따로 분리시켜서 이걸 body에 담어서 보냄
+        // orderList의 index번호를 기준으로 info에 값이 저장됨
+        let info = this.orderList[idx];
+
+        await this.getOrderDtList(info.order_id);
+
+        let orderInfo = {
+          order_id:       info.order_id,
+          order_detail_list: this.orderDtList
+        };
+        
+        let ajaxRes = await axios.post(`/api/planinsert`, orderInfo)
+                                  .catch(err => console.log(err));
+        let sqlRes = ajaxRes.data;
+        let planInfo = sqlRes.affectedRows;
+
+        // 등록이 끝난 후 상세계획을 다시 불러옴.
+        // 페이지 이동할꺼라서 불러올필요없음.
+        // await this.getOrderDtList(info.order_id);
+
+        // 성공적으로 등록 시 페이지 이동 실패하면 안내
+        if(planInfo > 0){
+          alert('계획이 생성되었습니다.');
+          this.$router.push('/prodplan');
+        }else{
+          alert('계획이 등록되지 않았습니다.');
+        }
+      }
     }
-  },
-};
+}
+
 </script>
