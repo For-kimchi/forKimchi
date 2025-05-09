@@ -45,7 +45,7 @@ const postOrder = async (orderInfo) => {
 
     for (let detail of order_details) {
       
-      let newId = keys.getNextKeyId(lastId);
+      newId = keys.getNextKeyId(lastId);
       detail.order_detail_id = newId;
       detail.order_id = order.order_id;
 

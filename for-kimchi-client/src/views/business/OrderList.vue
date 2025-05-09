@@ -55,7 +55,7 @@
           </div>
           <div class="card-body px-0 pb-2" style="max-height: 300px; overflow: auto;">
             <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">
@@ -66,21 +66,21 @@
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">거래처</th>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">담당자</th>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">승인자</th>
-                    <th class="text-center text-uppercase font-weight-bolder opacity-7">주문상태</th>
+                    <th class="text-center text-uppercase font-weight-bolder opacity-7">주문최종상태</th>
                     <th class="text-center text-uppercase font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in orders" v-bind:key="info.order_id" @click="getOrderDetails(info.order_id)">
+                  <tr v-for="(info, index) in orders" v-bind:key="info.order_id" @click="getOrderDetails(index)" :class="selectedIndex === index ? 'table-active' : ''">
                     <td class="align-middle text-center">
                       <input type="checkbox" v-if="info.order_final_status === '1a'" v-model="info.selected" @change="check">
                     </td>
                     <td class="align-middle text-center">{{ info.order_id}}</td>
                     <td class="align-middle text-center">{{ yyyyMMdd(info.order_date)}}</td>
-                    <td class="align-middle text-center">{{ info.vendor_id }}</td>
+                    <td class="align-middle text-center">{{ info.vendor_name }}</td>
                     <td class="align-middle text-center">{{ info.employee_id }}</td>
                     <td class="align-middle text-center">{{ info.manager_id }}</td>
-                    <td class="align-middle text-center">{{ info.order_final_status }}</td>
+                    <td class="align-middle text-center">{{ codeToName(info.order_final_status, codes) }}</td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
@@ -112,7 +112,7 @@
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
                     <td class="align-middle text-center">{{ info.order_amount }}</td>
                     <td class="align-middle text-center">{{ yyyyMMdd(info.deliv_due_date) }}</td>
-                    <td class="align-middle text-center">{{ info.order_status }}</td>
+                    <td class="align-middle text-center">{{ codeToName(info.order_status, detailCodes) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -134,7 +134,13 @@ export default {
         orders : [],
         orderDetails : [],
         codes: [],
+        detailCodes: [],
         allSelected: false,
+        selectedIndex: null,
+        employee: {
+          employee_id : 'EMP-001',
+          employee_name : '홍길동',
+        }
       }
     },
     methods : {
@@ -157,24 +163,36 @@ export default {
         this.orders = result.data.map(item => ({ ...item, selected: false}));
         this.allSelected = false;
       },
-      async getOrderDetails(orderid) {
+      async getOrderDetails(index) {
+        this.selectedIndex = index;
+
         let  result =
-        await axios.get(`/api/order/${orderid}`)
+        await axios.get(`/api/order/${this.orders[index].order_id}`)
                    .catch(err => console.log(err));
         this.orderDetails = result.data;
       },
-      async getOrderType() {
+      async getOrderStatus() {
         let res = await axios.get(`/api/codes/A1`)
           .catch(err => console.log(err));
         this.codes = res.data;
+      },
+      async getOrderDetailStatus() {
+        let res = await axios.get(`/api/codes/Z1`)
+          .catch(err => console.log(err));
+        this.detailCodes = res.data;
       },
       async confirmOrder() {
 
         const selectedItems = this.orders.filter(item => item.selected);
 
+        let params = {
+          selectedItems: selectedItems,
+          employee_id: this.employee.employee_id,
+        }
+
         if (selectedItems.length > 0) {
           if (confirm('선택한 항목을 승인하시겠습니까?')) {
-              let res = await axios.post(`/api/orderConfirm`, selectedItems)
+              let res = await axios.post(`/api/orderConfirm`, params)
                 .catch(err => console.log(err));
 
               console.log(res.data);
@@ -213,9 +231,16 @@ export default {
       check() {
         this.allSelected = this.orders.every(item => item.selected);
       },
+      codeToName(code, codeArray) {
+        for (let item of codeArray) {
+          if (item.sub_code == code) return item.sub_code_name;
+        }
+        return '';
+      },
     },
     created() {
-      this.getOrderType();
+      this.getOrderStatus();
+      this.getOrderDetailStatus();
     }
 }
 

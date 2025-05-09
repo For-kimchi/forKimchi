@@ -199,9 +199,8 @@ export default {
 
       if (!exist) {
         this.bom.bom_details.push({
-          mate_id: this.materials[index].mate_id,
+          ...this.materials[index],
           mate_amount: 0,
-          mate_unit: this.materials[index].mate_unit,
         })
       } else {
         alert('이미 추가된 자재입니다')
