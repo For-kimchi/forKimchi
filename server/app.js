@@ -13,6 +13,7 @@ const businessRouter = require('./router/business_router.js')
 
 // 어진 
 const materialRouter = require('./router/material_router.js');
+const storeRouter = require('./router/store_router.js');
 
 // 혁진
 const qualityRouter = require('./router/quality_router.js');
@@ -58,6 +59,7 @@ app.use('/', businessRouter);
 
 // 어진
 app.use('/', materialRouter);
+app.use('/', storeRouter);
 
 // 유환
 app.use('/', prodRouter);
