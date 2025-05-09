@@ -11,7 +11,7 @@ const mateReqAll = async(searchList) => {
 };
 
 // 발주상세조회
-const  mateReqById = async(mateNo) => {
+const mateReqById = async(mateNo) => {
   let list = await mariaDB.query('selectMateDetail', mateNo);
   return list;
 };
@@ -37,7 +37,7 @@ const insertMates = async (mateSaveInfo) => {
   
   try{
     conn = await mariaDB.getConnection();
-    await conn.beginTransaction();
+          await conn.beginTransaction();
 
     // detail 분리
     const {mate_detail_list, ...mateInfos} = mateSaveInfo;

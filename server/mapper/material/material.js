@@ -136,11 +136,11 @@ WHERE req_id = ?
 AND mate_id = ?;
 `
 // 자재이름을 ID로 변환시키는 쿼리 필요없어서 주석
-const mateChangeId =`
-SELECT mate_id
-FROM t_mate
-WHERE mate_name = ?
-`;
+// const mateChangeId =`
+// SELECT mate_id
+// FROM t_mate
+// WHERE mate_name = ?
+// `;
 
 
 // 자재창고 입고 //
@@ -162,5 +162,4 @@ module.exports = {
     mateCode,
     insertMateDetail,
     detailMateInserts,
-    mateChangeId,
 }
