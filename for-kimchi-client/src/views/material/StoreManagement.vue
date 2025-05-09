@@ -170,7 +170,7 @@ export default {
           console.log('검색 실패:', error.response?.data || error.message);
         });
     },
-      // 발주수량보다 입고수량을 초과하여 입력시 경고창 띄움
+      // 발주수량보다 입고수량을 초과하여 입력시 경고창 띄움 (자동으로 발주수량으로 되돌림)
      amountCheck(info) {
      if (info.inbound_amount > info.req_amount) {
       alert("입고수량은 발주수량을 초과할 수 없습니다.");
