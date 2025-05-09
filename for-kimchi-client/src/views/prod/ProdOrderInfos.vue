@@ -18,7 +18,7 @@
           </div>
           <div class="card-body px-0 pb-2" >
             <div class="table-responsive p-0" style="height: 450px;">
-              <table class="table align-items-center justify-content-center mb-0">
+              <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
@@ -105,7 +105,7 @@
             </div>
             <div class="card-body px-0 pb-2">
               <div class="table-responsive p-0" style="height: 300px;">
-                <table class="table align-items-center justify-content-center mb-0">
+                <table class="table align-items-center justify-content-center mb-0 table-hover">
                   <thead>
                     <tr>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>

@@ -100,7 +100,7 @@
                 </thead>
                 <tbody>
                   <template v-if="prodBomLists.length > 0">
-                  <tr v-for="(info,index) in prodBomLists">
+                  <tr v-for="(info,index) in prodBomLists" v-bind:key="info.mate_id">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.mate_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.mate_name}}</td>
@@ -126,6 +126,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
+            <button class="text-end" @click="addClick(prodBomListInfos)">요청</button>
             <div class="table-responsive p-0">
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
@@ -140,12 +141,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-if="prodBomLists.length > 0">
-                  <tr v-for="(info,index) in prodBomLists">
+                  <template v-if="prodBomListInfos.length > 0">
+                  <tr v-for="(info,index) in prodBomListInfos" v-bind:key="info.mate_id">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.mate_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.mate_name}}</td>
-                    <td class="align-middle font-weight-bolder text-center"><input type="number"></td>
+                    <td class="align-middle font-weight-bolder text-center"><input type="number" v-bind="number"></td>
                     <td class="align-middle font-weight-bolder text-center">{{info.mate_unit}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.mate_amount * order_amounts + info.mate_unit}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.mate_type}}</td>
@@ -173,7 +174,8 @@ export default {
         return{
           prodOrderLists: [],
           prodBomLists: [],
-          order_amounts: '',
+          prodBomListInfos: [],
+          number:'',
           // check: false,
           // test: 'table-active',
         }
@@ -187,20 +189,36 @@ export default {
         await axios.get(`/api/prodOrderList`)
                    .catch(err => console.log(err));
         this.prodOrderLists = ajaxRes.data;
-        // .map(item => ({
-        //   ...item,
-        //   check: false,
-        // }));
+        
       },
+      // 생산지시 클릭
       async prodBomList(info){
-        console.log(info);
         let prodId = info.prod_id;
         let ajaxRes =
         await axios.get(`/api/prodBom/${prodId}`)
                     .catch(err => console.log(err));
         this.prodBomLists = ajaxRes.data;
+        this.prodBomListInfos = [{
+          mate_id :ajaxRes.data.mate_id,
+          mate_name : ajaxRes.data.mate_name,
+          
+        }];
         this.order_amounts = info.order_amount;
-        // info.check = true;
+        this.prod_order_lot = ajaxRes.data.prod_order_lot;
+      },
+      // 자재요청 클릭
+      async addClick(info){
+        // let info = prodBomListInfo[index];
+        // this.prodBomListInfo.mate_amount = 
+        console.log(info);
+        // let list = {
+        //             prod_order_lot: this.prod_order_lot,
+        //             mate_id :       this.info.mate_id,
+        //             inbound_amount: this.info.number,
+        //             employee_id:    this.info.employee_id,
+        //             memo:           this.info.memo
+        // };
+        // console.log(list);
       }
     }
 }
