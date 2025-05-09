@@ -125,8 +125,8 @@
 </template>
 <script>
 import axios from 'axios';
-import ProdModal from './ProdModal.vue';
-import VendorModal from './VendorModal.vue';
+import ProdModal from '../modal/ProdModal.vue';
+import VendorModal from '../modal/VendorModal.vue';
 import OrderDetailModal from '../modal/OrderDetailModal.vue';
 
 export default {
