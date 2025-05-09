@@ -3,7 +3,7 @@
     <nav class="text-center">
         <router-link to="/ProdOrder"><button class="btn btn-info ms-1 me-1">생산지시</button></router-link>
         <button class="btn btn-primary ms-2 me-2">생산지시등록</button>
-        <router-link to="/ProdMate"><button class="btn btn-info ms-2 me-2">자재요청</button></router-link>
+        <router-link to="/ProdMate"><button class="btn btn-info ms-2 me-2">자재관리</button></router-link>
     </nav>
     <div class="row">
         <!-- 행 영역 div-->

@@ -3,7 +3,7 @@
     <nav class="text-center">
       <button class="btn btn-primary ms-1 me-1">생산지시</button>
       <router-link to="/ProdOrderInfo"><button class="btn btn-info ms-2 me-2">생산지시등록</button></router-link>
-      <router-link to="/ProdMate"><button class="btn btn-info ms-2 me-2">자재요청</button></router-link>
+      <router-link to="/ProdMate"><button class="btn btn-info ms-2 me-2">자재관리</button></router-link>
     </nav>
     <!-- 검색
      <div class="text-end">
@@ -42,7 +42,7 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>

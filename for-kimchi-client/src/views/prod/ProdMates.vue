@@ -3,7 +3,7 @@
     <nav class="text-center">
       <router-link to="/ProdOrder"><button class="btn btn-info ms-1 me-1">생산지시</button></router-link>
       <router-link to="/ProdOrderInfo"><button class="btn btn-info ms-2 me-2">생산지시등록</button></router-link>
-      <button class="btn btn-primary ms-2 me-2">자재요청</button>
+      <button class="btn btn-primary ms-2 me-2">자재관리</button>
     </nav>
     <!-- 검색
      <div class="text-end">
@@ -37,81 +37,48 @@
             <!--항목명 div-->
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">자재이동추적</h6>
+              <h6 class="text-white text-capitalize ps-3">생산지시</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
-                <thead>
-                  <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재요청ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산지시LOT</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">제품</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">메모</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(info,index) in prodMateList" v-bind:key="info.prod_mate_id">
-                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.prod_mate_id}}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.prod_order_lot }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_date }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
-                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.inbound_status }}</span></td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="table-responsive p-0" style="height: 300px;">
+                <table class="table align-items-center justify-content-center mb-0 table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산지시LOT</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산제품</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산수량</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산일자</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">담당자</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">테스트</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">상세지시상태</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- <tr>
+                      <td colspan="8" rowspan="8" class="align-middle text-center ">생산계획을 선택해주세요</td>
+                    </tr> -->
+                    <tr v-for="(info,index) in prodOrderLists" @click="prodBomList(info)" v-bind:key="info.prod_order_lot" style="height: 50px; overflow-y: auto;">
+                      <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.prod_order_lot}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.prod_id}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.order_amount}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.order_date}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.employee_id}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.check}}</td>
+                      <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.order_status}}</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
         </div>
       </div>
     <!-- row div-->
     </div>
     <div class="row">
-      <div class="col-6">
-        <div class="card my-4">
-          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">공정</h6>
-            </div>
-          </div>
-          <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center justify-content-center mb-0">
-                <thead>
-                  <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">erer</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="align-middle font-weight-bolder text-center"></td>
-                    <td class="align-middle font-weight-bolder text-center"></td>
-                    <td class="align-middle font-weight-bolder text-center"></td>
-                    <td class="align-middle font-weight-bolder text-center"></td>
-                    <td class="align-middle font-weight-bolder text-center"></td>
-                    <td class="align-middle font-weight-bolder text-center"></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
+      <div class="col-4">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
@@ -120,26 +87,73 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
-              <table class="table align-items-center justify-content-center mb-0">
+              <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">erer</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">erer</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">단위</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">분류</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td class="align-middle text-center"></td>
-                    <td class="align-middle text-center"></td>
-                    <td class="align-middle text-center"></td>
-                    <td class="align-middle text-center"></td>
-                    <td class="align-middle text-center"></td>
-                    <td class="align-middle text-center"></td>
+                  <template v-if="prodBomLists.length > 0">
+                  <tr v-for="(info,index) in prodBomLists">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_id}}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_name}}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_amount}}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_unit}}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_type}}</td>
                   </tr>
+                </template>
+                <tr v-else>
+                  <td rowspan="3" colspan="7" class="align-middle font-weight-bolder text-center">항목을 선택해주세요.</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">자재요청</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center justify-content-center mb-0 table-hover">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">단위</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">최소수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">분류</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="prodBomLists.length > 0">
+                  <tr v-for="(info,index) in prodBomLists">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_id}}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_name}}</td>
+                    <td class="align-middle font-weight-bolder text-center"><input type="number"></td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_unit}}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_amount * order_amounts + info.mate_unit}}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{info.mate_type}}</td>
+                  </tr>
+                </template>
+                <tr v-else>
+                  <td rowspan="3" colspan="7" class="align-middle font-weight-bolder text-center">항목을 선택해주세요.</td>
+                </tr>
                 </tbody>
               </table>
             </div>
@@ -157,21 +171,37 @@ export default {
     name: "Prodorder",
     data(){
         return{
-          prodMateList: [],
-
+          prodOrderLists: [],
+          prodBomLists: [],
+          order_amounts: '',
+          // check: false,
+          // test: 'table-active',
         }
     },
     created(){
-      this.selectMateLists();
+      this.prodOrderList();
     },
     methods:{
-      async selectMateLists(){
-        let ajaxRes = 
-        await axios.get(`/api/prodMate`)
+      async prodOrderList(){
+        let ajaxRes =
+        await axios.get(`/api/prodOrderList`)
+                   .catch(err => console.log(err));
+        this.prodOrderLists = ajaxRes.data;
+        // .map(item => ({
+        //   ...item,
+        //   check: false,
+        // }));
+      },
+      async prodBomList(info){
+        console.log(info);
+        let prodId = info.prod_id;
+        let ajaxRes =
+        await axios.get(`/api/prodBom/${prodId}`)
                     .catch(err => console.log(err));
-                    this .prodMateList = ajaxRes.data;
+        this.prodBomLists = ajaxRes.data;
+        this.order_amounts = info.order_amount;
+        // info.check = true;
       }
-
     }
 }
     

@@ -76,9 +76,20 @@ router.put('/prodOrder', async(req, res)=>{
   res.send(result);
 });
 
+// 생산지시 조건 조회 selectProdOrderLists
+router.get('/prodOrderList', async(req, res)=>{
+  let result = await prodOrderService.selectProdOrderLists();
+  res.send(result);
+});
 // 생산지시자재 요청내역
 router.get('/prodMate', async(req, res)=>{
   let result = await prodOrderService.selectProdMateList();
   res.send(result);
-})
+});
+// 생산지시자재 요청BOM selectProdBomList
+router.get('/prodBom/:id', async(req, res)=>{
+  let prodid = req.params.id
+  let result = await prodOrderService.selectProdBomList(prodid);
+  res.send(result);
+});
 module.exports = router;

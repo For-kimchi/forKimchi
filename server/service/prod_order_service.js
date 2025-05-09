@@ -29,11 +29,38 @@ const selectProdOrderInfoList = async(planDtId) =>{
     let list = await mariaDB.query('selectplanOrderInfo', planDtId);
     return list;
 };
+// 생산지시리스트
+const selectProdOrderLists = async() =>{
+    let list = await mariaDB.query('selectProdOrderList');
+    return list
+};
 // 생산지시자재 요청내역
 const selectProdMateList = async() =>{
     let list = await mariaDB.query('selectProdMate');
     return list
 };
+// 생산지시자재 BOM
+const selectProdBomList = async(prodid) =>{
+    let conn;
+    try{
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
+        // prod_name = prod_id
+        selectedSql = await mariaDB.selectedQuery('selectProdName', prodid);
+        let prodId = await conn.query(selectedSql, prodid);
+        prodId = prodId[0].prod_id;
+        
+        selectedSql = await mariaDB.selectedQuery('selectBomsBomDetail', prodId);
+        let result = await conn.query(selectedSql, prodId);
+        conn.commit();
+        return result;
+    }catch(err){
+        if(conn) conn.rollback();
+    }finally{
+        if(conn) conn.release();
+    }
+};
+
 // 생산지시 등록
 const insertProdOrder = async(prodOrder) =>{
 
@@ -75,4 +102,6 @@ module.exports = {
     selectProdOrderInfoList,
     insertProdOrder,
     selectProdMateList,
+    selectProdOrderLists,
+    selectProdBomList,
 }
