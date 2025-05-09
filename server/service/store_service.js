@@ -3,11 +3,24 @@ const { convertObjToQuery } = require('../utils/converts');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts.js');
 
+// 입고조회
+const storeAll = async (searchList) => {
+  let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
+  let list = await mariaDB.query('selectStore', searchKeyword);
+  return list;
+};
+
+// 입고상세조회
+const storeById = async (storeId) => {
+  let list = await mariaDB.query('selectDetailStore', storeId);
+  return list;
+};
+
 
 // 입고 저장
 const insertStore = async(storeSaveInfo) => {
   let conn;
-  console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm", storeSaveInfo);
+
   try{
     conn = await mariaDB.getConnection();
         await conn.beginTransaction();
@@ -76,4 +89,6 @@ const insertStore = async(storeSaveInfo) => {
 
 module.exports = {
   insertStore,
+  storeAll,
+  storeById,
 }

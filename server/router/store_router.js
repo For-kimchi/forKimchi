@@ -29,7 +29,21 @@ router.post('/storeSave', async (req, res) => {
   res.send(result);
 });
 
+// 입고조회
+router.get('/storeList', async(req, res) => {
+  let search = req.query;
+  let storeList = await storeService.storeAll(search)
+                                    .catch(err => console.log(err));
+  res.send(storeList);
+});
 
+// 입고상세조회
+router.get('/storeList/:id', async(req, res) => {
+  let storeId = req.params.id;
+  let storeInfo = await storeService.storeById(storeId)
+                                    .catch(err => console.log(err));
+  res.send(storeInfo);
+});
 
 
 
