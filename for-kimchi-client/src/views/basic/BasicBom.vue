@@ -224,6 +224,12 @@ export default {
       }
 
     },
+      codeToName(code) {
+        for (let item of this.codes) {
+          if (item.sub_code == code) return item.sub_code_name;
+        }
+        return '';
+      },
   },
   mounted() {
   },
