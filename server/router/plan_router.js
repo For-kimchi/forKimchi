@@ -92,4 +92,15 @@ router.get('/prodBom/:id', async(req, res)=>{
   let result = await prodOrderService.selectProdBomList(prodid);
   res.send(result);
 });
+// 생산공정을 위한 지시 조회 selectProdProcess
+router.get('/prodProcess', async(req, res)=>{
+  let result = await prodOrderService.selectProdProcess();
+  res.send(result);
+});
+// 생산공정을 위한 공정흐름도 조회 selectProdProcFlowInfo
+router.get('/prodProcFlow/:id', async(req, res)=>{
+  let prodId = req.params.id
+  let result = await prodOrderService.selectProdProcFlowInfo(prodId);
+  res.send(result);
+});
 module.exports = router;

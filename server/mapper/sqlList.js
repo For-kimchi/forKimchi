@@ -16,7 +16,8 @@ const deliv = require('./business/deliv.js');
 // 생산
 const plan = require('./production/prodPlan.js');
 const prodOrder = require('./production/prodOrder.js');
-const prodMate = require('./production/prodMate.js')
+const prodProcess = require('./production/prodProcess.js');
+const prodMate = require('./production/prodMate.js');
 // 검사
 const quality = require('./quality/quality.js');
 module.exports = {
@@ -40,6 +41,7 @@ module.exports = {
     // 생산
     ...plan,
     ...prodOrder,
+    ...prodProcess,
     ...prodMate,
     //검사
     ...quality,

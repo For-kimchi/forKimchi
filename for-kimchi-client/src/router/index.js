@@ -26,10 +26,10 @@ import ProdProcWork from "../views/prod/ProdProcWorks.vue";
 import OrderProd from "../views/prod/OrderProd.vue";
 import ProdOrderInfo from "../views/prod/ProdOrderInfos.vue";
 import ProdMate from "../views/prod/ProdMates.vue";
+
 // 김어진 (자재발주)
 import MaterialList from "../views/material/MaterialList.vue";
 import MaterialManagement from "../views/material/MaterialManagement.vue";
-
 // 김어진 (입고)
 import StoreList from "../views/material/StoreList.vue";
 import StoreManagement from "../views/material/StoreManagement.vue";

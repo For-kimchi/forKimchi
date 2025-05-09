@@ -293,7 +293,7 @@ export default {
   }
 
   const mateInfo = {
-    mate_detail_list: this.selectedList.map(item => ({
+      mate_detail_list: this.selectedList.map(item => ({
       mate_id: item.mate_id,
       req_amount: item.req_amount,
     })),
@@ -307,7 +307,6 @@ export default {
       alert("저장되었습니다.");
       this.resetForm();
       this.$router.push('/matma');
-      
     } else {
       alert("저장이 실패하였습니다.");
     }

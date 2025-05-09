@@ -32,12 +32,12 @@ const selectProdOrderInfoList = async(planDtId) =>{
 // 생산지시리스트
 const selectProdOrderLists = async() =>{
     let list = await mariaDB.query('selectProdOrderList');
-    return list
+    return list;
 };
 // 생산지시자재 요청내역
 const selectProdMateList = async() =>{
     let list = await mariaDB.query('selectProdMate');
-    return list
+    return list;
 };
 // 생산지시자재 BOM
 const selectProdBomList = async(prodid) =>{
@@ -96,6 +96,34 @@ const insertProdOrder = async(prodOrder) =>{
         if(conn) conn.release();
     }
 };
+// 생산공정
+// 생산공정을 위한 지시 조회 selectProdProcess
+const selectProdProcess = async() =>{
+    let list = await mariaDB.query('selectProdProcess');
+    return list;
+};
+// 공정흐름도 조회
+const selectProdProcFlowInfo = async(prodId) =>{
+    let conn;
+    try{
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
+        selectedSql = await mariaDB.selectedQuery('prodCode', prodId);
+        let prodid = await conn.query(selectedSql, prodId);
+
+         // prod_id 처리
+        prodId =  prodid[0].prod_id;
+        
+        selectedSql = await mariaDB.selectedQuery('selectProdProcFlowInfo', prodId);
+        let list = await conn.query(selectedSql, prodId);
+        conn.commit();
+        return list;
+    }catch(err){
+        if(conn) conn.rollback();
+    }finally{
+        if(conn) conn.release();
+    }
+}
 module.exports = {
     selectProdOrderList,
     selectProdPlanDetailList,
@@ -104,4 +132,6 @@ module.exports = {
     selectProdMateList,
     selectProdOrderLists,
     selectProdBomList,
+    selectProdProcess,
+    selectProdProcFlowInfo,
 }
