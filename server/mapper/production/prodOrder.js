@@ -112,8 +112,8 @@ FROM t_bom b JOIN t_bom_detail bd
                 ON(b.bom_id = bd.bom_id)
 	     JOIN t_mate m
 		ON (bd.mate_id = m.mate_id)
-WHERE b.prod_id = ?
-GROUP BY bd.mate_id
+WHERE b.prod_id = ? 
+AND b.bom_status = '1t'
 `;
 // ----------------------------------------------------------------
 

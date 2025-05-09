@@ -21,6 +21,8 @@ const qualityRouter = require('./router/quality_router.js');
 const prodRouter = require('./router/plan_router.js');
 const { quaReqAll } = require('./service/quality_service.js');
 
+const prodMatreRouter = require('./router/prod_mate_router.js')
+
 // 미들웨어
 // 기본적으로 넣어야할 부분이 있음. content-type에 대한 부분.
 // application/x-www-form-urlencoded
@@ -61,6 +63,7 @@ app.use('/', materialRouter);
 
 // 유환
 app.use('/', prodRouter);
+app.use('/', prodMatreRouter);
 
 // 혁진
 app.use('/', qualityRouter);
