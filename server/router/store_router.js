@@ -21,7 +21,6 @@ router.get('/materials/:id', async(req, res)=> {
   res.send(mateInfo);
 });
 
-
 // 입고저장버튼
 router.post('/storeSave', async (req, res) => {
   let store_detail_list = req.body;
@@ -45,6 +44,18 @@ router.get('/storeList/:id', async(req, res) => {
   res.send(storeInfo);
 });
 
+// 창고저장
+router.post('/insertWarehouse', async (req, res) => {
+  let warehouseInfo = req.body;
+  let result = await storeService.insertWarehouse(warehouseInfo);
+  return result
+});
 
+// 창고조회
+router.get('/warehouseList', async (req, res) => {
+  let search = req.query;
+  let wareList = await storeService.wareAll(search);
+  res.send(wareList);
+});
 
 module.exports = router;

@@ -82,6 +82,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">양품수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">불량품수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고/반품</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
@@ -93,10 +94,25 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.pass_amount }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.fail_amount }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
+                    <!-- 드롭다운(입고/반품) -->
+                    <td>
+                     <select class="form-select me-2 text-center"style="max-width: 200px; border: 1px solid gray; text-align-last: center;">
+                      <option value="">입고</option>
+                      <option value="">반품</option>
+                     </select>
+                    </td>
+                     <!-- 드롭다운(입고/반품) -->
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
+              </div>
+            <!-- 테이블 오른쪽 밑에 저장버튼 -->
+            <div v-if="storeDtList.length > 0" class="table-responsive p-0">
+                  <table class="table align-items-center justify-content-center mb-0"></table>
+                 <div class="text-end pe-5 mt-3">
+                <button class="btn btn-success" @click="wareAdd">저장</button>
+                </div>
             </div>
           </div>
         </div>
@@ -132,6 +148,17 @@ export default {
       this.storeDtList = ajaxRes.data;
     },
 
+    async wareAdd() {
+      this.selectList = this.storeDtList;
+      const storeDetailInfo = {
+        warehouseInfo
+      }
+    
+      let ajaxRes =
+    await axios.post(`api/insertWarehouse`)
+                .catch(err => console.log(err));
+    },
+  
   }
 }
 

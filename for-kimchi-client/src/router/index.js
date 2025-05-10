@@ -33,6 +33,8 @@ import MaterialManagement from "../views/material/MaterialManagement.vue";
 // 김어진 (입고)
 import StoreList from "../views/material/StoreList.vue";
 import StoreManagement from "../views/material/StoreManagement.vue";
+// 김어진 (창고현황)
+import WarehouseList from "../views/material/WarehouseList.vue";
 
 //business (영업)
 import OrderList from "../views/business/OrderList.vue";
@@ -176,6 +178,14 @@ const routes = [
     name: "StoreManagement",
     component: StoreManagement,
   },
+
+  // 어진(창고현황)
+  {
+    path: "/warehouseList",
+    name: "WarehouseList",
+    component: WarehouseList
+  },
+
   {
     path: "/mateQuality",
     name: "mateQuality",

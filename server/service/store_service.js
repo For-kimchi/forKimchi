@@ -16,6 +16,17 @@ const storeById = async (storeId) => {
   return list;
 };
 
+// 창고조회
+const wareAll = async() => {
+  let list = await mariaDB.query('selectWarehouses');
+  return list;
+};
+
+// 창고저장
+// const insertWarehouse = async() => {
+//   let list = await mariaDB.query('selectWarehouse')
+// }
+
 
 // 입고 저장
 const insertStore = async(storeSaveInfo) => {
@@ -91,4 +102,6 @@ module.exports = {
   insertStore,
   storeAll,
   storeById,
+  wareAll,
+  
 }
