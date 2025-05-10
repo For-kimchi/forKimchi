@@ -87,6 +87,20 @@ router.post('/basicProcFlow', async(req, res)=>{
   res.send(result);
 });
 
+// 사원 조건 조회
+router.get('/basicEmployee', async(req, res)=>{
+  let params = req.query;
+  let list = await basicService.getEmp(params);
+  res.send(list);
+});
+
+// 사원원 등록
+router.post('/basicEmployee', async(req, res)=>{
+  let body = req.body;
+  let result = await basicService.postEmp(body);
+  res.send(result);
+});
+
 // 코드 조회 (main -> sub)
 router.get('/codes/:main_code', async(req, res)=>{
   let mainCode = req.params.main_code;
@@ -94,9 +108,6 @@ router.get('/codes/:main_code', async(req, res)=>{
   res.send(result);
 });
 
-router.get('/equips', async(req, res)=>{
-  let result = await basicService.findAll();
-  res.send(result);
-});
+
 
 module.exports = router;

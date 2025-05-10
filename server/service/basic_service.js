@@ -409,8 +409,55 @@ const postProcFlow = async (body) => {
       // connection 반환
       if (conn) conn.release();
     }
-
 }
+
+// 사원 조건 조회
+const getEmp = async (params) => {
+  let count = Object.keys(params).length;
+  let keyword;
+  if (count > 0) {
+    let selected = [];
+    for (let i = 0; i < (count - 1); i++) {
+      selected.push('AND ');
+    }
+
+    keyword = converts.convertObjToQueryLike(params, selected);
+  } else {
+    keyword = {};
+  }
+
+  let list = await mariaDB.query("selectEmployee", keyword);
+  return list;
+};
+
+// 사원 등록
+const postEmp = async (body) => {
+
+  console.log(body);
+
+  let result;
+  if (body.prod_id) {
+
+    result = await mariaDB.query("updateProd", [body, body.prod_id]);
+
+  } else {
+
+    let lastProd = await mariaDB.query("selectLastProd", {});
+    let lastProdId = lastProd[0].prod_id;
+
+    let newProdId = keys.getNextUniqueId(lastProdId);
+
+    body.prod_id = newProdId;
+
+    let prodColumn = ['prod_id', 'prod_type', 'prod_name', 'prod_size', 'prod_unit'];
+    let prodParam = converts.convertObjToAry(body, prodColumn);
+
+    result = await mariaDB.query("insertProd", prodParam);
+
+  }
+
+  return result;
+};
 
 // 코드 조회
 const getCode = async (mainCode) => {
@@ -431,5 +478,7 @@ module.exports = {
   postBom,
   getProcFlow,
   postProcFlow,
+  getEmp,
+  postEmp,
   getCode,
 }
