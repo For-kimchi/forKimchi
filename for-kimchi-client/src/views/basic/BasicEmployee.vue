@@ -88,13 +88,14 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, idx) in items" :key="item.vendor_id" @click="editItem(index)">
-                    <td class="align-middle text-center">{{ item.vendor_id }}</td>
-                    <td class="align-middle text-center">{{ item.vendor_name }}</td>
-                    <td class="align-middle text-center">{{ codeToName(item.vendor_type) }}</td>
-                    <td class="align-middle text-center">{{ item.vendor_number }}</td>
-                    <td class="align-middle text-center">{{ item.vendor_tel }}</td>
-                    <td class="align-middle text-center">{{ item.vendor_addr }}</td>
+                  <tr v-for="(item, idx) in items" :key="item.employee_id" @click="editItem(idx)">
+                    <td class="align-middle text-center">{{ item.employee_id }}</td>
+                    <td class="align-middle text-center">{{ item.employee_name }}</td>
+                    <td class="align-middle text-center">{{ codeToName(item.employee_dept, dept) }}</td>
+                    <td class="align-middle text-center">{{ codeToName(item.employee_type, type) }}</td>
+                    <td class="align-middle text-center">{{ item.employee_email }}</td>
+                    <td class="align-middle text-center">{{ item.employee_tel }}</td>
+                    <td class="align-middle text-center">{{ codeToName(item.employee_status, status) }}</td>
                   </tr>
                   <tr v-if="items.length === 0">
                     <td colspan="6" class="text-center">검색된 결과가 없습니다</td>
@@ -107,32 +108,44 @@
       </div>
 
       <div class="col-md-4">
-        <div class="card p-3">
+        <div class="card p-3 mb-1">
           <h5>{{ action }}</h5>
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">거래처ID</label>
-            <input v-model="selected.vendor_id" type="text" class="form-control border text-center" readonly/>
+            <label class="form-label me-2 mb-0 " style="width: 100px;">사원ID</label>
+            <input v-model="selected.employee_id" type="text" class="form-control border text-center" readonly/>
           </div>
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
-            <input v-model="selected.vendor_name" type="text" class="form-control border text-center" />
+            <label class="form-label me-2 mb-0 " style="width: 100px;">사원명</label>
+            <input v-model="selected.employee_name" type="text" class="form-control border text-center" />
           </div>
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">사업자번호</label>
-            <input v-model="selected.vendor_number" type="text" class="form-control border text-center" />
+            <label class="form-label me-2 mb-0 " style="width: 100px;">부서</label>
+            <select v-model="selected.employee_dept" class="form-select border text-center">
+              <option v-for="code in dept" :key="code.sub_code" :value="code.sub_code">
+                {{ code.sub_code_name }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">권한</label>
+            <select v-model="selected.employee_type" class="form-select border text-center">
+              <option v-for="code in type" :key="code.sub_code" :value="code.sub_code">
+                {{ code.sub_code_name }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">이메일</label>
+            <input v-model="selected.employee_email" type="email" class="form-control border text-center" />
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">연락처</label>
-            <input v-model="selected.vendor_tel" type="text" class="form-control border text-center" />
+            <input v-model="selected.employee_tel" type="text" class="form-control border text-center" />
           </div>
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">주소</label>
-            <textarea v-model="selected.vendor_addr" class="form-control border"></textarea>
-          </div>
-          <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">거래처분류</label>
-            <select v-model="selected.vendor_type" class="form-select border text-center">
-              <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">상태</label>
+            <select v-model="selected.employee_status" class="form-select border text-center">
+              <option v-for="code in status" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
               </option>
             </select>
@@ -152,7 +165,7 @@
   import axios from 'axios';
 
   export default {
-    name: "제품관리",
+    name: "사원관리",
     data() {
       return {
         searchName: '',
@@ -186,6 +199,7 @@
       })
         .catch(err => console.log(err));
       this.items = res.data;
+      console.log(this.items);
     },
       editItem(index) {
         this.action = '수정',
@@ -198,11 +212,10 @@
         this.selected = {};
       },
       async save() {
-        let result = await axios.post('/api/basicEmployee', this.selected)
+        let res = await axios.post('/api/basicEmployee', this.selected)
           .catch(err => console.log(err));
-        console.log(result);
 
-        if (result.data.affectedRows > 0) {
+        if (res.data.success > 0) {
           alert('저장이 완료되었습니다');
           this.getBasicEmployee();
           this.resetForm();
@@ -211,8 +224,8 @@
         }
 
       },
-      codeToName(code) {
-        for (let item of this.codes) {
+      codeToName(code, codes) {
+        for (let item of codes) {
           if (item.sub_code == code) return item.sub_code_name;
         }
         return '';

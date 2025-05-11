@@ -3,16 +3,17 @@ const material = require('./material/material.js');
 const store = require('./material/store.js');
 
 // 기준관리
-const bom = require('./basic/bom.js');
-const employee = require('./basic/employee.js');
-const etc = require('./basic/etc.js');
-const mate = require('./basic/mate.js');
-const proc = require('./basic/proc.js');
-const product = require('./basic/prod.js');
-const vendor = require('./basic/vendor.js');
+const accont = require('./sqls/basic/accounts.js')
+const bom = require('./sqls/basic/bom.js');
+const employee = require('./sqls/basic/employee.js');
+const etc = require('./sqls/basic/etc.js');
+const mate = require('./sqls/basic/mate.js');
+const proc = require('./sqls/basic/proc.js');
+const product = require('./sqls/basic/prod.js');
+const vendor = require('./sqls/basic/vendor.js');
 // 영업
-const order = require('./business/order.js');
-const deliv = require('./business/deliv.js');
+const order = require('./sqls/business/order.js');
+const deliv = require('./sqls/business/deliv.js');
 // 생산
 const plan = require('./production/prodPlan.js');
 const prodOrder = require('./production/prodOrder.js');
@@ -28,6 +29,7 @@ module.exports = {
     ...store,
 
     //기준관리
+    ...accont,
     ...bom,
     ...employee,
     ...etc,

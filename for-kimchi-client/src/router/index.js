@@ -2,7 +2,13 @@ import {
   createRouter,
   createWebHistory
 } from "vue-router";
+import { useUserStore } from '@/stores/user';
+
+// main, login
+import LoginView from "../views/LoginVue.vue";
 import HomeView from "../views/HomeView.vue";
+
+// examples
 import Tables from "../views/Tables.vue";
 import Notifications from "../views/Notifications.vue";
 import Billing from "../views/Billing.vue";
@@ -51,11 +57,16 @@ import BasicVendor from "../views/basic/BasicVendor.vue";
 import BasicEmployee from "../views/basic/BasicEmployee.vue";
 
 const routes = [
-  // 예시
+  {
+    path: "/login",
+    name: "Login",
+    component: LoginView,
+  },
   {
     path: "/",
-    name: "/",
+    name: "Home",
     component: HomeView,
+    meta: { requiresAuth: true }
   },
   {
     path: "/tables",
@@ -222,33 +233,50 @@ const routes = [
     path: "/orders",
     name: "OrderList",
     component: OrderList,
+    meta: { requiresAuth: true }
   },
   {
     path: "/ordersmng",
     name: "OrderMng",
     component: OrderMng,
+    meta: { requiresAuth: true }
   },
   {
     path: "/delivs",
     name: "DelivList",
     component: DelivList,
+    meta: { requiresAuth: true }
   },
   {
     path: "/delivsmng",
     name: "DelivMng",
     component: DelivMng,
+    meta: { requiresAuth: true }
   },
   {
     path: "/prodwh",
     name: "ProdWarehouse",
     component: ProdWarehouse,
+    meta: { requiresAuth: true }
   },
 ];
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
   linkActiveClass: "active",
+});
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+
+  // 로그인 필요한 페이지에 접근 시
+  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+    next('/login');
+  } else {
+    next();
+  }
 });
 
 export default router;

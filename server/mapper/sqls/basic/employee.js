@@ -10,8 +10,7 @@ const selectEmployee =
         employee_dept,
         employee_type,
         employee_status,
-        employee_tel,
-        employee_date,
+        employee_tel
  FROM t_employee
  WHERE 1=1
  :searchKeyword
@@ -22,7 +21,7 @@ const insertEmployee =
   `INSERT INTO t_employee
 (employee_id, employee_email, employee_pwd, employee_name, employee_dept, employee_type, employee_status, employee_tel, employee_date)
 VALUES
-(?, ? , ?, ?, ?, ?, '1k', ?, CURRENT_TIMESTAMP)`;
+(?, ? , ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`;
 
 // 사원 갱신
 const updateEmployee =
@@ -35,9 +34,16 @@ const deleteEmployee =
   `DELETE FROM t_employee
 WHERE employee_id = ?`;
 
+const selectLastEmp =
+`SELECT employee_id
+FROM t_employee
+ORDER BY employee_id DESC
+LIMIT 1`;
+
 module.exports = {
   selectEmployee,
   insertEmployee,
   updateEmployee,
-  deleteEmployee
+  deleteEmployee,
+  selectLastEmp,
 }

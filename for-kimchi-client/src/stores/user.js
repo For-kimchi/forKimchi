@@ -7,13 +7,13 @@ export const useUserStore = defineStore('user', {
     userInfo: JSON.parse(localStorage.getItem('userInfo')) || null,
   }),
   actions: {
-    login(user) {
+    loginStore(user) {
       this.isLoggedIn = true;
       this.userInfo = user;
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userInfo', JSON.stringify(user));
     },
-    logout() {
+    logoutStore() {
       this.isLoggedIn = false;
       this.userInfo = null;
       localStorage.removeItem('isLoggedIn');

@@ -1,6 +1,8 @@
 const mariaDB = require('../mapper/mapper');
 const keys = require('../utils/keys');
-const converts = require('../utils/converts')
+const converts = require('../utils/converts');
+const accounts = require('../utils/accounts');
+const argon2 = require('argon2');
 
 // 제품 조건 조회
 const getProd = async (params) => {
@@ -433,30 +435,57 @@ const getEmp = async (params) => {
 // 사원 등록
 const postEmp = async (body) => {
 
-  console.log(body);
-
-  let result;
-  if (body.prod_id) {
-
-    result = await mariaDB.query("updateProd", [body, body.prod_id]);
-
-  } else {
-
-    let lastProd = await mariaDB.query("selectLastProd", {});
-    let lastProdId = lastProd[0].prod_id;
-
-    let newProdId = keys.getNextUniqueId(lastProdId);
-
-    body.prod_id = newProdId;
-
-    let prodColumn = ['prod_id', 'prod_type', 'prod_name', 'prod_size', 'prod_unit'];
-    let prodParam = converts.convertObjToAry(body, prodColumn);
-
-    result = await mariaDB.query("insertProd", prodParam);
-
+  let res = {
+    success: true,
+    employee: {},
   }
 
-  return result;
+  let list = await mariaDB.query("selectLogin", body.employee_email);
+  let item = list[0];
+
+  if (item && body.employee_id !== item.employee_id) {
+    res.success = false;
+    return res;
+  }
+
+  let result;
+  if (body.employee_id) {
+
+    result = await mariaDB.query("updateEmployee", [body, body.employee_id]);
+
+    if (result.affectedRows > 0) {
+      return res;
+    } else {
+      res.success = false;
+      return res;
+    }
+  } else {
+
+    let last = await mariaDB.query("selectLastEmp", {});
+    let lastId = last[0].employee_id;
+
+    let newId = keys.getNextUniqueId(lastId);
+
+    body.employee_id = newId;
+
+    const tempPassword = accounts.generateTempPassword();
+    const hashedPassword = await argon2.hash(tempPassword);
+
+    body.employee_pwd = hashedPassword;
+
+    let column = ['employee_id', 'employee_email', 'employee_pwd', 'employee_name', 'employee_dept', 'employee_type','employee_status', 'employee_tel'];
+    let param = converts.convertObjToAry(body, column);
+
+    result = await mariaDB.query("insertEmployee", param);
+
+    if (result.affectedRows > 0) {
+      await accounts.sendTempPasswordEmail(body.employee_email, tempPassword);
+      return res;
+    } else {
+      res.success = false;
+      return res;
+    }
+  }
 };
 
 // 코드 조회

@@ -20,43 +20,86 @@ const postOrder = async (orderInfo) => {
       ...order
     } = orderInfo;
 
-    // 최근 key 정보 조회
-    let selectedSql = await mariaDB.selectedQuery('selectLastOrder', {});
-    let last = await conn.query(selectedSql, {});
-    let lastId = last[0].order_id;
+    if (order.order_id) {
+      // update
 
-    // deliv key 생성
-    let newId = keys.getNextKeyId(lastId);
-    order.order_id = newId;
+      selectedSql = await mariaDB.selectedQuery('updateOrder', {});
+      let result = await conn.query(selectedSql, [order, order.order_id]);
 
-    let column = ['order_id', 'order_date', 'vendor_id', 'employee_id', 'memo'];
-    let param = converts.convertObjToAry(order, column);
+      selectedSql = await mariaDB.selectedQuery('selectLastOrderDetail', {});
+      last = await conn.query(selectedSql, {});
+      lastId = last[0].order_detail_id;
 
-    selectedSql = await mariaDB.selectedQuery('insertOrder', param);
-    let result = await conn.query(selectedSql, param);
+      let column = ['order_detail_id', 'order_id', 'prod_id', 'order_amount', 'deliv_due_date'];  
 
-    console.log(result);
+      for (let detail_full of order_details) {
 
-    column = ['order_detail_id', 'order_id', 'prod_id', 'order_amount', 'deliv_due_date'];
+        let { 
+          prod_name,
+          ...detail
+        } = detail_full;
 
-    selectedSql = await mariaDB.selectedQuery('selectLastOrderDetail', {});
-    last = await conn.query(selectedSql, {});
-    lastId = last[0].order_detail_id;
+        console.log(detail);
 
-    for (let detail of order_details) {
-      
-      newId = keys.getNextKeyId(lastId);
-      detail.order_detail_id = newId;
-      detail.order_id = order.order_id;
+        if (detail.hasOwnProperty('order_detail_id') && detail.order_detail_id) {
+          selectedSql = await mariaDB.selectedQuery('updateOrderDetail', {});
+          result = await conn.query(selectedSql, [detail, detail.order_detail_id]);
+        } else {
+          newId = keys.getNextKeyId(lastId);
+          detail.order_detail_id = newId;
+          detail.order_id = order.order_id;
+  
+          param = converts.convertObjToAry(detail, column);
+          
+          selectedSql = await mariaDB.selectedQuery('insertOrderDetail', param);
+          result = await conn.query(selectedSql, param);
+  
+          console.log(result);
+  
+          lastId = newId;
+        }
+      }
+    } else {
+      // insert
 
-      param = converts.convertObjToAry(detail, column);
+      // 최근 key 정보 조회
+      let selectedSql = await mariaDB.selectedQuery('selectLastOrder', {});
+      let last = await conn.query(selectedSql, {});
+      let lastId = last[0].order_id;
 
-      selectedSql = await mariaDB.selectedQuery('insertOrderDetail', param);
-      result = await conn.query(selectedSql, param);
+      // deliv key 생성
+      let newId = keys.getNextKeyId(lastId);
+      order.order_id = newId;
+
+      let column = ['order_id', 'order_date', 'vendor_id', 'employee_id', 'memo'];
+      let param = converts.convertObjToAry(order, column);
+
+      selectedSql = await mariaDB.selectedQuery('insertOrder', param);
+      let result = await conn.query(selectedSql, param);
 
       console.log(result);
 
-      lastId = newId;
+      column = ['order_detail_id', 'order_id', 'prod_id', 'order_amount', 'deliv_due_date'];
+
+      selectedSql = await mariaDB.selectedQuery('selectLastOrderDetail', {});
+      last = await conn.query(selectedSql, {});
+      lastId = last[0].order_detail_id;
+
+      for (let detail of order_details) {
+
+        newId = keys.getNextKeyId(lastId);
+        detail.order_detail_id = newId;
+        detail.order_id = order.order_id;
+
+        param = converts.convertObjToAry(detail, column);
+
+        selectedSql = await mariaDB.selectedQuery('insertOrderDetail', param);
+        result = await conn.query(selectedSql, param);
+
+        console.log(result);
+
+        lastId = newId;
+      }
     }
 
     // 정상 완료 시 commit
@@ -76,7 +119,7 @@ const postOrder = async (orderInfo) => {
   }
 };
 
-const getOrder = async(params) => {
+const getOrder = async (params) => {
 
   const {
     startDate,
@@ -99,14 +142,14 @@ const getOrder = async(params) => {
     };
   }
 
-  keyword.searchKeyword = ` AND order_date BETWEEN '${startDate}' AND '${endDate}'` 
-  + keyword.searchKeyword;
-  
+  keyword.searchKeyword = ` AND order_date BETWEEN '${startDate}' AND '${endDate}'` +
+    keyword.searchKeyword;
+
   let list = await mariaDB.query("selectOrder", keyword);
   return list;
 }
 
-const getOrderDetail = async(id) => {
+const getOrderDetail = async (id) => {
   let list = await mariaDB.query("selectOrderDetail", id);
   return list;
 }
@@ -123,10 +166,15 @@ const postOrderConfirm = async (orderInfo) => {
 
     console.log(orderInfo);
 
-    for (let order of orderInfo) {
-  
+    let {
+      orders,
+      employee_id
+    } = orderInfo;
+
+    for (let order of orders) {
+
       let selectedSql = await mariaDB.selectedQuery('updateOrderStatus', {});
-      let result = await conn.query(selectedSql, ['2a', order.order_id]);
+      let result = await conn.query(selectedSql, ['2a', employee_id, order.order_id]);
 
       selectedSql = await mariaDB.selectedQuery('selectOrderDetail', {});
       result = await conn.query(selectedSql, order.order_id);
@@ -149,7 +197,7 @@ const postOrderConfirm = async (orderInfo) => {
     console.log(err);
     if (conn) conn.rollback();
 
-    res.success = false
+    res.success = false;
     return res;
   } finally {
     if (conn) conn.release();
@@ -222,7 +270,7 @@ const postDeilv = async (delivInfo) => {
     let lastDelivDetailId = lastDelivDetail[0].deliv_detail_id;
 
     for (let detail of deliv_details) {
-      
+
       // deliv detail key 생성
       let newDelivDetailId = keys.getNextKeyId(lastDelivDetailId);
       detail.deliv_detail_id = newDelivDetailId;
@@ -238,8 +286,8 @@ const postDeilv = async (delivInfo) => {
 
       // LOT 사용 처리
       if (detail.prod_amount == detail.deliv_amount) {
-          selectedSql = await mariaDB.selectedQuery('updatePlotStatus', {});
-          result = await conn.query(selectedSql, ['3aa', detail.prod_lot]);
+        selectedSql = await mariaDB.selectedQuery('updatePlotStatus', {});
+        result = await conn.query(selectedSql, ['3aa', detail.prod_lot]);
       }
 
       // deliv detail insert 완료 시 최근 key 정보 갱신
@@ -266,7 +314,7 @@ const postDeilv = async (delivInfo) => {
   }
 };
 
-const getDeliv = async(params) => {
+const getDeliv = async (params) => {
 
   const {
     startDate,
@@ -289,16 +337,30 @@ const getDeliv = async(params) => {
     };
   }
 
-  keyword.searchKeyword = ` AND deliv_date BETWEEN '${startDate}' AND '${endDate}'` 
-  + keyword.searchKeyword;
-  
+  keyword.searchKeyword = ` AND deliv_date BETWEEN '${startDate}' AND '${endDate}'` +
+    keyword.searchKeyword;
+
   let list = await mariaDB.query("selectDeliv", keyword);
   return list;
 }
 
-const getDelivDetail = async(id) => {
+const getDelivDetail = async (id) => {
   let list = await mariaDB.query("selectDelivDetail", id);
   return list;
+}
+
+const getOrderOne = async (id) => {
+
+  let item = await mariaDB.query("selectOrderOne", id);
+
+  let list = await mariaDB.query("selectOrderDetail", id);
+
+  let res = {
+    order: item[0],
+    order_details: list
+  }
+
+  return res;
 }
 
 module.exports = {
@@ -311,4 +373,5 @@ module.exports = {
   postDeilv,
   getDeliv,
   getDelivDetail,
+  getOrderOne,
 }

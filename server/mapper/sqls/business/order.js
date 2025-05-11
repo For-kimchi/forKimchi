@@ -49,22 +49,52 @@ const selectOrder =
  const selectOrderDetail =
   `SELECT order_detail_id,
         order_id,
-        prod_id,
+        od.prod_id,
+        p.prod_name,
         order_amount,
         deliv_due_date,
         order_status,
-        memo
- FROM t_order_detail
+        od.memo
+ FROM t_order_detail od
+ JOIN t_prod p ON od.prod_id = p.prod_id
  WHERE order_id = ?`;
 
  const updateOrderStatus = 
  `UPDATE t_order
- SET order_final_status = ?
+ SET order_final_status = ?,
+ manager_id = ?,
+ confirm_date = CURRENT_TIMESTAMP
  WHERE order_id = ?`;
 
  const updateOrderDetailStatus = 
  `UPDATE t_order_detail
  SET order_status = ?
+ WHERE order_detail_id = ?`;
+
+ const selectOrderOne = 
+ `SELECT order_id,
+        order_date,
+        order_final_status,
+        o.vendor_id,
+        v.vendor_name,
+        employee_id,
+        reg_date,
+        manager_id,
+        confirm_date,
+        memo
+ FROM t_order o 
+ JOIN t_vendor v ON o.vendor_id = v.vendor_id
+ WHERE order_id = ?
+ `;
+
+ const updateOrder = 
+ `UPDATE t_order
+ SET ?
+ WHERE order_id = ?`;
+
+ const updateOrderDetail = 
+ `UPDATE t_order_detail
+ SET ?
  WHERE order_detail_id = ?`;
 
 module.exports = {
@@ -76,4 +106,7 @@ module.exports = {
   selectOrderDetail,
   updateOrderStatus,
   updateOrderDetailStatus,
+  selectOrderOne,
+  updateOrder,
+  updateOrderDetail,
 }
