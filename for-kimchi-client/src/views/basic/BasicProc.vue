@@ -63,7 +63,7 @@
                   <tr v-for="(item, idx) in items" :key="item.proc_id" @click="editItem(item)">
                     <td class="align-middle text-center">{{ item.proc_id }}</td>
                     <td class="align-middle text-center">{{ item.proc_name }}</td>
-                    <td class="align-middle text-center">{{ item.proc_type }}</td>
+                    <td class="align-middle text-center">{{ codeToName(item.proc_type) }}</td>
                   </tr>
                   <tr v-if="items.length === 0">
                     <td colspan="6" class="text-center">검색된 결과가 없습니다</td>
@@ -76,7 +76,7 @@
       </div>
 
       <div class="col-md-4">
-        <div class="card p-3">
+        <div class="card p-3 mb-1">
           <h5>{{ action }}</h5>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">공정ID</label>
@@ -168,6 +168,12 @@
           alert('저장 과정에서 오류가 발생했습니다');
         }
 
+      },
+      codeToName(code) {
+        for (let item of this.codes) {
+          if (item.sub_code == code) return item.sub_code_name;
+        }
+        return '';
       },
     },
     created() {

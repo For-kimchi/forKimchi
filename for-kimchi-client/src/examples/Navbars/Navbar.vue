@@ -21,8 +21,8 @@
             <span class="me-2 font-weight-bolder" v-if="isLoggedIn">{{ userInfo.employee_name ? userInfo.employee_name + ' 님, 환영합니다' : '' }}</span>
           </li>
           <li class="nav-item d-flex align-items-center">
-              <button class="btn btn-danger me-2" v-if="isLoggedIn" @click="logout">로그아웃</button>
-              <button class="btn btn-info" v-if="isLoggedIn" @click="openModal">비밀번호변경</button>
+              <button class="btn btn-danger m-0 me-2" v-if="isLoggedIn" @click="logout">로그아웃</button>
+              <button class="btn btn-info m-0" v-if="isLoggedIn" @click="openModal">비밀번호변경</button>
           </li>
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
             <a
