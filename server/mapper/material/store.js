@@ -30,6 +30,7 @@ const selectDetailStore =
         ,pass_amount
         ,fail_amount
         ,sub_code(inbound_status) inbound_status
+        ,mate_id
         ,memo
 FROM t_mate_inbound_detail
 WHERE inbound_id = ?`;
@@ -52,14 +53,15 @@ const insertStoreDetail =
                                     mate_id
                                     ,inbound_amount
                                     ,inbound_status
+                                    ,employee_id
                                     ,memo)
-VALUES (?, ?, ?, ?, '1p', ?)`;
+VALUES (?, ?, ?, ?, '1p', '', ?)`;
 
 // 창고조회
 const selectWarehouses = 
 `SELECT warehouse_id,
 	mate_lot,
-        mate_id(mate_id) mate_id,
+        mate_id,
 	mate_amount,
         date_type(inbound_date) inbound_date,
         employee_id(employee_id) employee_id
@@ -70,12 +72,13 @@ FROM t_mate_warehouse`;
 const insertWarehouse =
 `INSERT INTO t_mate_warehouse (
                                 mate_lot,
+                                mate_id,
                                 inbound_detail_id,
                                 warehouse_id,
                                 mate_amount,
                                 inbound_date,
                                 employee_id)
-VALUES()`
+VALUES(?, ?, ?, ?, ?, SYSDATE(), ?)`
 
 // 자재입고삭제
 

@@ -46,16 +46,22 @@ router.get('/storeList/:id', async(req, res) => {
 
 // 창고저장
 router.post('/insertWarehouse', async (req, res) => {
-  let warehouseInfo = req.body;
-  let result = await storeService.insertWarehouse(warehouseInfo);
-  return result
+  try {
+    let warehouseInfo = req.body;
+    let result = await storeService.insertWarehouse(warehouseInfo);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('저장 오류');
+  }
 });
+
 
 // 창고조회
 router.get('/warehouseList', async (req, res) => {
-  let search = req.query;
-  let wareList = await storeService.wareAll(search);
-  res.send(wareList);
+  let addWare = req.body;
+  let result = await storeService.wareAll(addWare);
+  res.send(result);
 });
 
-module.exports = router;
+module.exports = router;  

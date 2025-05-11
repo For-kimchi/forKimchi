@@ -23,10 +23,27 @@ const wareAll = async() => {
 };
 
 // 창고저장
-// const insertWarehouse = async() => {
-//   let list = await mariaDB.query('selectWarehouse')
-// }
+const insertWarehouse = async(wareList) => {
+  let columnList = ['mate_lot', 'mate_id', 'inbound_detail_id', 'warehouse_id', 'mate_amount', 'employee_id'];
 
+  for (let item of wareList) {
+    let values = converterAry(item, columnList);
+    await mariaDB.query('insertWarehouse', values);
+  }
+
+  return { success: true };
+};
+
+
+const converterAry = (target, list) => {
+  let ary = [];
+
+  for(let field of list) {
+    let val = target[field];
+    ary.push(val);
+  }
+  return ary;
+};
 
 // 입고 저장
 const insertStore = async(storeSaveInfo) => {
@@ -103,5 +120,5 @@ module.exports = {
   storeAll,
   storeById,
   wareAll,
-  
+  insertWarehouse,
 }

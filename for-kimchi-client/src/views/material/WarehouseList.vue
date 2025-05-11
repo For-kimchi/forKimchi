@@ -85,7 +85,7 @@ export default {
       let ajaxRes =
       await axios.get(`/api/warehouseList`)
                   .catch(err=> console.log(err));
-        this.wareList = ajaxRes.data;    
+        this.wareList = ajaxRes.data;
     } 
   }
 }
