@@ -52,6 +52,19 @@ router.post('/mateQualityViewAll', async(req, res)=>{
 
 //--------------------------------------------------------
 
+// 제품검사요청
+router.get('/prodQualityReq', async(req, res)=> {
+  let prodQualityReq = await material_service.prodQualityReq();
+  res.send(prodQualityReq);
+})
+
+// 제품검사요청 (대기)
+router.get('/prodQualityWait/:id', async(req, res)=> {
+  let detailId = req.params.id;
+  let prodQualityWait = await material_service.prodQualityWait(detailId);
+  res.send(prodQualityWait);
+})
+
 // 제품검사조회 (드롭다운)
 router.get('/prodQualityViewDropDown', async(req, res)=> {
   let prodQualityViewDropDown = await material_service.prodQualityViewDropDown();
@@ -71,20 +84,24 @@ router.get('/prodQualityViewDetail/:id', async(req, res) => {
   res.send(prodQualityViewDetail);
 });
 
-// router.get('/qualityDetail', async(req, res)=> {
-//   let qualityView = await mateService.qualityDetail();
-//   res.send(qualityView);
+// -------------------------
+
+// 검사항목관리
+
+// 검사조회
+// router.get('/selectOption', async(req, res)=>{
+//   let params = req.query;
+//   let list = await material_service.selectOption(params);
+//   res.send(list);
 // });
 
-// router.get('/qualityControl', async(req, res)=> {
-//   let mate = await mateService.qualityControl();
-//   res.send(mate);
+// 검사등록
+// router.post('/optionListInsert', async(req, res)=>{
+//   let body = req.body;
+//   let result = await material_service.optionListInsert(body);
+//   res.send(result);
 // });
 
-// router.get('/qualityMatedetail/:id', async(req, res)=>{
-//   let orderId = req.params.id
-//   let mate = await mateService.qualityMatedetail(orderId);
-//   res.send(mate);
-// });
+
 
 module.exports = router;
