@@ -109,6 +109,18 @@ const mateQualityViewDetail = async(detailId) => {
 
 // -------------------------------------------------------------------
 
+//제품검사요청
+const prodQualityReq = async() => {
+  let list = await mariaDB.query('prodQualityReq');
+  return list;
+}
+
+//제품검사요청 (대기)
+const prodQualityWait = async(detailId) => {
+  let list = await mariaDB.query('prodQualityWait', detailId);
+  return list;
+}
+
 // 제품검사조회 (드롭다운)
 const prodQualityViewDropDown = async() => {
   let list = await mariaDB.query('prodQualityViewDropDown');
@@ -127,6 +139,58 @@ const prodQualityViewDetail = async(detailId) => {
   return list;
 }
 
+// ---------------------------------------------
+
+// 검사항목조회
+// const selectOption = async (params) => {
+//   let count = Object.keys(params).length;
+//   let keyword;
+//   if (count > 0) {
+//     let selected = [];
+//     for (let i = 0; i < (count - 1); i++) {
+//       selected.push('AND ');
+//     }
+
+//     keyword = converts.convertObjToQueryLike(params, selected);
+//   } else {
+//     keyword = {};
+//   }
+
+//   let list = await mariaDB.query("selectOption", keyword);
+//   return list;
+// };
+
+
+// 검사항목관리 (검사항목 등록)
+// const optionListInsert = async (body) => {
+
+//   console.log(body);
+
+//   let result;
+//   if (body.option_id) {
+
+//     result = await mariaDB.query("updateOption", [body, body.option_id]);
+
+//   } else {
+
+//     let lastOption = await mariaDB.query("selectLastOption", {});
+//     let lastOptionId = lastOption[0].option_id;
+
+//     let newOptionId = keys.getNextUniqueId(lastOptionId);
+
+//     body.option_id = newOptionId;
+
+//     let optionColumn = ['option_id', 'option_name', 'option_standard', 'option_method'];
+//     let optionParam = converts.convertObjToAry(body, optionColumn);
+
+//     result = await mariaDB.query("optionListInsert", optionParam);
+
+//   }
+
+//   return result;
+// };
+
+
 module.exports = {
   // 자재
   mateQualityReq,
@@ -136,7 +200,10 @@ module.exports = {
   mateQualityViewAll,
   mateQualityViewDetail,
   // 제품
+  prodQualityReq,
+  prodQualityWait,
   prodQualityViewDropDown,
   prodQualityViewAll,
   prodQualityViewDetail,
+  // 검사
 }
