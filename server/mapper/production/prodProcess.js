@@ -13,16 +13,80 @@ WHERE order_status in ('4d', '5d')
 
 // 생산작업을 위한 공정흐름도 조회
 const selectProdProcFlowInfo =`
-SELECT  proc_seq,
-		    proc_name,
-        sub_code(proc_type) proc_type
-FROM t_proc_flow pf LEFT JOIN t_proc_flow_detail pfd
-					            ON(pf.proc_flow_id = pfd.proc_flow_id)
-					          JOIN t_proc p
-					            ON(pfd.proc_id = p.proc_id)
-WHERE pf.prod_id = ?
+SELECT  pfd.proc_seq,
+        p.proc_id,
+        p.proc_name,
+        sub_code(p.proc_type) proc_type
+ FROM t_proc_flow_detail pfd
+ JOIN t_proc p ON pfd.proc_id = p.proc_id
+ WHERE proc_flow_id = (SELECT proc_flow_id
+                        FROM t_proc_flow
+                        WHERE prod_id = ?
+                        AND proc_flow_status = '1v');
+`;
+// 생산작업을 위한 생산공정 조회
+const selectProdProcList =`
+SELECT 
+        prod_proc_id,
+        employee_id(employee_id) employee_id,
+        proc_order_amount, 
+        proc_input_amount, 
+        proc_fail_amount, 
+        proc_pass_amount, 
+        DATE_FORMAT(proc_start_date, '%y/%m/%d %T') proc_start_date, 
+        DATE_FORMAT(proc_end_date, '%y/%m/%d %T') proc_end_date,
+        sub_code(proc_status) proc_status
+ FROM t_prod_proc
+ WHERE prod_order_lot = ? AND proc_id = ?
+`;
+// lot번호를 통한 제품 가져오기
+const selectProdOrderProdId =`
+SELECT prod_id
+FROM t_prod_order
+WHERE prod_order_lot = ?
+`;
+// 생산공정Key를 위한 ID조회
+const selectProdProcessId =`
+SELECT prod_proc_id
+FROM t_prod_proc
+ORDER BY prod_proc_id DESC
+LIMIT 1
+`;
+
+// 생산공정 등록
+const insertProdProc =`
+INSERT INTO t_prod_proc(
+                        prod_proc_id,
+                        prod_order_lot,
+                        proc_id,
+                        employee_id,
+                        proc_order_amount,
+                        proc_input_amount,
+                        proc_status)
+VALUES(?, ?, ?, 'EMP-001',? , ?, '1e');
+`;
+// startTime 업데이트
+const updateStartTime =`
+UPDATE t_prod_proc
+SET proc_start_date = sysdate(),
+    proc_status = '2e'
+WHERE prod_proc_id = ?
+`;
+// endTime 업데이트
+const updateEndTime =`
+UPDATE t_prod_proc
+SET proc_end_date = sysdate(),
+    proc_status = '3e',
+    ?
+WHERE prod_proc_id = ?
 `;
 module.exports = {
   selectProdProcess,
   selectProdProcFlowInfo,
+  selectProdProcList,
+  selectProdOrderProdId,
+  selectProdProcessId,
+  insertProdProc,
+  updateStartTime,
+  updateEndTime,
 }

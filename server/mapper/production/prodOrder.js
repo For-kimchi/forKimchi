@@ -69,6 +69,12 @@ INSERT INTO t_prod_order(plan_detail_id,
 VALUES (?, ?, ?, ?, ?, '1d')
 `;
 
+// 생산지시 중 상세계획 상태변경
+const updatePlanDetailStatus =`
+UPDATE t_prod_plan_detail
+SET plan_status = '3c'
+WHERE plan_detail_id = ?
+`;
 
 // ----------------------------------------------------------------
 // 선출창고관리
@@ -128,4 +134,5 @@ module.exports = {
     selectProdMate,
     selectProdOrderList,
     selectBomsBomDetail,
+    updatePlanDetailStatus,
 }
