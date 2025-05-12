@@ -103,4 +103,29 @@ router.get('/prodProcFlow/:id', async(req, res)=>{
   let result = await prodOrderService.selectProdProcFlowInfo(prodId);
   res.send(result);
 });
+// 생산공정LIst selectProdProcInfo
+router.put('/prodProcFlowInfo', async(req, res)=>{
+  let lot = req.body;
+  let result = await prodOrderService.selectProdProcInfo(lot);
+  res.send(result);
+});
+// 생산공정 등록 insertProdProc
+router.post('/insertProdProc', async(req, res)=>{
+  let procList = req.body;
+  let result = await prodOrderService.insertProdProcList(procList);
+  res.send(result);
+});
+// 공정시작 버튼
+router.put('/updateStartTime/:id', async(req, res)=>{
+  let param = req.params.id;
+  let result = await prodOrderService.updateStartTime(param);
+  res.send(result);
+});
+// 공정종료 버튼 updateEndTime
+router.put('/updateStartTime/:id', async(req, res)=>{
+  let procId = req.params.id;
+  let param = req.body;
+  let result = await prodOrderService.updateEndTime(param, procId);
+  res.send(result);
+});
 module.exports = router;
