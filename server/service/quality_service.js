@@ -142,54 +142,84 @@ const prodQualityViewDetail = async(detailId) => {
 // ---------------------------------------------
 
 // 검사항목조회
-// const selectOption = async (params) => {
-//   let count = Object.keys(params).length;
-//   let keyword;
-//   if (count > 0) {
-//     let selected = [];
-//     for (let i = 0; i < (count - 1); i++) {
-//       selected.push('AND ');
-//     }
+const selectOption = async (params) => {
+  let count = Object.keys(params).length;
+  let keyword;
+  if (count > 0) {
+    let selected = [];
+    for (let i = 0; i < (count - 1); i++) {
+      selected.push('AND ');
+      
+    }
 
-//     keyword = converts.convertObjToQueryLike(params, selected);
-//   } else {
-//     keyword = {};
-//   }
+    keyword = converts.convertObjToQueryLike(params, selected);
+  } else {
+    keyword = {};
+  }
 
-//   let list = await mariaDB.query("selectOption", keyword);
-//   return list;
-// };
-
+  let list = await mariaDB.query("selectOption", keyword);
+  return list;
+};
 
 // 검사항목관리 (검사항목 등록)
-// const optionListInsert = async (body) => {
+  const insertOption = async(params)=>{
+    let columnlist = ['option_id', 'option_name', 'option_standard', 'option_method'];
+    let addInfo = converts.convertObjToAry(params, columnlist);
+    let result = await mariaDB.query('insertOption', addInfo);
+    return result;
+  };
+// 검사항목 업데이트
+const updateOption = async(info, id) => {
+  let updateOpt = [info.option_name, info.option_standard, info.option_method, id];
+  let result = await mariaDB.query('updateOption', updateOpt);
+  return result;
+};
+// 검사항목 삭제
+const deleteOption = async(id) => {
+  let list = await mariaDB.query('deleteOption', id);
+  return list;
+};
 
-//   console.log(body);
+// -------------------------------------------------------
 
-//   let result;
-//   if (body.option_id) {
+// 검사기준조회
+const selectOptionControl = async (params) => {
+  let count = Object.keys(params).length;
+  let keyword;
+  if (count > 0) {
+    let selected = [];
+    for (let i = 0; i < (count - 1); i++) {
+      selected.push('AND ');
+      
+    }
 
-//     result = await mariaDB.query("updateOption", [body, body.option_id]);
+    keyword = converts.convertObjToQueryLike(params, selected);
+  } else {
+    keyword = {};
+  }
 
-//   } else {
+  let list = await mariaDB.query("selectOption", keyword);
+  return list;
+};
 
-//     let lastOption = await mariaDB.query("selectLastOption", {});
-//     let lastOptionId = lastOption[0].option_id;
-
-//     let newOptionId = keys.getNextUniqueId(lastOptionId);
-
-//     body.option_id = newOptionId;
-
-//     let optionColumn = ['option_id', 'option_name', 'option_standard', 'option_method'];
-//     let optionParam = converts.convertObjToAry(body, optionColumn);
-
-//     result = await mariaDB.query("optionListInsert", optionParam);
-
-//   }
-
-//   return result;
-// };
-
+// 검사기준관리 (검사항목 등록)
+  const insertOptionControl = async(params)=>{
+    let columnlist = ['option_id', 'option_name', 'option_standard', 'option_method'];
+    let addInfo = converts.convertObjToAry(params, columnlist);
+    let result = await mariaDB.query('insertOption', addInfo);
+    return result;
+  };
+// 검사기준 업데이트
+const updateOptionControl = async(info, id) => {
+  let updateOpt = [info.option_id, info.option_name, info.option_standard, info.option_method, id];
+  let result = await mariaDB.query('updateOption', updateOpt);
+  return result;
+};
+// 검사기준 삭제
+const deleteOptionControl = async(id) => {
+  let list = await mariaDB.query('deleteOption', id);
+  return list;
+};
 
 module.exports = {
   // 자재
@@ -205,5 +235,14 @@ module.exports = {
   prodQualityViewDropDown,
   prodQualityViewAll,
   prodQualityViewDetail,
-  // 검사
+  // 검사항목
+  selectOption,
+  insertOption,
+  updateOption,
+  deleteOption,
+  //검사기준
+  selectOptionControl,
+  insertOptionControl,
+  updateOptionControl,
+  deleteOptionControl
 }

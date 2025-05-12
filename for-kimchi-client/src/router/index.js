@@ -17,7 +17,7 @@ import Profile from "../views/Profile.vue";
 import SignUp from "../views/SignUp.vue";
 import SignIn from "../views/SignIn.vue";
 
-//혁진 (검사사)
+//혁진 (검사)
 import mateQuality from "../views/quality/mate_quality.vue";
 import prodQuality from "../views/quality/prod_quality.vue";
 import mateQualityControl from "../views/quality/mate_quality_control.vue";

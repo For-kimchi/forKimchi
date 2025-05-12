@@ -150,7 +150,7 @@
     },
     methods: {
       reloadPage() {
-        location.reload();
+                location.reload();
       },
 
       // 자재검사요청 (요청)

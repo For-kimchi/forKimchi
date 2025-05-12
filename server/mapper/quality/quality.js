@@ -206,18 +206,16 @@ where A.quality_id= ?
 const selectOption =
 `
 SELECT 
-    option_id, 
+	option_id, 
     option_name, 
     option_standard, 
     option_method
-FROM t_quality_option
-WHERE 1=1
-:searchKeyword
-ORDER BY option_id
+FROM
+	t_quality_option
 `;
 
 // 검사항목 추가
-const optionListInsert =
+const insertOption =
 `
 INSERT INTO t_quality_option 
 (option_id, option_name, option_standard, option_method)
@@ -228,7 +226,7 @@ VALUES(?, ?, ?, ?)
 const updateOption =
 `
 UPDATE t_quality_option
-SET option_name = ?, option_standard = ?, option_method = ?
+SET option_name=?, option_standard=?, option_method=?
 WHERE option_id = ?
 `;
 
@@ -240,7 +238,60 @@ FROM t_quality_option
 ORDER BY option_id DESC
 LIMIT 1
 `;
+// 검사항목 삭제
+const deleteOption = 
+`
+DELETE FROM t_quality_option
+WHERE option_id = ?
+`;
 
+// ----------------------------------------------------------------
+// 검사기준 조회
+const selectOptionControl =
+`
+SELECT 
+		tqs.target_id,
+        tqsd.option_id, 
+        tqo.option_name, 
+        tqo.option_standard,
+        tqo.option_method
+ FROM t_quality_std tqs JOIN t_quality_std_detail tqsd ON (tqs.std_id = tqsd.std_id) JOIN
+	  t_quality_option tqo ON (tqsd.option_id = tqo.option_id)
+ WHERE 1=1
+ :searchKeyword
+ ORDER BY tqs.target_id
+`;
+
+// 검사기준 추가
+const insertOptionControl =
+`
+INSERT INTO t_quality_option 
+(option_id, option_name, option_standard, option_method)
+VALUES(?, ?, ?, ?)
+`;
+
+// 검사기준 갱신
+const updateOptionControl =
+`
+UPDATE t_quality_option
+SET option_id=?, option_name=?, option_standard=?, option_method=?
+WHERE option_id = ?
+`;
+
+// 검사기준의 마지막 option_id 조회
+const selectLastOptionControl =
+`
+SELECT option_id
+FROM t_quality_option
+ORDER BY option_id DESC
+LIMIT 1
+`;
+// 검사기준 삭제
+const deleteOptionControl = 
+`
+DELETE FROM t_quality_option
+WHERE option_id = ?
+`;
 module.exports = {
     // 자재
      mateQualityReq,
@@ -260,7 +311,14 @@ module.exports = {
      prodQualityViewDetail,
     // 검사항목관리
      selectOption,
-     optionListInsert,
+     insertOption,
      updateOption,
      selectLastOption,
+     deleteOption,
+     // 검사기준관리
+     selectOptionControl,
+     insertOptionControl,
+     updateOptionControl,
+     selectLastOptionControl,
+     deleteOptionControl
 };
