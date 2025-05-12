@@ -106,27 +106,41 @@ const selectProdProcess = async() =>{
     return list;
 };
 // 공정흐름도 조회 + 공정수
-const selectProdProcFlowInfo = async(prodId) =>{
+const selectProdProcFlowInfo = async(prodLot) =>{
     let conn;
     try{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
-        selectedSql = await mariaDB.selectedQuery('prodCode', prodId);
-        let prodid = await conn.query(selectedSql, prodId);
+        
+        // 이름을 넣어서 id를 구함.
+        selectedSql = await mariaDB.selectedQuery('selectOrderProdId', prodLot);
+        let prodId = await conn.query(selectedSql, prodLot);
 
          // prod_id 처리
-        prodId =  prodid[0].prod_id;
+        prodId =  prodId[0].prod_id;
+        // prod_id + prod_order_lot 합치기
         
+        // 공정흐름도 조회
         selectedSql = await mariaDB.selectedQuery('selectProdProcFlowInfo', prodId);
-        let list = await conn.query(selectedSql, prodId);
+        let Info = await conn.query(selectedSql, prodId);
+        let sumList = [];
+        // 반복문
+        for(let procFlow of Info){
+            let params = [prodLot, procFlow.proc_id];
+            // 각 합계 구하기
+            selectedSql = await mariaDB.selectedQuery('selectSumProdProcList', params);
+            let list = await conn.query(selectedSql, params);
+            sumList.push(list[0]);
+        };
 
-        // 각 합계 구하기
-        // selectSumProdProcList
-        selectedSql = await mariaDB.selectedQuery('selectSumProdProcList', prodId);
-        list = await conn.query(selectedSql, prodId);
+        // 한 행처럼 보이도록 결과물 합치기
+        let result =[];
+        for(let idx in Info){
+            result[idx] = {...Info[idx], ...sumList[idx] };
+        }
         
         conn.commit();
-        return list;
+        return result;
     }catch(err){
         if(conn) conn.rollback();
     }finally{

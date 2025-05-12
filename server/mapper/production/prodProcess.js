@@ -92,6 +92,13 @@ SET proc_end_date = sysdate(),
     ?
 WHERE prod_proc_id = ?
 `;
+// prod_order_lot정보를 가지고 prod_id를 가져와야함.
+const selectOrderProdId =`
+SELECT prod_id
+FROM t_prod_order
+WHERE prod_order_lot = ?
+LIMIT 1
+`;
 module.exports = {
   selectProdProcess,
   selectProdProcFlowInfo,
@@ -102,4 +109,5 @@ module.exports = {
   updateStartTime,
   updateEndTime,
   selectSumProdProcList,
+  selectOrderProdId,
 }
