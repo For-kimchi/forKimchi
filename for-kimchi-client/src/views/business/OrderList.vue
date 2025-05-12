@@ -4,8 +4,9 @@
     <div class="row">
       <div class="col text-end">
         <button class="btn btn-success" @click="getOrders">조회</button>
+        <button class="btn btn-info ms-2" @click="registerOrder">등록</button>
         <button class="btn btn-warning ms-2" @click="modifyOrder">수정</button>
-        <button class="btn btn-info ms-2" @click="confirmOrder">승인</button>
+        <button class="btn btn-dark ms-2" @click="confirmOrder">승인</button>
       </div>
     </div>
 
@@ -54,8 +55,8 @@
           <h6 class="text-white text-capitalize ps-3">주문내역</h6>
         </div>
       </div>
-      <div class="card-body px-0 pb-2" style="max-height: 300px; overflow: auto;">
-        <div class="table-responsive p-0">
+      <div class="card-body px-0 py-2" style="max-height: 300px; overflow: auto;">
+        <!-- <div class="table-responsive p-0"> -->
           <table class="table align-items-center mb-0 table-hover">
             <thead>
               <tr>
@@ -79,7 +80,7 @@
                     @change="check">
                 </td>
                 <td class="text-center">{{ info.order_id}}</td>
-                <td class="text-center">{{ yyyyMMdd(info.order_date)}}</td>
+                <td class="text-center">{{ formatDate(info.order_date)}}</td>
                 <td class="text-center">{{ info.vendor_name }}</td>
                 <td class="text-center">{{ info.employee_id }}</td>
                 <td class="text-center">{{ info.manager_id }}</td>
@@ -88,7 +89,7 @@
               </tr>
             </tbody>
           </table>
-        </div>
+        <!-- </div> -->
       </div>
     </div>
 
@@ -98,7 +99,7 @@
           <h6 class="text-white text-capitalize ps-3">주문상세내역</h6>
         </div>
       </div>
-      <div class="card-body px-0 pb-2">
+      <div class="card-body px-0 py-2">
         <table class="table align-items-center justify-content-center mb-0">
           <thead>
             <tr>
@@ -114,7 +115,7 @@
               <td class="text-center">{{ info.order_detail_id }}</td>
               <td class="text-center">{{ info.prod_id }}</td>
               <td class="text-center">{{ info.order_amount }}</td>
-              <td class="text-center">{{ yyyyMMdd(info.deliv_due_date) }}</td>
+              <td class="text-center">{{ formatDate(info.deliv_due_date) }}</td>
               <td class="text-center">{{ codeToName(info.order_status, detailCodes) }}</td>
             </tr>
           </tbody>
@@ -126,17 +127,18 @@
 
 <script>
   import axios from 'axios';
-  import { mapState, mapActions } from 'pinia';
-  import { useUserStore } from "@/stores/user"; 
+  import { mapState } from 'pinia';
+  import { useUserStore } from "@/stores/user";
+  import { formatDate, codeToName} from '@/utils/common';
 
   export default {
     name: "주문조회",
     data() {
       return {
-        searchName: "",
-        searchType: "",
-        searchStartDate: this.getTodayDate(),
-        searchEndDate: this.getTodayDate(),
+        searchName: '',
+        searchType: '',
+        searchStartDate: formatDate(),
+        searchEndDate: formatDate(),
         orders: [],
         orderDetails: [],
         codes: [],
@@ -152,15 +154,21 @@
     ])
     },
     methods: {
+      registerOrder() {
+        this.$router.push('/ordersmng');
+      },
       modifyOrder() {
         if (this.selectedIndex != null) {
 
-          let selected =  this.orders[this.selectedIndex];
+          let selected = this.orders[this.selectedIndex];
 
           if (selected.order_final_status == '1a') {
-            this.$router.push({ path: '/ordersmng', query: { 
-            order_id: this.orders[this.selectedIndex].order_id,
-            } });
+            this.$router.push({
+              path: '/ordersmng',
+              query: {
+                order_id: this.orders[this.selectedIndex].order_id,
+              }
+            });
           } else {
             alert('승인완료된 건은 수정할 수 없습니다')
           }
@@ -176,8 +184,6 @@
         if (this.searchType) params.order_final_status = this.searchType;
         if (this.searchStartDate) params.startDate = this.searchStartDate;
         if (this.searchEndDate) params.endDate = this.searchEndDate;
-
-        console.log(params);
 
         let result =
           await axios.get(`/api/order`, {
@@ -238,22 +244,6 @@
           alert('선택된 항목이 없습니다.');
         }
       },
-      getTodayDate() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      },
-      yyyyMMdd(fullDateTime) {
-        const date = new Date(fullDateTime);
-
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-
-        return `${year}-${month}-${day}`;
-      },
       toggleAll() {
         this.orders.forEach(item => {
           if (item.order_final_status == '1a') {
@@ -265,15 +255,15 @@
         this.allSelected = this.orders.every(item => item.selected);
       },
       codeToName(code, codeArray) {
-        for (let item of codeArray) {
-          if (item.sub_code == code) return item.sub_code_name;
-        }
-        return '';
+        return codeToName(code, codeArray);
       },
+      formatDate(dateString) {
+        return formatDate(dateString);
+      }
     },
     created() {
       this.getOrderStatus();
       this.getOrderDetailStatus();
-    }
+    },
   }
 </script>

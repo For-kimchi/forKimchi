@@ -95,7 +95,7 @@ const deleteProcFlowDetail =
   `DELETE FROM t_proc_flow_detail
 WHERE proc_flow_detail_id = ?`;
 
-// 공정흐름도 비활성화화
+// 공정흐름도 비활성화
 const updateProcFlowStatus =
 `UPDATE t_proc_flow
 SET proc_flow_status = '2v'

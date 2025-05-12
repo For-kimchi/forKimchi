@@ -52,21 +52,25 @@
                     <th class="text-center font-weight-bolder">자재수량</th>
                     <th class="text-center font-weight-bolder">자재단위</th>
                     <th class="text-center font-weight-bolder"></th>
-                    <th class="text-center font-weight-bolder"></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in bom.bom_details" v-bind:key="info.bom_detail_id">
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_name" readonly></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="number" v-model="info.mate_amount"></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_unit" readonly></td>
-                    <td class="align-middle text-center">
-                      <button class="btn btn-danger m-0" @click="removeRows(index)">삭제</button></td>
+                    <td class="text-center">
+                      {{ info.mate_id }}
+                    </td>
+                    <td class="text-center">
+                      {{ info.mate_name }}
+                    </td>
+                    <td class="text-center">
+                      <input class="form-control border text-center" type="number" v-model="info.mate_amount">
+                    </td>
+                    <td class="text-center">
+                      {{ info.mate_unit }}
+                    </td>
+                    <td class="text-center">
+                      <button class="btn btn-danger m-0" @click="removeRows(index)">삭제</button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -107,16 +111,21 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in materials" v-bind:key="info.mate_id">
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_name" readonly></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_unit" readonly></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_type" readonly></td>
-                    <td class="align-middle text-center">
-                      <button class="btn btn-success m-0" @click="addRows(index)">추가</button></td>
+                    <td class="text-center">
+                      {{ info.mate_id }}
+                    </td>
+                    <td class="text-center">
+                      {{ info.mate_name }}
+                    </td>
+                    <td class="text-center">
+                      {{ info.mate_unit }}
+                    </td>
+                    <td class="text-center">
+                      {{ codeToName(info.mate_type, codes) }}
+                    </td>
+                    <td class="text-center">
+                      <button class="btn btn-success m-0" @click="addRows(index)">추가</button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -135,6 +144,7 @@
 <script>
 import ProdModal from '../modal/ProdModal.vue';
 import axios from 'axios';
+import { formatDate, codeToName} from '@/utils/common';
 
 export default {
   components: {
@@ -150,7 +160,8 @@ export default {
       employee: {
         employee_id: 'EMP-001',
         employee_name: '홍길동',
-      }
+      },
+      codes: [],
     };
   },
   computed: {
@@ -217,8 +228,17 @@ export default {
       }
 
     },
+    async getMateType() {
+      let res = await axios.get(`/api/codes/U1`)
+        .catch(err => console.log(err));
+      this.codes = res.data;
+    },
+    codeToName(code, codeArray) {
+      return codeToName(code, codeArray);
+    }
   },
-  mounted() {
+  created() {
+    this.getMateType();
   },
 };
 </script>

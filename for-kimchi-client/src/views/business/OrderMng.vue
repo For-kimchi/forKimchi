@@ -58,7 +58,7 @@
           <h6 class="text-white text-capitalize ps-3">주문상세정보</h6>
         </div>
       </div>
-      <div class="card-body px-0 pb-2">
+      <div class="card-body px-0 py-2">
         <table class="table align-items-center justify-content-center mb-0">
           <thead>
             <tr>
@@ -72,14 +72,6 @@
             </tr>
           </thead>
           <tbody>
-            <!-- <tr v-for="(info, index) in orderDetails" v-bind:key="info.order_detail_id">
-              <td class="text-center">{{ info.order_detail_id }}</td>
-              <td class="text-center">{{ info.prod_id }}</td>
-              <td class="text-center">{{ info.order_amount }}</td>
-              <td class="text-center">{{ yyyyMMdd(info.deliv_due_date) }}</td>
-              <td class="text-center">{{ codeToName(info.order_status, detailCodes) }}</td>
-            </tr> -->
-
             <tr v-for="(info, index) in orderDetails" v-bind:key="info.order_detail_id">
                     <td class="text-center">
                       <input class="form-control border text-center" type="text" v-model="info.prod_name" @keydown.prevent
@@ -106,7 +98,10 @@
   import axios from 'axios';
   import ProdModal from '../modal/ProdModal.vue';
   import VendorModal from '../modal/VendorModal.vue';
-  import { mapState, mapActions } from 'pinia';
+  import { formatDate, formatDateAfter } from '../../utils/common';
+
+  // pinia
+  import { mapState } from 'pinia';
   import { useUserStore } from "@/stores/user"; 
 
   export default {
@@ -117,13 +112,14 @@
     },
     data() {
       return {
-        order: {},
+        order: {
+          order_date: formatDate(),
+        },
         orderDetails: [],
         selectedIndex: null,
         showVendor: false,
         showProd: false,
         vendor: {},
-        order_date: this.getTodayDate(),
         memo: '',
       }
     },
@@ -159,35 +155,15 @@
 
         }
       },
-      getTodayDate() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+      formatDate(dateString) {
+        return formatDate(dateString);
       },
-      getDifferDate() {
-        const baseDate = new Date(this.order_date);
-
-        baseDate.setDate(baseDate.getDate() + 14);
-
-        const year = baseDate.getFullYear();
-        const month = String(baseDate.getMonth() + 1).padStart(2, '0');
-        const day = String(baseDate.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      },
-      yyyyMMdd(fullDateTime) {
-        const date = new Date(fullDateTime);
-
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-
-        return `${year}-${month}-${day}`;
+      formatDateAfter() {
+        return formatDateAfter(this.order_date, 14);
       },
       addRow() {
         this.orderDetails.push({
-          deliv_due_date: this.getDifferDate(),
+          deliv_due_date: formatDateAfter(),
         });
       },
       removeRows(index) {
@@ -217,10 +193,10 @@
           console.log(res.data);
 
           this.order = res.data.order;
-          this.order.order_date = this.yyyyMMdd(this.order.order_date);
+          this.order.order_date = formatDate(this.order.order_date);
           this.orderDetails = res.data.order_details;
           this.orderDetails.forEach(item => {
-            item.deliv_due_date = this.yyyyMMdd(item.deliv_due_date);
+            item.deliv_due_date = formatDate(item.deliv_due_date);
           })
       },
       reset() {
