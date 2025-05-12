@@ -25,7 +25,7 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="align-middle text-center">검사ID</th>
+                    <th class="align-middle text-center">검사Id</th>
                     <th class="align-middle text-center">검사명</th>
                     <th class="align-middle text-center">검사기준치</th>
                     <th class="align-middle text-center">검사항목</th>
@@ -33,17 +33,17 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, idx) in optionList" :key="item.option_id">
+                  <tr v-for="(item, idx) in optionList" v-bind:key="option_id">
                     <td class="align-middle text-center">{{ item.option_id }}</td>
                     <td class="align-middle text-center">{{ item.option_name }}</td>
                     <td class="align-middle text-center">{{ item.option_standard }}</td>
                     <td class="align-middle text-center">{{ item.option_method }}</td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-warning" @click="editOption(item)">수정</button>
-                      <button class="btn btn-danger ms-2" @click="delOption(item.option_id)">삭제</button>
+                      <button class="btn btn-warning" v-on:click="editOption(item)">수정</button>
+                      <button class="btn btn-danger ms-2" v-on:click="delOption(item.option_id)">삭제</button>
                     </td>
                   </tr>
-                  <tr v-if="items.length === 0">
+                  <tr v-if="optionList.length === 0">
                     <td colspan="5" class="text-center">검색된 결과가 없습니다</td>
                   </tr>
                 </tbody>
@@ -89,6 +89,8 @@
   export default {
     data() {
       return {
+        textValue: "",
+
         action: '추가', // 액션(추가/수정)
         items: [], // 검사기준 목록
         optionList: [],
@@ -112,32 +114,33 @@
         this.optionList = ajaxRes.data;
       },
 
-      // 수정
-      editOption(item) {
-        this.selected = {
-          ...item,
-        };
+      // 수정(담기만)
+      async editOption(item) {
+        const {option_id, ...item_} = item;
+        this.selected = item_;
+        this.selected.option_id = option_id;
         this.action = '수정';
+
+    
       },
 
       // 저장 (추가/수정)
-      async save(){
-            let id = {
-              option_id: this.selected.option_id,
-              option_name: this.selected.option_name,
-              option_standard: this.selected.option_standard,
-              option_method: this.selected.option_method
-            };
-            let result = await axios.post("/api/options", id)
-                               .catch(err => console.log(err));
-            let addRes = result.data;
-            if(addRes.isSuccessed){
-                alert('등록되었습니다.');
-                this.selected.option_id = addRes.No;
-            }else{
-                alert('등록되지 않았습니다.\n데이터를 확인해보세요.');
-            };
-        },
+      async save() {
+        let result = await axios.post('/api/options', this.selected)
+          .catch(err => console.log(err));
+        console.log(result);
+
+        if (result.data.affectedRows > 0) {
+          alert('저장이 완료되었습니다');
+          this.getBasicProd();
+          this.resetForm();
+        } else {
+          alert('저장 과정에서 오류가 발생했습니다');
+        }
+      },
+      codeToName(code, codeArray) {
+        return codeToName(code, codeArray);
+      },
 
       // 삭제
       async delOption(option_id) {

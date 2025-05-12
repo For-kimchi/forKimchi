@@ -39,7 +39,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(product, idx) in items" :key="product.prod_id" @click="editItem(product)">
+                  <tr v-for="(product, idx) in items" v-bind:key="product.prod_id" @click="editItem(product)">
                     <td class="align-middle text-center">{{ product.prod_id }}</td>
                     <td class="align-middle text-center">{{ product.prod_name }}</td>
                     <td class="align-middle text-center">{{ product.prod_size }}</td>
