@@ -122,7 +122,7 @@ router.put('/updateStartTime/:id', async(req, res)=>{
   res.send(result);
 });
 // 공정종료 버튼 updateEndTime
-router.put('/updateStartTime/:id', async(req, res)=>{
+router.put('/updateEndTime/:id', async(req, res)=>{
   let procId = req.params.id;
   let param = req.body;
   let result = await prodOrderService.updateEndTime(param, procId);
