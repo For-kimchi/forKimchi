@@ -6,7 +6,13 @@ const converts = require('../utils/converts.js');
 // 전체발주조회
 const mateReqAll = async(searchList) => {
   let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
-  let list = await mariaDB.query('selectMateReq', searchKeyword);
+  let list = await mariaDB.query('selectStore', searchKeyword);
+  return list;
+};
+
+// 입고관리 발주서전체조회(발주승인건만)
+const storeMateAll = async() => {
+  let list = await mariaDB.query('selectMateStore');
   return list;
 };
 
@@ -129,4 +135,5 @@ module.exports = {
   vendorId,
   mateList,
   insertMates,
+  storeMateAll,
 }

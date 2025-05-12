@@ -44,6 +44,14 @@ router.get('/storeList/:id', async(req, res) => {
   res.send(storeInfo);
 });
 
+// 창고입고(검사완료건만 조회)
+router.get('/storeWareStatus', async (req, res) => {
+  let search = req.query;
+  let storeList = await storeService.storeAll(search)
+                                    .catch(err => console.log(err));
+  res.send(storeList);
+});
+
 // 창고저장
 router.post('/insertWarehouse', async (req, res) => {
   try {

@@ -6,9 +6,15 @@ const converts = require('../utils/converts.js');
 // 입고조회
 const storeAll = async (searchList) => {
   let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
-  let list = await mariaDB.query('selectStore', searchKeyword);
+  let list = await mariaDB.query('selectStoreStatus', searchKeyword);
   return list;
 };
+
+// 창고입고조회 (검사완료건만 조회)
+const storeWareAll = async() => {
+  let list = await mariaDB.query('selectWareStatus');
+  return list;
+}
 
 // 입고상세조회
 const storeById = async (storeId) => {
@@ -24,14 +30,41 @@ const wareAll = async() => {
 
 // 창고저장
 const insertWarehouse = async(wareList) => {
-  let columnList = ['mate_lot', 'mate_id', 'inbound_detail_id', 'warehouse_id', 'mate_amount', 'employee_id'];
+  
+  let conn;
+  try{
+    let columnList = ['mate_lot', 'mate_id', 'inbound_detail_id', 'warehouse_id', 'mate_amount', 'employee_id'];
+    conn = await mariaDB.getConnection();
+    await conn.beginTransaction();
 
-  for (let item of wareList) {
+    
+    let inbound_id = wareList[0].inbound_id;
+    for (let item of wareList) {
+      
+      // lot 생성 select seletMateLot
+      selectedSql = await mariaDB.selectedQuery('seletMateLot');
+      let lots = await conn.query(selectedSql);
+      lots = lots[0].mate_lot;
+      let newLot = keys.getNextKeyId(lots);
+      item.mate_lot = newLot;
+      
     let values = converterAry(item, columnList);
-    await mariaDB.query('insertWarehouse', values);
+    await mariaDB.selectedQuery('insertWarehouse', values);
+    let result = await conn.query(selectedSql, values);
   }
-
-  return { success: true };
+    selectedSql = await mariaDB.selectedQuery('updateInbound', inbound_id);
+    let result = await conn.query(selectedSql, inbound_id);
+    
+    await conn.commit();
+  return result;
+  //  에러 뜨면 rollback
+  }catch(err){
+      if(conn) conn.rollback();
+  // 커넥션 초기화
+  }finally{
+      if(conn) conn.release();
+  }
+  // return { success: true };
 };
 
 
@@ -101,6 +134,9 @@ const insertStore = async(storeSaveInfo) => {
       lastStoreDetailId = newStoreDetailId;
     }
 
+    selectedSql = await mariaDB.selectedQuery('updateStore', {});
+    await conn.query(selectedSql, storeInfo.req_id);
+
     await conn.commit();
 
     return result;
@@ -121,4 +157,5 @@ module.exports = {
   storeById,
   wareAll,
   insertWarehouse,
+  storeWareAll,
 }

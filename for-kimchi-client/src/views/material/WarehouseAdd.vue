@@ -1,27 +1,5 @@
 <template>
   <div class="container-fluid py-4">
-    <!-- 검색 -->
-
-    <div class="row">
-        <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-                    <h6 class="text-white text-capitalize ps-3">검색</h6>
-                </div>
-            </div>
-            <div>
-            <ul class="list-group list-group-horizontal">
-                <li class="list-group-item">거래처</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">제품명</li>
-                <li class="list-group-item"><input type="text"></li>
-                <!-- <li class="list-group-item">일정</li>
-                <li class="list-group-item"><input type="date"> ~ <input type="date"></li> -->
-                <li class="list-group-item"><button class="btn btn-success ms-2 me-2" @:click="">조회</button></li>
-            </ul>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <!-- 행 영역 div-->
       <div class="col-12">
@@ -44,7 +22,6 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -55,7 +32,6 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_final_status }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -82,9 +58,10 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재입고상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">양품수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">불량품수량</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">양품수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">불량품수량</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고/반품</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
@@ -94,13 +71,29 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.pass_amount }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.fail_amount }}</td>
+                    <!-- <td class="align-middle font-weight-bolder text-center">{{ info.pass_amount }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.fail_amount }}</td> -->
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
-                    </tr>
+                    <!-- 드롭다운(입고/반품) -->
+                    <td>
+                     <select v-model="info.inbound_type" class="form-select me-2 text-center"style="max-width: 200px; border: 1px solid gray; text-align-last: center;">
+                      <option value="입고">입고</option>
+                      <option value="반품">반품</option>
+                     </select>
+                    </td>
+                     <!-- 드롭다운(입고/반품) -->
+                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
+                  </tr>
                 </tbody>
               </table>
               </div>
+            <!-- 테이블 오른쪽 밑에 저장버튼 -->
+            <div v-if="storeDtList.length > 0" class="table-responsive p-0">
+                  <table class="table align-items-center justify-content-center mb-0"></table>
+                 <div class="text-end pe-5 mt-3">
+                <button class="btn btn-success" @click="wareAdd">저장</button>
+                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -116,6 +109,8 @@ export default {
       return{
         storeList: [],
         storeDtList: [],
+        insertWare: [],
+        inbound_id: '',
       }
     },
     created(){
@@ -124,17 +119,52 @@ export default {
     methods : {
     async getStoreList() {
       let ajaxRes = 
-      await axios.get(`/api/storeList`)
+      await axios.get(`/api/storeWareStatus`)
                   .catch (err => console.log(err));
       this.storeList = ajaxRes.data;
     },
+    
     async getStoreDtList(storeId) {
       let ajaxRes =
       await axios.get(`/api/storeList/${storeId}`)
                 .catch(err => console.log(err));
       this.storeDtList = ajaxRes.data;
+      this.inbound_id = storeId;
     },
 
+    async wareAdd() {
+  try {
+    let saveList = this.storeDtList // 창고와 입고테이블이 다르기 때문에 saveList에 storeDtList를 한개씩 담아줌.
+      .filter(item => item.inbound_type === '입고')   // 입고만 저장
+      .map(item => ({
+        inbound_type: '입고',         // 테이블에 inbound_type이 없기 때문에 값을 지정해줌 
+        mate_lot: `MLOT-${Date.now()}`,                 // LOT번호 자동 생성
+        inbound_detail_id: item.inbound_detail_id,
+        warehouse_id: 'WHS-001',        // 선택된 창고
+        mate_amount: item.pass_amount,
+        mate_id : item.mate_id,
+        employee_id: '홍길동',
+        inbound_id: this.inbound_id
+      }));
+      console.log(saveList);
+    // insertWarehouse 라우터로 전송
+    let res = await axios.post('/api/insertWarehouse', saveList)
+
+    // saveList에 빈값이 넘어올 경우 반품으로 처리, 
+    // 드롭다운에서 입고를 선택하면 inbound_type: '입고'로 기본값을 주었고, 
+    // 위의 드롭다운 입고옵션에 value="입고"를 주어서 saveList의 filter를 통해 값이 담김. 
+    // value="입고"가 아닌 드롭다운옵션의 경우에는 빈값을 담아서 넘김.
+    if (saveList.length === 0) {
+    alert('반품되었습니다.');
+    return;
+    }
+    alert('입고가 완료되었습니다.');
+    await this.storeList();
+  } catch (err) {
+    console.error('저장 실패:', err);
+    alert('저장 중 오류 발생');
+  }
+    }
   }
 }
 
