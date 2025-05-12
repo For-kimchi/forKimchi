@@ -82,7 +82,7 @@
       </div>
 
       <div class="col-md-4">
-        <div class="card p-3">
+        <div class="card p-3 mb-1">
           <h5>{{ action }}</h5>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">거래처ID</label>

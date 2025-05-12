@@ -29,12 +29,6 @@
             <input v-model="prod.prod_id" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품ID" />
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">제품분류</label>
-            <input v-model="prod.prod_type" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품분류" />
-          </div>
-        </div>
 
       </div>
     </div>
@@ -54,10 +48,10 @@
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">순번</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정ID</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정명</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                    <th class="text-center font-weight-bolder">순번</th>
+                    <th class="text-center font-weight-bolder">공정ID</th>
+                    <th class="text-center font-weight-bolder">공정명</th>
+                    <th class="text-center font-weight-bolder"></th>
                   </tr>
                 </thead>
                 <!-- <tbody>
@@ -78,7 +72,7 @@
                       <td class="text-center">{{ index + 1 }}</td>
                       <td class="text-center">{{ element.proc_id }}</td>
                       <td class="text-center">{{ element.proc_name }}</td>
-                      <td class="text-center"><button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
+                      <td class="text-center"><button class="btn btn-danger m-0" @click="removeRows(index)">삭제</button></td>
                     </tr>
                   </template>
                 </draggable>
@@ -103,23 +97,23 @@
                 <input v-model="searchName" type="text" class="form-control border text-center" placeholder="공정명" />
               </div>
               <div class="col-md-3">
-                <button class="btn btn-primary" @click="searchFlow">검색</button>
+                <button class="btn btn-primary m-0" @click="searchFlow">검색</button>
               </div>
             </div>
             <div class="table-responsive p-0" style="max-height: 400px;">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정ID</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">공정명</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                    <th class="text-center font-weight-bolder">공정ID</th>
+                    <th class="text-center font-weight-bolder">공정명</th>
+                    <th class="text-center font-weight-bolder"></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in procs" v-bind:key="info.proc_id">
                     <td class="text-center">{{ info.proc_id }}</td>
                     <td class="text-center">{{ info.proc_name }}</td>
-                    <td class="text-center"><button class="btn btn-success ms-2" @click="addRows(index)">추가</button></td>
+                    <td class="text-center"><button class="btn btn-success m-0" @click="addRows(index)">추가</button></td>
                   </tr>
                 </tbody>
               </table>

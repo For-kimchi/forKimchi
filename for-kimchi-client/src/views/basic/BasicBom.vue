@@ -29,12 +29,6 @@
             <input v-model="prod.prod_id" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품ID" />
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">제품분류</label>
-            <input v-model="prod.prod_type" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품분류" />
-          </div>
-        </div>
 
       </div>
     </div>
@@ -53,12 +47,12 @@
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재ID</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재명</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재수량</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재단위</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                    <th class="text-center font-weight-bolder">자재ID</th>
+                    <th class="text-center font-weight-bolder">자재명</th>
+                    <th class="text-center font-weight-bolder">자재수량</th>
+                    <th class="text-center font-weight-bolder">자재단위</th>
+                    <th class="text-center font-weight-bolder"></th>
+                    <th class="text-center font-weight-bolder"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -72,7 +66,7 @@
                     <td class="align-middle text-center">
                       <input class="form-control border text-center" type="text" v-model="info.mate_unit" readonly></td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
+                      <button class="btn btn-danger m-0" @click="removeRows(index)">삭제</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -97,18 +91,18 @@
             <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명" />
             </div>
             <div class="col-md-3">
-              <button class="btn btn-primary" @click="searchMaterial">검색</button>
+              <button class="btn btn-primary m-0" @click="searchMaterial">검색</button>
             </div>
           </div>
             <div class="table-responsive p-0" style="max-height: 400px;">
               <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재명</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재ID</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재단위</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">자재분류</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                    <th class="text-center font-weight-bolder">자재명</th>
+                    <th class="text-center font-weight-bolder">자재ID</th>
+                    <th class="text-center font-weight-bolder">자재단위</th>
+                    <th class="text-center font-weight-bolder">자재분류</th>
+                    <th class="text-center font-weight-bolder"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -122,7 +116,7 @@
                     <td class="align-middle text-center">
                       <input class="form-control border text-center" type="text" v-model="info.mate_type" readonly></td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-success ms-2" @click="addRows(index)">추가</button></td>
+                      <button class="btn btn-success m-0" @click="addRows(index)">추가</button></td>
                   </tr>
                 </tbody>
               </table>

@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="search">조회</button>
-        <button class="btn btn-info ms-2" @click="getBasicMate">등록</button>
+        <button class="btn btn-info ms-2" @click="resetForm">등록</button>
       </div>
     </div>
 
@@ -65,7 +65,7 @@
                     <td class="align-middle text-center">{{ item.mate_id }}</td>
                     <td class="align-middle text-center">{{ item.mate_name }}</td>
                     <td class="align-middle text-center">{{ item.mate_unit }}</td>
-                    <td class="align-middle text-center">{{ item.mate_type }}</td>
+                    <td class="align-middle text-center">{{ codeToName(item.mate_type) }}</td>
                   </tr>
                   <tr v-if="items.length === 0">
                     <td colspan="6" class="text-center">검색된 결과가 없습니다</td>
@@ -78,7 +78,7 @@
       </div>
 
       <div class="col-md-4">
-        <div class="card p-3">
+        <div class="card p-3 mb-1">
           <h5>{{ action }}</h5>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">자재ID</label>
@@ -148,6 +148,9 @@
         .catch(err => console.log(err));
       this.codes = res.data;
     },
+      search() {
+        this.getBasicMate();
+      },
       editItem(item) {
         this.action = '수정',
         this.selected = {
@@ -171,8 +174,13 @@
         } else {
           alert('저장 과정에서 오류가 발생했습니다');
         }
-
       },
+      codeToName(code) {
+        for (let item of this.codes) {
+          if (item.sub_code == code) return item.sub_code_name;
+        }
+        return '';
+      }
     },
     created() {
       this.getMateType();

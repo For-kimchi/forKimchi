@@ -47,8 +47,8 @@ const postPmo = async (PmoInfo) => {
 
     for (let detail of details) {
 
-      selectedSql = await mariaDB.selectedQuery('selectMateStock', detail.mate_id)
-      let mateStock = await conn.query(selectedSql, {});
+      selectedSql = await mariaDB.selectedQuery('selectMateStock', {})
+      let mateStock = await conn.query(selectedSql, detail.mate_id);
 
       let inbound_amount = detail.inbound_amount;
       
@@ -59,11 +59,9 @@ const postPmo = async (PmoInfo) => {
         let hold_amount = 0;
 
         if (inbound_amount >= mate.mate_stock_amount) {
-          hold_amount = inbound_amount - mate.mate_stock_amount;
-        } else if (inbound_amount > 0 && inbound_amount < mate.mate_stock_amount ) {
+          hold_amount = mate.mate_stock_amount;
+        } else if (inbound_amount < mate.mate_stock_amount ) {
           hold_amount = inbound_amount;
-        } else {
-          break;
         }
 
         newId = keys.getNextKeyId(lastId);
@@ -79,7 +77,11 @@ const postPmo = async (PmoInfo) => {
 
         console.log(result);
 
-        inbound_amount -= inbound_amount - hold_amount;
+        lastId = newId;
+
+        inbound_amount -= hold_amount;
+
+        if (inbound_amount == 0) break;
       }
     }
 

@@ -10,6 +10,7 @@ const session = require('express-session');
 // basic
 const basicRouter = require('./router/basic_router.js')
 const businessRouter = require('./router/business_router.js')
+const accountRouter = require('./router/account_router.js')
 
 // 어진 
 const materialRouter = require('./router/material_router.js');
@@ -56,8 +57,10 @@ app.listen(3000, ()=>{
 app.get('/', (req, res)=>{
   res.send('Welcome!!');
 });
+
 app.use('/', basicRouter);
 app.use('/', businessRouter);
+app.use('/', accountRouter);
 
 // 어진
 app.use('/', materialRouter);

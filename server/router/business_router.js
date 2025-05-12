@@ -63,4 +63,10 @@ router.get('/deliv/:id', async(req, res)=>{
   res.send(result);
 });
 
+router.get('/orderOne', async(req, res)=>{
+  let id = req.query.order_id;
+  let result = await business_service.getOrderOne(id);
+  res.send(result);
+});
+
 module.exports = router;
