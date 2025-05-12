@@ -102,7 +102,7 @@
                       <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
                       <td class="align-middle font-weight-bolder text-center">{{ info.req_amount }}</td>
                       <td class="align-middle font-weight-bolder text-center">
-                      <input type="number" v-model.number="info.inbound_amount" @change="amountCheck(info)">개</td>
+                      <input type="number" v-model.number="info.inbound_amount" @change="amountCheck(info)"></td>
                       <td>
                       <input type="text" v-model="info.memo" class="form-control text-center" placeholder="비고 입력">
                       </td>
@@ -141,11 +141,11 @@ export default {
     }
   },
   created() {
-    this.mateListAll();
+    this.storeMateAll();
   },
   methods: {
     // 발주서 조회
-    mateListAll() {
+    storeMateAll() {
       axios
         .get('/api/materials', {
           params: this.search,
@@ -157,6 +157,7 @@ export default {
           console.error('검색 실패:', error);
         });
     },
+
     // 발주서 클릭한 항목 상세조회
     mateDetailInfo(info) {
       this.selectedInfo = info;
@@ -204,6 +205,7 @@ export default {
         if (ajaxRes.data.affectedRows > 0) {
           alert("저장되었습니다.");
           this.$router.push('/StoreList');
+          
         } else {
           alert("저장이 실패하였습니다.");
         }

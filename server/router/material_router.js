@@ -11,6 +11,14 @@ router.get('/materials', async(req, res)=> {
   res.send(matList);
 });
 
+// 입고관리 발주서조회(발주승인건만)
+router.get('/storeMate', async(req, res) => {
+  let search = req.query;
+  let matList = await mateService.storeMateAll(search)
+                                .catch(err=> console.log(err));
+  res.send(matList);
+})
+
 // 발주상세조회
 router.get('/materials/:id', async(req, res)=> {
   let mateId = req.params.id;

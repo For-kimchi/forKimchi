@@ -69,7 +69,7 @@ query = async (alias, values) => {
 
 // 트랜젝션 열고 닫기를 편리하게 하기위해서 작성.
 const getConnection = async () => await connectionPool.getConnection() ;
-const selectedQuery = (alias, values) => queryFormat(sqlList[alias], values) ;
+const selectedQuery = (alias, values) => queryFormat(sqlList[alias], values);
 
 module.exports = {
   query,

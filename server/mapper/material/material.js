@@ -46,7 +46,23 @@ const selectMateReq =
 	memo,
     date_type(confirm_date) confirm_date,
     employee_id(manager_id) manager_id
- FROM t_mate_req
+FROM t_mate_req
+`;
+
+// 입고관리에서 발주서 전체조회(발주승인건만)
+const selectMateStore =
+  `SELECT 
+	req_id,
+    date_type(req_date) req_date,
+    vendor_id(vendor_id) vendor_id,
+    employee_id(employee_id) employee_id,
+	date_type(req_due_date) req_due_date,
+    sub_code(req_status) req_status,
+	memo,
+    date_type(confirm_date) confirm_date,
+    employee_id(manager_id) manager_id
+FROM t_mate_req
+WHERE req_status = '2o'
 `;
 
 // 자재발주상세조회 (No,품목코드,품목명,납품예정일,,수량,단위,검사여부,비고)
@@ -162,4 +178,5 @@ module.exports = {
     mateCode,
     insertMateDetail,
     detailMateInserts,
+    selectMateStore,
 }

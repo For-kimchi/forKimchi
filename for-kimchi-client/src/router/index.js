@@ -42,6 +42,7 @@ import StoreList from "../views/material/StoreList.vue";
 import StoreManagement from "../views/material/StoreManagement.vue";
 // 김어진 (창고현황)
 import WarehouseList from "../views/material/WarehouseList.vue";
+import WarehouseAdd from "../views/material/WarehouseAdd.vue";
 
 //business (영업)
 import OrderList from "../views/business/OrderList.vue";
@@ -201,6 +202,12 @@ const routes = [
     path: "/warehouseList",
     name: "WarehouseList",
     component: WarehouseList
+  },
+
+  {
+    path: "/warehouseAdd",
+    name: "WarehouseAdd",
+    component: WarehouseAdd
   },
 
   {
