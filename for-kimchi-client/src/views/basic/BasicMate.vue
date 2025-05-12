@@ -30,7 +30,7 @@
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">자재분류</label>
-            <select v-model="searchType" class="form-select text-center">
+            <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
@@ -94,7 +94,7 @@
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">자재분류</label>
-            <select v-model="selected.mate_type" class="form-select text-center">
+            <select v-model="selected.mate_type" class="form-select border text-center">
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
               </option>

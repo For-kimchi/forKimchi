@@ -230,6 +230,10 @@ const getDelivProdTarget = async (params) => {
 
 const postDeilv = async (delivInfo) => {
 
+  let res = {
+    success: true,
+  }
+
   try {
     conn = await mariaDB.getConnection();
     await conn.beginTransaction();
@@ -303,11 +307,14 @@ const postDeilv = async (delivInfo) => {
     // 정상 완료 시 commit
     conn.commit();
 
-    return result;
+    return res;
   } catch (err) {
     // error 발생 시 console 출력 및 rollback
     console.log(err);
     if (conn) conn.rollback();
+
+    res.success = false;
+    return res;
   } finally {
     // connection 반환
     if (conn) conn.release();

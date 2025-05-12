@@ -66,7 +66,7 @@
                   <tr v-for="(item, idx) in items" :key="item.vendor_id" @click="editItem(item)">
                     <td class="align-middle text-center">{{ item.vendor_id }}</td>
                     <td class="align-middle text-center">{{ item.vendor_name }}</td>
-                    <td class="align-middle text-center">{{ codeToName(item.vendor_type) }}</td>
+                    <td class="align-middle text-center">{{ codeToName(item.vendor_type, codes) }}</td>
                     <td class="align-middle text-center">{{ item.vendor_number }}</td>
                     <td class="align-middle text-center">{{ item.vendor_tel }}</td>
                     <td class="align-middle text-center">{{ item.vendor_addr }}</td>
@@ -125,6 +125,7 @@
 
 <script>
   import axios from 'axios';
+  import { codeToName } from '../../utils/common';
 
   export default {
     name: "제품관리",
@@ -185,11 +186,8 @@
         }
 
       },
-      codeToName(code) {
-        for (let item of this.codes) {
-          if (item.sub_code == code) return item.sub_code_name;
-        }
-        return '';
+      codeToName(code, codeArray) {
+        return codeToName(code, codeArray);
       }
     },
     created() {

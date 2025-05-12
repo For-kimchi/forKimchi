@@ -25,7 +25,7 @@
           <!-- slot 에 하위 컴포넌트 추가 -->
           <template v-slot:list>
             <SidenavCollapseItem refer="/orders" miniIcon="receipt_long" text="주문조회"/>
-            <SidenavCollapseItem refer="/ordersmng" miniIcon="receipt_long" text="주문관리"/>
+            <SidenavCollapseItem refer="/ordersmng" miniIcon="receipt_long" text="주문등록/수정"/>
             <SidenavCollapseItem refer="/delivs" miniIcon="local_shipping" text="납품조회"/>
             <SidenavCollapseItem refer="/delivsmng" miniIcon="local_shipping" text="납품관리"/>
             <SidenavCollapseItem refer="/prodwh" miniIcon="save_alt" text="제품입고"/>

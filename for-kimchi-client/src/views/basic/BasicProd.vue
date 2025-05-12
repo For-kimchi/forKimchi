@@ -30,7 +30,7 @@
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">제품분류</label>
-            <select v-model="searchType" class="form-select text-center">
+            <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
@@ -67,7 +67,7 @@
                     <td class="align-middle text-center">{{ product.prod_name }}</td>
                     <td class="align-middle text-center">{{ product.prod_size }}</td>
                     <td class="align-middle text-center">{{ product.prod_unit }}</td>
-                    <td class="align-middle text-center">{{ codeToName(product.prod_type) }}</td>
+                    <td class="align-middle text-center">{{ codeToName(product.prod_type, codes) }}</td>
                   </tr>
                   <tr v-if="items.length === 0">
                     <td colspan="6" class="text-center">검색된 결과가 없습니다</td>
@@ -100,7 +100,7 @@
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">제품분류</label>
-            <select v-model="selected.prod_type" class="form-select text-center">
+            <select v-model="selected.prod_type" class="form-select border text-center">
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
               </option>
@@ -119,6 +119,7 @@
 
 <script>
   import axios from 'axios';
+  import { codeToName } from '../../utils/common';
 
   export default {
     name: "제품관리",
@@ -133,40 +134,38 @@
         action: '등록',
       };
     },
-    computed: {
-    },
+    computed: {},
     methods: {
-    async getBasicProd() {
-      const params = {};
-      
-      if (this.searchName) params.prod_name = this.searchName;
-      if (this.searchId) params.prod_id = this.searchId;
-      if (this.searchType) params.prod_type = this.searchType;
+      async getBasicProd() {
+        const params = {};
 
-      let res = await axios.get('/api/basicProd', {
-        params
-      })
-        .catch(err => console.log(err));
-      this.items = res.data;
-    },
-    async getProdType() {
-      let res = await axios.get(`/api/codes/F1`)
-        .catch(err => console.log(err));
-      this.codes = res.data;
-    },
+        if (this.searchName) params.prod_name = this.searchName;
+        if (this.searchId) params.prod_id = this.searchId;
+        if (this.searchType) params.prod_type = this.searchType;
+
+        let res = await axios.get('/api/basicProd', {
+            params
+          })
+          .catch(err => console.log(err));
+        this.items = res.data;
+      },
+      async getProdType() {
+        let res = await axios.get(`/api/codes/F1`)
+          .catch(err => console.log(err));
+        this.codes = res.data;
+      },
       search() {
         this.getBasicProd();
       },
       editItem(product) {
         this.action = '수정',
-        this.selected = {
-          ...product
-        };
+          this.selected = {
+            ...product
+          };
       },
       resetForm() {
         this.action = '등록',
-        this.selected = {
-        };
+          this.selected = {};
       },
       async save() {
         let result = await axios.post('/api/basicProd', this.selected)
@@ -181,11 +180,8 @@
           alert('저장 과정에서 오류가 발생했습니다');
         }
       },
-      codeToName(code) {
-        for (let item of this.codes) {
-          if (item.sub_code == code) return item.sub_code_name;
-        }
-        return '';
+      codeToName(code, codeArray) {
+        return codeToName(code, codeArray);
       },
     },
     created() {
