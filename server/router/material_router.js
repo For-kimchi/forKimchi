@@ -11,13 +11,28 @@ router.get('/materials', async(req, res)=> {
   res.send(matList);
 });
 
+// 자재발주조회 페이지에서 검색결과에 따른 조회
+router.post('/orderSearch', async (req, res) => {
+  try {
+    const { company, startDate, endDate, orderStatus, supplier } = req.body;
+    
+    // 서비스 레이어 호출
+    const result = await orderSearchService.searchOrder(company, startDate, endDate, orderStatus, supplier);
+    
+    // 성공적인 응답 반환
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+});
 // 입고관리 발주서조회(발주승인건만)
-router.get('/storeMate', async(req, res) => {
-  let search = req.query;
-  let matList = await mateService.storeMateAll(search)
-                                .catch(err=> console.log(err));
-  res.send(matList);
-})
+// router.get('/storeMate', async(req, res) => {
+//   let search = req.query;
+//   let matList = await mateService.storeMateAll(search)
+//                                 .catch(err=> console.log(err));
+//   res.send(matList);
+// })
 
 // 발주상세조회
 router.get('/materials/:id', async(req, res)=> {
@@ -26,6 +41,35 @@ router.get('/materials/:id', async(req, res)=> {
                                   .catch(err => console.log(err));
   res.send(mateInfo);
 });
+
+// 자재발주관리페이지 발주서전체조회
+router.get('/materialList', async (req, res) => {
+  let search = req.query;
+  let matList = await mateService.mateAll(search)
+                                .catch(err=>console.log(err));
+  res.send(matList);
+})
+
+
+
+// 자재발주관리페이지 발주서 삭제
+// router.delete('/materialList/:Id', async (req, res) => {
+//   try {
+//     let reqId= req.params.id;
+//     await mateService.deleteMaterial(reqId); 
+//     res.status(200).send('삭제 완료');
+//   } catch (err) {
+//     console.error('삭제 에러:', err);
+//     res.status(500).send('삭제 중 오류 발생');
+//   }
+// });
+// 자재발주관리페이지 발주서 삭제
+router.delete('/materialList/:reqId', async (req,res) => {
+  let reqId = req.params.reqId;
+  let result = await mateService.deleteMaterial(reqId);
+  res.send(result);
+});
+
 
 // 회사조회
 router.get('/vendors', async(req,res) => {

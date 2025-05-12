@@ -36,39 +36,59 @@ const insertMateDetail =
 
 // 자재발주조회(no,발주일자,발주번호,거래처,사용자명,품목수,발주서,비고,승인일자,승인자)
 const selectMateReq =
-  `SELECT 
-	req_id,
-    date_type(req_date) req_date,
-    vendor_id(vendor_id) vendor_id,
-    employee_id(employee_id) employee_id,
-	date_type(req_due_date) req_due_date,
-    sub_code(req_status) req_status,
-	memo,
-    date_type(confirm_date) confirm_date,
-    employee_id(manager_id) manager_id
+`SELECT 
+	        req_id,
+          date_type(req_date) req_date,
+          vendor_id(vendor_id) vendor_id,
+          employee_id(employee_id) employee_id,
+	        date_type(req_due_date) req_due_date,
+          sub_code(req_status) req_status,
+	        memo,
+          date_type(confirm_date) confirm_date,
+          employee_id(manager_id) manager_id
 FROM t_mate_req
 `;
 
-// 입고관리에서 발주서 전체조회(발주승인건만)
-const selectMateStore =
-  `SELECT 
-	req_id,
+// 자재발주조회에서 검색 결과에 맞는 값만 조회
+const selectMateReqWithSearch = `
+  SELECT 
+    req_id,
     date_type(req_date) req_date,
     vendor_id(vendor_id) vendor_id,
     employee_id(employee_id) employee_id,
-	date_type(req_due_date) req_due_date,
+    date_type(req_due_date) req_due_date,
     sub_code(req_status) req_status,
-	memo,
+    memo,
     date_type(confirm_date) confirm_date,
     employee_id(manager_id) manager_id
-FROM t_mate_req
-WHERE req_status = '2o'
+  FROM t_mate_req
+  WHERE 1=1
+    AND (? IS NULL OR vendor_id LIKE ?)
+    AND (? IS NULL OR req_date BETWEEN ? AND ?)
+    AND (? IS NULL OR req_status = ?)
+    AND (? IS NULL OR employee_id LIKE ?)
 `;
+
+// 입고관리에서 발주서 전체조회(발주승인건만)
+// const selectMateStore =
+//   `SELECT 
+// 	req_id,
+//     date_type(req_date) req_date,
+//     vendor_id(vendor_id) vendor_id,
+//     employee_id(employee_id) employee_id,
+// 	date_type(req_due_date) req_due_date,
+//     sub_code(req_status) req_status,
+// 	memo,
+//     date_type(confirm_date) confirm_date,
+//     employee_id(manager_id) manager_id
+// FROM t_mate_req
+// WHERE req_status = '2o'
+// `;
 
 // 자재발주상세조회 (No,품목코드,품목명,납품예정일,,수량,단위,검사여부,비고)
 const selectMateDetail =
 `SELECT 
-		req_detail_id,
+		    req_detail_id,
         req_id,
         mate_id(mate_id) mate_id,
         req_amount,
@@ -126,6 +146,26 @@ const insertMatese =
 VALUES(?, ?, ?, ?, ?)
 `;
 
+// 자재발주관리페이지에서 발주서전체리스트 조회
+const selectDeleteList =
+`SELECT 
+	        req_id,
+          date_type(req_date) req_date,
+          vendor_id(vendor_id) vendor_id,
+          employee_id(employee_id) employee_id,
+	        date_type(req_due_date) req_due_date,
+          sub_code(req_status) req_status,
+	        memo,
+          date_type(confirm_date) confirm_date,
+          employee_id(manager_id) manager_id
+FROM t_mate_req `
+
+// 자재발주관리페이지에서 자재리스트 중 선택항목 삭제버튼
+const deleteMateBtn =
+`DELETE 
+FROM t_mate_req
+WHERE req_id =?`
+
 // 자재발주 상세삭제(자재발주상세부터 삭제해야 오류가 안난다.)
 const deleteDetailMate =
 `DELETE 
@@ -178,5 +218,7 @@ module.exports = {
     mateCode,
     insertMateDetail,
     detailMateInserts,
-    selectMateStore,
+    selectDeleteList,
+    deleteDetailMate,
+    deleteMateBtn,
 }

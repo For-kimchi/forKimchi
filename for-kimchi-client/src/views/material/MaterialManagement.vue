@@ -3,7 +3,7 @@
 
     <div class="text-end mb-3">
       <button class="btn btn-success" @click="mateAdd">저장</button>
-      <button class="btn btn-danger" >삭제</button>
+      <!-- <button class="btn btn-danger" >삭제</button> -->
       <button class="btn btn-info" @click="goBack">닫기</button>
     </div>
 
@@ -131,12 +131,74 @@
     </div>
   </div>
   <VendorModal :visible="showVendor" @close="showVendor = false" @select="onSelectVendor" />
+    <!-- 자재발주조회리스트 -->
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">발주서수정</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <!-- <th>선택</th> -->
+                    <th>발주일자</th>
+                    <th>발주번호</th>
+                    <th>거래처</th>
+                    <th>사용자명</th>
+                    <th>납기예정일자</th>
+                    <th>발주상태</th>
+                    <th>비고</th>
+                    <th>승인일자</th>
+                    <th>승인자</th>
+                    <th>삭제</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="materialList.length > 0">
+                    <tr v-for="(info, index) in materialList" :key="info.id" @click="">
+                      <td>{{ index + 1 }}</td>
+                      <!-- <td><MaterialCheckbox></MaterialCheckbox></td> -->
+                      <td>{{ info.req_date }}</td>
+                      <td>{{ info.req_id }}</td>
+                      <td>{{ info.vendor_id }}</td>
+                      <td>{{ info.employee_id }}</td>
+                      <td>{{ info.req_due_date }}</td>
+                      <td>{{ info.req_status }}</td>
+                      <td>{{ info.memo }}</td>
+                      <td>{{ info.confirm_date }}</td>
+                      <td>{{ info.manager_id }}</td>
+                      <!-- <td>{{ info.req_status }}({{ typeof info.req_status }})</td> -->
+                      <td>
+                      <button class="btn btn-danger" @click.stop="deleteRow(index)" v-if="info.req_status !== '발주마감'">삭제</button>
+                      </td>
+                    </tr>
+                  </template>
+                  <tr v-else>
+                    <td colspan="11" style="text-align: center;">검색어를 입력하세요.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
 import Modal from '@/views/modal/Modal.vue'
 import VendorModal from '../modal/VendorModal.vue';
+// import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
+
 
 export default {
   name: "Material Management",
@@ -163,8 +225,13 @@ export default {
       mateList: [],
       matReqList: [],
       req_due_date: '',
-      initialMateInfo: null
+      initialMateInfo: null,
+      materialList:[]
     };
+    
+  },
+  created() {
+this.getMateList();
   },
   methods: {
     toggleAll(listName, event) {
@@ -184,6 +251,32 @@ export default {
     console.error('검색 실패:', error);
   });
 },
+
+// 발주서 리스트 전체조회
+async getMateList() {
+  let ajaxRes =
+  await axios.get(`/api/materialList`)
+            .catch(err=> console.log(err));
+  this.materialList = ajaxRes.data;
+},
+
+// 자재발주관리에서 삭제버튼 클릭시 발주삭제
+ async deleteRow(index) {
+  
+    const reqId = this.materialList[index].req_id; // 뒤에는 실제불러올 값인 req_id가 들어가야한다.
+
+    if (!confirm('정말 삭제하시겠습니까?')) 
+    return;
+    try {
+      await axios.delete(`/api/materialList/${reqId}`);
+      this.materialList.splice(index, 1); // 프론트에서도 삭제
+      alert('삭제되었습니다.');
+    } catch (err) {
+      console.error('삭제 실패:', err);
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+ },
+
 // 항목선택여부 알림.
 // if(Object.keys(planDetailList).length > 0){
 //     let  ajaxRes =
@@ -306,6 +399,8 @@ export default {
     if (ajaxRes.data.affectedRows > 0) {
       alert("저장되었습니다.");
       this.resetForm();
+      // // 저장된 항목 포함된 전체 목록 다시 불러오기
+      // await this.loadDeleteList(); // 이 함수 안에서 삭제목록용 리스트를 다시 조회
       this.$router.push('/matma');
     } else {
       alert("저장이 실패하였습니다.");
@@ -315,6 +410,14 @@ export default {
     alert("저장 중 오류가 발생했습니다.");
   }
 },
+// async loadDeleteList() {
+//   try {
+//     const res = await axios.get('/api/materialList'); // DB에서 삭제 가능한 항목 조회
+//     this.deleteList = res.data; // 이게 v-for 돌리는 목록
+//   } catch (err) {
+//     console.error("삭제 목록 불러오기 실패:", err);
+//   }
+// },
 
 
 

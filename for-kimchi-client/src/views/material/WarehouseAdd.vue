@@ -22,6 +22,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -32,6 +33,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -66,7 +68,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in storeDtList" v-bind:key="inbound_detail_id">
+                  <tr v-for="(info,index) in storeWareStatus " v-bind:key="inbound_detail_id">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
@@ -88,10 +90,10 @@
               </table>
               </div>
             <!-- 테이블 오른쪽 밑에 저장버튼 -->
-            <div v-if="storeDtList.length > 0" class="table-responsive p-0">
+            <div v-if="storeWareStatus.length > 0" class="table-responsive p-0">
                   <table class="table align-items-center justify-content-center mb-0"></table>
                  <div class="text-end pe-5 mt-3">
-                <button class="btn btn-success" @click="wareAdd">저장</button>
+                <button class="btn btn-success" @click="wareAdd">창고입고</button>
                 </div>
             </div>
           </div>
@@ -111,6 +113,7 @@ export default {
         storeDtList: [],
         insertWare: [],
         inbound_id: '',
+        storeWareStatus:[],
       }
     },
     created(){
@@ -128,20 +131,21 @@ export default {
       let ajaxRes =
       await axios.get(`/api/storeList/${storeId}`)
                 .catch(err => console.log(err));
-      this.storeDtList = ajaxRes.data;
+      this.storeWareStatus = ajaxRes.data;
       this.inbound_id = storeId;
     },
 
+
     async wareAdd() {
   try {
-    let saveList = this.storeDtList // 창고와 입고테이블이 다르기 때문에 saveList에 storeDtList를 한개씩 담아줌.
+    let saveList = this.storeWareStatus // 창고와 입고테이블이 다르기 때문에 saveList에 storeDtList를 한개씩 담아줌.
       .filter(item => item.inbound_type === '입고')   // 입고만 저장
       .map(item => ({
         inbound_type: '입고',         // 테이블에 inbound_type이 없기 때문에 값을 지정해줌 
         mate_lot: `MLOT-${Date.now()}`,                 // LOT번호 자동 생성
         inbound_detail_id: item.inbound_detail_id,
         warehouse_id: 'WHS-001',        // 선택된 창고
-        mate_amount: item.pass_amount,
+        inbound_amount: item.inbound_amount,
         mate_id : item.mate_id,
         employee_id: '홍길동',
         inbound_id: this.inbound_id
@@ -158,9 +162,16 @@ export default {
     alert('반품되었습니다.');
     return;
     }
+    
     alert('입고가 완료되었습니다.');
-    await this.storeList();
+    // 창고입고목록 초기화 axios.get함수를 다시 부름으로써 새로고침 효과가 나타난다.(새로고침하면 inbound_id 가 3p가 된 컬럼은 사라지게 됨)
+    this.getStoreList();
+    // 창고입고상세목록 초기화(id값과 in storeWareStatus을 빈값으로 나타낸다. 즉, 입고상세는 저장버튼을 누르면 자동으로 전부 빈값으로 만들어지게 됨.)
+    this.storeWareStatus = [];
+    this.inbound_id = '';
+
   } catch (err) {
+
     console.error('저장 실패:', err);
     alert('저장 중 오류 발생');
   }
