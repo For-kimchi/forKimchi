@@ -8,7 +8,7 @@ SELECT
         employee_id(employee_id) employee_id,
         sub_code(order_status) order_status
 FROM t_prod_order
-WHERE order_status in ('4d', '5d')
+WHERE order_status in ('4d', '5d') and order_date > sysdate()
 `;
 
 // 생산작업을 위한 공정흐름도 조회
@@ -24,6 +24,18 @@ SELECT  pfd.proc_seq,
                         WHERE prod_id = ?
                         AND proc_flow_status = '1v');
 `;
+// 생산작업을 위한 생산공정 합계조회
+const selectSumProdProcList =`
+SELECT 
+        COUNT(prod_proc_id) count,
+        SUM(proc_input_amount) sum_input_amount,
+        SUM(proc_fail_amount) sum_fail_amount,
+        SUM(proc_pass_amount) sum_pass_amount
+ FROM t_prod_proc
+ WHERE prod_order_lot = ? AND proc_id = ?
+`;
+
+
 // 생산작업을 위한 생산공정 조회
 const selectProdProcList =`
 SELECT 
@@ -89,4 +101,5 @@ module.exports = {
   insertProdProc,
   updateStartTime,
   updateEndTime,
+  selectSumProdProcList,
 }

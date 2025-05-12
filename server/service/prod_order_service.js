@@ -105,7 +105,7 @@ const selectProdProcess = async() =>{
     let list = await mariaDB.query('selectProdProcess');
     return list;
 };
-// 공정흐름도 조회
+// 공정흐름도 조회 + 공정수
 const selectProdProcFlowInfo = async(prodId) =>{
     let conn;
     try{
@@ -119,6 +119,12 @@ const selectProdProcFlowInfo = async(prodId) =>{
         
         selectedSql = await mariaDB.selectedQuery('selectProdProcFlowInfo', prodId);
         let list = await conn.query(selectedSql, prodId);
+
+        // 각 합계 구하기
+        // selectSumProdProcList
+        selectedSql = await mariaDB.selectedQuery('selectSumProdProcList', prodId);
+        list = await conn.query(selectedSql, prodId);
+        
         conn.commit();
         return list;
     }catch(err){
@@ -191,7 +197,7 @@ const updateStartTime = async(param) =>{
 // 공정 종료결과 업데이트 updateEndTime
 const updateEndTime = async(param, procId) =>{
     let list = [param, procId];
-    let result = await mariaDB.query('updateStartTime', param);
+    let result = await mariaDB.query('updateEndTime', list);
     return result;
 };
 module.exports = {
@@ -207,4 +213,5 @@ module.exports = {
     selectProdProcInfo,
     insertProdProcList,
     updateStartTime,
+    updateEndTime,
 }
