@@ -3,11 +3,52 @@ const { convertObjToQuery } = require('../utils/converts');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts.js');
 
+// 입고조회
+const storeAll = async (searchList) => {
+  let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
+  let list = await mariaDB.query('selectStore', searchKeyword);
+  return list;
+};
+
+// 입고상세조회
+const storeById = async (storeId) => {
+  let list = await mariaDB.query('selectDetailStore', storeId);
+  return list;
+};
+
+// 창고조회
+const wareAll = async() => {
+  let list = await mariaDB.query('selectWarehouses');
+  return list;
+};
+
+// 창고저장
+const insertWarehouse = async(wareList) => {
+  let columnList = ['mate_lot', 'mate_id', 'inbound_detail_id', 'warehouse_id', 'mate_amount', 'employee_id'];
+
+  for (let item of wareList) {
+    let values = converterAry(item, columnList);
+    await mariaDB.query('insertWarehouse', values);
+  }
+
+  return { success: true };
+};
+
+
+const converterAry = (target, list) => {
+  let ary = [];
+
+  for(let field of list) {
+    let val = target[field];
+    ary.push(val);
+  }
+  return ary;
+};
 
 // 입고 저장
 const insertStore = async(storeSaveInfo) => {
   let conn;
-  console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm", storeSaveInfo);
+
   try{
     conn = await mariaDB.getConnection();
         await conn.beginTransaction();
@@ -76,4 +117,8 @@ const insertStore = async(storeSaveInfo) => {
 
 module.exports = {
   insertStore,
+  storeAll,
+  storeById,
+  wareAll,
+  insertWarehouse,
 }

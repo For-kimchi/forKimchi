@@ -102,10 +102,11 @@
                       <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
                       <td class="align-middle font-weight-bolder text-center">{{ info.req_amount }}</td>
                       <td class="align-middle font-weight-bolder text-center">
-                        <input type="number" v-model.number="info.inbound_amount">개
+                      <input type="number" v-model.number="info.inbound_amount" @change="amountCheck(info)">개</td>
+                      <td>
+                      <input type="text" v-model="info.memo" class="form-control text-center" placeholder="비고 입력">
                       </td>
-                      <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
-                    </tr>
+                      </tr>
                 </tbody>
               </table>
             </div>
@@ -168,6 +169,13 @@ export default {
         .catch((error) => {
           console.log('검색 실패:', error.response?.data || error.message);
         });
+    },
+      // 발주수량보다 입고수량을 초과하여 입력시 경고창 띄움 (자동으로 발주수량으로 되돌림)
+     amountCheck(info) {
+     if (info.inbound_amount > info.req_amount) {
+      alert("입고수량은 발주수량을 초과할 수 없습니다.");
+      info.inbound_amount = info.req_amount; // 자동으로 발주수량으로 되돌림
+    }
     },
 
     // 저장버튼  

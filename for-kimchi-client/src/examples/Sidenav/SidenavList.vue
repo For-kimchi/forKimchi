@@ -59,6 +59,7 @@
             <SidenavCollapseItem refer="/matma" miniIcon="" text="자재발주관리"/>
             <SidenavCollapseItem refer="/storeList" miniIcon="" text="입고조회"/>
             <SidenavCollapseItem refer="/storema" miniIcon="" text="입고관리"/>
+            <SidenavCollapseItem refer="/warehouseList" miniIcon="" text="창고현황"/>
           </template>
         </sidenav-collapse>
       </li>

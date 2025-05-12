@@ -46,7 +46,7 @@ const selectMateReq =
 	memo,
     date_type(confirm_date) confirm_date,
     employee_id(manager_id) manager_id
- FROM t_mate_req;
+ FROM t_mate_req
 `;
 
 // 자재발주상세조회 (No,품목코드,품목명,납품예정일,,수량,단위,검사여부,비고)

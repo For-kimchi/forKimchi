@@ -14,26 +14,35 @@ FROM t_mate_inbound_detail
 ORDER BY inbound_detail_id DESC
 LIMIT 1`;
 
-// store_id 조회
-const storeCode = 
-``
-
-
-
 // 자재입고조회(입고일자,입고번호,거래처,사용자명,품목수,비고,수정일,수정자)
-
+const selectStore =
+`SELECT inbound_id
+        ,date_type(inbound_date) inbound_date
+        ,vendor_id(vendor_id) vendor_id
+        ,employee_id(employee_id) employee_id
+        ,memo
+  FROM t_mate_inbound`;
 
 // 자재입고 상세조회
-
+const selectDetailStore =
+`SELECT inbound_detail_id
+        ,inbound_amount
+        ,pass_amount
+        ,fail_amount
+        ,sub_code(inbound_status) inbound_status
+        ,mate_id
+        ,memo
+FROM t_mate_inbound_detail
+WHERE inbound_id = ?`;
 
 // 발주서입고등록(저장버튼 클릭시)
 const insertStoreMain =
 `INSERT INTO t_mate_inbound( inbound_id
-                            , req_id
-							               ,employee_id
-							               ,inbound_date
-                             ,vendor_id
-                             ,memo)
+                            ,req_id
+			    ,employee_id
+			    ,inbound_date
+                            ,vendor_id
+                            ,memo)
 VALUES(?, ?, ?, SYSDATE(), ?, '')`;
 
 // 자재입고상세등록(저장버튼 클릭시)
@@ -44,8 +53,32 @@ const insertStoreDetail =
                                     mate_id
                                     ,inbound_amount
                                     ,inbound_status
+                                    ,employee_id
                                     ,memo)
-VALUES (?, ?,?, ?, '1p', ?)`;
+VALUES (?, ?, ?, ?, '1p', '', ?)`;
+
+// 창고조회
+const selectWarehouses = 
+`SELECT warehouse_id,
+	mate_lot,
+        mate_id,
+	mate_amount,
+        date_type(inbound_date) inbound_date,
+        employee_id(employee_id) employee_id
+FROM t_mate_warehouse`;
+
+
+// 입고상세에서 저장버튼 클릭시 창고에 DB저장
+const insertWarehouse =
+`INSERT INTO t_mate_warehouse (
+                                mate_lot,
+                                mate_id,
+                                inbound_detail_id,
+                                warehouse_id,
+                                mate_amount,
+                                inbound_date,
+                                employee_id)
+VALUES(?, ?, ?, ?, ?, SYSDATE(), ?)`
 
 // 자재입고삭제
 
@@ -64,4 +97,8 @@ module.exports = {
   insertStoreDetail,
   storePlanKey,
   storeDetailKey,
+  selectStore,
+  selectDetailStore,
+  selectWarehouses,
+  insertWarehouse,
 }
