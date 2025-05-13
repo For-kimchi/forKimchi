@@ -192,6 +192,19 @@ t_quality_prod_detail B on (A.quality_id = B.quality_id) join
 t_quality_option C on (B.option_id = C.option_id)
 where A.quality_id= ?
 `;
+
+// key
+const selectLastProdQuality = 
+`SELECT quality_id
+FROM t_quality_prod
+ORDER BY quality_id DESC
+LIMIT 1`;
+// 상세 key
+const selectLastProdQualityDetail = 
+`SELECT quality_detail_id
+FROM t_quality_prod_detail
+ORDER BY quality_detail_id DESC
+LIMIT 1`;
 // --------------------------------------------------
 
 // // 검사항목조회
@@ -333,6 +346,8 @@ module.exports = {
      prodQualityViewDropDown,
      prodQualityViewAll,
      prodQualityViewDetail,
+     selectLastProdQuality,
+     selectLastProdQualityDetail,
     // 검사항목관리
      selectOption,
      insertOption,
