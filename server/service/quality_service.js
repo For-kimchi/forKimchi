@@ -161,17 +161,32 @@ const selectOption = async (params) => {
   return list;
 };
 
-// 검사항목관리 (검사항목 등록)
-  const insertOption = async(params)=>{
-    let columnlist = ['option_id', 'option_name', 'option_standard', 'option_method'];
-    let addInfo = converts.convertObjToAry(params, columnlist);
-    let result = await mariaDB.query('insertOption', addInfo);
-    return result;
-  };
-// 검사항목 업데이트
-const updateOption = async(info, id) => {
-  let updateOpt = [info.option_name, info.option_standard, info.option_method, id];
-  let result = await mariaDB.query('updateOption', updateOpt);
+// 검사항목 등록/수정정
+const insertOption = async (body) => {
+
+  console.log(body);
+
+  let result;
+  if (body.option_id) {
+
+    result = await mariaDB.query("updateOption", [body, body.option_id]);
+
+  } else {
+
+    let lastOpt = await mariaDB.query("selectLastOption", {});
+    let lastOptionId = lastOpt[0].prod_id;
+
+    let newOptId = keys.getNextUniqueId(lastOptionId);
+
+    body.option_id = newOptId;
+
+    let optionColumn = ['option_id', 'option_name', 'option_standard', 'option_method'];
+    let optionParam = converts.convertObjToAry(body, optionColumn);
+
+    result = await mariaDB.query("insertOption", optionParam);
+
+  }
+
   return result;
 };
 // 검사항목 삭제
@@ -238,7 +253,6 @@ module.exports = {
   // 검사항목
   selectOption,
   insertOption,
-  updateOption,
   deleteOption,
   //검사기준
   selectOptionControl,

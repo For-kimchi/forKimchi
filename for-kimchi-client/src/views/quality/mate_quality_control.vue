@@ -92,11 +92,11 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in mateQualitywait" v-bind:key="mate_detail_id" style="cursor: pointer;">
+                  <tr v-for="(info, index) in mateQualitywait" v-bind:key="option_id" style="cursor: pointer;">
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}}</td>
-                    <td class="align-middle text-center"><input type="text" v-model="info.quality_result_value"></td>
+                    <td class="align-middle text-center"><input type="text" v-model="info.qualitujy_result_value"></td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
                         style="width: 60px; text-align: center;">
@@ -136,8 +136,8 @@
       mateQualitywait: {
         handler(newResult) {
           newResult.forEach(info => {
-            const result_value = parseFloat(info.quality_result_value);
-            const standard = parseFloat(info.option_standard);
+            const result_value = info.quality_result_value;
+            const standard = info.option_standard;
             if (!isNaN(result_value) && !isNaN(standard)) {
               info.result = result_value >= standard ? '합격' : '불합격';
             } else {
