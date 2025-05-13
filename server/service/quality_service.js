@@ -7,6 +7,12 @@ const mateQualityReq = async () => {
   return list;
 };
 
+// 자재검사요청상세 (대기)
+const mateQualityWait = async (waitId) => {
+  let list = await mariaDB.query('mateQualityWait', waitId);
+  return list;
+};
+
 // 자재검사등록
 const mateQualityInsert = async (mateInfo) => {
 
@@ -27,21 +33,21 @@ const mateQualityInsert = async (mateInfo) => {
     let lastMate = await conn.query(selectedSql, {});
     let lastMateId = lastMate[0].quality_id;
 
-    // deliv key 생성
+    // mateQuality key 생성
     let newMateId = keys.getNextKeyId(lastMateId);
     mate.quality_id = newMateId;
 
-    // deliv column 정보 배열
+    // mateQuality column 정보 배열
     let mateColumn = ['quality_id', 'inbound_detail_id'];
     let mateParam = converts.convertObjToAry(mate, mateColumn);
 
-    // deliv insert
+    // mateQuality insert
     selectedSql = await mariaDB.selectedQuery('mateQualityInsert', mateParam);
     let result = await conn.query(selectedSql, mateParam);
 
     console.log(result);
 
-    // deliv detail column 정보 배열
+    // mateQuality detail column 정보 배열
     let mateDetailColumn = ['quality_detail_id', 'quality_id', 'option_id', 'quality_result_value'];
 
     // // 최근 key 정보 조회
@@ -51,12 +57,12 @@ const mateQualityInsert = async (mateInfo) => {
 
     for (let detail of details) {
       
-      // deliv detail key 생성
+      // mateQuality detail key 생성
       let newMateDetailId = keys.getNextKeyId(lastMateDetailId);
       detail.quality_detail_id = newMateDetailId;
       detail.quality_id = newMateId;
 
-      // deliv detail insert
+      // mateQuality detail insert
       let mateDetailParam = converts.convertObjToAry(detail, mateDetailColumn);
 
       selectedSql = await mariaDB.selectedQuery('mateWaitInsert', mateDetailParam);
@@ -64,7 +70,7 @@ const mateQualityInsert = async (mateInfo) => {
 
       console.log(result);
 
-      // deliv detail insert 완료 시 최근 key 정보 갱신
+      // mateQuality detail insert 완료 시 최근 key 정보 갱신
       lastMateDetailId = newMateDetailId;
     }
     
@@ -86,20 +92,14 @@ const mateQualityInsert = async (mateInfo) => {
   }
 };
 
-//자재검사요청상세 (대기)
-const mateQualityWait = async (waitId) => {
-  let list = await mariaDB.query('mateQualityWait', waitId);
-  return list;
-};
-
 // 자재최종입고
-const insertResult = async (body) => {
-  let list = ['inbound_id'];
-  let params = converts.convertObjToAry(body, list);
-  console.log(params);
-  let result = await mariaDB.query('insertResult', params);
-  return result;
-};
+// const insertResult = async (body) => {
+//   let list = ['inbound_id'];
+//   let params = converts.convertObjToAry(body, list);
+//   console.log(params);
+//   let result = await mariaDB.query('insertResult', params);
+//   return result;
+// };
 
 // 자재상세
 const updateMateQuality = async(id) => {
@@ -268,7 +268,6 @@ module.exports = {
   mateQualityViewAll,
   mateQualityViewDetail,
   updateMateQuality,
-  insertResult,
   // 제품
   prodQualityReq,
   prodQualityWait,

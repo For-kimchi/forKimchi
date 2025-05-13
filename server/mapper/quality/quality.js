@@ -13,6 +13,22 @@ FROM t_mate_inbound_detail
 WHERE inbound_status = '1p'
 `;
 
+// 자재검사요청 (대기-상세)
+const mateQualityWait = 
+`
+SELECT 
+	qo.option_id,
+    qo.option_name,
+    qo.option_standard,
+    qo.option_method
+FROM t_mate_inbound_detail id
+JOIN t_quality_std qs ON id.mate_id = qs.target_id
+JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
+JOIN t_quality_option qo ON qsd.option_id = qo.option_id
+WHERE inbound_status = '1p'
+AND inbound_detail_id = ?
+`;
+
 const mateQualityInsert =
 `
 INSERT INTO t_quality_mate
@@ -44,28 +60,6 @@ const updateMate =
 UPDATE t_mate_inbound_detail
 SET inbound_status = '2p'
 WHERE inbound_detail_id = ?
-`;
-
-// 최종검사 후 입고로 보내기
-const insertResult =
-`
-INSERT INTO t_mate_inbound_detail(inbound_detail_id, inbound_id)
-VALUES ('', ? )
-`;
-// 자재검사요청 (대기-상세)
-const mateQualityWait = 
-`
-SELECT 
-	qo.option_id,
-    qo.option_name,
-    qo.option_standard,
-    qo.option_method
-FROM t_mate_inbound_detail id
-JOIN t_quality_std qs ON id.mate_id = qs.target_id
-JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
-JOIN t_quality_option qo ON qsd.option_id = qo.option_id
-WHERE inbound_status = '1p'
-AND inbound_detail_id = ?
 `;
 
 const mateWaitInsert =
@@ -136,29 +130,34 @@ LIMIT 1`;
 const prodQualityReq = 
 `
 SELECT 
-	 prod_proc_id, 
-     prod_order_lot, 
-     proc_id, 
-     equip_id, 
-     prod_id, 
-     proc_order_amount, 
-     proc_input_amount, 
-     proc_fail_amount, 
-     proc_pass_amount
+	prod_order_lot,
+	prod_proc_id,
+	equip_id,
+	proc_id,
+	prod_id,
+    prod_id (prod_id) prod_name,
+	proc_input_amount
 FROM
 	t_prod_proc
+WHERE
+    proc_status = '1e'
+ORDER BY prod_order_lot
 `;
 
 // 제품검사요청 (대기-상세)
 const prodQualityWait = 
 `
 SELECT 
-	tqo.option_id, tqo.option_name, tqo.option_standard
-FROM
-	t_prod_proc tpp JOIN t_quality_std tqs ON (tpp.prod_id = tqs.target_id) JOIN
-    t_quality_std_detail tqsd ON (tqs.std_id = tqsd.std_id) JOIN
-    t_quality_option tqo ON (tqsd.option_id = tqo.option_id)
-WHERE prod_id = ?
+	qo.option_id,
+    qo.option_name,
+    qo.option_standard,
+    qo.option_method
+FROM t_prod_proc pp
+JOIN t_quality_std qs ON pp.prod_id = qs.target_id
+JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
+JOIN t_quality_option qo ON qsd.option_id = qo.option_id
+WHERE pp.proc_status = '1e'
+AND prod_order_lot = ?;
 `;
 
 // 제품검사조회 (드롭다운)
@@ -193,6 +192,19 @@ t_quality_prod_detail B on (A.quality_id = B.quality_id) join
 t_quality_option C on (B.option_id = C.option_id)
 where A.quality_id= ?
 `;
+
+// key
+const selectLastProdQuality = 
+`SELECT quality_id
+FROM t_quality_prod
+ORDER BY quality_id DESC
+LIMIT 1`;
+// 상세 key
+const selectLastProdQualityDetail = 
+`SELECT quality_detail_id
+FROM t_quality_prod_detail
+ORDER BY quality_detail_id DESC
+LIMIT 1`;
 // --------------------------------------------------
 
 // // 검사항목조회
@@ -327,7 +339,6 @@ module.exports = {
      selectLastmateQualityDetail,
      mateWaitInsert,
      updateMateQuality,
-     insertResult,
      updateMate,
     // 제품
      prodQualityReq,
@@ -335,6 +346,8 @@ module.exports = {
      prodQualityViewDropDown,
      prodQualityViewAll,
      prodQualityViewDetail,
+     selectLastProdQuality,
+     selectLastProdQualityDetail,
     // 검사항목관리
      selectOption,
      insertOption,

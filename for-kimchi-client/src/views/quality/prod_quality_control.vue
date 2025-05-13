@@ -3,9 +3,6 @@
     <div class="row">
       <!-- 행 영역 div-->
       <div class="col-12">
-        <div class="text-end pe-3 ">
-          <button class="btn btn-secondary  btn-sm" @click="reloadPage">새로고침</button>
-        </div>
         <!-- 테이블 div-->
         <div class="card my-4">
           <!--항목명 div-->
@@ -19,28 +16,24 @@
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                  <tr>  
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산지시LOT</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">공정ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">설비ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">지시량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">투입량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">불량량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산량</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_id" v-on:click="prodQualityWait(index)" style="cursor: pointer;">
-                      <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_order_lot }}</td>
-                      <td class="align-middle text-center">{{ info.proc_id }}</td>
+                      <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
                       <td class="align-middle text-center">{{ info.equip_id }}</td>
+                      <td class="align-middle text-center">{{ info.proc_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_id }}</td>
-                      <td class="align-middle text-center">{{ info.proc_order_amount }}</td>
+                      <td class="align-middle text-center">{{ info.prod_name }}</td>
                       <td class="align-middle text-center">{{ info.proc_input_amount }}</td>
-                      <td class="align-middle text-center">{{ info.proc_fail_amount }}</td>
-                      <td class="align-middle text-center">{{ info.proc_pass_amount }}</td>
                     </tr>
                 </tbody>
               </table>
@@ -76,6 +69,8 @@
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력
                     </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상탸
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -83,7 +78,20 @@
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}}</td>
-                    <td class="align-middle text-center"><input type="text" v-model="info.quality_result_value"></td>
+                    <td class="align-middle text-center">{{ info.result}}</td>
+                    <td class="align-middle text-center">
+                      <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
+                        style="width: 60px; text-align: center;">
+                        {{ info.result }}
+                      </span>
+                      <span v-else-if="info.result === '불합격'" class="badge badge-sm bg-gradient-danger"
+                        style="width: 60px; text-align: center;">
+                        {{ info.result }}
+                      </span>
+                      <span v-else class="badge badge-sm bg-gradient-warning" style="width: 60px; text-align: center;">
+                        {{ info.result }}
+                      </span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -107,6 +115,22 @@
     },
     created() {
       this.prodQualityReq();
+    },
+    watch: {
+      prodQualitywait: {
+        handler(newResult) {
+          newResult.forEach(info => {
+            const result_value = info.quality_result_value;
+            const standard = info.option_standard;
+            if (!isNaN(result_value) && !isNaN(standard)) {
+              info.result = result_value >= standard ? '합격' : '불합격';
+            } else {
+              info.result = '대기';
+            }
+          });
+        },
+        deep: true
+      }
     },
     methods: {
        reloadPage() {
