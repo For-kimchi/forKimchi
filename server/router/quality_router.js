@@ -17,6 +17,13 @@ router.post('/mateInsert', async (req, res) => {
   res.send(result);
 });
 
+// 검사상태 업데이트 - 대기
+router.put(`/mateQuality`, async (req, res) => {
+  let id = req.body;
+  let result = await quality_service.updateMateQuality(id);
+  res.send(result);
+});
+
 //자재검사요청상세 (대기)
 router.get('/mateQualityWait/:id', async (req, res) => {
   let waitId = req.params.id;

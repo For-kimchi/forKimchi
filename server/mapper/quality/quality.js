@@ -7,12 +7,10 @@ SELECT
     mate_id,
     mate_id(mate_id) mate_name,
     inbound_amount,
-    pass_amount,
-    fail_amount,
-    date_type(expired_date) date,
     sub_code (inbound_status) inbound_status,
     memo
 FROM t_mate_inbound_detail
+WHERE inbound_status = '1p'
 `;
 
 const mateQualityInsert =
@@ -32,20 +30,42 @@ VALUES
 (?, ?, CURRENT_TIMESTAMP, '1x', '1w', 10, 20, 30)
 `;
 
+// 검사대기 항목 검사 후 상태 변경
+const updateMateQuality =
+`
+UPDATE t_quality_mate_detail
+SET quality_result = '2r'
+WHERE option_id = ?
+AND quality_detail_id = ?
+`
+// 등록된 검사요청 자재 상태변경
+const updateMate = 
+`
+UPDATE t_mate_inbound_detail
+SET inbound_status = '2p'
+WHERE inbound_detail_id = ?
+`;
+
+// 최종검사 후 입고로 보내기
+const insertResult =
+`
+INSERT INTO t_mate_inbound_detail(inbound_detail_id, inbound_id)
+VALUES ('', ? )
+`;
 // 자재검사요청 (대기-상세)
 const mateQualityWait = 
 `
-SELECT DISTINCT
-	tqsd.option_id, option_name, option_standard, sub_code(quality_result) result
-FROM
-	t_mate_inbound_detail tmid LEFT JOIN
-     t_quality_mate tqm ON (tmid.inbound_detail_id = tqm.inbound_detail_id) JOIN
-     t_quality_mate_detail tqmd ON (tqm.quality_id = tqmd.quality_id) JOIN
-	 t_quality_std tqs ON (tmid.mate_id = tqs.target_id) JOIN 
-    t_quality_std_detail tqsd ON (tqs.std_id = tqsd.std_id) JOIN
-	t_quality_option tqo ON (tqsd.option_id = tqo.option_id)
-    WHERE tmid.mate_id = ?
-    ORDER BY tqsd.option_id;
+SELECT 
+	qo.option_id,
+    qo.option_name,
+    qo.option_standard,
+    qo.option_method
+FROM t_mate_inbound_detail id
+JOIN t_quality_std qs ON id.mate_id = qs.target_id
+JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
+JOIN t_quality_option qo ON qsd.option_id = qo.option_id
+WHERE inbound_status = '1p'
+AND inbound_detail_id = ?
 `;
 
 const mateWaitInsert =
@@ -73,12 +93,15 @@ SELECT DISTINCT
     q.quality_id,
     md.mate_id,
     mate_id(md.mate_id) mate_name,
+    inbound_amount,
+    pass_amount,
+    fail_amount,
 	sub_code(quality_final_result) result
 FROM 
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
 ORDER BY
-	quality_id DESC
+	inbound_detail_id DESC
 `;
 
 // 자재수입검사조회 (상세)
@@ -303,6 +326,9 @@ module.exports = {
      selectLastmateQuality,
      selectLastmateQualityDetail,
      mateWaitInsert,
+     updateMateQuality,
+     insertResult,
+     updateMate,
     // 제품
      prodQualityReq,
      prodQualityWait,

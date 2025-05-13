@@ -15,8 +15,9 @@
                   <tr>
                     <th>자재입고상세ID</th>
                     <th>검사번호</th>
-                    <th>자재이름</th>
-                    <th>자재번호</th>
+                    <th>자재ID</th>
+                    <th>자재명</th>
+                    <th>입고수량</th>
                     <th>검사결과</th>
                   </tr>
                 </thead>
@@ -25,8 +26,9 @@
                     v-on:click="mateQualityViewDetail(info.quality_id)">
                     <td>{{info.inbound_detail_id}}</td>
                     <td>{{ info.quality_id }}</td>
-                    <td>{{ info.mate_name }}</td>
                     <td>{{ info.mate_id }}</td>
+                    <td>{{ info.mate_name }}</td>
+                    <td>{{ info.inbound_amount }}</td>
                     <td>
                       <span v-if="info.result === '최종합격'" class="badge badge-sm bg-gradient-info"
                         style="width: 60px; text-align: center;">
@@ -65,7 +67,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in mateQualityViewdetail" v-bind:key="info.id" style="cursor: pointer;">
+                  <tr v-for="(info, index) in mateQualityViewdetail" v-bind:key="option_id" style="cursor: pointer;">
                     <td>{{ info.option_id }}</td>
                     <td>{{ info.option_name }}</td>
                     <td>{{ info.option_standard }}</td>
@@ -103,7 +105,10 @@
       this.mateQualityViewDropDown();
       this.mateQualityViewAll();
     },
-  
+    watch() {
+      this.info.result == '합격'
+      
+    },
     methods: {
       async mateQualityViewDropDown() {
         let ajaxRes =
@@ -122,6 +127,9 @@
           await axios.get(`api/mateQualityViewDetail/${detailId}`)
           .catch(err => console.log(err));
         this.mateQualityViewdetail = ajaxRes.data;
+      },
+      async insertResult() {
+        
       },
       addRow() {
         this.mateQualityViewdetail.push({});
