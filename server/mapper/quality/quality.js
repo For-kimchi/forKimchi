@@ -231,25 +231,28 @@ const selectOption =
 SELECT 
 	option_id, 
     option_name, 
-    option_standard, 
+    option_standard,
+    option_operator,
     option_method
 FROM
 	t_quality_option
+WHERE 1=1
+:searchKeyword
 `;
 
 // 검사항목 추가
 const insertOption =
 `
 INSERT INTO t_quality_option 
-(option_id, option_name, option_standard, option_method)
-VALUES(?, ?, ?, ?)
+(option_id, option_name, option_standard, option_operator, option_method)
+VALUES(?, ?, ?, ?, ?)
 `;
 
 // 검사항목 갱신
 const updateOption =
 `
 UPDATE t_quality_option
-SET option_name=?, option_standard=?, option_method=?
+SET ?
 WHERE option_id = ?
 `;
 
@@ -315,6 +318,31 @@ const deleteOptionControl =
 DELETE FROM t_quality_option
 WHERE option_id = ?
 `;
+
+//검사기준관리
+//검사기준조회
+const selectStd =
+`SELECT std_id,
+        std_type
+FROM t_quality_std
+WHERE std_status = '1bb' 
+AND target_id = ?
+`;
+
+
+//검사기준상세조회
+const selectStdDetail =
+`SELECT
+        qsd.std_detail_id,
+        qo.option_id,
+        qo.option_name,
+        qo.option_standard,
+        qo.option_operator
+FROM t_quality_std_detail qsd
+JOIN t_quality_option qo ON qsd.option_id = qo.option_id
+WHERE qs.std_id = ?
+`;
+
 module.exports = {
     // 자재
      mateQualityReq,
@@ -346,5 +374,7 @@ module.exports = {
      insertOptionControl,
      updateOptionControl,
      selectLastOptionControl,
-     deleteOptionControl
+     deleteOptionControl,
+     selectStd,
+     selectStdDetail,
 };

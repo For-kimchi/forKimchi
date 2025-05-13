@@ -30,7 +30,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in results" :key="item.key" @click="selectItem(item)" style="cursor: pointer">
+            <tr v-for="item in results" :key="item.prod_id" @click="selectItem(item)" style="cursor: pointer">
               <td>{{ item.prod_id }}</td>
               <td>{{ item.prod_name }}</td>
             </tr>

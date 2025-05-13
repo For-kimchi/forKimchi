@@ -155,6 +155,13 @@ router.put('/options/:id', async (req, res) => {
   res.send(result);
 });
 
+// 검사기준관리
+// 검사기준조회
+router.put('/stds', async (req, res) => {
+  let params = req.query;
+  let list = await quality_service.getStds(params);
+  res.send(list);
+});
 
 
 module.exports = router;

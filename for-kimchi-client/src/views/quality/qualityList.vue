@@ -3,8 +3,7 @@
 
     <div class="row mt-3">
       <div class="col text-end">
-        <button class="btn btn-success" @click="search">조회</button>
-        <button class="btn btn-info ms-2" @click="resetForm">등록</button>
+        <button class="btn btn-success" @click="selectOption">조회</button>
       </div>
     </div>
 
@@ -43,7 +42,7 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="align-middle text-center">검사DB</th>
+                    <th class="align-middle text-center">검사ID</th>
                     <th class="align-middle text-center">검사명</th>
                     <th class="align-middle text-center">검사기준</th>
                     <th class="align-middle text-center">비교기준</th>
@@ -56,11 +55,11 @@
                     <td class="align-middle text-center">{{ item.option_id }}</td>
                     <td class="align-middle text-center">{{ item.option_name }}</td>
                     <td class="align-middle text-center">{{ item.option_standard }}</td>
+                    <td class="align-middle text-center">{{ codeToName(item.option_operator, codes) }}</td>
                     <td class="align-middle text-center">{{ item.option_method }}</td>
-                    <td class="align-middle text-center">{{ item.option_operator }}</td>
                     <td class="align-middle text-center">
                       <button class="btn btn-warning m-0" v-on:click="editOption(index)">수정</button>
-                      <button class="btn btn-danger m-0 ms-2" v-on:click="delOption(index)">삭제</button>
+                      <!-- <button class="btn btn-danger m-0 ms-2" v-on:click="delOption(index)">삭제</button> -->
                     </td>
                   </tr>
                   <tr v-if="optionList.length === 0">
@@ -113,35 +112,45 @@
 
 <script>
   import axios from 'axios';
+  import { codeToName } from '../../utils/common';
 
   export default {
     data() {
       return {
         action: '추가', // 액션(추가/수정)
         optionList: [],
-        selected: {
-          option_id: '',
-          option_name: '',
-          option_standard: '',
-          option_method: ''
-        },
+        selected: {},
+        searchName: '',
+        searchId: '',
+        codes: [],
       };
     },
     created() {
-      this.selectOption();
+      // this.selectOption();
+      this.getOptionType();
     },
     methods: {
       // 조회
       async selectOption() {
+
+        let params = {};
+
+        if (this.searchId) params.option_id = this.searchId;
+        if (this.searchName) params.option_name = this.searchName;
+
         let ajaxRes =
-          await axios.get(`/api/options`)
+          await axios.get(`/api/options`, {
+            params
+          })
           .catch(err => console.log(err));
         this.optionList = ajaxRes.data;
       },
 
       // 수정(담기만)
       async editOption(index) {
-        this.selected = this.optionList[index];
+        this.selected =  {
+          ...this.optionList[index]
+        }
         this.action = '수정';
       },
 
@@ -153,40 +162,32 @@
 
         if (result.data.affectedRows > 0) {
           alert('저장이 완료되었습니다');
-          this.getBasicProd();
+          this.selectOption();
           this.resetForm();
         } else {
           alert('저장 과정에서 오류가 발생했습니다');
         }
       },
-      codeToName(code, codeArray) {
-        return codeToName(code, codeArray);
-      },
 
       // 삭제
-      async delOption(option_id) {
-  let ajaxRes = await axios.delete(`/api/options/${option_id}`)
-                           .catch(err => console.log(err));
-  let sqlRes = ajaxRes?.data;
-  let result = sqlRes?.affectedRows;
-  if (result > 0) {
-    alert('정상적으로 삭제되었습니다.');
-    this.selectOption(); // 목록 새로고침
-  } else {
-    alert('삭제되지 않았습니다.');
-  }
-},
+      // async delOption(index) {
+      // },
 
       // 폼 초기화
       resetForm() {
-        this.selected = {
-          option_id: '',
-          option_name: '',
-          option_standard: '',
-          option_method: ''
-        };
+        this.selected = {};
         this.action = '추가';
-      }
+      },
+
+      async getOptionType() {
+        let res = await axios.get(`/api/codes/C2`)
+          .catch(err => console.log(err));
+        this.codes = res.data;
+      },
+
+      codeToName(code, codeArray) {
+        return codeToName(code, codeArray);
+      },
     },
   };
 </script>
