@@ -1,9 +1,5 @@
 <template>
     <div class="container-fluid py-4">
-    <nav class="text-center">
-        <button class="btn btn-primary ms-2 me-2">생산지시등록</button>
-        <router-link to="/"><button class="btn btn-info ms-2 me-2">자재관리</button></router-link>
-    </nav>
     <div class="row">
         <!-- 행 영역 div-->
       <div class="col-4">
@@ -68,6 +64,7 @@
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정ID</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정명</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정수</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">지시량</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">투입량</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">불량량</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산량</th>
@@ -84,11 +81,15 @@
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_id}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_name}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.count}}</td>
+                      <td class="align-middle font-weight-bolder text-center" v-if="info.proc_seq == 1">{{prodProdProcessInfo.order_amount}}</td>
+                      <td class="align-middle font-weight-bolder text-center" v-else>{{procFlow[index - 1].sum_pass_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_input_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_fail_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_pass_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.proc_type}}</span></td>
-                      <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '일반'"><span class="badge badge-sm bg-gradient-info">공정완료</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else-if="info.count == info.status && procFlow[index].proc_type == '품질검사대상'"><button class="btn btn-danger p-2 m-0">품질검사요청</button></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -159,8 +160,8 @@
             <div class="card-body px-0 pb-2" >
                 <div class="table-responsive p-0">
                   <div class=" text-end">
-                  <button class="btn btn-success mx-2" @click="addList()">공정생성</button>
-                  <button class="btn btn-info mx-2" @click="addinsert(procFlowList)">공정저장</button>
+                    <button class="btn btn-success mx-2" @click="addList()" :disable="!isValue">공정생성</button>
+                    <button class="btn btn-info mx-2" @click="addinsert(procFlowList)" :disable="!isValue">공정저장</button>
                   </div>
                 <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
@@ -168,7 +169,6 @@
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산공정ID</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정담당자</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">지시량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">투입량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">불량량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산량</th>
@@ -182,7 +182,6 @@
                     <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.prod_proc_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.employee_id}}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{info.proc_order_amount}}</td>
                     <td class="align-middle font-weight-bolder text-center" v-if="info.proc_input_amount >= 0">{{info.proc_input_amount}}</td>
                     <td class="align-middle font-weight-bolder text-center" v-else><input type="number" v-model="info.input_amount" style="width: 100px;"></td>
                     <td class="align-middle font-weight-bolder text-center">{{info.proc_fail_amount}}</td>
@@ -230,13 +229,10 @@
     
 <script>
 // 해야할일 정리
-// 공정흐름도 부분에 최종 생산량보여주기, 모든 공정 끝났는지 임시 상태값 만들기
 // 공정이 완료되었다면 공정생성막기, 공정저장부분 투입량이 지시량보다 많아지면 저장 안되게 막기
-// 종료시간 만들기
 // 모든 공정 종료 시 자재 홀딩 풀어야됨.
 // 투입량부분 공정시작누를떄 입력 vs 추가 공정생성할떄 입력하기.(현재)
 // 공정 삭제만드는거 생각해봐야함.
-// 
 
 import axios from 'axios'
 
@@ -248,21 +244,21 @@ export default {
             prodProdProcessInfo:[],
             procFlow: [],
             procFlowList: [],
+            // number= 공정흐름도 index
             number: '',
             input_amount: '',
             proc_fail_amount: '',
             proc_pass_amount: '',
             indexs: '',
             prodOrderidx: '',
+            // 공정상태 확인
+            procType: false,
         }
     },
     created(){
         this.prodProdProcessList();
     },
     computed:{
-      isValue(){
-        return ;
-      },
     },
     methods:{
      async prodProdProcessList(){
@@ -280,8 +276,15 @@ export default {
         await axios.get(`/api/prodProcFlow/${prodLot}`)
                     .catch(err => console.log(err));
         this.procFlow = ajaxRes.data;
+        // // count와 status의 값이 똑같다면 모든공정완료
+        // if(procFlow.count == procFlow.status){
+        //   this.procType = true;
+        // }else{
+        //   this.procType = false;
+        // }
         this.procFlowList = [];
         this.prodOrderidx = index;
+
       },
       // 생산공정 조회
       async selectProc(index){
@@ -307,11 +310,11 @@ export default {
         // if(input_amount){
         // console.log(this.list.input_amount);
         // }
-        // 이미 저장된 데이터는 제거.
+        // 이미 저장된 데이터는 제거.(Object.hasOwn를 통해서 prod_order_lot가 객체안에 있다면 true 없으면 false)
         let param = list.filter(item =>{
           return Object.hasOwn(item, 'prod_order_lot');
         });
-
+        console.log(param);
         let ajaxRes =
         await axios.post(`/api/insertProdProc`, param)
                     .catch(err => console.log(err));
