@@ -33,7 +33,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
+                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-sm btn-info" disabled>{{ info.inbound_status }}</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -57,25 +57,36 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">창고선택</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재입고상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">검사상태</th>
                     <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">양품수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">불량품수량</th> -->
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고/반품</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in storeWareStatus " v-bind:key="inbound_detail_id">
+                  <tr v-for="(info,index) in storeWareStatus " v-bind:key="info.inbound_detail_id">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">
+                   <select v-model="info.warehouse_id" class="form-select text-center" style="max-width: 150px; border: 1px solid gray;">
+  <option disabled value="">선택</option>
+  <option v-for="wh in warehouses" :key="wh.warehouse_id" :value="wh.warehouse_id">
+    {{ wh.warehouse_id }}
+  </option>
+</select>
+                  </td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.quality_result }}</td>
                     <!-- <td class="align-middle font-weight-bolder text-center">{{ info.pass_amount }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.fail_amount }}</td> -->
-                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.fail_amount }}</td> --> 
+                    <!-- <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>  -->
                     <!-- 드롭다운(입고/반품) -->
                     <td>
                      <select v-model="info.inbound_type" class="form-select me-2 text-center"style="max-width: 200px; border: 1px solid gray; text-align-last: center;">
@@ -102,78 +113,168 @@
     </div>
   </div>
 </template>
+
 <script>
 import axios from 'axios'
 
 export default {
-  
-    data() {
-      return{
-        storeList: [],
-        storeDtList: [],
-        insertWare: [],
-        inbound_id: '',
-        storeWareStatus:[],
+  data() {
+    return {
+      storeList: [],            // 입고 목록
+      storeWareStatus: [],      // 상세 목록
+      inbound_id: '',           // 선택된 입고 ID
+      warehouses: [],          
+    };
+  },
+  created() {
+    this.getStoreList();        // 최초 로드 시 입고 목록 조회
+    this.getWarehouses();
+  },
+  methods: {
+    async getStoreList() {
+      try {
+        const res = await axios.get(`/api/storeWareStatus`);
+        this.storeList = res.data;
+      } catch (err) {
+        console.error('입고 목록 조회 오류:', err);
       }
     },
-    created(){
-      this.getStoreList();
-    },
-    methods : {
-    async getStoreList() {
-      let ajaxRes = 
-      await axios.get(`/api/storeWareStatus`)
-                  .catch (err => console.log(err));
-      this.storeList = ajaxRes.data;
-    },
-    
-    async getStoreDtList(storeId) {
-      let ajaxRes =
-      await axios.get(`/api/storeList/${storeId}`)
-                .catch(err => console.log(err));
-      this.storeWareStatus = ajaxRes.data;
-      this.inbound_id = storeId;
-    },
-
-
-    async wareAdd() {
+    async getWarehouses() {
   try {
-    let saveList = this.storeWareStatus // 창고와 입고테이블이 다르기 때문에 saveList에 storeDtList를 한개씩 담아줌.
-      .map(item => ({
-        inbound_type: item.inbound_type,         // 테이블에 inbound_type이 없기 때문에 값을 지정해줌                  // LOT번호 자동 생성
-        inbound_detail_id: item.inbound_detail_id,
-        warehouse_id: 'WHS-001',        // 선택된 창고
-        inbound_amount: item.inbound_amount,
-        mate_id : item.mate_id,
-        employee_id: '홍길동',
-        inbound_id: this.inbound_id
-      }));
-    // insertWarehouse 라우터로 전송
-    let res = await axios.post('/api/insertWarehouse', saveList)
-
-    // saveList에 빈값이 넘어올 경우 반품으로 처리, 
-    // 드롭다운에서 입고를 선택하면 inbound_type: '입고'로 기본값을 주었고, 
-    // 위의 드롭다운 입고옵션에 value="입고"를 주어서 saveList의 filter를 통해 값이 담김. 
-    // value="입고"가 아닌 드롭다운옵션의 경우에는 빈값을 담아서 넘김.
-    if (saveList.length === 0) {
-    alert('반품되었습니다.');
-    return;
-    }
+    const res = await axios.get('/api/warehouseList');
     
-    alert('입고가 완료되었습니다.');
-    // 창고입고목록 초기화 axios.get함수를 다시 부름으로써 새로고침 효과가 나타난다.(새로고침하면 inbound_id 가 3p가 된 컬럼은 사라지게 됨)
-    this.getStoreList();
-    // 창고입고상세목록 초기화(id값과 in storeWareStatus을 빈값으로 나타낸다. 즉, 입고상세는 저장버튼을 누르면 자동으로 전부 빈값으로 만들어지게 됨.)
-    this.storeWareStatus = [];
-    this.inbound_id = '';
+    // 중복 제거된 warehouse_id만 추출
+    const uniqueList = [...new Set(res.data.map(item => item.warehouse_id))];
+
+    // 필요한 형태로 다시 가공
+    this.warehouses = uniqueList.map(id => ({ warehouse_id: id }));
 
   } catch (err) {
-
-    console.error('저장 실패:', err);
-    alert('저장 중 오류 발생');
+    console.error('창고 목록 조회 오류:', err);
   }
+},
+
+    async getStoreDtList(storeId) {
+      try {
+        const res = await axios.get(`/api/storeList/${storeId}`);
+        this.storeWareStatus = res.data;
+        this.inbound_id = storeId;
+
+        // 기본값 설정: quality_result 기준으로 inbound_type 세팅
+        this.storeWareStatus.forEach(item => {
+          if (!item.inbound_type) {
+            item.inbound_type = item.quality_result === '양품' ? '입고' : '반품';
+          }
+        });
+
+      } catch (err) {
+        console.error('입고 상세 조회 오류:', err);
+      }
+    },
+
+    async wareAdd() {
+      try {
+        const saveList = this.storeWareStatus.map(item => ({
+          inbound_type: item.inbound_type,
+          inbound_detail_id: item.inbound_detail_id,
+          warehouse_id: item.warehouse_id,
+          inbound_amount: item.inbound_amount,
+          mate_id: item.mate_id,
+          employee_id: '홍길동',
+          inbound_id: this.inbound_id
+        }));
+
+        if (saveList.length === 0) {
+          alert('입고 항목이 없습니다.');
+          return;
+        }
+
+        await axios.post('/api/insertWarehouse', saveList);
+
+        alert('입고가 완료되었습니다.');
+        this.getStoreList(); // 목록 새로고침
+        this.storeWareStatus = []; // 상세 목록 초기화
+        this.inbound_id = '';      // 선택 ID 초기화
+
+      } catch (err) {
+        console.error('입고 저장 실패:', err);
+        alert('저장 중 오류 발생');
+      }
     }
   }
 }
-
 </script>
+
+
+<!-- // export default {
+  
+//     data() {
+//       return{
+//         storeList: [],
+//         storeDtList: [],
+//         insertWare: [],
+//         inbound_id: '',
+//         storeWareStatus:[],
+//       }
+//     },
+//     created(){
+//       this.getStoreList();
+//     },
+//     methods : {
+//     async getStoreList() {
+//       let ajaxRes = 
+//       await axios.get(`/api/storeWareStatus`)
+//                   .catch (err => console.log(err));
+//       this.storeList = ajaxRes.data;
+//     },
+    
+//     async getStoreDtList(storeId) {
+//       let ajaxRes =
+//       await axios.get(`/api/storeList/${storeId}`)
+//                 .catch(err => console.log(err));
+//       this.storeWareStatus = ajaxRes.data;
+//       this.inbound_id = storeId;
+//     },
+
+
+//     async wareAdd() {
+//   try {
+//     let saveList = this.storeWareStatus // 창고와 입고테이블이 다르기 때문에 saveList에 storeDtList를 한개씩 담아줌.
+//       .map(item => ({
+//         inbound_type: item.inbound_type,         // 테이블에 inbound_type이 없기 때문에 값을 지정해줌                  // LOT번호 자동 생성
+//         inbound_detail_id: item.inbound_detail_id,
+//         warehouse_id: 'WHS-001',        // 선택된 창고
+//         inbound_amount: item.inbound_amount,
+//         mate_id : item.mate_id,
+//         employee_id: '홍길동',
+//         inbound_id: this.inbound_id
+//       }));
+//     // insertWarehouse 라우터로 전송
+//     let res = await axios.post('/api/insertWarehouse', saveList)
+
+//     // saveList에 빈값이 넘어올 경우 반품으로 처리, 
+//     // 드롭다운에서 입고를 선택하면 inbound_type: '입고'로 기본값을 주었고, 
+//     // 위의 드롭다운 입고옵션에 value="입고"를 주어서 saveList의 filter를 통해 값이 담김. 
+//     // value="입고"가 아닌 드롭다운옵션의 경우에는 빈값을 담아서 넘김.
+//     if (saveList.length === 0) {
+//     alert('반품되었습니다.');
+//     return;
+//     }
+    
+//     alert('입고가 완료되었습니다.');
+//     // 창고입고목록 초기화 axios.get함수를 다시 부름으로써 새로고침 효과가 나타난다.(새로고침하면 inbound_id 가 3p가 된 컬럼은 사라지게 됨)
+//     this.getStoreList();
+//     // 창고입고상세목록 초기화(id값과 in storeWareStatus을 빈값으로 나타낸다. 즉, 입고상세는 저장버튼을 누르면 자동으로 전부 빈값으로 만들어지게 됨.)
+//     this.storeWareStatus = [];
+//     this.inbound_id = '';
+
+//   } catch (err) {
+
+//     console.error('저장 실패:', err);
+//     alert('저장 중 오류 발생');
+//   }
+//     }
+//   }
+// } -->
+
+<!-- </script> -->

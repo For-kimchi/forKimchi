@@ -75,10 +75,31 @@ router.post('/insertWarehouse', async (req, res) => {
 
 
 // 창고조회
+// router.get('/warehouseList', async (req, res) => {
+//   let addWare = req.body;
+//   let result = await storeService.wareAll(addWare);
+//   res.send(result);
+// });
+
 router.get('/warehouseList', async (req, res) => {
-  let addWare = req.body;
-  let result = await storeService.wareAll(addWare);
-  res.send(result);
+  const type = req.query.type;
+
+  try {
+    let result;
+
+    if (type === 'group') {
+      result = await storeService.getGroupedByMaterial();
+    } else {
+      // 기본은 LOT별
+      result = await storeService.wareAll();
+    }
+
+    res.send(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
 });
+
 
 module.exports = router;  

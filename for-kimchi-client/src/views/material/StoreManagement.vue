@@ -21,6 +21,7 @@
         </div>
       </div>
     </div>
+    
     <div class="row">
       <!-- 행 영역 div-->
       <div class="col-12">
@@ -61,7 +62,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_due_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.req_status }}</td>
+                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-sm btn-success" disabled>{{ info.req_status }}</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -205,7 +206,7 @@ export default {
       try {
         const ajaxRes = await axios.post(`/api/storeSave`, storeInfo);
         if (ajaxRes.data.affectedRows > 0) {
-          alert("저장되었습니다.");
+          alert("검사요청되었습니다.");
           // this.$router.push('/StoreList');
 
           this.mateList = [];

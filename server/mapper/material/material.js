@@ -181,6 +181,16 @@ const deleteMateBtn =
 FROM t_mate_req
 WHERE req_id =?`
 
+// 자재발주관리페이지에서 선택항목 update
+const updateMateQuery =
+`UPDATE t_mate_req
+ SET vendor_id = ?
+    , employee_id = ?
+    , req_due_date = ?
+    , memo = ?
+ WHERE req_id = ?`
+
+
 // 자재발주 상세삭제(자재발주상세부터 삭제해야 오류가 안난다.)
 const deleteDetailMate =
 `DELETE 
@@ -219,6 +229,19 @@ AND mate_id = ?;
 
 // 선출창고 출고 //
 
+// 생산지시전체조회
+const mateOrderList =
+`SELECT 
+        prod_order_lot,
+        prod_id(prod_id) prod_id,
+        date_type(order_date) order_date,
+        order_amount,
+        employee_id(employee_id) employee_id,
+        sub_code(order_status) order_status
+FROM t_prod_order
+WHERE order_status = '2d'
+` 
+
 
 
 module.exports = {
@@ -237,4 +260,6 @@ module.exports = {
     deleteDetailMate,
     deleteMateBtn,
     updateMateStatus,
+    updateMateQuery,
+    mateOrderList,
 }

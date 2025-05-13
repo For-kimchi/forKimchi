@@ -40,6 +40,18 @@ const wareAll = async() => {
   return list;
 };
 
+// LOT별 창고조회
+const getGroupedByMaterial = async() => {
+  let list = await mariaDB.query('groupBywareList');
+  return list;
+}
+
+// 자재별 합계 창고조회
+const getWarehouseList = async() => {
+  let list = await mariaDB.query('warehouseLotList');
+  return list;
+}
+
 // 창고저장
 const insertWarehouse = async(wareList) => {
   
@@ -181,4 +193,6 @@ module.exports = {
   storeMateList,
   mateById,
   storeAll,
+  getGroupedByMaterial,
+  getWarehouseList,
 }
