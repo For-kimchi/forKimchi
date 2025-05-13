@@ -21,6 +21,58 @@ FROM t_mate_warehouse
 ORDER BY mate_lot DESC
 LIMIT 1`;
 
+// `SELECT req_id
+//         ,date_type(inbound_date) inbound_date
+//         ,vendor_id(vendor_id) vendor_id
+//         ,employee_id(employee_id) employee_id
+//         ,memo
+//   FROM t_mate_inbound`;
+
+// 입고조회
+const selectStoreList = 
+`SELECT 
+  i.inbound_id,
+  date_type(i.inbound_date) inbound_date,
+  i.vendor_id vendor_id,
+  employee_id(i.employee_id) employee_id,
+  i.memo,
+  CASE
+    WHEN SUM(CASE WHEN id.inbound_status = '1p' THEN 1 ELSE 0 END) > 0 THEN '검사요청'
+    WHEN COUNT(*) = SUM(CASE WHEN id.inbound_status = '2p' THEN 1 ELSE 0 END) THEN '검사완료'
+    WHEN SUM(CASE WHEN id.inbound_status IN ('3p', '4p') THEN 1 ELSE 0 END) > 0 THEN '입고마감'
+    ELSE '기타'
+  END AS inbound_final_status
+FROM t_mate_inbound i
+JOIN t_mate_inbound_detail id ON i.inbound_id = id.inbound_id
+GROUP BY i.inbound_id`;
+
+// 입고관리에서 발주서리스트 (입고상태추가해야함)
+const selectStoreMateList = 
+`SELECT 
+	        req_id,
+          date_type(req_date) req_date,
+          vendor_id(vendor_id) vendor_id,
+          employee_id(employee_id) employee_id,
+	        date_type(req_due_date) req_due_date,
+          sub_code(req_status) req_status,
+	        memo,
+          date_type(confirm_date) confirm_date,
+          employee_id(manager_id) manager_id
+FROM t_mate_req
+WHERE req_status = '2o'
+`;
+
+// 입고관리에서 발주서상세리스트(발주서리스트 중에서 클릭시)
+const selectStoreMateDetail =
+`SELECT 
+		    req_detail_id,
+        req_id,
+        mate_id(mate_id) mate_id,
+        req_amount,
+        memo
+FROM t_mate_req_detail
+WHERE req_id = ?;`;
+
 // 창고입고조회(입고일자,입고번호,거래처,사용자명,품목수,비고,수정일,수정자)
 const selectStore =
 `SELECT date_type(req_date) req_date
@@ -32,12 +84,6 @@ const selectStore =
   FROM t_mate_req
   WHERE req_status = '2o'`;
 
-  // `SELECT req_id
-//         ,date_type(inbound_date) inbound_date
-//         ,vendor_id(vendor_id) vendor_id
-//         ,employee_id(employee_id) employee_id
-//         ,memo
-//   FROM t_mate_inbound`;
 
 // 창고입고 상세조회
 const selectDetailStore =
@@ -55,10 +101,11 @@ WHERE inbound_id = ?`;
 const selectWareStatus = 
 `SELECT 
 	ib.inbound_id
-        ,ib.inbound_date
+        ,date_type(ib.inbound_date) inbound_date
         ,ib.vendor_id
-        ,ib.employee_id
+        ,employee_id(ib.employee_id) employee_id
         ,ib.memo
+        ,sub_code(ibt.inbound_status) inbound_status
 FROM t_mate_inbound ib
 JOIN t_mate_inbound_detail ibt ON ib.inbound_id = ibt.inbound_id
 GROUP BY ib.inbound_id
@@ -82,14 +129,14 @@ const selectStoreStatus =
 FROM t_mate_inbound i
 JOIN t_mate_inbound_detail id ON i.inbound_id = id.inbound_id
 WHERE id.inbound_status = '2p'
-GROUP BY i.inbound_id;`
+GROUP BY i.inbound_id`;
 
 // 발주서입고등록(저장버튼 클릭시)
 const insertStoreMain =
 `INSERT INTO t_mate_inbound( inbound_id
                             ,req_id
-			    ,employee_id
-			    ,inbound_date
+			                      ,employee_id
+			                      ,inbound_date
                             ,vendor_id
                             ,memo)
 VALUES(?, ?, ?, SYSDATE(), ?, '')`;
@@ -170,4 +217,7 @@ module.exports = {
   selectStoreStatus,
   updateInbound,
   seletMateLot,
+  selectStoreList,
+  selectStoreMateList,
+  selectStoreMateDetail,
 }

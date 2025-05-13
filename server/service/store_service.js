@@ -3,10 +3,28 @@ const { convertObjToQuery } = require('../utils/converts');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts.js');
 
-// 입고조회
+// 입고관리 발주서전체조회(발주승인건만)
+const storeMateList = async() => {
+  let list = await mariaDB.query('selectStoreMateList');
+  return list;
+};
+
+// 입고관리 발주상세조회
+const mateById = async(mateNo) => {
+  let list = await mariaDB.query('selectStoreMateDetail', mateNo);
+  return list;
+};
+
+// 입고조회페이지 전체리스트
 const storeAll = async (searchList) => {
   let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
-  let list = await mariaDB.query('selectStoreStatus', searchKeyword);
+  let list = await mariaDB.query('selectStoreList', searchKeyword);
+  return list;
+};
+
+// 입고조회페이지 입고상세조회(항목클릭시)
+const storeById = async (storeId) => {
+  let list = await mariaDB.query('selectDetailStore', storeId);
   return list;
 };
 
@@ -15,12 +33,6 @@ const storeWareAll = async() => {
   let list = await mariaDB.query('selectWareStatus');
   return list;
 }
-
-// 입고상세조회
-const storeById = async (storeId) => {
-  let list = await mariaDB.query('selectDetailStore', storeId);
-  return list;
-};
 
 // 창고조회
 const wareAll = async() => {
@@ -153,9 +165,11 @@ const insertStore = async(storeSaveInfo) => {
 
 module.exports = {
   insertStore,
-  storeAll,
   storeById,
   wareAll,
   insertWarehouse,
   storeWareAll,
+  storeMateList,
+  mateById,
+  storeAll,
 }

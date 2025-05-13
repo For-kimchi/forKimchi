@@ -6,15 +6,36 @@ const converts = require('../utils/converts.js');
 // 전체발주조회
 const mateReqAll = async(searchList) => {
   let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
-  let list = await mariaDB.query('selectStore', searchKeyword);
+  let list = await mariaDB.query('selectMateReq', searchKeyword);
   return list;
 };
 
-// 입고관리 발주서전체조회(발주승인건만)
-const storeMateAll = async() => {
-  let list = await mariaDB.query('selectMateStore');
-  return list;
+// 자재발주페이지에서 검색결과에 따른 발주조회
+const searchOrder = async (company, startDate, endDate, orderStatus, supplier) => {
+  const conn = await db.getConnection();
+  try {
+    const params = [
+      company, `%${company}%`,
+      startDate, startDate, endDate,
+      orderStatus, orderStatus,
+      supplier, `%${supplier}%`
+    ];
+
+    const [rows] = await conn.query(selectMateReqWithSearch, params);
+    return rows;
+  } catch (err) {
+    console.error(err);
+    throw new Error("검색 중 오류");
+  } finally {
+    conn.release();
+  }
 };
+
+// 입고관리 발주서전체조회(발주승인건만)
+// const storeMateAll = async() => {
+//   let list = await mariaDB.query('selectMateStore');
+//   return list;
+// };
 
 // 발주상세조회
 const mateReqById = async(mateNo) => {
@@ -32,6 +53,18 @@ const vendorId = async() => {
 const mateList = async(mateName) => {
   let list = await mariaDB.query('searchMateList', mateName);
   return list;
+};
+
+// 자재발주관리페이지 발주서리스트 조회
+const mateAll = async() => {
+  let list = await mariaDB.query('selectDeleteList')
+  return list;
+}
+
+// 자재발주관리페이지 발주서 삭제버튼
+const deleteMaterial = async(reqId) => {
+  let result = await mariaDB.query('deleteMateBtn', reqId);
+  return result;
 };
 
 // 발주저장버튼
@@ -135,5 +168,7 @@ module.exports = {
   vendorId,
   mateList,
   insertMates,
-  storeMateAll,
+  mateAll,
+  deleteMaterial,
+  searchOrder,
 }

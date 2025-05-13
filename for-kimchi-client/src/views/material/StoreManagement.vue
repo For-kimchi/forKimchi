@@ -49,6 +49,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">납기예정일자
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">발주상태</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -60,6 +61,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_due_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.req_status }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -114,7 +116,7 @@
             <div v-if="mateList.length > 0" class="table-responsive p-0">
               <table class="table align-items-center justify-content-center mb-0"></table>
               <div class="text-end pe-5 mt-3">
-                <button class="btn btn-success" @click="storeAdd">저장</button>
+                <button class="btn btn-success" @click="storeAdd">검사요청</button>
               </div>
             </div>
           </div>
@@ -147,7 +149,7 @@ export default {
     // 발주서 조회
     storeMateAll() {
       axios
-        .get('/api/materials', {
+        .get('/api/storeMate', {
           params: this.search,
         })
         .then((response) => {
@@ -162,7 +164,7 @@ export default {
     mateDetailInfo(info) {
       this.selectedInfo = info;
       axios
-        .get(`/api/materials/${info.req_id}`, {
+        .get(`/api/storeMate/${info.req_id}`, {
         })
         .then((response) => {
           this.mateList = response.data;
@@ -204,8 +206,11 @@ export default {
         const ajaxRes = await axios.post(`/api/storeSave`, storeInfo);
         if (ajaxRes.data.affectedRows > 0) {
           alert("저장되었습니다.");
-          this.$router.push('/StoreList');
-          
+          // this.$router.push('/StoreList');
+
+          this.mateList = [];
+          this.id = '';
+          this.storeMateAll();
         } else {
           alert("저장이 실패하였습니다.");
         }

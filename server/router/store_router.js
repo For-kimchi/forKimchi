@@ -6,17 +6,25 @@ const mateService = require('../service/material_service.js');
 
 
 // 발주서 조회
-router.get('/materials', async(req, res)=> {
+// router.get('/materials', async(req, res)=> {
+//   let search = req.query;
+//   let matList = await mateService.mateReqAll(search)
+//                                 .catch(err => console.log(err));
+//   res.send(matList);
+// });
+
+// 입고관리 발주서조회(발주승인건만)
+router.get('/storeMate', async(req, res) => {
   let search = req.query;
-  let matList = await mateService.mateReqAll(search)
-                                .catch(err => console.log(err));
+  let matList = await storeService.storeMateList(search)
+                                .catch(err=> console.log(err));
   res.send(matList);
-});
+})
 
 // 발주상세조회
-router.get('/materials/:id', async(req, res)=> {
+router.get('/storeMate/:id', async(req, res)=> {
   let mateId = req.params.id;
-  let mateInfo = await mateService.mateReqById(mateId)
+  let mateInfo = await storeService.mateById(mateId)
                                   .catch(err => console.log(err));
   res.send(mateInfo);
 });
@@ -24,7 +32,8 @@ router.get('/materials/:id', async(req, res)=> {
 // 입고저장버튼
 router.post('/storeSave', async (req, res) => {
   let store_detail_list = req.body;
-  let result = await storeService.insertStore(store_detail_list).catch((err) => console.log(err));
+  let result = await storeService.insertStore(store_detail_list)
+                                .catch((err) => console.log(err));
   res.send(result);
 });
 
@@ -47,7 +56,7 @@ router.get('/storeList/:id', async(req, res) => {
 // 창고입고(검사완료건만 조회)
 router.get('/storeWareStatus', async (req, res) => {
   let search = req.query;
-  let storeList = await storeService.storeAll(search)
+  let storeList = await storeService.storeWareAll(search)
                                     .catch(err => console.log(err));
   res.send(storeList);
 });

@@ -29,13 +29,13 @@
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">품목</li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
             <input type="text" v-model="search.item" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;">
-            <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
+            <!-- <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i> -->
           </li>
           <!-- 거래처 -->
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">거래처</li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
               <input type="text" v-model="search.supplier" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;"/>
-            <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
+            <!-- <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i> -->
           </li>
 
             <!-- 발주상태 -->
@@ -45,11 +45,10 @@
             <option disabled value="" style="text-align: center;">선택하세요</option>
             <option value="발주등록">발주등록</option>
             <option value="발주승인">발주승인</option>
-            <option value="발주중">발주중</option>
             <option value="발주마감">발주마감</option>
           </select>
           <!-- 검색 아이콘 -->
-          <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer;"></i>
+          <!-- <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer;"></i> -->
           </li>
             
           
@@ -176,6 +175,9 @@ export default {
       mateList: [],
     };
   },
+    created() {
+    this.handleSearch();
+  },
   methods: {
     handleSearch() {
       // 검색 조건을 사용하여 API 요청을 보냅니다.
@@ -206,5 +208,6 @@ export default {
       this.$router.push('/matma'); // Vue Router를 사용하여 페이지 이동
     },
   },
+
 };
 </script>
