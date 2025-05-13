@@ -126,7 +126,7 @@ const selectProdProcFlowInfo = async(prodLot) =>{
         let sumList = [];
         // 반복문
         for(let procFlow of Info){
-            let params = [prodLot, procFlow.proc_id];
+            let params = [prodLot, procFlow.proc_id, prodLot, procFlow.proc_id];
             // 각 합계 구하기
             selectedSql = await mariaDB.selectedQuery('selectSumProdProcList', params);
             let list = await conn.query(selectedSql, params);

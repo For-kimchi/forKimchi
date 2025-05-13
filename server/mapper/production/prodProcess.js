@@ -30,7 +30,10 @@ SELECT
         COUNT(prod_proc_id) count,
         SUM(proc_input_amount) sum_input_amount,
         SUM(proc_fail_amount) sum_fail_amount,
-        SUM(proc_pass_amount) sum_pass_amount
+        SUM(proc_pass_amount) sum_pass_amount,
+        (SELECT count(proc_status)
+			  FROM t_prod_proc
+			  WHERE prod_order_lot = ? AND proc_id = ? AND proc_status = '3e') status
  FROM t_prod_proc
  WHERE prod_order_lot = ? AND proc_id = ?
 `;
