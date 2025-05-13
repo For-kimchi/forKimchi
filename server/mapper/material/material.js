@@ -39,14 +39,20 @@ const selectMateReq =
 `SELECT 
 	        req_id,
           date_type(req_date) req_date,
-          vendor_id(vendor_id) vendor_id,
-          employee_id(employee_id) employee_id,
+          mr.vendor_id,
+          v.vendor_name,
+          employee_id,
+          employee_id(employee_id) employee_name,
 	        date_type(req_due_date) req_due_date,
           sub_code(req_status) req_status,
 	        memo,
           date_type(confirm_date) confirm_date,
-          employee_id(manager_id) manager_id
-FROM t_mate_req
+          manager_id,
+          employee_id(manager_id) manager_name
+FROM t_mate_req mr 
+JOIN t_vendor v ON mr.vendor_id = v.vendor_id
+WHERE 1=1
+:searchKeyword
 `;
 
 // 자재발주조회에서 검색 결과에 맞는 값만 조회
@@ -95,6 +101,14 @@ const selectMateDetail =
         memo
 FROM t_mate_req_detail
 WHERE req_id = ?;`;
+
+// 자재발주페이지 승인버튼(상태값 변경)
+const updateMateStatus =
+`UPDATE t_mate_req
+SET req_status = ?,
+    confirm_date = SYSDATE(),
+    manager_id = ?
+WHERE req_id= ?`
 
 
 // 거래처 검색
@@ -158,7 +172,8 @@ const selectDeleteList =
 	        memo,
           date_type(confirm_date) confirm_date,
           employee_id(manager_id) manager_id
-FROM t_mate_req `
+FROM t_mate_req
+WHERE req_status = '1o' `
 
 // 자재발주관리페이지에서 자재리스트 중 선택항목 삭제버튼
 const deleteMateBtn =
@@ -221,4 +236,5 @@ module.exports = {
     selectDeleteList,
     deleteDetailMate,
     deleteMateBtn,
+    updateMateStatus,
 }

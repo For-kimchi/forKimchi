@@ -46,26 +46,35 @@ const insertWarehouse = async(wareList) => {
   let conn;
   try{
     let columnList = ['mate_lot', 'mate_id', 'inbound_detail_id', 'warehouse_id', 'mate_amount', 'employee_id'];
+    
     conn = await mariaDB.getConnection();
     await conn.beginTransaction();
 
     
     let inbound_id = wareList[0].inbound_id;
     for (let item of wareList) {
-      
+      if(item.inbound_type == "입고") {
       // lot 생성 select seletMateLot
       selectedSql = await mariaDB.selectedQuery('seletMateLot');
       let lots = await conn.query(selectedSql);
       lots = lots[0].mate_lot;
+
       let newLot = keys.getNextKeyId(lots);
       item.mate_lot = newLot;
       
+    item.mate_amount = item.inbound_amount;
+      
     let values = converterAry(item, columnList);
-    await mariaDB.selectedQuery('insertWarehouse', values);
+    selectedSql = await mariaDB.selectedQuery('insertWarehouse', values);
     let result = await conn.query(selectedSql, values);
+
+    selectedSql = await mariaDB.selectedQuery('updateInbound', {});
+    let results = await conn.query(selectedSql, ['3p', item.inbound_detail_id ]);
+      } else {
+        selectedSql = await mariaDB.selectedQuery('updateInbound', {});
+        let results = await conn.query(selectedSql, ['4p', item.inbound_detail_id] );
+      }
   }
-    selectedSql = await mariaDB.selectedQuery('updateInbound', inbound_id);
-    let result = await conn.query(selectedSql, inbound_id);
     
     await conn.commit();
   return result;

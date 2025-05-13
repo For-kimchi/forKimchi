@@ -7,7 +7,6 @@ const mateService = require('../service/material_service.js');
 router.get('/materials', async(req, res)=> {
   let search = req.query;
   let matList = await mateService.mateReqAll(search)
-                                .catch(err => console.log(err));
   res.send(matList);
 });
 
@@ -26,6 +25,14 @@ router.post('/orderSearch', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+// 자재발주조회 페이지 승인버튼
+router.post('/mateConfirm', async (req, res) => {
+  let mateInfo = req.body;
+  let result = await mateService.mateConfirm(mateInfo);
+  res.send(result);
+});
+
 // 입고관리 발주서조회(발주승인건만)
 // router.get('/storeMate', async(req, res) => {
 //   let search = req.query;
@@ -49,7 +56,12 @@ router.get('/materialList', async (req, res) => {
                                 .catch(err=>console.log(err));
   res.send(matList);
 })
-
+// 관리페이지 상세조회
+router.get('/materialList/:id', async (req,res) => {
+  let reqId = req.params.id;
+  let reqInfo = await mateService.selectMateInfo(reqId);
+  res.send(reqInfo);
+})
 
 
 // 자재발주관리페이지 발주서 삭제

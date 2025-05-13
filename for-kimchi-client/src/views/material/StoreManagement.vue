@@ -101,7 +101,7 @@
                     <tr v-for="(info, index) in mateList" v-bind:key="info.id">
                       <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                       <td class="align-middle font-weight-bolder text-center">{{ info.req_detail_id }}</td>
-                      <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{ info.mate_name }}</td>
                       <td class="align-middle font-weight-bolder text-center">{{ info.req_amount }}</td>
                       <td class="align-middle font-weight-bolder text-center">
                       <input type="number" v-model.number="info.inbound_amount" @change="amountCheck(info)"></td>
