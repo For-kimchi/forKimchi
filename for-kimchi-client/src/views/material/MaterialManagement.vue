@@ -45,7 +45,7 @@
                     자재명
                   </li>
                   <li class="list-group-item d-flex align-items-center">
-                    <input type="text" v-model="search.material" @input="handleClick" class="form-control mb-2"placeholder="자재명을 입력하세요"/>
+                    <input type="text" v-model="search.material" @keyup.enter ="handleClick" class="form-control mb-2"placeholder="자재명을 입력하세요"/>
                     <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click ="handleClick(info)"></i>
                   </li>
                 </ul>
@@ -162,7 +162,7 @@
                 </thead>
                 <tbody>
                   <template v-if="materialList.length > 0">
-                    <tr v-for="(info, index) in materialList" :key="info.id" @click="">
+                    <tr v-for="(info, index) in materialList" :key="info.id" @click="updateMateList(index)">
                       <td>{{ index + 1 }}</td>
                       <!-- <td><MaterialCheckbox></MaterialCheckbox></td> -->
                       <td>{{ info.req_date }}</td>
@@ -176,7 +176,7 @@
                       <td>{{ info.manager_id }}</td>
                       <!-- <td>{{ info.req_status }}({{ typeof info.req_status }})</td> -->
                       <td>
-                      <button class="btn btn-danger" @click.stop="deleteRow(index)" v-if="info.req_status !== '발주마감'">삭제</button>
+                      <button class="btn btn-danger" @click.stop="deleteRow(index)" v-if="info.req_status == '발주등록'">삭제</button>
                       </td>
                     </tr>
                   </template>
@@ -226,7 +226,10 @@ export default {
       matReqList: [],
       req_due_date: '',
       initialMateInfo: null,
-      materialList:[]
+      materialList:[],
+      updates: {},
+      action: '수정',
+      companies: [],
     };
     
   },
@@ -251,17 +254,49 @@ this.getMateList();
     console.error('검색 실패:', error);
   });
 },
+// 발주관리페이지 발주항목 클릭시 수정(값 자동 입력)
+async updateMateList(idx) {
+    let id = this.materialList[idx].req_id;
+    let ajaxRes = await axios.get(`/api/materialList/${id}`)
+                              .catch(err => console.log(err));
+     this.selectedList = ajaxRes.data;
+     this.vendor.vendor_name = this.materialList[idx].vendor_id;
+
+},
+// this.action = '수정';
+// this.updates = { ...info };
+
+// this.selectedCompany = info.vendor_id;
+// this.vendor.vendor_name = info.vendor_id; // 또는 vendor_name 필드가 있다면 그것으로 대체
+
+// this.req_due_date = info.req_due_date;
+
+// try {
+//   const response = await axios.get(`/api/materialList/${info.id}`);
+//   this.selectedList = response.data.map(item => ({
+//     mate_id: item.mate_id,
+//     mate_name: item.mate_name,
+//     mate_unit: item.mate_unit,
+//     req_amount: item.req_amount,
+//     selected: false
+//   }));
+// } catch (error) {
+//   console.error('자재 상세 조회 실패:', error);
+//   alert('자재 상세 정보를 불러오는 데 실패했습니다.');
+// }
 
 // 발주서 리스트 전체조회
 async getMateList() {
-  let ajaxRes =
-  await axios.get(`/api/materialList`)
-            .catch(err=> console.log(err));
-  this.materialList = ajaxRes.data;
+  try {
+    const ajaxRes = await axios.get(`/api/materialList`);
+    this.materialList = ajaxRes.data;
+  } catch (error) {
+    console.error('자재 목록 조회 실패:', error);
+  }
 },
 
 // 자재발주관리에서 삭제버튼 클릭시 발주삭제
- async deleteRow(index) {
+async deleteRow(index) {
   
     const reqId = this.materialList[index].req_id; // 뒤에는 실제불러올 값인 req_id가 들어가야한다.
 
@@ -275,7 +310,7 @@ async getMateList() {
       console.error('삭제 실패:', err);
       alert('삭제 중 오류가 발생했습니다.');
     }
- },
+},
 
 // 항목선택여부 알림.
 // if(Object.keys(planDetailList).length > 0){
@@ -399,8 +434,8 @@ async getMateList() {
     if (ajaxRes.data.affectedRows > 0) {
       alert("저장되었습니다.");
       this.resetForm();
-      // // 저장된 항목 포함된 전체 목록 다시 불러오기
-      // await this.loadDeleteList(); // 이 함수 안에서 삭제목록용 리스트를 다시 조회
+      this.getMateList();
+
       this.$router.push('/matma');
     } else {
       alert("저장이 실패하였습니다.");
@@ -410,16 +445,6 @@ async getMateList() {
     alert("저장 중 오류가 발생했습니다.");
   }
 },
-// async loadDeleteList() {
-//   try {
-//     const res = await axios.get('/api/materialList'); // DB에서 삭제 가능한 항목 조회
-//     this.deleteList = res.data; // 이게 v-for 돌리는 목록
-//   } catch (err) {
-//     console.error("삭제 목록 불러오기 실패:", err);
-//   }
-// },
-
-
 
   // async mateAdd() {
   //     let info = this.mateList[mate_id];

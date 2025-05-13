@@ -139,10 +139,8 @@ export default {
     async wareAdd() {
   try {
     let saveList = this.storeWareStatus // 창고와 입고테이블이 다르기 때문에 saveList에 storeDtList를 한개씩 담아줌.
-      .filter(item => item.inbound_type === '입고')   // 입고만 저장
       .map(item => ({
-        inbound_type: '입고',         // 테이블에 inbound_type이 없기 때문에 값을 지정해줌 
-        mate_lot: `MLOT-${Date.now()}`,                 // LOT번호 자동 생성
+        inbound_type: item.inbound_type,         // 테이블에 inbound_type이 없기 때문에 값을 지정해줌                  // LOT번호 자동 생성
         inbound_detail_id: item.inbound_detail_id,
         warehouse_id: 'WHS-001',        // 선택된 창고
         inbound_amount: item.inbound_amount,
@@ -150,7 +148,6 @@ export default {
         employee_id: '홍길동',
         inbound_id: this.inbound_id
       }));
-      console.log(saveList);
     // insertWarehouse 라우터로 전송
     let res = await axios.post('/api/insertWarehouse', saveList)
 

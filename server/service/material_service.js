@@ -5,8 +5,33 @@ const converts = require('../utils/converts.js');
 
 // 전체발주조회
 const mateReqAll = async(searchList) => {
-  let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
-  let list = await mariaDB.query('selectMateReq', searchKeyword);
+  console.log(searchList);
+  // let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
+  
+  let param = {
+    searchKeyword: ''
+  }
+
+  let {
+    startDate,
+    endDate,
+    ...others
+  } = searchList;
+
+  for (let key of Object.keys(others)) {
+    if (others[key]) {
+      param.searchKeyword += ` AND LOWER(${key}) LIKE LOWER('%${others[key]}%')`; 
+    }
+  }
+  
+  if (startDate && endDate) {
+    param.searchKeyword += ` AND req_date BETWEEN '${startDate}' AND '${endDate}'`;
+   }
+
+console.log(param)
+
+    // :searchKeyword => AND a = b AND c = d
+  let list = await mariaDB.query('selectMateReq', param);
   return list;
 };
 
@@ -30,6 +55,50 @@ const searchOrder = async (company, startDate, endDate, orderStatus, supplier) =
     conn.release();
   }
 };
+
+// 발주조회페이지 승인버튼
+
+const mateConfirm = async (mateInfo) => {
+
+  let res = {
+    success: true,
+  }
+
+    try {
+      conn = await mariaDB.getConnection();
+      await conn.beginTransaction();
+  
+      let {
+        mates,
+        employee_id
+      } = mateInfo;
+
+      for (let mate of mates) {
+  
+        let selectedSql = await mariaDB.selectedQuery('updateMateStatus', {});
+        let result = await conn.query(selectedSql, ['2o',employee_id, mate.req_id]);
+        
+        // let mateDetail = result;
+  
+        // for (let detail of mateDetail) {
+  
+        //   let selectedSql = await mariaDB.selectedQuery('updateOrderDetailStatus', {});
+        //   result = await conn.query(selectedSql, ['2z', detail.order_detail_id]);
+        // }
+      }
+      conn.commit();
+
+      return res;
+    } catch (err) {
+      console.log(err);
+      if (conn) conn.rollback();
+      res.success = false;
+      return res;
+    } finally {
+      if (conn) conn.release();
+    }
+
+}
 
 // 입고관리 발주서전체조회(발주승인건만)
 // const storeMateAll = async() => {
@@ -59,7 +128,13 @@ const mateList = async(mateName) => {
 const mateAll = async() => {
   let list = await mariaDB.query('selectDeleteList')
   return list;
-}
+};
+
+// 자재발주페이지 발주상세조회
+const selectMateInfo = async(reqId) => {
+  let list = await mariaDB.query('selectMateDetail', reqId);
+  return list;
+};
 
 // 자재발주관리페이지 발주서 삭제버튼
 const deleteMaterial = async(reqId) => {
@@ -171,4 +246,6 @@ module.exports = {
   mateAll,
   deleteMaterial,
   searchOrder,
+  mateConfirm,
+  selectMateInfo,
 }

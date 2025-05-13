@@ -67,7 +67,8 @@ const selectStoreMateDetail =
 `SELECT 
 		    req_detail_id,
         req_id,
-        mate_id(mate_id) mate_id,
+        mate_id(mate_id) mate_name,
+        mate_id,
         req_amount,
         memo
 FROM t_mate_req_detail
@@ -100,7 +101,7 @@ WHERE inbound_id = ?`;
 // 창고입고조회 (검사완료건만 조회)
 const selectWareStatus = 
 `SELECT 
-	ib.inbound_id
+	      ib.inbound_id
         ,date_type(ib.inbound_date) inbound_date
         ,ib.vendor_id
         ,employee_id(ib.employee_id) employee_id
@@ -156,10 +157,10 @@ VALUES (?, ?, ?, ? ,'1p', '')`;
 // 창고현황조회
 const selectWarehouses = 
 `SELECT warehouse_id,
-	mate_lot,
+	      mate_lot,
         mate_id(mate_id) mate_name,
         mate_id,
-	mate_amount,
+	      mate_amount,
         date_type(inbound_date) inbound_date,
         employee_id(employee_id) employee_id
 FROM t_mate_warehouse`;
@@ -186,9 +187,14 @@ WHERE req_id = ?`
 // 창고입고관리 inbound_status UPDATE
 const updateInbound =`
 UPDATE t_mate_inbound_detail
-SET inbound_status = '3p'
-WHERE inbound_id = ?`;
+SET inbound_status = ?
+WHERE inbound_detail_id = ?`;
 
+// 창고입고카테고리에서 반품처리
+const updateWarehouse = 
+`UPDATE t_mate_warehouse
+SET inbound_status = '4p'
+WHERE inbound_id =?`;
 
 
 // 자재입고삭제
@@ -220,4 +226,5 @@ module.exports = {
   selectStoreList,
   selectStoreMateList,
   selectStoreMateDetail,
+  updateWarehouse,
 }
