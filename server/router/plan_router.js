@@ -99,8 +99,8 @@ router.get('/prodProcess', async(req, res)=>{
 });
 // 생산공정을 위한 공정흐름도 조회 selectProdProcFlowInfo
 router.get('/prodProcFlow/:id', async(req, res)=>{
-  let prodId = req.params.id
-  let result = await prodOrderService.selectProdProcFlowInfo(prodId);
+  let prodLot = req.params.id
+  let result = await prodOrderService.selectProdProcFlowInfo(prodLot);
   res.send(result);
 });
 // 생산공정LIst selectProdProcInfo

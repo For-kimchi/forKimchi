@@ -67,12 +67,12 @@
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정순서</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정ID</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정명</th>
-                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정분류</th>
-                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정상태</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정수</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">투입량</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">불량량</th>
                       <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산량</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정분류</th>
+                      <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">공정상태</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -83,12 +83,12 @@
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_seq}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_id}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_name}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.count}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.sum_input_amount}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.sum_fail_amount}}</td>
+                      <td class="align-middle font-weight-bolder text-center">{{info.sum_pass_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.proc_type}}</span></td>
                       <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
-                      <td class="align-middle font-weight-bolder text-center">{{}}</td>
-                      <td class="align-middle font-weight-bolder text-center">{{}}</td>
-                      <td class="align-middle font-weight-bolder text-center">{{}}</td>
-                      <td class="align-middle font-weight-bolder text-center">{{}}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -253,16 +253,17 @@ export default {
             proc_fail_amount: '',
             proc_pass_amount: '',
             indexs: '',
+            prodOrderidx: '',
         }
     },
     created(){
         this.prodProdProcessList();
     },
-    // computed:{
-    //   amount(){
-    //     return proc_fail_amount - this.procFlowList;
-    //   }
-    // },
+    computed:{
+      isValue(){
+        return ;
+      },
+    },
     methods:{
      async prodProdProcessList(){
         let ajaxRes =
@@ -270,15 +271,19 @@ export default {
                     .catch(err => console.log(err));
         this.prodProdProcessLists = ajaxRes.data;
      },
+     // 생산지시선택 버튼
      async prodOrder(index){
         this.prodProdProcessInfo = this.prodProdProcessLists[index];
-        let prodId = this.prodProdProcessInfo.prod_id;
+        // let prodId = this.prodProdProcessInfo.prod_id;
+        let prodLot = this.prodProdProcessLists[index].prod_order_lot
         let ajaxRes =
-        await axios.get(`/api/prodProcFlow/${prodId}`)
+        await axios.get(`/api/prodProcFlow/${prodLot}`)
                     .catch(err => console.log(err));
         this.procFlow = ajaxRes.data;
         this.procFlowList = [];
+        this.prodOrderidx = index;
       },
+      // 생산공정 조회
       async selectProc(index){
         let param = {lot: this.prodProdProcessInfo.prod_order_lot,
                      prodId: this.procFlow[index].proc_id};
@@ -291,44 +296,45 @@ export default {
       },
       // 공정생성버튼
       async addList(){
-        // console.log(this.procFlow[this.number].proc_id);
-        // if(){
           this.procFlowList.push({prod_order_lot:this.prodProdProcessInfo.prod_order_lot,
                                   employee_id: this.prodProdProcessInfo.employee_id,
                                   proc_order_amount: this.prodProdProcessInfo.order_amount,
                                   proc_id: this.procFlow[this.number].proc_id});
-        // }
-                    
       },
       // 공정저장버튼
       async addinsert(list){
+        // 투입량 확인
+        // if(input_amount){
+        // console.log(this.list.input_amount);
+        // }
         // 이미 저장된 데이터는 제거.
         let param = list.filter(item =>{
           return Object.hasOwn(item, 'prod_order_lot');
         });
+
         let ajaxRes =
         await axios.post(`/api/insertProdProc`, param)
                     .catch(err => console.log(err));
         let result = ajaxRes.data.affectedRows;
         
-        console.log(result);
         if(result > 0){
           alert('저장되었습니다.');
+          await this.prodOrder(this.prodOrderidx);
           await this.selectProc(this.number);
         }else{
           alert('저장에 실패했습니다.');
+          await this.prodOrder(this.prodOrderidx);
           await this.selectProc(this.number);
         }
       },
       // 공정시작
       async startTime(idx){
         let info = this.procFlowList[idx].prod_proc_id;
-        console.log(info);
-        alert('공정이 시작되었습니다.');
         let ajaxRes =
         await axios.put(`/api/updateStartTime/${info}`)
-                    .catch(err => console.log(err));
+        .catch(err => console.log(err));
         let result = ajaxRes.data.affectedRows;
+        alert('공정이 시작되었습니다.');
         await this.selectProc(this.number);
       },
       // 공정 종료 버튼
@@ -346,7 +352,9 @@ export default {
           await axios.put(`/api/updateEndTime/${id}`, info)
                      .catch(err => console.log(err));
           let result = ajaxRes.data.affectedRows;
+          await this.prodOrder(this.prodOrderidx);
           await this.selectProc(this.number);
+          this.proc_fail_amount= '';
         }
       },
       async inx(idx){
