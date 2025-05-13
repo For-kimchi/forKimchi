@@ -1,13 +1,31 @@
 <template>
   <div class="container-fluid">
+
+    <div class="row mt-3">
+      <div class="col text-end">
+        <button class="btn btn-success" @click="search">조회</button>
+        <button class="btn btn-info ms-2" @click="resetForm">등록</button>
+      </div>
+    </div>
+
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
-          <h6 class="text-white text-capitalize ps-3">검사항목 관리</h6>
+          <h6 class="text-white text-capitalize ps-3">검사항목관리</h6>
         </div>
       </div>
       <div class="row g-2 my-3 px-3">
         <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">검사명</label>
+            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="제품명" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">검사ID</label>
+            <input v-model="searchId" type="text" class="form-control border text-center" placeholder="제품ID" />
+          </div>
         </div>
       </div>
     </div>
@@ -25,22 +43,24 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="align-middle text-center">검사Id</th>
+                    <th class="align-middle text-center">검사DB</th>
                     <th class="align-middle text-center">검사명</th>
-                    <th class="align-middle text-center">검사기준치</th>
-                    <th class="align-middle text-center">검사항목</th>
-                    <th class="align-middle text-center">작업</th>
+                    <th class="align-middle text-center">검사기준</th>
+                    <th class="align-middle text-center">비교기준</th>
+                    <th class="align-middle text-center">검사방법</th>
+                    <th class="align-middle text-center"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, idx) in optionList" v-bind:key="option_id">
+                  <tr v-for="(item, index) in optionList" v-bind:key="option_id">
                     <td class="align-middle text-center">{{ item.option_id }}</td>
                     <td class="align-middle text-center">{{ item.option_name }}</td>
                     <td class="align-middle text-center">{{ item.option_standard }}</td>
                     <td class="align-middle text-center">{{ item.option_method }}</td>
+                    <td class="align-middle text-center">{{ item.option_operator }}</td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-warning" v-on:click="editOption(item)">수정</button>
-                      <button class="btn btn-danger ms-2" v-on:click="delOption(item.option_id)">삭제</button>
+                      <button class="btn btn-warning m-0" v-on:click="editOption(index)">수정</button>
+                      <button class="btn btn-danger m-0 ms-2" v-on:click="delOption(index)">삭제</button>
                     </td>
                   </tr>
                   <tr v-if="optionList.length === 0">
@@ -65,16 +85,24 @@
             <input v-model="selected.option_name" type="text" class="form-control border text-center" />
           </div>
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0" style="width: 100px;">검사기준치</label>
+            <label class="form-label me-2 mb-0" style="width: 100px;">검사기준</label>
             <input v-model="selected.option_standard" type="text" class="form-control border text-center" />
           </div>
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0" style="width: 100px;">검사항목</label>
+            <label class="form-label me-2 mb-0" style="width: 100px;">비교기준</label>
+            <select v-model="selected.option_operator" class="form-select border text-center">
+              <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
+                {{ code.sub_code_name }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0" style="width: 100px;">검사방법</label>
             <input v-model="selected.option_method" type="text" class="form-control border text-center" />
           </div>
           <div class="text-end">
-            <button class="btn btn-primary" @click="save">저장</button>
-            <button class="btn btn-secondary ms-2" @click="resetForm">취소</button>
+            <button class="btn btn-primary m-0" @click="save">저장</button>
+            <button class="btn btn-secondary m-0 ms-2" @click="resetForm">취소</button>
           </div>
         </div>
       </div>
@@ -89,10 +117,7 @@
   export default {
     data() {
       return {
-        textValue: "",
-
         action: '추가', // 액션(추가/수정)
-        items: [], // 검사기준 목록
         optionList: [],
         selected: {
           option_id: '',
@@ -115,13 +140,9 @@
       },
 
       // 수정(담기만)
-      async editOption(item) {
-        const {option_id, ...item_} = item;
-        this.selected = item_;
-        this.selected.option_id = option_id;
+      async editOption(index) {
+        this.selected = this.optionList[index];
         this.action = '수정';
-
-    
       },
 
       // 저장 (추가/수정)

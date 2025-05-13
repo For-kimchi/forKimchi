@@ -101,7 +101,7 @@
       </li>
 
       <!-- Example -->
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="Examples">
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">close</i>
@@ -116,7 +116,7 @@
             <SidenavCollapseItem refer="/signUp" miniIcon="" text="SignUp"/>
           </template>
         </sidenav-collapse>
-      </li>
+      </li> -->
 
     </ul>
   </div>

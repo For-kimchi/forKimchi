@@ -32,6 +32,9 @@ const postOrder = async (orderInfo) => {
 
       let column = ['order_detail_id', 'order_id', 'prod_id', 'order_amount', 'deliv_due_date'];  
 
+      selectedSql = await mariaDB.selectedQuery('selectLastOrderDetail', {});
+      let old_order_details = await conn.query("selectOrderDetail", order.order_id);
+
       for (let detail_full of order_details) {
 
         let { 
@@ -39,7 +42,7 @@ const postOrder = async (orderInfo) => {
           ...detail
         } = detail_full;
 
-        console.log(detail);
+        // 없어진 항목 삭제 처리!
 
         if (detail.hasOwnProperty('order_detail_id') && detail.order_detail_id) {
           selectedSql = await mariaDB.selectedQuery('updateOrderDetail', {});
