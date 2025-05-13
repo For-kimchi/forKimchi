@@ -62,7 +62,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(product, idx) in items" :key="product.prod_id" @click="editItem(product)">
+                  <tr v-for="(product, index) in items" :key="product.prod_id" @click="editItem(index)">
                     <td class="align-middle text-center">{{ product.prod_id }}</td>
                     <td class="align-middle text-center">{{ product.prod_name }}</td>
                     <td class="align-middle text-center">{{ product.prod_size }}</td>
@@ -157,10 +157,10 @@
       search() {
         this.getBasicProd();
       },
-      editItem(product) {
+      editItem(index) {
         this.action = '수정',
           this.selected = {
-            ...product
+            ...this.items[index]
           };
       },
       resetForm() {

@@ -159,11 +159,11 @@
         return formatDate(dateString);
       },
       formatDateAfter() {
-        return formatDateAfter(this.order_date, 14);
+        return formatDateAfter(this.order.order_date, 14);
       },
       addRow() {
         this.orderDetails.push({
-          deliv_due_date: formatDateAfter(),
+          deliv_due_date: this.formatDateAfter(),
         });
       },
       removeRows(index) {
