@@ -210,16 +210,17 @@ order by tqp.prod_proc_id
 
 // 제품검사조회 (상세)
 const prodQualityViewDetail = 
-`select DISTINCT
-C.option_id, 
-C.option_name, 
-C.option_standard, 
-sub_code(B.quality_result) result
-from 
-t_quality_prod A join 
-t_quality_prod_detail B on (A.quality_id = B.quality_id) join
-t_quality_option C on (B.option_id = C.option_id)
-where A.quality_id= ?
+`SELECT DISTINCT
+	m.option_id, 
+    option_name, 
+    option_standard,
+    quality_result_value,
+    sub_code(m.quality_result) result
+FROM 
+	t_quality_prod t join
+    t_quality_prod_detail m on (t.quality_id = m.quality_id)join
+    t_quality_option o on (m.option_id = o.option_id)
+where m.quality_id= ?
 `;
 
 // 검사완료된 항목 상태값 변경 - 검사 합격 시
