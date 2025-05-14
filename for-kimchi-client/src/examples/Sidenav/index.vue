@@ -35,7 +35,7 @@
           class="navbar-brand-img h-100"
           alt="main_logo"
         /> -->
-        <span class="ms-2 font-weight-bold text-white">For 김치</span>
+        <h4 class="ms-2 font-weight-bold text-white">For 김치</h4>
       </div>
     </div>
     <hr class="horizontal light mt-0 mb-2" />
