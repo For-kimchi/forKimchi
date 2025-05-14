@@ -81,15 +81,19 @@
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_id}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_name}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.count}}</td>
-                      <td class="align-middle font-weight-bolder text-center" v-if="info.proc_seq == 1">{{prodProdProcessInfo.order_amount}}</td>
+                      <td class="align-middle font-weight-bolder text-center" v-if="info.proc_seq == 1">
+                        <input type="text" class="text-center align-middle font-weight-bolder" style="background-color: white; border: 0; width: 50px;" v-model="order_amount" disabled></td>
                       <td class="align-middle font-weight-bolder text-center" v-else>{{procFlow[index - 1].sum_pass_amount}}</td>
+                       <!-- <td class="align-middle font-weight-bolder text-center" v-else>
+                        <input type="text" class="text-center align-middle font-weight-bolder" style="background-color: white; border: 0;" v-model="pass_amount" disabled></td> -->
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_input_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_fail_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_pass_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.proc_type}}</span></td>
-                      <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '일반'"><span class="badge badge-sm bg-gradient-info">공정완료</span></td>
-                      <td class="align-middle font-weight-bolder text-center" v-else-if="info.count == info.status && procFlow[index].proc_type == '품질검사대상'"><button class="btn btn-danger p-2 m-0">품질검사요청</button></td>
-                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '품질검사대상' && info.count > 0"><button class="btn btn-danger p-2 m-0">품질검사요청</button></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else-if="info.count == info.status && info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정완료</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else-if="(info.count == info.status && info.proc_type == '일반') || info.count >= 0"><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정진행중</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -253,14 +257,24 @@ export default {
             prodOrderidx: '',
             // 공정상태 확인
             procType: false,
+            amount: 0,
+            order_amount: 0,
+            pass_amount: 0,
         }
     },
     created(){
         this.prodProdProcessList();
     },
     computed:{
+      isValue(){
+        return ;
+      },
+      // pass_amount(){
+      //   return this.procFlow[index - 1].sum_pass_amount;
+      // },
     },
     methods:{
+      // 생산지시 리스트
      async prodProdProcessList(){
         let ajaxRes =
         await axios.get(`/api/prodProcess`)
@@ -276,15 +290,13 @@ export default {
         await axios.get(`/api/prodProcFlow/${prodLot}`)
                     .catch(err => console.log(err));
         this.procFlow = ajaxRes.data;
-        // // count와 status의 값이 똑같다면 모든공정완료
-        // if(procFlow.count == procFlow.status){
-        //   this.procType = true;
-        // }else{
-        //   this.procType = false;
-        // }
+        // 버튼 클릭시 list 초기화
         this.procFlowList = [];
+        // index값 저장
         this.prodOrderidx = index;
-
+        // 값 활용하기위해서 저장
+        this.order_amount = this.prodProdProcessInfo.order_amount;
+        // this.pass_amount;
       },
       // 생산공정 조회
       async selectProc(index){
@@ -295,6 +307,7 @@ export default {
         await axios.put(`/api/prodProcFlowInfo`, param)
                   .catch(err => console.log(err));
         this.procFlowList = ajaxRes.data;
+        // index값 저장
         this.number = index;
       },
       // 공정생성버튼
@@ -304,17 +317,48 @@ export default {
                                   proc_order_amount: this.prodProdProcessInfo.order_amount,
                                   proc_id: this.procFlow[this.number].proc_id});
       },
-      // 공정저장버튼
+      // 공정저장버튼(procFlowList)
       async addinsert(list){
-        // 투입량 확인
-        // if(input_amount){
-        // console.log(this.list.input_amount);
-        // }
+        // input값이 빈값이라면 저장 취소.
+        for(let listcheck of list){
+          if(!Object.hasOwn(listcheck, 'input_amount') && !Object.hasOwn(listcheck, 'proc_input_amount')){
+            alert('값이 없습니다.');
+            return;
+          }
+          // 값이 저장안되있는 행
+          if(Object.hasOwn(listcheck, 'input_amount')){
+            this.amount += listcheck.input_amount;
+            // 값이 저장되있는 행
+          }else if(Object.hasOwn(listcheck, 'proc_input_amount')){
+            this.amount += listcheck.proc_input_amount;
+          }
+          this.amount == this.amount;
+        };
+        // 이전생산량을 현재 투입량과 비교
+        // index가 0번이 아니라면 이전 생산량과 비교
+        if(this.number > 0){
+          this.pass_amount = this.procFlow[this.number - 1].sum_pass_amount;
+          if(this.amount > this.pass_amount){
+            alert('투입량이 현재 지시량보다 많습니다.');
+            await this.prodOrder(this.prodOrderidx);
+            await this.selectProc(this.number);
+            return;
+          };
+          // index가 0번이라면 생산지시의 지시량과 비교
+        }else{
+          if(this.amount > this.order_amount){
+            alert('투입량이 현재 지시량보다 많습니다.');
+            await this.prodOrder(this.prodOrderidx);
+            await this.selectProc(this.number);
+            return;
+           };
+        };
         // 이미 저장된 데이터는 제거.(Object.hasOwn를 통해서 prod_order_lot가 객체안에 있다면 true 없으면 false)
         let param = list.filter(item =>{
           return Object.hasOwn(item, 'prod_order_lot');
         });
-        console.log(param);
+
+        // 통신처리
         let ajaxRes =
         await axios.post(`/api/insertProdProc`, param)
                     .catch(err => console.log(err));
