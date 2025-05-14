@@ -8,7 +8,7 @@ SELECT
         employee_id(employee_id) employee_id,
         sub_code(order_status) order_status
 FROM t_prod_order
-WHERE order_status in ('4d', '5d') and order_date > sysdate()
+WHERE order_status in ('4d', '3d') and order_date > sysdate()
 `;
 
 // 생산작업을 위한 공정흐름도 조회
@@ -78,8 +78,15 @@ INSERT INTO t_prod_proc(
                         proc_order_amount,
                         proc_input_amount,
                         proc_status)
-VALUES(?, ?, ?, 'EMP-001',? , ?, '1e');
+VALUES(?, ?, ?, ?, ?, ?, '1e');
 `;
+// 공정등록 시 생산지시 상태변경
+const updateOrderStatus =`
+UPDATE t_prod_order
+SET order_status = '4d'
+WHERE prod_order_lot = ?
+`;
+
 // startTime 업데이트
 const updateStartTime =`
 UPDATE t_prod_proc
@@ -113,4 +120,5 @@ module.exports = {
   updateEndTime,
   selectSumProdProcList,
   selectOrderProdId,
+  updateOrderStatus,
 }

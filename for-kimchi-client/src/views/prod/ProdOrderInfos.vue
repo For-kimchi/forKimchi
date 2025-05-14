@@ -142,6 +142,8 @@
     
 <script>
 import axios from 'axios'
+import { useUserStore } from "@/stores/user"; 
+import { mapState } from 'pinia';
 
 export default {
     name: "Prodorder",
@@ -157,6 +159,12 @@ export default {
     },
     created(){
       this.prodDetailList();
+    },
+    computed:{
+      ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
     },
     methods:{
       async prodDetailList(){
@@ -174,13 +182,15 @@ export default {
         this.planDetailId = planDtId.plan_detail_id;
         this.planDetailProd = planDtId.prod_id;
       },
-      // 담당자 추가해야함.
+      // 추가 버튼
       async addOrders(){
         let info ={plan_detail_id: this.planDetailId,
                   prod_id:         this.planDetailProd,
                   order_date:      this.prodDate,
-                  order_amount:    this.prodAmount
+                  order_amount:    this.prodAmount,
+                  employee_id :    this.userInfo.employee_id
         };
+        console.log(info);
         let ajaxRes =
         await axios.put(`/api/prodOrder`, info)
                     .catch(err=> console.log(err));

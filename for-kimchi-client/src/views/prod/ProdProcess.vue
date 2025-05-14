@@ -90,10 +90,10 @@
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_fail_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_pass_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.proc_type}}</span></td>
-                      <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '품질검사대상' && info.count > 0"><button class="btn btn-danger p-2 m-0">품질검사요청</button></td>
+                      <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '품질검사대상' && info.count > 0"><button class="btn btn-danger p-2 m-0" @click.stop="addQuality(index)">품질검사요청</button></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.count == info.status && info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정완료</span></td>
-                      <td class="align-middle font-weight-bolder text-center" v-else-if="(info.count == info.status && info.proc_type == '일반') || info.count >= 0"><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
-                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정진행중</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정진행중</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -274,14 +274,14 @@ export default {
       // },
     },
     methods:{
-      // 생산지시 리스트
+      // 생산지시 리스트 prodProdProcessLists
      async prodProdProcessList(){
         let ajaxRes =
         await axios.get(`/api/prodProcess`)
                     .catch(err => console.log(err));
         this.prodProdProcessLists = ajaxRes.data;
      },
-     // 생산지시선택 버튼
+     // 생산지시선택 버튼 procFlow
      async prodOrder(index){
         this.prodProdProcessInfo = this.prodProdProcessLists[index];
         // let prodId = this.prodProdProcessInfo.prod_id;
@@ -298,7 +298,7 @@ export default {
         this.order_amount = this.prodProdProcessInfo.order_amount;
         // this.pass_amount;
       },
-      // 생산공정 조회
+      // 생산공정 조회 procFlowList
       async selectProc(index){
         let param = {lot: this.prodProdProcessInfo.prod_order_lot,
                      prodId: this.procFlow[index].proc_id};
@@ -310,7 +310,7 @@ export default {
         // index값 저장
         this.number = index;
       },
-      // 공정생성버튼
+      // 공정생성버튼(procFlowList)
       async addList(){
           this.procFlowList.push({prod_order_lot:this.prodProdProcessInfo.prod_order_lot,
                                   employee_id: this.prodProdProcessInfo.employee_id,
@@ -320,6 +320,7 @@ export default {
       // 공정저장버튼(procFlowList)
       async addinsert(list){
         // input값이 빈값이라면 저장 취소.
+        this.amount = 0;
         for(let listcheck of list){
           if(!Object.hasOwn(listcheck, 'input_amount') && !Object.hasOwn(listcheck, 'proc_input_amount')){
             alert('값이 없습니다.');
@@ -407,7 +408,14 @@ export default {
       async inx(idx){
         this.indexs = idx;
         console.log(this.indexs);
-      }
+      },
+      // 품질검사요청 버튼
+      async addQuality(idx){
+        await this.selectProc(idx);
+        let info = this.procFlowList;
+        console.log(info);
+        
+      },
     }
 }
     

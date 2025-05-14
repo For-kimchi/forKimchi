@@ -84,8 +84,7 @@ const insertProdOrder = async(prodOrder) =>{
 
         prodOrder.prod_order_lot = newOrderLot;
         prodOrder.prod_id = prodId;
-
-        let cloumn = ['plan_detail_id', 'prod_order_lot', 'prod_id', 'order_date', 'order_amount'];
+        let cloumn = ['plan_detail_id', 'prod_order_lot', 'prod_id', 'order_date', 'order_amount', 'employee_id'];
         let convert = converts.convertObjToAry(prodOrder, cloumn);
         
         selectedSql = await mariaDB.selectedQuery('insertProdOrderInfo', convert);
@@ -173,6 +172,11 @@ const insertProdProcList = async(procList) =>{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
         let result;
+
+        let lot = [procList[0].prod_order_lot];
+        selectedSql = await mariaDB.selectedQuery('updateOrderStatus', lot);
+        result = await conn.query(selectedSql, lot);
+
         // for문
         for(let prodProc of procList){
             // prodProcId 생성
@@ -185,7 +189,7 @@ const insertProdProcList = async(procList) =>{
             
             
             // convert employee_id 추가해야함.
-            let cloumn = ['prod_proc_id', 'prod_order_lot', 'proc_id', 'proc_order_amount', 'input_amount'];
+            let cloumn = ['prod_proc_id', 'prod_order_lot', 'proc_id', 'employee_id', 'proc_order_amount', 'input_amount'];
             let convert = converts.convertObjToAry(prodProc, cloumn);
             
             // console.log(convert);
