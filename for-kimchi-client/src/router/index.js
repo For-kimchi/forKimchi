@@ -169,11 +169,19 @@ const routes = [
     path: "/qualityManager",
     name: "qualityManager",
     component: qualityManager,
+    meta: { 
+      requiresAuth: true,
+      pageName: '검사기준관리',
+     }
   },
   {
     path: "/qualityList",
     name: "qualityList",
     component: qualityList,
+    meta: { 
+      requiresAuth: true,
+      pageName: '검사항목관리',
+     }
   },
   // 김어진 (자재발주)
   {
@@ -228,36 +236,66 @@ const routes = [
     path: "/basicprod",
     name: "BasicProd",
     component: BasicProd,
+    meta: { 
+      requiresAuth: true,
+      pageName: '제품관리',
+     }
   },
   {
     path: "/basicmate",
     name: "BasicMate",
     component: BasicMate,
+    meta: { 
+      requiresAuth: true,
+      pageName: '자재관리',
+     }
+    
   },
   {
     path: "/basicbom",
     name: "BasicBom",
     component: BasicBom,
+    meta: { 
+      requiresAuth: true,
+      pageName: 'BOM관리',
+     }
   },
   {
     path: "/basicproc",
     name: "BasicProc",
     component: BasicProc,
+    meta: { 
+      requiresAuth: true,
+      pageName: '공정관리',
+     }
   },
   {
     path: "/basicprocflow",
     name: "BasicProcFlow",
     component: BasicProcFlow,
+    meta: { 
+      requiresAuth: true,
+      pageName: '공정흐름도관리',
+     }
   },
   {
     path: "/basicvendor",
     name: "BasicVendor",
     component: BasicVendor,
+    meta: { 
+      requiresAuth: true,
+      pageName: '거래처관리',
+     }
+    
   },
   {
     path: "/basicemp",
     name: "BasicEmployee",
     component: BasicEmployee,
+    meta: { 
+      requiresAuth: true,
+      pageName: '사원관리',
+     }
   },
   //business (영업)
   {

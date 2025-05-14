@@ -56,7 +56,7 @@ const mateQualityInsert = async (mateInfo) => {
     let lastMateDetailId = lastmateDetail[0].quality_detail_id;
 
     for (let detail of details) {
-      
+
       // mateQuality detail key 생성
       let newMateDetailId = keys.getNextKeyId(lastMateDetailId);
       detail.quality_detail_id = newMateDetailId;
@@ -73,10 +73,10 @@ const mateQualityInsert = async (mateInfo) => {
       // mateQuality detail insert 완료 시 최근 key 정보 갱신
       lastMateDetailId = newMateDetailId;
     }
-    
+
     selectedSql = await mariaDB.selectedQuery('updateMate', {});
-      result = await conn.query(selectedSql, mate.inbound_detail_id);
-    
+    result = await conn.query(selectedSql, mate.inbound_detail_id);
+
 
     // 정상 완료 시 commit
     conn.commit();
@@ -102,10 +102,10 @@ const mateQualityInsert = async (mateInfo) => {
 // };
 
 // 자재상세
-const updateMateQuality = async(id) => {
+const updateMateQuality = async (id) => {
   console.log(id);
   let mateColumn = ['option_id', 'quality_detail_id'];
-  let params =  converts.convertObjToAry(id[0], mateColumn);
+  let params = converts.convertObjToAry(id[0], mateColumn);
   console.log(params);
   let result = await mariaDB.query('updateMateQuality', params);
   return result;
@@ -113,19 +113,19 @@ const updateMateQuality = async(id) => {
 
 
 // 자재검사조회 (드롭다운)
-const mateQualityViewDropDown = async() => {
+const mateQualityViewDropDown = async () => {
   let list = await mariaDB.query('mateQualityViewDropDown');
   return list;
 };
 
 // 자재검사조회
-const mateQualityViewAll = async() => {
+const mateQualityViewAll = async () => {
   let list = await mariaDB.query('mateQualityViewAll');
   return list;
 };
 
 // 자재검사조회 (상세)
-const mateQualityViewDetail = async(detailId) => {
+const mateQualityViewDetail = async (detailId) => {
   let list = await mariaDB.query('mateQualityViewDetail', detailId);
   return list;
 }
@@ -133,31 +133,31 @@ const mateQualityViewDetail = async(detailId) => {
 // -------------------------------------------------------------------
 
 //제품검사요청
-const prodQualityReq = async() => {
+const prodQualityReq = async () => {
   let list = await mariaDB.query('prodQualityReq');
   return list;
 }
 
 //제품검사요청 (대기)
-const prodQualityWait = async(detailId) => {
+const prodQualityWait = async (detailId) => {
   let list = await mariaDB.query('prodQualityWait', detailId);
   return list;
 }
 
 // 제품검사조회 (드롭다운)
-const prodQualityViewDropDown = async() => {
+const prodQualityViewDropDown = async () => {
   let list = await mariaDB.query('prodQualityViewDropDown');
   return list;
 };
 
 // 제품검사조회
-const prodQualityViewAll = async() => {
+const prodQualityViewAll = async () => {
   let list = await mariaDB.query('prodQualityViewAll');
   return list;
 };
 
 // 제품검사조회 (상세)
-const prodQualityViewDetail = async(detailId) => {
+const prodQualityViewDetail = async (detailId) => {
   let list = await mariaDB.query('prodQualityViewDetail', detailId);
   return list;
 }
@@ -172,7 +172,7 @@ const selectOption = async (params) => {
     let selected = [];
     for (let i = 0; i < (count - 1); i++) {
       selected.push('AND ');
-      
+
     }
 
     keyword = converts.convertObjToQueryLike(params, selected);
@@ -213,7 +213,7 @@ const insertOption = async (body) => {
   return result;
 };
 // 검사항목 삭제
-const deleteOption = async(id) => {
+const deleteOption = async (id) => {
   let list = await mariaDB.query('deleteOption', id);
   return list;
 };
@@ -228,7 +228,7 @@ const selectOptionControl = async (params) => {
     let selected = [];
     for (let i = 0; i < (count - 1); i++) {
       selected.push('AND ');
-      
+
     }
 
     keyword = converts.convertObjToQueryLike(params, selected);
@@ -241,27 +241,27 @@ const selectOptionControl = async (params) => {
 };
 
 // 검사기준관리 (검사항목 등록)
-  const insertOptionControl = async(params)=>{
-    let columnlist = ['option_id', 'option_name', 'option_standard', 'option_method'];
-    let addInfo = converts.convertObjToAry(params, columnlist);
-    let result = await mariaDB.query('insertOption', addInfo);
-    return result;
-  };
+const insertOptionControl = async (params) => {
+  let columnlist = ['option_id', 'option_name', 'option_standard', 'option_method'];
+  let addInfo = converts.convertObjToAry(params, columnlist);
+  let result = await mariaDB.query('insertOption', addInfo);
+  return result;
+};
 // 검사기준 업데이트
-const updateOptionControl = async(info, id) => {
+const updateOptionControl = async (info, id) => {
   let updateOpt = [info.option_id, info.option_name, info.option_standard, info.option_method, id];
   let result = await mariaDB.query('updateOption', updateOpt);
   return result;
 };
 // 검사기준 삭제
-const deleteOptionControl = async(id) => {
+const deleteOptionControl = async (id) => {
   let list = await mariaDB.query('deleteOption', id);
   return list;
 };
 
 // 검사기준관리
 // 검사기준조회
-const getStds = async(params) => {
+const getStds = async (params) => {
   let target_id = params.target_id;
 
   let list = await mariaDB.query('selectStd', target_id);
@@ -285,8 +285,83 @@ const getStds = async(params) => {
     }
   }
 
-  return list;
+  return std;
 };
+
+const postStds = async (body) => {
+  let res = {
+    success: true,
+  };
+
+  try {
+    conn = await mariaDB.getConnection();
+    await conn.beginTransaction();
+
+    const {
+      std_details,
+      ...std
+    } = body;
+
+    let selectedSql = await mariaDB.selectedQuery('updateStdStatus', std.target_id);
+    let result = await conn.query(selectedSql, std.target_id);
+
+    selectedSql = await mariaDB.selectedQuery('selectLastStd', {});
+    let lastItem = await conn.query(selectedSql, {});
+    let lastKey = lastItem[0].std_id;
+
+    let newKey = keys.getNextUniqueId(lastKey);
+    std.std_id = newKey;
+
+    if (std.target_id.startsWith('MAT')) {
+      std.std_type = '1s';
+    } else {
+      std.std_type = '2s';
+    }
+
+    let column = ['std_id', 'std_type', 'target_id'];
+    let param = converts.convertObjToAry(std, column);
+
+    selectedSql = await mariaDB.selectedQuery('insertStd', param);
+    result = await conn.query(selectedSql, param);
+
+    column = ['std_detail_id', 'std_id', 'option_id'];
+
+    selectedSql = await mariaDB.selectedQuery('selectLastStdDetail', {});
+    lastItem = await conn.query(selectedSql, {});
+    lastKey = lastItem[0].std_detail_id;
+
+    for (let detail of std_details) {
+
+      newKey = keys.getNextUniqueId(lastKey);
+      detail.std_detail_id = newKey;
+      detail.std_id = std.std_id;
+
+      param = converts.convertObjToAry(detail, column);
+
+      let selectedSql = await mariaDB.selectedQuery('insertStdDetail', param);
+      result = await conn.query(selectedSql, param);
+
+      lastKey = newKey;
+    }
+
+    // 정상 완료 시 commit
+    conn.commit();
+
+    return res;
+  } catch (err) {
+    // error 발생 시 console 출력 및 rollback
+    console.log(err);
+    if (conn) conn.rollback();
+
+    res.success = false;
+
+    return res;
+  } finally {
+    // connection 반환
+    if (conn) conn.release();
+  }
+
+}
 
 module.exports = {
   // 자재
@@ -311,5 +386,7 @@ module.exports = {
   selectOptionControl,
   insertOptionControl,
   updateOptionControl,
-  deleteOptionControl
+  deleteOptionControl,
+  getStds,
+  postStds,
 }

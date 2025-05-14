@@ -16,7 +16,7 @@
 
           <!-- 오른쪽: 버튼 -->
           <div class="d-flex gap-2">
-            <button type="button" class="btn btn-primary m-0" @click="doSearch">조회</button>
+            <button type="button" class="btn btn-success m-0" @click="doSearch">조회</button>
             <button type="button" class="btn btn-secondary m-0" @click="$emit('close')">닫기</button>
           </div>
         </div>

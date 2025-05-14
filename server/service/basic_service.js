@@ -128,7 +128,7 @@ const postMate = async (body) => {
   let result;
   if (body.mate_id) {
 
-    result = await mariaDB.query("updateMate", [body, body.mate_id]);
+    result = await mariaDB.query("updateBasicMate", [body, body.mate_id]);
 
   } else {
 

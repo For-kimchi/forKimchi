@@ -6,6 +6,7 @@
         <button class="btn btn-success" @click="getOrders">조회</button>
         <button class="btn btn-info ms-2" @click="registerOrder">등록</button>
         <button class="btn btn-warning ms-2" @click="modifyOrder">수정</button>
+        <!-- <button class="btn btn-danger ms-2" @click="removeOrder">삭제</button> -->
         <button class="btn btn-dark ms-2" @click="confirmOrder">승인</button>
       </div>
     </div>
@@ -127,9 +128,16 @@
 
 <script>
   import axios from 'axios';
-  import { mapState } from 'pinia';
-  import { useUserStore } from "@/stores/user";
-  import { formatDate, codeToName} from '@/utils/common';
+  import {
+    mapState
+  } from 'pinia';
+  import {
+    useUserStore
+  } from "@/stores/user";
+  import {
+    formatDate,
+    codeToName
+  } from '@/utils/common';
 
   export default {
     name: "주문조회",
@@ -149,9 +157,9 @@
     },
     computed: {
       ...mapState(useUserStore, [
-      "isLoggedIn",
-      "userInfo",
-    ])
+        "isLoggedIn",
+        "userInfo",
+      ])
     },
     methods: {
       registerOrder() {
@@ -175,7 +183,6 @@
         } else {
           alert('선택된 항목이 없습니다')
         }
-
       },
       async getOrders() {
         const params = {};
@@ -243,6 +250,38 @@
         } else {
           alert('선택된 항목이 없습니다.');
         }
+      },
+      async removeOrder() {
+        // if (this.selectedIndex != null) {
+
+        //   let selectedOrder = this.orders[this.selectedIndex];
+
+        //   if (selectedOrder.order_final_status == '1a') {
+        //     if (confirm('선택한 항목을 승인하시겠습니까?')) {
+        //     let res = await axios.delete(`/api/order`, {
+        //       params: {
+        //         order_id: selectedOrder.order_id
+        //       }
+        //     })
+        //       .catch(err => console.log(err));
+
+        //     console.log(res.data);
+
+        //     if (res.data.success) {
+        //       alert('선택된 항목이 승인되었습니다.');
+        //       this.getOrders();
+        //       this.orderDetails = [];
+
+        //     } else {
+        //       alert('승인 처리 중 오류가 발생했습니다.');
+        //     }
+        //   }
+        //   } else {
+        //     alert('승인완료된 건은 삭제할 수 없습니다')
+        //   }
+        // } else {
+        //   alert('선택된 항목이 없습니다')
+        // }
       },
       toggleAll() {
         this.orders.forEach(item => {

@@ -157,10 +157,17 @@ router.put('/options/:id', async (req, res) => {
 
 // 검사기준관리
 // 검사기준조회
-router.put('/stds', async (req, res) => {
-  let params = req.query;
-  let list = await quality_service.getStds(params);
+router.get('/stds', async (req, res) => {
+  let query = req.query;
+  let list = await quality_service.getStds(query);
   res.send(list);
+});
+
+// 검사기준조회
+router.post('/stds', async (req, res) => {
+  let body = req.body;
+  let result = await quality_service.postStds(body);
+  res.send(result);
 });
 
 

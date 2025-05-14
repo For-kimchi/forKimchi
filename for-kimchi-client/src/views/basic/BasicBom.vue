@@ -1,6 +1,12 @@
 <template>
   <div class="container-fluid">
 
+    <div class="row mt-3">
+      <div class="col text-end">
+        <button class="btn btn-info" @click="save">저장</button>
+      </div>
+    </div>
+
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
@@ -22,7 +28,18 @@
             <input v-model="prod.prod_id" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품ID" />
           </div>
         </div>
-
+        <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품규격</label>
+            <input v-model="prod.prod_size" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품규격" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">제품단위</label>
+            <input v-model="prod.prod_unit" type="text" class="form-control border text-center" @keydown.prevent placeholder="제품단위" />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -88,7 +105,7 @@
             <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명" />
             </div>
             <div class="col-md-3">
-              <button class="btn btn-primary m-0" @click="searchMaterial">검색</button>
+              <button class="btn btn-success m-0" @click="searchMaterial">검색</button>
             </div>
           </div>
             <div class="table-responsive p-0" style="max-height: 400px;">
@@ -138,6 +155,12 @@
 import ProdModal from '../modal/ProdModal.vue';
 import axios from 'axios';
 import { formatDate, codeToName} from '@/utils/common';
+import {
+    mapState
+  } from 'pinia';
+  import {
+    useUserStore
+  } from "@/stores/user";
 
 export default {
   components: {
@@ -150,14 +173,14 @@ export default {
       bom: {},
       materials: [],
       prod:{},
-      employee: {
-        employee_id: 'EMP-001',
-        employee_name: '홍길동',
-      },
       codes: [],
     };
   },
   computed: {
+    ...mapState(useUserStore, [
+        "isLoggedIn",
+        "userInfo",
+      ])
   },
   methods: {
     async getBom() {
@@ -206,16 +229,13 @@ export default {
     },
     async save() {
 
-      this.bom.employee_id = this.employee.employee_id;
+      this.bom.employee_id = this.userInfo.employee_id;
 
       let res = await axios.post('/api/basicBom', this.bom)
       .catch(err => console.log(err));
       
       if (res.data.success) {
         alert('등록 성공');
-        this.bom = {};
-        this.materials = [];
-        this.prod = {};
       } else {
         alert('등록 실패');
       }

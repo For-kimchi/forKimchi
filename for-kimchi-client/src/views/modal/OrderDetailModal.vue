@@ -25,12 +25,14 @@
 
           <!-- 오른쪽: 버튼 -->
           <div class="d-flex gap-2">
-            <button type="button" class="btn btn-primary" @click="search">조회</button>
+            <button type="button" class="btn btn-success" @click="search">조회</button>
             <button type="button" class="btn btn-secondary" @click="$emit('close')">닫기</button>
           </div>
         </div>
         <!-- 검색 결과 테이블 -->
-        <table class="table table-hover">
+        <div style="max-height: 300px; overflow-y: auto;">
+
+        <table class="table table-hover" >
           <thead>
             <tr>
               <th>주문상세ID</th>
@@ -40,7 +42,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in results" :key="item.key" @click="selectItem(item)" style="cursor: pointer">
+            <tr v-for="item in results" :key="item.key" @click="selectItem(item)" style="cursor: pointer;">
               <td>{{ item.order_detail_id }}</td>
               <td>{{ item.prod_id }}</td>
               <td>{{ item.order_amount }}</td>
@@ -48,6 +50,7 @@
             </tr>
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   </teleport>

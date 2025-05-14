@@ -97,6 +97,16 @@ const selectOrder =
  SET ?
  WHERE order_detail_id = ?`;
 
+ const deleteOrder = 
+ `DELETE FROM t_order
+WHERE order_id = ?
+ `;
+
+ const deleteOrderDetail =
+ `DELETE FROM t_order_detail
+WHERE order_detail_ = ?
+ `;
+
 module.exports = {
   selectLastOrder,
   selectLastOrderDetail,
@@ -109,4 +119,6 @@ module.exports = {
   selectOrderOne,
   updateOrder,
   updateOrderDetail,
+  deleteOrder,
+  deleteOrderDetail,
 }

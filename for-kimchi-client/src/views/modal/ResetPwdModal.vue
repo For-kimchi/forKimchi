@@ -20,7 +20,7 @@
               </div>
 
               <div class="text-end">
-                <button class="btn btn-primary" @click="resetPwd">임시비밀번호발급</button>
+                <button class="btn btn-success" @click="resetPwd">임시비밀번호발급</button>
                 <button class="btn btn-secondary ms-2" @click="close">취소</button>
               </div>
 

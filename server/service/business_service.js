@@ -207,6 +207,23 @@ const postOrderConfirm = async (orderInfo) => {
   }
 };
 
+const deleteOrder = async (params) => {
+
+  let res = {
+    success: true,
+  }
+
+  let result = await mariaDB.query('deleteOrder', params);
+
+  if (result.affectedRows > 0) {
+    return res;
+  } else {
+    res.success = false;
+    return res;
+  }
+
+}
+
 const getDelivTarget = async (params) => {
 
   let column = ['startDate', 'endDate'];
@@ -378,6 +395,7 @@ module.exports = {
   getOrder,
   getOrderDetail,
   postOrderConfirm,
+  deleteOrder,
   getDelivTarget,
   getDelivProdTarget,
   postDeilv,
