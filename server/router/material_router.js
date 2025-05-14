@@ -56,7 +56,7 @@ router.get('/materialList', async (req, res) => {
                                 .catch(err=>console.log(err));
   res.send(matList);
 })
-// 관리페이지 상세조회
+// 자재발주관리페이지 상세조회
 router.get('/materialList/:id', async (req,res) => {
   let reqId = req.params.id;
   let reqInfo = await mateService.selectMateInfo(reqId);
@@ -107,12 +107,27 @@ router.get('/mateList', async (req, res) => {
   }
 });
 
-// 자재발주 저장버튼
+// 자재발주관리 저장버튼 클릭시 (req_id가 있으면 put, req_id가 없으면 post)
 router.post('/mateSave', async (req, res) => {
   const mate_detail_list = req.body;
   let result = await mateService.insertMates(mate_detail_list).catch((err) => console.log(err));
   res.send(result);
 }); 
 
+// 자재발주관리 저장버튼 클릭시 (req_id가 있으면 put, req_id가 없으면 post)
+router.put('/mateSave/:req_id', async (req, res) => {
+  const req_id = req.params.req_id;
+  const mate_detail_list = req.body;
+
+  let result = await mateService.updateMates(req_id, mate_detail_list).catch((err) => console.log(err));
+  res.send(result);
+});
+
+// 생산지시조회
+router.get('/mateOrder', async (req, res) => {
+  let list = req.query;
+  let mateOrderList = await mateService.mateOrder(list);
+  res.send(mateOrderList);
+})
 
 module.exports = router;

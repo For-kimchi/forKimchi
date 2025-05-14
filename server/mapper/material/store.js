@@ -39,7 +39,7 @@ const selectStoreList =
   CASE
     WHEN SUM(CASE WHEN id.inbound_status = '1p' THEN 1 ELSE 0 END) > 0 THEN '검사요청'
     WHEN COUNT(*) = SUM(CASE WHEN id.inbound_status = '2p' THEN 1 ELSE 0 END) THEN '검사완료'
-    WHEN SUM(CASE WHEN id.inbound_status IN ('3p', '4p') THEN 1 ELSE 0 END) > 0 THEN '입고마감'
+    WHEN SUM(CASE WHEN id.inbound_status IN ('3p', '4p') THEN 1 ELSE 0 END) > 0 THEN '입고완료'
     ELSE '기타'
   END AS inbound_final_status
 FROM t_mate_inbound i
@@ -88,15 +88,50 @@ const selectStore =
 
 // 창고입고 상세조회
 const selectDetailStore =
-`SELECT inbound_detail_id
-        ,inbound_amount
-        ,pass_amount
-        ,fail_amount
-        ,sub_code(inbound_status) inbound_status
-        ,mate_id
-        ,memo
-FROM t_mate_inbound_detail
-WHERE inbound_id = ?`;
+`SELECT 
+  ib.inbound_id,
+  DATE_FORMAT(ib.inbound_date, '%Y-%m-%d') AS inbound_date,
+  ib.vendor_id,
+  employee_id(ib.employee_id) AS employee_id,
+  ib.memo,
+
+  ibd.inbound_detail_id,
+  MAX(ibd.mate_id) AS mate_id,  -- 예시로 MAX를 사용
+  MAX(ibd.inbound_amount) AS inbound_amount,  -- SUM 대신 MAX를 사용하여 한 값만 취함
+  MAX(ibd.memo) AS detail_memo,
+
+  CASE 
+    WHEN qmd.quality_result = '1r' THEN '합격'
+    WHEN qmd.quality_result = '2r' THEN '불합격'
+    ELSE NULL
+  END AS quality_result,
+
+  CASE 
+    WHEN qmd.quality_result = '2r' THEN '반품'
+    ELSE '입고'
+  END AS inbound_type
+
+FROM t_mate_inbound ib
+JOIN t_mate_inbound_detail ibd ON ib.inbound_id = ibd.inbound_id
+LEFT JOIN t_quality_mate qm ON ibd.inbound_detail_id = qm.inbound_detail_id
+LEFT JOIN t_quality_mate_detail qmd ON qm.quality_id = qmd.quality_id
+
+WHERE ib.inbound_id = ?
+GROUP BY 
+  ib.inbound_id, 
+  ibd.inbound_detail_id
+
+
+`
+// `SELECT inbound_detail_id
+//         ,inbound_amount
+//         ,pass_amount
+//         ,fail_amount
+//         ,sub_code(inbound_status) inbound_status
+//         ,mate_id
+//         ,memo
+// FROM t_mate_inbound_detail
+// WHERE inbound_id = ?`;
 
 // 창고입고조회 (검사완료건만 조회)
 const selectWareStatus = 
@@ -196,6 +231,27 @@ const updateWarehouse =
 SET inbound_status = '4p'
 WHERE inbound_id =?`;
 
+// 창고 LOT별 전체조회
+const warehouseLotList =
+`SELECT 
+    warehouse_id,
+    mate_lot,
+    mate_id,
+    mate_amount,
+    inbound_date,
+    employee_id
+FROM t_mate_warehouse
+ORDER BY inbound_date DESC`;
+
+// 창고 자재별 묶음 합계조회
+const groupBywareList =
+`SELECT 
+    mate_id(mate_id) mate_id,
+    SUM(mate_amount) AS mate_amount,
+    MAX(inbound_date) AS last_inbound_date,
+    COUNT(*) AS lot_count
+FROM t_mate_warehouse
+GROUP BY mate_id`;
 
 // 자재입고삭제
 
@@ -227,4 +283,6 @@ module.exports = {
   selectStoreMateList,
   selectStoreMateDetail,
   updateWarehouse,
+  warehouseLotList,
+  groupBywareList,
 }

@@ -142,13 +142,26 @@ const deleteMaterial = async(reqId) => {
   return result;
 };
 
+// 자재발주관리에서 req_id가 있을경우 수정 (update)
+const updateMates = async (updateData) => {
+  let result = await mariaDB.query('updateMateQuery', updateData);
+  return result;
+};
+
+// 생산지시조회
+const mateOrder = async () => {
+  let list = await mariaDB.query('mateOrderList');
+  return list;
+}
+
+
 // 발주저장버튼
 const insertMates = async (mateSaveInfo) => {
   let list = ['mate_id','mate_name'];
   // let result = await mariaDB.query('insertMate', addList);
   // let addList = converterAray.convertObjToAry(mateSaveInfo, list);
   let conn;
-  
+
   try{
     conn = await mariaDB.getConnection();
           await conn.beginTransaction();
@@ -237,6 +250,7 @@ const insertMates = async (mateSaveInfo) => {
           }
 };
 
+
 module.exports = {
   mateReqAll,
   mateReqById,
@@ -248,4 +262,6 @@ module.exports = {
   searchOrder,
   mateConfirm,
   selectMateInfo,
+  updateMates,
+  mateOrder,
 }

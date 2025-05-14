@@ -55,7 +55,12 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_final_status }}</td>
+                    <td class="align-middle text-center">
+                    <button class= "btn btn-sm" :class="{ 'btn-warning': info.inbound_final_status === '검사요청',
+                                                          'btn-info': info.inbound_final_status === '검사완료',
+                                                          'btn-success': info.inbound_final_status === '입고완료'
+                                                          }"disabled>{{ info.inbound_final_status }}</button>
+                    </td>
                   </tr>
                 </tbody>
               </table>

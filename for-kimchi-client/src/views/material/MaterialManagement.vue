@@ -6,16 +6,25 @@
       <!-- <button class="btn btn-danger" >삭제</button> -->
       <button class="btn btn-info" @click="goBack">닫기</button>
     </div>
-
     <div class="row">
+  <div class="col-12 text-end">
+    <button class="btn btn-outline-primary mb-2" @click="goToProdOrderPage">
+      📋 생산지시서 조회
+    </button>
+  </div>
+</div>
+    <div class="row">
+      
       <div class="col-12">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              
               <h6 class="text-white text-capitalize ps-3">검색</h6>
+              
             </div>
           </div>
-
+          
           <div class="card-body">
             <ul class="list-group list-group-horizontal">
               <li class="list-group-item d-flex align-items-center">
@@ -170,7 +179,9 @@
                       <td>{{ info.vendor_id }}</td>
                       <td>{{ info.employee_id }}</td>
                       <td>{{ info.req_due_date }}</td>
-                      <td>{{ info.req_status }}</td>
+                      <td><button class="btn btn-sm btn-warning" disabled>
+    {{ info.req_status }}
+  </button></td>
                       <td>{{ info.memo }}</td>
                       <td>{{ info.confirm_date }}</td>
                       <td>{{ info.manager_id }}</td>
@@ -230,13 +241,24 @@ export default {
       updates: {},
       action: '수정',
       companies: [],
+      materialList: [],
     };
     
   },
   created() {
 this.getMateList();
+  const stored = sessionStorage.getItem('auto_materials');
+    if (stored) {
+      this.materialList = JSON.parse(stored);
+      sessionStorage.removeItem('auto_materials'); // 한 번만 쓰고 삭제
+    }
   },
   methods: {
+    //생산지시조회 페이지 이동
+    goToProdOrderPage() {
+    this.$router.push({ name: 'MateProdOrder' });
+  },
+  
     toggleAll(listName, event) {
       const isChecked = event.target.checked;
       this[listName].forEach(item => {
@@ -261,6 +283,7 @@ async updateMateList(idx) {
                               .catch(err => console.log(err));
      this.selectedList = ajaxRes.data;
      this.vendor.vendor_name = this.materialList[idx].vendor_id;
+     this.req_due_date = this.materialList[idx].req_due_date;
 
 },
 // this.action = '수정';
@@ -481,6 +504,19 @@ async deleteRow(index) {
   },
   mounted() {
   this.fetchCompanies();
+  const autoMaterials = sessionStorage.getItem('auto_materials');
+  if (autoMaterials) {
+    const data = JSON.parse(autoMaterials);
+
+    // 예시: editForm에 값 세팅
+    this.editForm.prod_order_lot = data.prod_order_lot;
+    this.editForm.order_date = data.order_date;
+    this.editForm.order_amount = data.order_amount;
+    this.editForm.order_status = data.order_status;
+    this.editForm.memo = data.memo;
+
+    sessionStorage.removeItem('auto_materials'); // 한 번만 사용
+  }
   },
 }
 </script>

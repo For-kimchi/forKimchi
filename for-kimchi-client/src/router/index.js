@@ -43,7 +43,8 @@ import StoreManagement from "../views/material/StoreManagement.vue";
 // 김어진 (창고현황)
 import WarehouseList from "../views/material/WarehouseList.vue";
 import WarehouseAdd from "../views/material/WarehouseAdd.vue";
-
+// 김어진 (생산지시조회)
+import MateProdOrder from "../views/material/MateProdOrder.vue";
 //business (영업)
 import OrderList from "../views/business/OrderList.vue";
 import OrderMng from "../views/business/OrderMng.vue";
@@ -209,6 +210,13 @@ const routes = [
     name: "WarehouseAdd",
     component: WarehouseAdd
   },
+  // 어진 (생산지시조회)
+  {
+    path: "/mateProdOrder",
+    name: "MateProdOrder",
+    component: MateProdOrder
+  },
+
 
   {
     path: "/mateQuality",

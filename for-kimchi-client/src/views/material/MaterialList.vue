@@ -92,7 +92,12 @@
                       <td>{{ info.vendor_name }}</td>
                       <td>{{ info.employee_name }}</td>
                       <td>{{ info.req_due_date }}</td>
-                      <td>{{ info.req_status }}</td>
+                      <td class="align-middle text-center">
+                      <button class="btn btn-sm" :class="{
+                                                          'btn-primary': info.req_status === '발주등록',
+                                                          'btn-success': info.req_status === '발주승인',
+                                                           'btn-secondary': info.req_status === '발주마감'
+                                                          }"disabled>{{ info.req_status === '발주등록' ? '📝' : info.req_status === '발주승인' ? '✅' : '📦' }} {{ info.req_status }} </button></td>
                       <td>{{ info.memo }}</td>
                       <td>{{ info.confirm_date }}</td>
                       <td>{{ info.manager_name }}</td>
