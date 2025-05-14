@@ -81,7 +81,7 @@ INSERT INTO t_prod_proc(
 VALUES(?, ?, ?, ?, ?, ?, '1e');
 `;
 // 공정등록 시 생산지시 상태변경
-const updateOrderStatus =`
+const updateOrderStatuss =`
 UPDATE t_prod_order
 SET order_status = '4d'
 WHERE prod_order_lot = ?
@@ -120,5 +120,5 @@ module.exports = {
   updateEndTime,
   selectSumProdProcList,
   selectOrderProdId,
-  updateOrderStatus,
+  updateOrderStatuss,
 }

@@ -174,7 +174,7 @@ const insertProdProcList = async(procList) =>{
         let result;
 
         let lot = [procList[0].prod_order_lot];
-        selectedSql = await mariaDB.selectedQuery('updateOrderStatus', lot);
+        selectedSql = await mariaDB.selectedQuery('updateOrderStatuss', lot);
         result = await conn.query(selectedSql, lot);
 
         // for문
