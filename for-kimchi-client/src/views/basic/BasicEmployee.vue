@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="getBasicEmployee">조회</button>
-        <button class="btn btn-info ms-2" @click="resetForm">등록</button>
+        <!-- <button class="btn btn-info ms-2" @click="resetForm">등록</button> -->
       </div>
     </div>
 
@@ -17,21 +17,21 @@
       <div class="row g-2 mt-3 px-3">
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">사원명</label>
-            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="거래처명" />
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">사원명</label>
+            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="사원명" />
           </div>
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">사원ID</label>
-            <input v-model="searchId" type="text" class="form-control border text-center" placeholder="거래처ID" />
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">사원ID</label>
+            <input v-model="searchId" type="text" class="form-control border text-center" placeholder="사원ID" />
           </div>
         </div>
       </div>
-      <div class="row g-2 my-3 px-3">
+      <div class="row g-2 mt-1 mb-3 px-3">
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">부서</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">부서</label>
             <select v-model="searchDept" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in dept" :key="code.sub_code" :value="code.sub_code">
@@ -42,7 +42,7 @@
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">권한</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">권한</label>
             <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in type" :key="code.sub_code" :value="code.sub_code">
@@ -53,7 +53,7 @@
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">상태</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">상태</label>
             <select v-model="searchStatus" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in status" :key="code.sub_code" :value="code.sub_code">
@@ -151,7 +151,7 @@
             </select>
           </div>
           <div class="text-end">
-            <button class="btn btn-primary" @click="save">저장</button>
+            <button class="btn btn-info" @click="save">저장</button>
             <button class="btn btn-secondary ms-2" @click="resetForm">취소</button>
           </div>
         </div>

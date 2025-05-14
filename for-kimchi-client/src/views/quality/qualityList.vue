@@ -17,13 +17,13 @@
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">검사명</label>
-            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="제품명" />
+            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="검사명" />
           </div>
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">검사ID</label>
-            <input v-model="searchId" type="text" class="form-control border text-center" placeholder="제품ID" />
+            <input v-model="searchId" type="text" class="form-control border text-center" placeholder="검사ID" />
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@
             <input v-model="selected.option_method" type="text" class="form-control border text-center" />
           </div>
           <div class="text-end">
-            <button class="btn btn-primary m-0" @click="save">저장</button>
+            <button class="btn btn-info m-0" @click="save">저장</button>
             <button class="btn btn-secondary m-0 ms-2" @click="resetForm">취소</button>
           </div>
         </div>

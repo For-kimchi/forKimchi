@@ -29,6 +29,12 @@ router.post('/orderConfirm', async(req, res)=>{
   res.send(result);
 });
 
+router.delete('/order', async(req, res)=>{
+  let query = req.query;
+  let result = await business_service.deleteOrder(query);
+  res.send(result);
+});
+
 // 납품대상 조회
 router.get('/delivTarget', async(req, res)=>{
   let params = req.query;

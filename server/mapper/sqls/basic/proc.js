@@ -54,7 +54,8 @@ const selectProcFlowDetail =
         pfd.proc_flow_id,
         pfd.proc_id,
         p.proc_name,
-        pfd.proc_seq
+        pfd.proc_seq,
+        p.proc_type
  FROM t_proc_flow_detail pfd
  JOIN t_proc p ON pfd.proc_id = p.proc_id
  WHERE proc_flow_id = ?`;
@@ -102,7 +103,7 @@ SET proc_flow_status = '2v'
 WHERE prod_id = ?
 `;
 
-// 최근 공정흐름도도 조회
+// 최근 공정흐름도 조회
 const selectLastProcFlow =
 `SELECT proc_flow_id
 FROM t_proc_flow

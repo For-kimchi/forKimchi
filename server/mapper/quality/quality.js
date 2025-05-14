@@ -372,7 +372,8 @@ WHERE option_id = ?
 //검사기준조회
 const selectStd =
 `SELECT std_id,
-        std_type
+        std_type,
+        target_id
 FROM t_quality_std
 WHERE std_status = '1bb' 
 AND target_id = ?
@@ -389,7 +390,43 @@ const selectStdDetail =
         qo.option_operator
 FROM t_quality_std_detail qsd
 JOIN t_quality_option qo ON qsd.option_id = qo.option_id
-WHERE qs.std_id = ?
+WHERE qsd.std_id = ?
+`;
+
+const updateStdStatus =
+`UPDATE t_quality_std
+SET std_status = '2bb'
+WHERE target_id = ?
+`;
+
+const selectLastStd = 
+`SELECT std_id
+FROM t_quality_std
+ORDER BY std_id DESC
+LIMIT 1
+`;
+
+const insertStd = 
+`
+INSERT INTO t_quality_std
+(std_id, std_type, target_id, std_status)
+VALUES
+(?, ?, ?, '1bb')
+`;
+
+const selectLastStdDetail = 
+`SELECT std_detail_id
+FROM t_quality_std_detail
+ORDER BY std_detail_id DESC
+LIMIT 1
+`;
+
+const insertStdDetail = 
+`
+INSERT INTO t_quality_std_detail
+(std_detail_id, std_id, option_id)
+VALUES
+(?, ?, ?)
 `;
 
 module.exports = {
@@ -430,4 +467,9 @@ module.exports = {
      deleteOptionControl,
      selectStd,
      selectStdDetail,
+     updateStdStatus,
+     selectLastStd,
+     insertStd,
+     selectLastStdDetail,
+     insertStdDetail,
 };

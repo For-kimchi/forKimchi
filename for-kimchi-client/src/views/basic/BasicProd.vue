@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="search">조회</button>
-        <button class="btn btn-info ms-2" @click="resetForm">등록</button>
+        <!-- <button class="btn btn-info ms-2" @click="resetForm">등록</button> -->
       </div>
     </div>
 
@@ -107,7 +107,7 @@
             </select>
           </div>
           <div class="text-end">
-            <button class="btn btn-primary" @click="save">저장</button>
+            <button class="btn btn-info" @click="save">저장</button>
             <button class="btn btn-secondary ms-2" @click="resetForm">취소</button>
           </div>
         </div>

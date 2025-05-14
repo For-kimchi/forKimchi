@@ -1,5 +1,11 @@
 <template>
-  <div class="container-fluid mt-5">
+  <div class="container-fluid">
+
+    <div class="row mt-3">
+      <div class="col text-end">
+        <button class="btn btn-info" @click="save">저장</button>
+      </div>
+    </div>
 
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -11,16 +17,16 @@
 
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">대상명</label>
+            <label class="form-label me-2 mb-0 " style="width: 100px;">검사대상명</label>
             <input v-model="target.target_name" type="text" class="form-control border text-center" @keydown.prevent
-                  @click="showProd = true" placeholder="대상명"/>
+                  @click="showProd = true" placeholder="검사대상명"/>
           </div>
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">대상ID</label>
+            <label class="form-label me-2 mb-0 " style="width: 100px;">검사대상ID</label>
             <input v-model="target.target_id" type="text" class="form-control border text-center" @keydown.prevent 
-            placeholder="대상ID" />
+            placeholder="검사대상ID" />
           </div>
         </div>
 
@@ -88,7 +94,7 @@
             <input v-model="searchName" type="text" class="form-control border text-center" placeholder="검사명" />
             </div>
             <div class="col-md-3">
-              <button class="btn btn-primary m-0" @click="searchOptions">검색</button>
+              <button class="btn btn-success m-0" @click="searchOptions">검색</button>
             </div>
           </div>
             <div class="table-responsive p-0" style="max-height: 400px;">
@@ -157,7 +163,6 @@ export default {
       materials: [],
       codes: [],
       target: {},
-      stds: {},
       options: [],
       std: {
         std_details: [],
@@ -186,7 +191,7 @@ export default {
         }
       }).catch(err => console.log(err));
 
-      this.stds = result.data;
+      this.std = result.data;
     },
     async getOptions() {
 
@@ -207,33 +212,27 @@ export default {
       this.getOptions();
     },
     removeRows(index) {
-      this.bom.bom_details.splice(index, 1);
+      this.std.std_details.splice(index, 1);
     },
     addRows(index) {
       
-      let exist = this.bom.bom_details.some(item => item.mate_id === this.materials[index].mate_id);
+      let exist = this.std.std_details.some(item => item.option_id === this.options[index].option_id);
 
       if (!exist) {
-        this.bom.bom_details.push({
-          ...this.materials[index],
-          mate_amount: 0,
+        this.std.std_details.push({
+          ...this.options[index],
         })
       } else {
-        alert('이미 추가된 자재입니다')
+        alert('이미 추가된 검사입니다')
       }
     },
     async save() {
 
-      this.bom.employee_id = this.employee.employee_id;
-
-      let res = await axios.post('/api/basicBom', this.bom)
+      let res = await axios.post('/api/stds', this.std)
       .catch(err => console.log(err));
       
       if (res.data.success) {
         alert('등록 성공');
-        this.bom = {};
-        this.materials = [];
-        this.prod = {};
       } else {
         alert('등록 실패');
       }

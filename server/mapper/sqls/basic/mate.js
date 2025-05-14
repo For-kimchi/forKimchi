@@ -22,7 +22,7 @@ VALUES
 (?, ?, ?, ?)`;
 
 // 자재 갱신
-const updateMate =
+const updateBasicMate =
   `UPDATE t_mate
 SET ?
 WHERE mate_id = ?`;
@@ -42,7 +42,7 @@ LIMIT 1`;
 module.exports = {
   selectMate,
   insertMate,
-  updateMate,
+  updateBasicMate,
   deleteMate,
   selectLastMate,
 }

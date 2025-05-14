@@ -28,7 +28,7 @@
               </div>
 
               <div class="text-end">
-                <button class="btn btn-primary" @click="changePwd">비밀번호변경</button>
+                <button class="btn btn-success" @click="changePwd">비밀번호변경</button>
                 <button class="btn btn-secondary ms-2" @click="close">취소</button>
               </div>
 

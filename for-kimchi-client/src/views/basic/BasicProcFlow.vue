@@ -1,6 +1,12 @@
 <template>
   <div class="container-fluid">
 
+    <div class="row mt-3">
+      <div class="col text-end">
+        <button class="btn btn-info" @click="save">저장</button>
+      </div>
+    </div>
+
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
@@ -44,27 +50,17 @@
                     <th class="text-center font-weight-bolder">순번</th>
                     <th class="text-center font-weight-bolder">공정ID</th>
                     <th class="text-center font-weight-bolder">공정명</th>
+                    <th class="text-center font-weight-bolder">공정분류</th>
                     <th class="text-center font-weight-bolder"></th>
                   </tr>
                 </thead>
-                <!-- <tbody>
-                  <tr v-for="(info, index) in bom.bom_detail" v-bind:key="info.bom_detail_id">
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_id" readonly></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="number" v-model="info.mate_amount"></td>
-                    <td class="align-middle text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.mate_unit" readonly></td>
-                    <td class="align-middle text-center">
-                      <button class="btn btn-danger ms-2" @click="removeRows(index)">삭제</button></td>
-                  </tr>
-                </tbody> -->
                 <draggable tag="tbody" :list="procFlow.flow_details" item-key="id" @end="updateRowNumbers">
                   <template #item="{ element, index }">
                     <tr>
                       <td class="text-center">{{ index + 1 }}</td>
                       <td class="text-center">{{ element.proc_id }}</td>
                       <td class="text-center">{{ element.proc_name }}</td>
+                      <td class="text-center">{{ codeToName(element.proc_type, codes) }}</td>
                       <td class="text-center"><button class="btn btn-danger m-0" @click="removeRows(index)">삭제</button></td>
                     </tr>
                   </template>
@@ -90,7 +86,7 @@
                 <input v-model="searchName" type="text" class="form-control border text-center" placeholder="공정명" />
               </div>
               <div class="col-md-3">
-                <button class="btn btn-primary m-0" @click="searchFlow">검색</button>
+                <button class="btn btn-success m-0" @click="searchFlow">검색</button>
               </div>
             </div>
             <div class="table-responsive p-0" style="max-height: 400px;">
@@ -99,6 +95,7 @@
                   <tr>
                     <th class="text-center font-weight-bolder">공정ID</th>
                     <th class="text-center font-weight-bolder">공정명</th>
+                    <th class="text-center font-weight-bolder">공정분류</th>
                     <th class="text-center font-weight-bolder"></th>
                   </tr>
                 </thead>
@@ -106,6 +103,7 @@
                   <tr v-for="(info, index) in procs" v-bind:key="info.proc_id">
                     <td class="text-center">{{ info.proc_id }}</td>
                     <td class="text-center">{{ info.proc_name }}</td>
+                    <td class="text-center">{{ codeToName(info.proc_type, codes) }}</td>
                     <td class="text-center"><button class="btn btn-success m-0" @click="addRows(index)">추가</button></td>
                   </tr>
                 </tbody>
@@ -123,7 +121,14 @@
 <script>
   import ProdModal from '../modal/ProdModal.vue';
   import axios from 'axios';
-  import draggable from 'vuedraggable'
+  import draggable from 'vuedraggable';
+  import { codeToName } from '../../utils/common'
+  import {
+    mapState
+  } from 'pinia';
+  import {
+    useUserStore
+  } from "@/stores/user";
 
   export default {
     components: {
@@ -137,13 +142,15 @@
         procFlow: {},
         procs: [],
         prod: {},
-        employee: {
-          employee_id: 'EMP-001',
-          employee_name: '홍길동',
-        }
+        codes: []
       };
     },
-    computed: {},
+    computed: {
+      ...mapState(useUserStore, [
+        "isLoggedIn",
+        "userInfo",
+      ])
+    },
     methods: {
       async getProcFlow() {
 
@@ -193,22 +200,29 @@
       },
       async save() {
 
-        this.procFlow.employee_id = this.employee.employee_id;
+        this.procFlow.employee_id = this.userInfo.employee_id;
 
         let res = await axios.post('/api/basicProcFlow', this.procFlow)
         .catch(err => console.log(err));
 
         if (res.data.success) {
           alert('등록 성공');
-          this.bom = {};
-          this.materials = [];
-          this.prod = {};
         } else {
           alert('등록 실패');
         }
 
       },
+      async getProcType() {
+      let res = await axios.get(`/api/codes/G1`)
+        .catch(err => console.log(err));
+      this.codes = res.data;
     },
-    mounted() {},
+      codeToName(code, codeArray) {
+        return codeToName(code, codeArray);
+      },
+    },
+    created() {
+      this.getProcType();
+    },
   };
 </script>

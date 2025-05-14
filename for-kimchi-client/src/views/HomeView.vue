@@ -7,7 +7,8 @@
     <!-- <span class="mask bg-gradient-dark opacity-6"></span> -->
     <div class="container my-auto">
       <div class="row">
-          <h1>For 김치</h1>
+          <h1>For 김치, </h1>
+          <h3>MES for kimchi production</h3>
       </div>
     </div>
   </div>
