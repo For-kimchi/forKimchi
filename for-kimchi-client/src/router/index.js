@@ -180,49 +180,77 @@ const routes = [
     path: "/materlist",
     name: "Material List",
     component: MaterialList,
+    meta: { 
+      requiresAuth: true,
+      pageName: '자재발주조회',
+     }
   },
   {
     path: "/matma",
     name: "Material Management",
     component: MaterialManagement,
+    meta: { 
+      requiresAuth: true,
+      pageName: '자재발주관리',
+     }
   },
   // 김어진(입고)
   {
     path: "/storeList",
     name: "StoreList",
     component: StoreList,
+    meta: { 
+      requiresAuth: true,
+      pageName: '입고조회',
+     }
   },
   {
     path: "/storema",
     name: "StoreManagement",
     component: StoreManagement,
+    meta: { 
+      requiresAuth: true,
+      pageName: '입고관리',
+     }
   },
 
   // 어진(창고현황)
   {
     path: "/warehouseList",
     name: "WarehouseList",
-    component: WarehouseList
+    component: WarehouseList,
+    meta: { 
+      requiresAuth: true,
+      pageName: '창고현황',
+     }
   },
 
   {
     path: "/warehouseAdd",
     name: "WarehouseAdd",
-    component: WarehouseAdd
+    component: WarehouseAdd,
+    meta: { 
+      requiresAuth: true,
+      pageName: '창고입고',
+     }
   },
   // 어진 (생산지시조회)
   {
     path: "/mateProdOrder",
     name: "MateProdOrder",
-    component: MateProdOrder
+    component: MateProdOrder,
+    meta: { 
+      requiresAuth: true,
+      pageName: '생산지시조회',
+     }
   },
 
-
-  {
-    path: "/mateQuality",
-    name: "mateQuality",
-    component: mateQuality,
-  },
+  // ---------------------------------------
+  // {
+  //   path: "/mateQuality",
+  //   name: "mateQuality",
+  //   component: mateQuality,
+  // },
   //basic (기준관리)
   {
     path: "/basicprod",

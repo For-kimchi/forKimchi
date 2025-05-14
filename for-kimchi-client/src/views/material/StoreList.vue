@@ -12,12 +12,12 @@
             <div>
             <ul class="list-group list-group-horizontal">
                 <li class="list-group-item">거래처</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">제품명</li>
-                <li class="list-group-item"><input type="text"></li>
+                <li class="list-group-item"><input type="text" v-model="search.vendor_name" ></li>
+                <li class="list-group-item">입고일자</li>
+                <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date" v-model="search.endDate"></li>
                 <!-- <li class="list-group-item">일정</li>
                 <li class="list-group-item"><input type="date"> ~ <input type="date"></li> -->
-                <li class="list-group-item"><button class="btn btn-success ms-2 me-2" @:click="">조회</button></li>
+                <li class="list-group-item"><button class="btn btn-success ms-2 me-2" @:click="getStoreList">조회</button></li>
             </ul>
             </div>
         </div>
@@ -52,7 +52,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_date }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.vendor_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                     <td class="align-middle text-center">
@@ -87,8 +87,6 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재입고상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">양품수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">불량품수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
@@ -99,8 +97,6 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.pass_amount }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.fail_amount }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
                     </tr>
                 </tbody>
@@ -121,6 +117,9 @@ export default {
       return{
         storeList: [],
         storeDtList: [],
+        search: {
+
+        },
       }
     },
     created(){
@@ -129,7 +128,9 @@ export default {
     methods : {
     async getStoreList() {
       let ajaxRes = 
-      await axios.get(`/api/storeList`)
+      await axios.get(`/api/storeList`, {
+        params: this.search,
+      })
                   .catch (err => console.log(err));
       this.storeList = ajaxRes.data;
     },

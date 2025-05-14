@@ -171,7 +171,7 @@
                 </thead>
                 <tbody>
                   <template v-if="materialList.length > 0">
-                    <tr v-for="(info, index) in materialList" :key="info.id" @click="updateMateList(index)">
+                    <tr v-for="(info, index) in materialList" :key="info.id" @click="">
                       <td>{{ index + 1 }}</td>
                       <!-- <td><MaterialCheckbox></MaterialCheckbox></td> -->
                       <td>{{ info.req_date }}</td>
@@ -179,9 +179,7 @@
                       <td>{{ info.vendor_id }}</td>
                       <td>{{ info.employee_id }}</td>
                       <td>{{ info.req_due_date }}</td>
-                      <td><button class="btn btn-sm btn-warning" disabled>
-    {{ info.req_status }}
-  </button></td>
+                      <td><button class="btn btn-sm btn-warning" disabled>{{ info.req_status }}</button></td>
                       <td>{{ info.memo }}</td>
                       <td>{{ info.confirm_date }}</td>
                       <td>{{ info.manager_id }}</td>
@@ -237,11 +235,14 @@ export default {
       matReqList: [],
       req_due_date: '',
       initialMateInfo: null,
-      materialList:[],
       updates: {},
       action: '수정',
       companies: [],
       materialList: [],
+      mateListInsert: [],
+      // mate_name:[],
+      // req_amount:[],
+      // mate_unit:[],
     };
     
   },
@@ -277,15 +278,17 @@ this.getMateList();
   });
 },
 // 발주관리페이지 발주항목 클릭시 수정(값 자동 입력)
-async updateMateList(idx) {
-    let id = this.materialList[idx].req_id;
-    let ajaxRes = await axios.get(`/api/materialList/${id}`)
-                              .catch(err => console.log(err));
-     this.selectedList = ajaxRes.data;
-     this.vendor.vendor_name = this.materialList[idx].vendor_id;
-     this.req_due_date = this.materialList[idx].req_due_date;
-
-},
+// async updateMateList(idx) {
+//     let id = this.materialList[idx].req_id;
+//     let ajaxRes = await axios.get(`/api/materialList/${id}`)
+//                               .catch(err => console.log(err));
+//      this.selectedList = ajaxRes.data;
+//      this.vendor.vendor_name = this.materialList[idx].vendor_id;
+//      this.req_due_date = this.materialList[idx].req_due_date;
+//     //  this.mate_name = this.mateListInsert[idx].mate_name;
+//     //  this.req_amount = this.mateListInsert[idx].req_amount;
+//     //  this.mate_unit = this.mateListInsert[idx].mate_unit;
+// },
 // this.action = '수정';
 // this.updates = { ...info };
 
