@@ -74,11 +74,9 @@
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">
                    <select v-model="info.warehouse_id" class="form-select text-center" style="max-width: 150px; border: 1px solid gray;">
-  <option disabled value="">선택</option>
-  <option v-for="wh in warehouses" :key="wh.warehouse_id" :value="wh.warehouse_id">
-    {{ wh.warehouse_id }}
-  </option>
-</select>
+                   <option disabled value="">선택</option>
+                  <option v-for="wh in warehouses" :key="wh.warehouse_type" :value="wh.warehouse_id">{{ wh.warehouse_type }}</option>
+                  </select>
                   </td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
