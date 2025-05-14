@@ -253,6 +253,15 @@ const warehouseLotList =
 FROM t_mate_warehouse
 ORDER BY inbound_date DESC`;
 
+// `SELECT 
+//     w.warehouse_type,
+//     mate_lot,
+//     mate_id,
+//     mate_amount,
+//     inbound_date,
+//     employee_id
+// FROM t_mate_warehouse mw JOIN t_warehouse w ON (mw.warehouse_id = w.warehouse_id)
+// ORDER BY inbound_date DESC`;
 // 창고 자재별 묶음 합계조회
 const groupBywareList =
 `SELECT 
