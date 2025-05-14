@@ -3,9 +3,6 @@
     <div class="row">
       <!-- 행 영역 div-->
       <div class="col-12">
-        <div class="text-end pe-3 ">
-          <button class="btn btn-secondary  btn-sm" @click="reloadPage">새로고침</button>
-        </div>
         <!-- 테이블 div-->
         <div class="card my-4">
           <!--항목명 div-->
@@ -19,24 +16,18 @@
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID
-                    </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID
-                    </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID
-                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량
-                    </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고상태
-                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in mateQualityreq" v-bind:key="info.inbound_detail_id"
-                    v-on:click="mateQualityWait(index)" style="cursor: pointer;">
-                    <!--클릭안에 -> getQualityDetail(info.id)-->
+                    v-on:click="mateQualityWait(index)" style="cursor: pointer;" :class="selectedIndex === index ? 'table-active' : ''">
                     <td class="align-middle text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.inbound_id }}</td>
                     <td class="align-middle text-center">{{ info.mate_id }}</td>
@@ -113,6 +104,18 @@
 </template>
 <script>
   import axios from 'axios';
+
+  // pinia import
+  // stores 
+  import {
+    useUserStore
+  } from "@/stores/user";
+  // state, getter => mapState 
+  // actions => mapActions 
+  import {
+    mapState
+  } from 'pinia';
+
   export default {
     data() {
       return {
@@ -120,6 +123,19 @@
         mateQualitywait: [],
         selected: [],
       }
+    },
+    computed: {
+      // ...mapState(store, []), ...mapActions(store, [])
+      // stores 에 등록된 이름으로 사용
+      // 아래 처럼 등록했을 경우 computed 에 등록된 값과 동일하게 사용
+      // 로그인 유저 정보는 userInfo 에 객체 형태로 저장되어있음
+      // 아래 와 같은 형태로 사용
+      // <template></template> 내부에서는 userInfo.employee_id
+      // export default {} 내부에서는 this.userInfo.employee_id
+      ...mapState(useUserStore, [
+        "isLoggedIn",
+        "userInfo",
+      ])
     },
     created() {
       this.mateQualityReq();
@@ -141,10 +157,6 @@
       }
     },
     methods: {
-      reloadPage() {
-        location.reload();
-      },
-
       // 자재검사요청 (요청)
       async mateQualityReq() {
         let ajaxRes =

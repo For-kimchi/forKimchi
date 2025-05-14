@@ -63,7 +63,14 @@ router.post('/mateQualityViewAll', async (req, res) => {
 router.get('/prodQualityReq', async (req, res) => {
   let prodQualityReq = await quality_service.prodQualityReq();
   res.send(prodQualityReq);
-})
+});
+
+// 등록
+router.post('/prod', async (req, res) => {
+  let prodQualityInsert = req.body;
+  let result = await quality_service.prodQualityInsert(prodQualityInsert);
+  res.send(result);
+});
 
 // 제품검사요청 (대기)
 router.get('/prodQualityWait/:id', async (req, res) => {

@@ -149,31 +149,55 @@ const routes = [
     path: "/mateQuality",
     name: "mateQuality",
     component: mateQuality,
+    meta: { 
+      requiresAuth: true,
+      pageName: '자재검사조회',
+    }
   },
   {
     path: "/prodQuality",
     name: "prodQuality",
     component: prodQuality,
+    meta: { 
+      requiresAuth: true,
+      pageName: '제품검사조회',
+    }
   },
   {
     path: "/mateQualityControl",
     name: "mateQualityControl",
     component: mateQualityControl,
+    meta: { 
+      requiresAuth: true,
+      pageName: '자재검사관리',
+    }
   },
   {
     path: "/prodQualityControl",
     name: "prodQualityControl",
     component: prodQualityControl,
+    meta: { 
+      requiresAuth: true,
+      pageName: '제품검사관리',
+    }
   },
   {
     path: "/qualityManager",
     name: "qualityManager",
     component: qualityManager,
+    meta: { 
+      requiresAuth: true,
+      pageName: '검사기준관리',
+    }
   },
   {
     path: "/qualityList",
     name: "qualityList",
     component: qualityList,
+    meta: { 
+      requiresAuth: true,
+      pageName: '검사항목관리',
+    }
   },
   // 김어진 (자재발주)
   {
@@ -245,7 +269,6 @@ const routes = [
      }
   },
 
-  // ---------------------------------------
   // {
   //   path: "/mateQuality",
   //   name: "mateQuality",

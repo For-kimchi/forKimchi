@@ -41,6 +41,10 @@ const mateQualityInsert = async (mateInfo) => {
     let mateColumn = ['quality_id', 'inbound_detail_id'];
     let mateParam = converts.convertObjToAry(mate, mateColumn);
 
+    // 검사결과
+    const result_ = details.every(item => item.result == '합격')
+    mateParam.push(result_ ? '1x' : '2x');
+
     // mateQuality insert
     selectedSql = await mariaDB.selectedQuery('mateQualityInsert', mateParam);
     let result = await conn.query(selectedSql, mateParam);
@@ -61,9 +65,10 @@ const mateQualityInsert = async (mateInfo) => {
       let newMateDetailId = keys.getNextKeyId(lastMateDetailId);
       detail.quality_detail_id = newMateDetailId;
       detail.quality_id = newMateId;
-
+      detail.quality_result
       // mateQuality detail insert
       let mateDetailParam = converts.convertObjToAry(detail, mateDetailColumn);
+      mateDetailParam.push(detail.result == '합격' ? '1r' : '2r');
 
       selectedSql = await mariaDB.selectedQuery('mateWaitInsert', mateDetailParam);
       result = await conn.query(selectedSql, mateDetailParam);
@@ -136,13 +141,97 @@ const mateQualityViewDetail = async(detailId) => {
 const prodQualityReq = async() => {
   let list = await mariaDB.query('prodQualityReq');
   return list;
-}
+};
 
 //제품검사요청 (대기)
 const prodQualityWait = async(detailId) => {
   let list = await mariaDB.query('prodQualityWait', detailId);
   return list;
-}
+};
+
+// 제품검사등록
+const prodQualityInsert = async (prodInfo) => {
+
+  try {
+    conn = await mariaDB.getConnection();
+    await conn.beginTransaction();
+
+    console.log(prodInfo);
+
+    // 구조 분해 할당 (detail 분리)
+    const {
+      details,
+      ...prod
+    } = prodInfo;
+
+    // 최근 key 정보 조회
+    let selectedSql = await mariaDB.selectedQuery('selectLastProdQuality', {});
+    let lastProd = await conn.query(selectedSql, {});
+    let lastProdId = lastProd[0].quality_id;
+
+    // prodQuality key 생성
+    let newProdId = keys.getNextKeyId(lastProdId);
+    prod.quality_id = newProdId;
+
+    // prodQuality column 정보 배열
+    let prodColumn = ['quality_id', 'prod_proc_id'];
+    let prodParam = converts.convertObjToAry(prod, prodColumn);
+
+    // 검사결과
+    const result_ = details.every(item => item.result == '합격')
+    prodParam.push(result_ ? '1x' : '2x');
+
+    // prodQuality insert
+    selectedSql = await mariaDB.selectedQuery('prodQualityInsert', prodParam);
+    let result = await conn.query(selectedSql, prodParam);
+
+    console.log(result);
+
+    // prodQuality detail column 정보 배열
+    let prodDetailColumn = ['quality_detail_id', 'quality_id', 'option_id', 'quality_result_value'];
+
+    // // 최근 key 정보 조회
+    selectedSql = await mariaDB.selectedQuery('selectLastProdQualityDetail', {});
+    let lastProdDetail = await conn.query(selectedSql, {});
+    let lastProdDetailId = lastProdDetail[0].quality_detail_id;
+
+    for (let detail of details) {
+      
+      // prodQuality detail key 생성
+      let newProdDetailId = keys.getNextKeyId(lastProdDetailId);
+      detail.quality_detail_id = newProdDetailId;
+      detail.quality_id = newProdId;
+
+      // prodQuality detail insert
+      let prodDetailParam = converts.convertObjToAry(detail, prodDetailColumn);
+      prodDetailParam.push(detail.result == '합격' ? '1r' : '2r');
+
+      selectedSql = await mariaDB.selectedQuery('prodWaitInsert', prodDetailParam);
+      result = await conn.query(selectedSql, prodDetailParam);
+
+      console.log(result);
+
+      // prodQuality detail insert 완료 시 최근 key 정보 갱신
+      lastProdDetailId = newProdDetailId;
+    }
+    
+    selectedSql = await mariaDB.selectedQuery('updateProd', {});
+      result = await conn.query(selectedSql, prod.prod_proc_id);
+    
+
+    // 정상 완료 시 commit
+    conn.commit();
+
+    return result;
+  } catch (err) {
+    // error 발생 시 console 출력 및 rollback
+    console.log(err);
+    if (conn) conn.rollback();
+  } finally {
+    // connection 반환
+    if (conn) conn.release();
+  }
+};
 
 // 제품검사조회 (드롭다운)
 const prodQualityViewDropDown = async() => {
@@ -303,6 +392,7 @@ module.exports = {
   prodQualityViewDropDown,
   prodQualityViewAll,
   prodQualityViewDetail,
+  prodQualityInsert,
   // 검사항목
   selectOption,
   insertOption,
