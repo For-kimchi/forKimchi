@@ -37,19 +37,19 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
+            <div class="table-responsive p-0" style="height: 400px; overflow: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문서 작성</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문담당자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문서 작성</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문ID</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문상태</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">거래처ID</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문담당자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문등록일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,7 +113,8 @@
 </template>
 <script>
 import axios from 'axios'
-
+import { useUserStore } from "@/stores/user"; 
+import { mapState } from 'pinia';
 export default {
     name: "orderprod",
     data() {
@@ -125,6 +126,12 @@ export default {
     },
     created(){
       this.getOrderList();
+    },
+    computed:{
+      ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
     },
     methods :{
       async getOrderList(){
@@ -139,12 +146,7 @@ export default {
         await axios.get(`/api/orderList/${orderId}`)
                     .catch(err => console.log(err));
         this.orderDtList = ajaxRes.data;
-        
-        // "order_detail_id": "OD20250428003",
-        // "prod_id": "P003",
-        // "order_amount": 200,
-        // "deliv_due_date": "2025-05-09T15:00:00.000Z",
-        // "memo": "대량 발주",
+
       },
       // 주문데이터를 통해서 생산계획등록 매서드
      async planAdd(idx){
@@ -154,10 +156,11 @@ export default {
         let info = this.orderList[idx];
 
         await this.getOrderDtList(info.order_id);
-
+      // employee_id
         let orderInfo = {
           order_id:       info.order_id,
-          order_detail_list: this.orderDtList
+          order_detail_list: this.orderDtList,
+          employee_id : this.userInfo.employee_id
         };
         
         let ajaxRes = await axios.post(`/api/planinsert`, orderInfo)

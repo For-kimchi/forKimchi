@@ -46,8 +46,8 @@ const prodlist = async()=>{
 };
 
 // 생산상세계획조회
-const proddtlist = async(orderId)=>{
-    let list = await mariaDB.query('selectproddetail', orderId);
+const proddtlist = async(planId)=>{
+    let list = await mariaDB.query('selectproddetail', planId);
     return list;
 };
 
@@ -88,18 +88,24 @@ const pldtperm = async(planDetailList)=>{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
         let planDetailId = '';
-        // 체크된 행의 Id를 저장시키고 업데이트시킴 
+        
+        // 체크된 행의 Id를 저장시키고 업데이트시킴
+        let manager_id = {manager_id: planDetailList[0].employee_id};
         for(let planDeatillist of planDetailList){
-            planDetailId = planDeatillist.plan_detail_id;
+            planDetailId = [planDeatillist.plan_detail_id];
             selectedSql = await mariaDB.selectedQuery('updateplandt', planDetailId);
             let result = await conn.query(selectedSql, planDetailId);
         }
-
         // planId 가져오기(마지막 행의 detail_id를 통해서 조회)
         selectedSql = await mariaDB.selectedQuery('selectPlan_id', planDetailId);
-        reult = await conn.query(selectedSql, planDetailId);
+        result = await conn.query(selectedSql, planDetailId);
 
-        const planId = reult[0].plan_id;
+        const planId = result[0].plan_id;
+        console.log(manager_id);
+        let param = [manager_id, planId]
+        // 승인자 업데이트
+        selectedSql = await mariaDB.selectedQuery('updatePlanManager', param);
+        result = await conn.query(selectedSql, param);
 
         // 모든 detail의 승인상태 확인위한 조회
         selectedSql = await mariaDB.selectedQuery('selectPlanDetails', planId);
@@ -165,7 +171,7 @@ const orpldtinsert = async(orderInfo)=>{
         let newPlanId = keys.getNextKeyId(lastPlanId);
         orplInfo.plan_id = newPlanId;
 
-        let procloumn = ['plan_id','order_id'];
+        let procloumn = ['plan_id','order_id', 'employee_id'];
         // 컬럼값과 넘겨받은 값을 배열로 저장.
         let addInfo = converts.convertObjToAry(orplInfo, procloumn);
         // 실제 SQL문을 가지고 오는 작업

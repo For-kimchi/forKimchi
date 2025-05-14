@@ -24,8 +24,8 @@ router.get('/prodlist', async(req, res)=>{
 });
 // 생산계획상세조회
 router.get('/proddtlist/:id', async(req, res)=>{
-  let orderId = req.params.id
-  let prodList = await prodPlanService.proddtlist(orderId);
+  let planId = req.params.id
+  let prodList = await prodPlanService.proddtlist(planId);
   res.send(prodList);
 });
 // 주문서를 통한 생산계획 등록

@@ -90,7 +90,7 @@ const selectproddetail =
                          employee_id,
                          plan_final_status,
                          reg_date)
-VALUES(?, ?, '세션Id', '1i',SYSDATE())
+VALUES(?, ?, ?, '1i',SYSDATE())
  `;
  // 주문서를 통한 detail등록
  const insertorprdt =
@@ -127,6 +127,13 @@ WHERE plan_detail_id = ?
 LIMIT 1
 `;
 
+// 승인한 매니저 업데이트.
+const updatePlanManager =`
+UPDATE t_prod_plan
+SET ?
+WHERE plan_id = ?
+`;
+
 // 승인버튼 확인
 const selectPlanDetails =`
 SELECT plan_status
@@ -157,4 +164,5 @@ module.exports = {
     selectPlan_id,
     updatePlan,
     selectPlanDetails,
+    updatePlanManager,
 }

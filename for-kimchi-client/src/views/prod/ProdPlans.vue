@@ -39,22 +39,22 @@
               <h6 class="text-white text-capitalize ps-3">생산계획</h6>
             </div>
           </div>
-          <div class="card-body px-0 pb-2">
+          <div class="card-body px-0 pb-2" style="height: 500px; overflow: auto;">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산계획ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">승인자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">계획등록일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">최종계획상태</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산계획ID</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">거래처</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">담당자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">승인자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">계획등록일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">최종계획상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(info.plan_id)">
+                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(index)">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.plan_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
@@ -89,18 +89,18 @@
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10"><input type="checkbox" v-model="checkAll" @change="checkeds"></th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">순번</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">상세ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">제품명</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">생산필요수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">추가생산수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">상세계획상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">납품예정일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">시작일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">종료일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10"><input type="checkbox" v-model="checkAll" @change="checkeds"></th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">상세ID</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">제품명</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문수량</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산수량</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산필요수량</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">추가생산수량</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">상세계획상태</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">납품예정일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">시작일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">종료일자</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -133,7 +133,8 @@
 </template>
 <script>
 import axios from 'axios'
-
+import { useUserStore } from "@/stores/user"; 
+import { mapState } from 'pinia';
 export default {
     name: "Prodplan",
     data(){
@@ -150,6 +151,12 @@ export default {
       this.prodList();
       // this.proddtList(orderId);
     },
+    computed:{
+      ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
+    },
     // 생산계획 조회
     methods : {
       async prodList(){
@@ -159,9 +166,10 @@ export default {
                   this.prodlist = ajaxRes.data;
       },
       // 생산계획 상세 조회
-      async proddtList(orderid){
+      async proddtList(idx){
+        let planId = this.prodlist[idx].plan_id;
         let  ajaxRes =
-        await axios.get(`/api/proddtlist/${orderid}`)
+        await axios.get(`/api/proddtlist/${planId}`)
                    .catch(err => console.log(err));
         this.proddtlist = ajaxRes.data.map(item => ({
           ...item,
@@ -196,7 +204,9 @@ export default {
           // 체크한게 있는지 확인
           for(let planDetail of this.proddtlist){
             if(planDetail.check){
-              param.push({ plan_detail_id: planDetail.plan_detail_id });
+              param.push({ plan_detail_id: planDetail.plan_detail_id,
+                          employee_id: this.userInfo.employee_id
+               });
               checkCheck = true;
             }
           }
