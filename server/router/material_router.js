@@ -63,6 +63,14 @@ router.get('/materialList/:id', async (req,res) => {
   res.send(reqInfo);
 })
 
+// 자재발주관리페이지에서 발주서 클릭시 값넘기기
+router.get('/mateListInsert/:id', async (req,res) => {
+  let reqId = req.params.id;
+  let reqInfo = await mateService.mateListClick(reqId);
+  res.send(reqInfo);
+});
+
+
 
 // 자재발주관리페이지 발주서 삭제
 // router.delete('/materialList/:Id', async (req, res) => {
@@ -75,6 +83,8 @@ router.get('/materialList/:id', async (req,res) => {
 //     res.status(500).send('삭제 중 오류 발생');
 //   }
 // });
+
+
 // 자재발주관리페이지 발주서 삭제
 router.delete('/materialList/:reqId', async (req,res) => {
   let reqId = req.params.reqId;
