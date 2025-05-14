@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid py-4">
     <!-- 검색 -->
-    <div class="row">
+    <!-- <div class="row">
       <div class="card my-4">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
           <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
@@ -20,7 +20,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div> -->
     
     <div class="row">
       <!-- 행 영역 div-->

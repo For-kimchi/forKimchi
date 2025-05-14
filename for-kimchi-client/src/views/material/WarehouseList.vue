@@ -45,8 +45,8 @@
 <div class="card-body px-0 pb-2">
   <div class="table-responsive p-0">
     <table class="table align-items-center mb-0">
-      <thead v-if="searchType === 'lot'">
-        <tr>
+      <thead>
+        <tr v-show="searchType === 'lot'">
           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">창고명</th>
           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">LOT</th>
@@ -56,8 +56,8 @@
           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
         </tr>
       </thead>
-      <thead v-else-if="searchType === 'group'">
-        <tr>
+      <thead>
+        <tr v-show="searchType === 'group'">
           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명</th>
           <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량</th>
@@ -67,26 +67,30 @@
       </thead>
 
       <tbody>
-        <!-- LOT별 조회일 때 -->
-        <tr v-if="searchType === 'lot'" v-for="(info, index) in wareList" :key="info.warehouse_id">
-          <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.warehouse_id }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.mate_lot }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.mate_amount }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.inbound_date }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
-        </tr>
+  <!-- LOT별 조회일 때 -->
+  <template v-if="searchType === 'lot'">
+    <tr v-for="(info, index) in wareList" :key="'lot_' + index">
+      <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.warehouse_id }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.mate_lot }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.mate_amount }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.inbound_date }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
+    </tr>
+  </template>
 
-        <!-- 자재별 묶음 조회일 때 -->
-        <tr v-else-if="searchType === 'group'" v-for="(info, index) in wareList" :key="info.mate_id">
-          <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.mate_amount }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ formatDate(info.last_inbound_date) }}</td>
-          <td class="align-middle font-weight-bolder text-center">{{ info.lot_count }}</td>
-        </tr>
-      </tbody>
+  <!-- 자재별 묶음 조회일 때 -->
+  <template v-else>
+    <tr v-for="(info, index) in wareList" :key="'group_' + index">
+      <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.mate_amount }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ formatDate(info.last_inbound_date) }}</td>
+      <td class="align-middle font-weight-bolder text-center">{{ info.lot_count }}</td>
+    </tr>
+  </template>
+</tbody>
     </table>
   </div>
 </div>
@@ -103,7 +107,7 @@ export default {
   
     data() {
       return{
-       wareList:[],
+       wareList:null,
        searchType : 'lot', // 기본조회방식
       };
     },
@@ -113,12 +117,14 @@ export default {
     methods : {
      async wareSearch() {
     try {
+      this.wareList = null;
       let ajaxRes = await axios.get(`/api/warehouseList?type=${this.searchType}`);
       this.wareList = ajaxRes.data;
     } catch (err) {
       console.error('창고현황 조회 실패:', err);
     }
     },
+    
 
   formatDate(dateString) {
     const date = new Date(dateString); // 입력된 날짜를 Date 객체로 변환

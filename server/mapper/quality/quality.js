@@ -11,8 +11,8 @@ SELECT
     memo
 FROM t_mate_inbound_detail
 WHERE inbound_status = '1p'
+ORDER BY inbound_detail_id
 `;
-
 // 자재검사요청 (대기-상세)
 const mateQualityWait = 
 `
@@ -28,7 +28,7 @@ JOIN t_quality_option qo ON qsd.option_id = qo.option_id
 WHERE inbound_status = '1p'
 AND inbound_detail_id = ?
 `;
-
+// 검사결과 최종반영
 const mateQualityInsert =
 `
 INSERT INTO t_quality_mate
@@ -43,42 +43,41 @@ quality_pass_amount,
 quality_fail_amount
 )
 VALUES
-(?, ?, CURRENT_TIMESTAMP, '1x', '1w', 10, 20, 30)
+(?, ?, CURRENT_TIMESTAMP, ?, '1w', 10, 20, 30)
 `;
-
 // 검사대기 항목 검사 후 상태 변경
 const updateMateQuality =
 `
 UPDATE t_quality_mate_detail
-SET quality_result = '2r'
+SET quality_result = ?
 WHERE option_id = ?
 AND quality_detail_id = ?
-`
-// 등록된 검사요청 자재 상태변경
+`;
+// 검사완료된 항목 상태값 변경
 const updateMate = 
 `
 UPDATE t_mate_inbound_detail
 SET inbound_status = '2p'
 WHERE inbound_detail_id = ?
 `;
-
+// 검사상세 결과값
 const mateWaitInsert =
 `
 INSERT INTO t_quality_mate_detail
 (quality_detail_id, quality_id, option_id, quality_result_value, quality_result)
 VALUES
-(?, ?, ?, ?, '1r')
+(?, ?, ?, ?, ?)
 `;
-
 // 자재검사조회 (드롭다운)
 const mateQualityViewDropDown =
-`select 
+`
+select 
       mate_id
  from 
       t_mate_inbound_detail t JOIN 
       t_quality_mate m on (t.inbound_detail_id = m.inbound_detail_id)
-      group by mate_id`;
-
+      group by mate_id
+`;
 // 자재수입검사조회
 const mateQualityViewAll =
 `
@@ -87,20 +86,20 @@ SELECT DISTINCT
     q.quality_id,
     md.mate_id,
     mate_id(md.mate_id) mate_name,
-    inbound_amount,
-    pass_amount,
-    fail_amount,
-	sub_code(quality_final_result) result
+    q.quality_amount,
+    q.quality_pass_amount,
+    q.quality_fail_amount,
+	sub_code(quality_final_result) final_result
 FROM 
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
 ORDER BY
 	inbound_detail_id DESC
 `;
-
 // 자재수입검사조회 (상세)
 const mateQualityViewDetail = 
-`SELECT DISTINCT
+`
+SELECT DISTINCT
 	m.option_id, 
     option_name, 
     option_standard,
@@ -114,25 +113,27 @@ where m.quality_id= ?
 `;
 // key
 const selectLastmateQuality = 
-`SELECT quality_id
+`
+SELECT quality_id
 FROM t_quality_mate
 ORDER BY quality_id DESC
-LIMIT 1`;
+LIMIT 1
+`;
 // 상세 key
 const selectLastmateQualityDetail = 
 `SELECT quality_detail_id
 FROM t_quality_mate_detail
 ORDER BY quality_detail_id DESC
-LIMIT 1`;
+LIMIT 1
+`;
 //-----------------------------------------------------------------------------
 
-// 제품검사요청 (요청)
+// 제품검사요청 (요청)  --- 공정상태 추후 t_sub_code  E : 4e 생성시 코드변경
 const prodQualityReq = 
 `
 SELECT 
 	prod_order_lot,
 	prod_proc_id,
-	equip_id,
 	proc_id,
 	prod_id,
     prod_id (prod_id) prod_name,
@@ -140,7 +141,7 @@ SELECT
 FROM
 	t_prod_proc
 WHERE
-    proc_status = '1e'
+    proc_status = '4e'
 ORDER BY prod_order_lot
 `;
 
@@ -156,10 +157,35 @@ FROM t_prod_proc pp
 JOIN t_quality_std qs ON pp.prod_id = qs.target_id
 JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
 JOIN t_quality_option qo ON qsd.option_id = qo.option_id
-WHERE pp.proc_status = '1e'
-AND prod_order_lot = ?;
+WHERE pp.proc_status = '4e'
+AND pp.prod_proc_id = ?;
 `;
 
+const prodQualityInsert =
+`
+INSERT INTO t_quality_prod
+(
+quality_id,
+prod_proc_id,
+quality_date,
+quality_final_result,
+quality_type,
+quality_amount,
+quality_pass_amount,
+quality_fail_amount
+)
+VALUES
+(?, ?, CURRENT_TIMESTAMP, '1x', '1w', 10, 20, 30)
+`;
+
+// 검사상세 결과값
+const prodWaitInsert =
+`
+INSERT INTO t_quality_prod_detail
+(quality_detail_id, quality_id, option_id, quality_result_value, quality_result)
+VALUES
+(?, ?, ?, ?, ?)
+`;
 // 제품검사조회 (드롭다운)
 const prodQualityViewDropDown =
 `select distinct t.prod_id 
@@ -173,6 +199,9 @@ select
     tqp.quality_id,
     prod_id(tpp.prod_id) prod_name,
     tpp.prod_id,
+    tqp.quality_amount,
+    tqp.quality_pass_amount,
+    tqp.quality_fail_amount,
     sub_code(tqp.quality_final_result) final_result
 from
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
@@ -191,6 +220,14 @@ t_quality_prod A join
 t_quality_prod_detail B on (A.quality_id = B.quality_id) join
 t_quality_option C on (B.option_id = C.option_id)
 where A.quality_id= ?
+`;
+
+// 검사완료된 항목 상태값 변경 - 검사 합격 시
+const updateProd = 
+`
+UPDATE t_prod_proc
+SET proc_status = '3e'
+WHERE prod_proc_id = ?
 `;
 
 // key
@@ -413,6 +450,9 @@ module.exports = {
      prodQualityViewDetail,
      selectLastProdQuality,
      selectLastProdQualityDetail,
+     prodQualityInsert,
+     prodWaitInsert,
+     updateProd,
     // 검사항목관리
      selectOption,
      insertOption,
