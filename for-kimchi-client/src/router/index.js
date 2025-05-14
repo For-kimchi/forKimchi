@@ -113,36 +113,64 @@ const routes = [
     path: "/prodPlan",
     name: "ProdPlan",
     component: ProdPlan,
+    meta: { 
+      requiresAuth: true,
+      pageName: '생산계획',
+     }
   },
   {
     path: "/prodOrder",
     name: "ProdOrder",
     component: ProdOrder,
+     meta: { 
+      requiresAuth: true,
+      pageName: '생산지시',
+     }
   },
   {
     path: "/prodProcess",
     name: "ProdProcess",
     component: ProdProcess,
+     meta: { 
+      requiresAuth: true,
+      pageName: '생산공정',
+     }
   },
   {
     path: "/prodProcWork",
     name: "ProdProcWork",
     component: ProdProcWork,
+     meta: { 
+      requiresAuth: true,
+      pageName: '생산이력',
+     }
   },
   {
     path: "/orderProd",
     name: "OrderProd",
     component: OrderProd,
+     meta: { 
+      requiresAuth: true,
+      pageName: '주문확인',
+     }
   },
   {
     path: "/prodOrderInfo",
     name: "ProdOrderInfo",
     component: ProdOrderInfo,
+     meta: { 
+      requiresAuth: true,
+      pageName: '생산계획관리',
+     }
   },
   {
     path: "/prodMate",
     name: "ProdMate",
     component: ProdMate,
+     meta: { 
+      requiresAuth: true,
+      pageName: '생산자재관리',
+     }
   },
   // 이혁진
   {

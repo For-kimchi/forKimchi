@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
     <nav class="text-center">
-      <router-link to="/ProdOrder"><button class="btn btn-info me-2">생산지시</button></router-link>
+      <!-- <router-link to="/ProdOrder"><button class="btn btn-info me-2">생산지시</button></router-link> -->
       <router-link to="/ProdOrderInfo"><button class="btn btn-info me-2">생산지시등록</button></router-link>
       <button class="btn btn-primary">자재관리</button>
     </nav>
