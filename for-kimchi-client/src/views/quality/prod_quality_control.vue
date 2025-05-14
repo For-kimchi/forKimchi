@@ -48,7 +48,6 @@
         <div class="text-end pe-3 ">
           <!-- 승인버튼에 세션값을 통해 권한이 있을경우에만 작동하도록 조건을 넣어줘야함 -->
           <button class="btn btn-success ms-2 me-2" @click="test">검사</button>
-          <button class="btn btn-danger ms-2 me-2" @click="">반려</button>
         </div>
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -61,20 +60,15 @@
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호
-                    </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사이름
-                    </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준
-                    </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력
-                    </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상탸
-                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사이름</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in prodQualitywait" v-bind:key="prod_detail_id" style="cursor: pointer;">
+                  <tr v-for="(info, index) in prodQualitywait" v-bind:key="info.option_id" style="cursor: pointer;">
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}}</td>
@@ -105,6 +99,14 @@
 
 <script>
   import axios from 'axios';
+
+    // pinia import
+  // stores 
+  import { useUserStore } from "@/stores/user"; 
+  // state, getter => mapState 
+  // actions => mapActions 
+  import { mapState } from 'pinia';
+
   export default {
     data() {
       return {
@@ -112,6 +114,19 @@
         prodQualitywait : [],
         selected: {},
       }
+    },
+    computed: {
+      // ...mapState(store, []), ...mapActions(store, [])
+      // stores 에 등록된 이름으로 사용
+      // 아래 처럼 등록했을 경우 computed 에 등록된 값과 동일하게 사용
+      // 로그인 유저 정보는 userInfo 에 객체 형태로 저장되어있음
+      // 아래 와 같은 형태로 사용
+      // <template></template> 내부에서는 userInfo.employee_id
+      // export default {} 내부에서는 this.userInfo.employee_id
+      ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
     },
     created() {
       this.prodQualityReq();
@@ -133,10 +148,6 @@
       }
     },
     methods: {
-       reloadPage() {
-        location.reload();
-      },
-
       // 제품품검사요청 (요청)
       async prodQualityReq(){
         let ajaxRes = 
@@ -154,9 +165,41 @@
                    .catch(err => console.log(err));
                    this.prodQualitywait = ajaxRes.data;
       },
-      addRow() {
-        this.prodQualitywait.push({});
-      }
+      // 검사버튼
+      async test() {
+        let param = {
+          prod_proc_id: this.selected.prod_proc_id,
+          details: this.prodQualitywait
+        };
+        // 검사결과값 입력여부 체크
+        // 비정상
+        let save = false;
+        for (let idx of this.prodQualitywait) {
+          let val = Object.hasOwn(idx, 'quality_result_value');
+          if (!val || idx.quality_result_value <= 0) {
+            alert("검사결과값 을 입력하세요.");
+            return;
+          }
+        }
+        // 정상
+        let testlist = await axios.post('/api/prod', param)
+          .catch(err => console.log(err))
+        console.log(testlist);
+        if (testlist.data.affectedRows > 0) {
+          alert('저장이 완료되었습니다');
+          //
+          // this.prodQualityreq = [];
+          this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected.prod_proc_id);
+          this.selected = {};
+          this.prodQualitywait = [];
+        } else {
+          alert('저장 과정에서 오류가 발생했습니다');
+        }
+
+      },
+      // addRow() {
+      //   this.prodQualitywait.push({});
+      // }
     }
   }
 </script>

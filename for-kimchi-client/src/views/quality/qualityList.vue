@@ -114,6 +114,13 @@
   import axios from 'axios';
   import { codeToName } from '../../utils/common';
 
+  // pinia import
+  // stores 
+  import { useUserStore } from "@/stores/user"; 
+  // state, getter => mapState 
+  // actions => mapActions 
+  import { mapState } from 'pinia';
+
   export default {
     data() {
       return {
@@ -124,6 +131,19 @@
         searchId: '',
         codes: [],
       };
+    },
+    computed: {
+      // ...mapState(store, []), ...mapActions(store, [])
+      // stores 에 등록된 이름으로 사용
+      // 아래 처럼 등록했을 경우 computed 에 등록된 값과 동일하게 사용
+      // 로그인 유저 정보는 userInfo 에 객체 형태로 저장되어있음
+      // 아래 와 같은 형태로 사용
+      // <template></template> 내부에서는 userInfo.employee_id
+      // export default {} 내부에서는 this.userInfo.employee_id
+      ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
     },
     created() {
       // this.selectOption();
