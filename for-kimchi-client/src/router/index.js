@@ -264,34 +264,48 @@ const routes = [
     path: "/orders",
     name: "OrderList",
     component: OrderList,
-    meta: { requiresAuth: true }
+    meta: { 
+      requiresAuth: true,
+      pageName: '주문조회',
+    }
   },
   {
     path: "/ordersmng",
     name: "OrderMng",
     component: OrderMng,
-    meta: { requiresAuth: true }
+    meta: { 
+      requiresAuth: true,
+      pageName: '주문등록/수정',
+     }
   },
   {
     path: "/delivs",
     name: "DelivList",
     component: DelivList,
-    meta: { requiresAuth: true }
+    meta: { 
+      requiresAuth: true,
+      pageName: '납품조회',
+     }
   },
   {
     path: "/delivsmng",
     name: "DelivMng",
     component: DelivMng,
-    meta: { requiresAuth: true }
+    meta: { 
+      requiresAuth: true,
+      pageName: '납품관리',
+     }
   },
   {
     path: "/prodwh",
     name: "ProdWarehouse",
     component: ProdWarehouse,
-    meta: { requiresAuth: true }
+    meta: { 
+      requiresAuth: true,
+      pageName: '제품입고',
+     }
   },
 ];
-
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -302,7 +316,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
 
-  // 로그인 필요한 페이지에 접근 시
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
     next('/login');
   } else {

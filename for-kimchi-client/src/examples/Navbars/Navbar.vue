@@ -42,6 +42,7 @@
       </div>
     </div>
   </nav>
+  <hr class="my-1">
 
   <ChangePwdModal :visible="showModal" @close="showModal = false"/>
 
@@ -95,7 +96,7 @@ export default {
       "userInfo",
     ]),
     currentRouteName() {
-      return this.$route.name;
+      return this.$route.meta.pageName;
     },
   },
 };

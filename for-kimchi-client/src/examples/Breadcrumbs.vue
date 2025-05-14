@@ -4,7 +4,7 @@
       class="px-0 pt-1 pb-0 mb-0 bg-transparent breadcrumb"
       :class="'me-sm-6'"
     >
-      <li class="text-sm breadcrumb-item" :class="color">
+      <!-- <li class="text-sm breadcrumb-item" :class="color">
         <a :class="color" class="opacity-8" href="#">Pages</a>
       </li>
       <li
@@ -13,11 +13,11 @@
         aria-current="page"
       >
         {{ currentPage }}
-      </li>
+      </li> -->
     </ol>
-    <h6 class="mb-0 font-weight-bolder" :class="color">
+    <h3 class="mb-0 font-weight-bolder" :class="color">
       {{ currentPage }}
-    </h6>
+    </h3>
   </nav>
 </template>
 

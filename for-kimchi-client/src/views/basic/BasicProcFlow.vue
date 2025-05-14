@@ -1,12 +1,5 @@
 <template>
   <div class="container-fluid">
-    
-    <div class="row mt-3">
-      <div class="col text-end">
-        <button class="btn btn-success" @click="showProd = true">조회</button>
-        <button class="btn btn-info ms-2" @click="save">등록</button>
-      </div>
-    </div>
 
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">

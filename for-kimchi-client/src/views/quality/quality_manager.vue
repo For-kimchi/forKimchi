@@ -1,58 +1,70 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid mt-5">
+
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
-          <h6 class="text-white text-capitalize ps-3">검사기준 관리</h6>
+          <h6 class="text-white text-capitalize ps-3">대상정보</h6>
         </div>
       </div>
       <div class="row g-2 my-3 px-3">
+
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0">제품</label>
-            <input v-model="selectedType" type="radio" value="PRD" @change="fetchQualityItems" />
-            <label class="form-label me-2 mb-0">자재</label>
-            <input v-model="selectedType" type="radio" value="MAT" @change="fetchQualityItems" />
+            <label class="form-label me-2 mb-0 " style="width: 100px;">대상명</label>
+            <input v-model="target.target_name" type="text" class="form-control border text-center" @keydown.prevent
+                  @click="showProd = true" placeholder="대상명"/>
           </div>
         </div>
+        <div class="col-md-3">
+          <div class="d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">대상ID</label>
+            <input v-model="target.target_id" type="text" class="form-control border text-center" @keydown.prevent 
+            placeholder="대상ID" />
+          </div>
+        </div>
+
       </div>
     </div>
 
     <div class="row">
-      <div class="col-md-8">
+      <!-- Left Side: Products -->
+      <div class="col-md-6">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
-              <h6 class="text-white text-capitalize ps-3">검사기준목록</h6>
+              <h6 class="text-white text-capitalize ps-3">검사기준정보</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive mb-4" style="max-height: 600px; overflow-y: auto;">
-              <table class="table align-items-center mb-0">
+            <div class="table-responsive p-0" style="max-height: 400px;">
+              <table class="table align-items-center justify-content-center mb-0">
                 <thead>
                   <tr>
-                    <th class="align-middle text-center">target_id</th>
-                    <th class="align-middle text-center">검사ID</th>
-                    <th class="align-middle text-center">검사명</th>
-                    <th class="align-middle text-center">검사기준치</th>
-                    <th class="align-middle text-center">검사항목</th>
-                    <th class="align-middle text-center">작업</th>
+                    <th class="text-center font-weight-bolder">검사ID</th>
+                    <th class="text-center font-weight-bolder">검사명</th>
+                    <th class="text-center font-weight-bolder">검사기준</th>
+                    <th class="text-center font-weight-bolder">비교기준</th>
+                    <th class="text-center font-weight-bolder"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, idx) in items" :key="item.target_id">
-                    <td class="align-middle text-center">{{ item.target_id }}</td>
-                    <td class="align-middle text-center">{{ item.option_id }}</td>
-                    <td class="align-middle text-center">{{ item.option_name }}</td>
-                    <td class="align-middle text-center">{{ item.option_standard }}</td>
-                    <td class="align-middle text-center">{{ item.option_method }}</td>
-                    <td class="align-middle text-center">
-                      <button class="btn btn-warning" @click="editItem(item)">수정</button>
-                      <button class="btn btn-danger ms-2" @click="delOption(item.option_id)">삭제</button>
+                  <tr v-for="(info, index) in std.std_details" v-bind:key="info.std_detail_id">
+                    <td class="text-center">
+                      {{ info.option_id }}
                     </td>
-                  </tr>
-                  <tr v-if="items.length === 0">
-                    <td colspan="5" class="text-center">검색된 결과가 없습니다</td>
+                    <td class="text-center">
+                      {{ info.option_name }}
+                    </td>
+                    <td class="text-center">
+                      {{ info.option_standard }}
+                    </td>
+                    <td class="text-center">
+                      {{ codeToName(info.option_operator, codes) }}
+                    </td>
+                    <td class="text-center">
+                      <button class="btn btn-danger m-0" @click="removeRows(index)">삭제</button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -61,132 +73,165 @@
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="card p-3">
-          <h5>{{ action }}</h5>
-          <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0" style="width: 100px;">검사ID</label>
-            <input v-model="selected.option_id" type="text" class="form-control border text-center" readonly />
+      <!-- Right Side: Materials -->
+      <div class="col-md-6">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
+              <h6 class="text-white text-capitalize ps-3">검사정보</h6>
+            </div>
           </div>
-          <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0" style="width: 100px;">검사명</label>
-            <input v-model="selected.option_name" type="text" class="form-control border text-center" />
+
+          <div class="card-body px-0 pb-2">
+            <div class="row g-3 px-3">
+            <div class="col-md-6">
+            <input v-model="searchName" type="text" class="form-control border text-center" placeholder="검사명" />
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary m-0" @click="searchOptions">검색</button>
+            </div>
           </div>
-          <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0" style="width: 100px;">검사기준치</label>
-            <input v-model="selected.option_standard" type="text" class="form-control border text-center" />
-          </div>
-          <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0" style="width: 100px;">검사항목</label>
-            <input v-model="selected.option_method" type="text" class="form-control border text-center" />
-          </div>
-          <div class="text-end">
-            <button class="btn btn-primary" @click="save">저장</button>
-            <button class="btn btn-secondary ms-2" @click="resetForm">취소</button>
+            <div class="table-responsive p-0" style="max-height: 400px;">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center font-weight-bolder">검사ID</th>
+                    <th class="text-center font-weight-bolder">검사명</th>
+                    <th class="text-center font-weight-bolder">검사기준</th>
+                    <th class="text-center font-weight-bolder">비교기준</th>
+                    <th class="text-center font-weight-bolder"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(info, index) in options" v-bind:key="info.option_id">
+                    <td class="text-center">
+                      {{ info.option_id }}
+                    </td>
+                    <td class="text-center">
+                      {{ info.option_name }}
+                    </td>
+                    <td class="text-center">
+                      {{ info.option_standard }}
+                    </td>
+                    <td class="text-center">
+                      {{ codeToName(info.option_operator, codes) }}
+                    </td>
+                    <td class="text-center">
+                      <button class="btn btn-success m-0" @click="addRows(index)">추가</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <TargetModal :visible="showProd" @close="showProd = false" @select="onSelectTarget" />
   </div>
 </template>
 
 
+
 <script>
-  import axios from 'axios';
+import TargetModal from '../modal/TargetModal.vue';
+import axios from 'axios';
+import { codeToName } from '@/utils/common';
 
-  export default {
-    data() {
-      return {
-        selectedType: '', // 자재(MAT) 또는 상품(PRD) 선택
-        action: '추가', // 액션(추가/수정)
-        items: [], // 검사기준 목록
-        selected: {
-          target_id:'',
-          option_id: '',
-          option_name: '',
-          option_standard: '',
-          option_method: ''
-        },
-      };
+export default {
+  components: {
+    TargetModal,
+  },
+  data() {
+    return {
+      showProd: false,
+      searchName: '',
+      materials: [],
+      codes: [],
+      target: {},
+      stds: {},
+      options: [],
+      std: {
+        std_details: [],
+      }
+    };
+  },
+  computed: {
+  },
+  methods: {
+    async getStd() {
+
+      let result = await axios.get('/api/stds', {
+        params: {
+          target_id : this.target.target_id
+        }
+      }).catch(err => console.log(err));
+
+      this.stds = result.data;
     },
-    methods: {
-      // 제품 및 자재를 기반으로 검사항목 조회
-      async fetchQualityItems() {
-        if (!this.selectedType) {
-          alert("제품 또는 자재를 선택하세요.");
-          return;
+    async getOptions() {
+
+      let result = await axios.get('/api/options', {
+        params: {
+          option_name: this.searchName
         }
-        try {
-          const response = await axios.get(`/api/options`, {
-            params: {
-              target_id: this.selectedType,
-            }
-          });
-          this.items = response.data;
-        } catch (error) {
-          console.error(error);
-          alert('검사항목 조회에 실패했습니다.');
-        }
-      },
+      }).catch(err => console.log(err));
 
-      // 항목 수정
-      editItem(item) {
-        this.selected = {
-          ...item,         // target_id 없애야함
-        };
-        this.action = '수정';
-      },
+      this.options = result.data;
+    }
+    ,
+    onSelectTarget(target) {
+      this.target = target;
+      this.getStd();
+    }, 
+    searchOptions() {
+      this.getOptions();
+    },
+    removeRows(index) {
+      this.bom.bom_details.splice(index, 1);
+    },
+    addRows(index) {
+      
+      let exist = this.bom.bom_details.some(item => item.mate_id === this.materials[index].mate_id);
 
-      // 항목 저장 (추가/수정)
-      async save(){
-            // Form에 입력된 정보를 기준으로 등록하는 경우
-
-            // 서버에 전달할 정보를 객체로 따로 구성
-            let id = {
-              target_id: this.selected.target_id,
-              option_id: this.selected.option_id,
-              option_name: this.selected.option_name,
-              option_standard: this.selected.option_standard,
-              option_method: this.selected.option_method
-            }
-            // 서버에 데이터를 요청 : POST + http://localhost:3000/books => proxy ) /api/books
-            // axios 모듈을 활용해 AJAX하는 경우 POST와 PUT은 두번째 매개변수로 서버에 보낼 데이터를 전달, 자동으로 JSON 적용
-            let result = await axios.post("/api/options", id)
-                               .catch(err => console.log(err));
-            let addRes = result.data;
-            if(addRes.isSuccessed){
-                alert('등록되었습니다.');
-                this.selected.target_id = addRes.No;
-            }else{
-                alert('등록되지 않았습니다.\n데이터를 확인해보세요.');
-            };
-        },
-
-      // 항목 삭제
-      async delOption() {
-            // 서버에 데이터를 요청 : DELETE + http://localhost:3000/options/MAT-001 => proxy ) /api/options/MAT-001
-            let ajaxRes = await axios.delete(`/api/options/${this.item.option_id}`) 
-                                      .catch(err => console.log(err));
-            let sqlRes = ajaxRes.data;
-            let result = sqlRes.affectedRows;
-            if (result > 0) {
-                alert('정상적으로 삭제되었습니다.');
-                // 정상적으로 삭제된 경우 존재하지 않는 데이터이므로 전체조회로 페이지 전환
-            } else {
-                alert('삭제되지 않았습니다.');
-            }
-        },
-
-      // 폼 초기화
-      resetForm() {
-        this.selected = {
-          option_id: '',
-          option_name: '',
-          option_standard: '',
-          option_method: ''
-        };
-        this.action = '추가';
+      if (!exist) {
+        this.bom.bom_details.push({
+          ...this.materials[index],
+          mate_amount: 0,
+        })
+      } else {
+        alert('이미 추가된 자재입니다')
       }
     },
-  };
+    async save() {
+
+      this.bom.employee_id = this.employee.employee_id;
+
+      let res = await axios.post('/api/basicBom', this.bom)
+      .catch(err => console.log(err));
+      
+      if (res.data.success) {
+        alert('등록 성공');
+        this.bom = {};
+        this.materials = [];
+        this.prod = {};
+      } else {
+        alert('등록 실패');
+      }
+
+    },
+    async getOptionType() {
+      let res = await axios.get(`/api/codes/C2`)
+        .catch(err => console.log(err));
+      this.codes = res.data;
+    },
+    codeToName(code, codeArray) {
+      return codeToName(code, codeArray);
+    }
+  },
+  created() {
+    this.getOptionType();
+  },
+};
 </script>

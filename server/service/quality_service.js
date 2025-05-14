@@ -197,13 +197,13 @@ const insertOption = async (body) => {
   } else {
 
     let lastOpt = await mariaDB.query("selectLastOption", {});
-    let lastOptionId = lastOpt[0].prod_id;
+    let lastOptionId = lastOpt[0].option_id;
 
     let newOptId = keys.getNextUniqueId(lastOptionId);
 
     body.option_id = newOptId;
 
-    let optionColumn = ['option_id', 'option_name', 'option_standard', 'option_method'];
+    let optionColumn = ['option_id', 'option_name', 'option_standard', 'option_operator', 'option_method'];
     let optionParam = converts.convertObjToAry(body, optionColumn);
 
     result = await mariaDB.query("insertOption", optionParam);
@@ -256,6 +256,35 @@ const updateOptionControl = async(info, id) => {
 // 검사기준 삭제
 const deleteOptionControl = async(id) => {
   let list = await mariaDB.query('deleteOption', id);
+  return list;
+};
+
+// 검사기준관리
+// 검사기준조회
+const getStds = async(params) => {
+  let target_id = params.target_id;
+
+  let list = await mariaDB.query('selectStd', target_id);
+
+  let std;
+
+  if (list.length > 0) {
+    std = list[0];
+
+    if (std.std_id) {
+      list = await mariaDB.query('selectStdDetail', std.std_id);
+    }
+
+    std.std_details = list;
+
+  } else {
+
+    std = {
+      target_id: target_id,
+      std_details: [],
+    }
+  }
+
   return list;
 };
 
