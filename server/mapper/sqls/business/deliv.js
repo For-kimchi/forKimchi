@@ -5,7 +5,9 @@ const { selectLastOrder } = require("./order");
 
 // 납품
 const selectDelivTarget =
-  `SELECT ORDD.order_detail_id,
+  `
+  SELECT DEL.* FROM 
+  (SELECT ORDD.order_detail_id,
  ORDD.order_id,
  ORDD.prod_id,
  ORD.vendor_id,
@@ -19,8 +21,9 @@ FROM t_order_detail ORDD
 JOIN t_order ORD ON ORDD.order_id = ORD.order_id
 JOIN t_prod PR ON ORDD.prod_id = PR.prod_id
 JOIN t_vendor VE ON ORD.vendor_id = VE.vendor_id
-AND deliv_due_date BETWEEN ? AND ?
-ORDER BY deliv_due_date 
+WHERE deliv_due_date BETWEEN ? AND ?
+ORDER BY deliv_due_date) DEL
+WHERE order_amount > 0
 `;
 //WHERE order_status = '4z' 나중에 데이터 있으면 필요한 조건
 
