@@ -156,12 +156,12 @@ export default {
 
     async getStoreDtList(storeId) {
       try {
-        const res = await axios.get(`/api/storeList/${storeId}`);
+        const res = await axios.get(`/api/storeWareList/${storeId}`);
         this.storeWareStatus = res.data;
         this.inbound_id = storeId;
 
         // 기본값 설정: quality_result 기준으로 inbound_type 세팅
-        this.storeWareStatus.forEach(item => {
+        this.storeWareStatus.forEach(item => {  
           if (!item.inbound_type) {
             item.inbound_type = item.quality_result === '양품' ? '입고' : '반품';
           }

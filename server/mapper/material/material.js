@@ -121,7 +121,7 @@ ORDER BY vendor_id`;
 // 자재검색
 const searchMateList =
 `SELECT 
-	mate_id
+	   mate_id
     ,mate_name
     ,mate_unit
 FROM t_mate
@@ -132,7 +132,7 @@ const detailMateInserts =
 `SELECT
         p.mate_id
         ,p.mate_name
-        ,req_amountsd
+        ,req_amount
         ,p.mate_unit
 FROM t_mate_req_detail mrd LEFT JOIN t_mate p
                                 ON (mrd.mate.id = p.mate_id)
@@ -149,6 +149,15 @@ const insertMainMate =
                         ,req_status
                         ,memo)
 VALUES(SYSDATE(), ?, ?, ?, ?, '1o', '')`;
+
+// 자재발주관리페이지에서 선택항목 update
+const updateMateQuery =
+`UPDATE t_mate_req
+ SET vendor_id = ?
+    , employee_id = ?
+    , req_due_date = ?
+    , memo = ?
+ WHERE req_id = ?`
 
 // 자재발주 상세등록버튼(저장)
 const insertMatese =
@@ -175,20 +184,25 @@ const selectDeleteList =
 FROM t_mate_req
 WHERE req_status = '1o' `
 
+
+// 자재발주관리페이지에서 행클릭
+const selectReqMate =
+`SELECT mr.mate_id,
+		    tm.mate_name,
+        mr.req_amount,
+        tm.mate_unit
+FROM t_mate_req_detail mr
+LEFT JOIN t_mate tm ON mr.mate_id = tm.mate_id
+WHERE mr.req_detail_id = ?`;
+
+
 // 자재발주관리페이지에서 자재리스트 중 선택항목 삭제버튼
 const deleteMateBtn =
 `DELETE 
 FROM t_mate_req
 WHERE req_id =?`
 
-// 자재발주관리페이지에서 선택항목 update
-const updateMateQuery =
-`UPDATE t_mate_req
- SET vendor_id = ?
-    , employee_id = ?
-    , req_due_date = ?
-    , memo = ?
- WHERE req_id = ?`
+
 
 
 // 자재발주 상세삭제(자재발주상세부터 삭제해야 오류가 안난다.)
@@ -262,4 +276,5 @@ module.exports = {
     updateMateStatus,
     updateMateQuery,
     mateOrderList,
+    selectReqMate,
 }

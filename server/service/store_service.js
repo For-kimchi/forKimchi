@@ -2,6 +2,7 @@ const mariaDB = require('../mapper/mapper.js');
 const { convertObjToQuery } = require('../utils/converts');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts.js');
+const { search } = require('../router/material_router.js');
 
 // 입고관리 발주서전체조회(발주승인건만)
 const storeMateList = async() => {
@@ -17,22 +18,72 @@ const mateById = async(mateNo) => {
 
 // 입고조회페이지 전체리스트
 const storeAll = async (searchList) => {
-  let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
-  let list = await mariaDB.query('selectStoreList', searchKeyword);
+  let param = {
+    searchKeyword: ''
+  }
+
+  let {
+    startDate,
+    endDate,
+    ...others
+  } = searchList;
+  
+  for (let key of Object.keys(others)) {
+    if (others[key]) {
+      param.searchKeyword += ` AND LOWER(${key}) LIKE LOWER('%${others[key]}%')`;
+    }
+  }
+
+  if (startDate && endDate) {
+    param.searchKeyword += ` AND inbound_date BETWEEN '${startDate}' AND '${endDate}'`;
+  }
+
+    let list = await mariaDB.query('selectStoreList', param);
+    return list;
+}
+
+
+
+// const storeAll = async (searchList) => {
+//   let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
+//   let list = await mariaDB.query('selectStoreList', searchKeyword);
+//   return list;
+// };
+
+// 입고조회페이지 입고상세조회(항목클릭시)
+// const storeById = async (searchList) => {
+//   let param = {
+//     searchKeyword: ''
+//   }
+
+//   let {
+//     vendor_id,
+//     inbound_id
+//   } = searchList;
+
+//   for (let key of Object.keys(others)) {
+//     if(others[key])
+//   }
+// }
+
+// 입조조회페이지 상세조회
+const storedtList = async(storeId) => {
+  let list = await mariaDB.query('storeDetailList', storeId);
   return list;
 };
 
-// 입고조회페이지 입고상세조회(항목클릭시)
-const storeById = async (storeId) => {
-  let list = await mariaDB.query('selectDetailStore', storeId);
-  return list;
-};
 
 // 창고입고조회 (검사완료건만 조회)
 const storeWareAll = async() => {
   let list = await mariaDB.query('selectWareStatus');
   return list;
-}
+};
+
+// 창고입고 상세조회
+const storeById = async (storeId) => {
+  let list = await mariaDB.query('selectDetailStore', storeId);
+  return list;
+};
 
 // 창고조회
 const wareAll = async() => {
@@ -195,4 +246,5 @@ module.exports = {
   storeAll,
   getGroupedByMaterial,
   getWarehouseList,
+  storedtList,
 }

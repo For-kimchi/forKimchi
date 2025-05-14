@@ -48,17 +48,26 @@ router.get('/storeList', async(req, res) => {
 // 입고상세조회
 router.get('/storeList/:id', async(req, res) => {
   let storeId = req.params.id;
-  let storeInfo = await storeService.storeById(storeId)
+  let storeInfo = await storeService.storedtList(storeId)
                                     .catch(err => console.log(err));
   res.send(storeInfo);
 });
 
+//-----------------------------------창고---------------------------------------
 // 창고입고(검사완료건만 조회)
 router.get('/storeWareStatus', async (req, res) => {
   let search = req.query;
   let storeList = await storeService.storeWareAll(search)
-                                    .catch(err => console.log(err));
+  .catch(err => console.log(err));
   res.send(storeList);
+});
+
+// 창고입고상세조회
+router.get('/storeWareList/:id', async(req, res) => {
+  let storeId = req.params.id;
+  let storeInfo = await storeService.storeById(storeId)
+                                    .catch(err => console.log(err));
+  res.send(storeInfo);
 });
 
 // 창고저장

@@ -85,8 +85,7 @@
                     <tr v-for="(info, index) in matReqList" :key="info.id" @click="handleRowClick(info)">
                       <td>{{ index + 1 }}</td>
                       <td>           
-                          <input type="checkbox" v-if="info.req_status === '발주등록'" v-model="info.selected"
-                        @change="check"></td>
+                        <input type="checkbox" v-if="info.req_status === '발주등록'" v-model="info.selected" @change="check"></td>
                       <td>{{ info.req_date }}</td>
                       <td>{{ info.req_id }}</td>
                       <td>{{ info.vendor_name }}</td>
@@ -184,12 +183,12 @@ export default {
       check() {
         this.allSelected = this.matReqList.every(item => item.selected);
       },
-    handleSearch() {
+    async handleSearch() {
       // 검색 조건을 사용하여 API 요청을 보냅니다.
-      axios
+      await axios
         .get('/api/materials', {
           params: this.search,
-        })
+        })  
         .then((response) => {
           this.matReqList = response.data.map(item => ({
           ...item,
@@ -201,9 +200,9 @@ export default {
           console.error('검색 실패:', error);
         });
     },
-    handleRowClick(info) {
+    async handleRowClick(info) {
       this.selectedInfo = info;
-      axios
+      await axios
         .get(`/api/materials/${info.req_id}`,{
         })
         .then((response) => {
@@ -229,8 +228,6 @@ export default {
           if (confirm('선택한 항목을 승인하시겠습니까?')) {
             let res = await axios.post(`/api/mateConfirm`, params)
               .catch(err => console.log(err));
-              
-              
             if (res.data.success) {
               alert('선택된 항목이 승인되었습니다.');
               this.handleSearch();

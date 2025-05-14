@@ -32,9 +32,10 @@ LIMIT 1`;
 const selectStoreList = 
 `SELECT 
   i.inbound_id,
-  date_type(i.inbound_date) inbound_date,
-  i.vendor_id vendor_id,
-  employee_id(i.employee_id) employee_id,
+  date_type(i.inbound_date) AS inbound_date,
+  i.vendor_id,
+  v.vendor_name,
+  employee_id(i.employee_id) AS employee_id,
   i.memo,
   CASE
     WHEN SUM(CASE WHEN id.inbound_status = '1p' THEN 1 ELSE 0 END) > 0 THEN '검사요청'
@@ -44,7 +45,17 @@ const selectStoreList =
   END AS inbound_final_status
 FROM t_mate_inbound i
 JOIN t_mate_inbound_detail id ON i.inbound_id = id.inbound_id
-GROUP BY i.inbound_id`;
+JOIN t_vendor v ON i.vendor_id = v.vendor_id 
+WHERE 1=1
+  :searchKeyword
+GROUP BY 
+  i.inbound_id,
+  i.inbound_date,
+  i.vendor_id,
+  v.vendor_name,
+  i.employee_id,
+  i.memo;
+`;
 
 // 입고관리에서 발주서리스트 (입고상태추가해야함)
 const selectStoreMateList = 
@@ -96,8 +107,8 @@ const selectDetailStore =
   ib.memo,
 
   ibd.inbound_detail_id,
-  MAX(ibd.mate_id) AS mate_id,  -- 예시로 MAX를 사용
-  MAX(ibd.inbound_amount) AS inbound_amount,  -- SUM 대신 MAX를 사용하여 한 값만 취함
+  MAX(ibd.mate_id) AS mate_id, 
+  MAX(ibd.inbound_amount) AS inbound_amount,  
   MAX(ibd.memo) AS detail_memo,
 
   CASE 
@@ -120,18 +131,17 @@ WHERE ib.inbound_id = ?
 GROUP BY 
   ib.inbound_id, 
   ibd.inbound_detail_id
+`;
 
-
-`
-// `SELECT inbound_detail_id
-//         ,inbound_amount
-//         ,pass_amount
-//         ,fail_amount
-//         ,sub_code(inbound_status) inbound_status
-//         ,mate_id
-//         ,memo
-// FROM t_mate_inbound_detail
-// WHERE inbound_id = ?`;
+// 입고조회페이지 상세조회
+const storeDetailList =
+`SELECT inbound_detail_id
+        ,inbound_amount
+        ,sub_code(inbound_status) inbound_status
+        ,mate_id
+        ,memo
+FROM t_mate_inbound_detail
+WHERE inbound_id = ?`;
 
 // 창고입고조회 (검사완료건만 조회)
 const selectWareStatus = 
@@ -285,4 +295,5 @@ module.exports = {
   updateWarehouse,
   warehouseLotList,
   groupBywareList,
+  storeDetailList,
 }
