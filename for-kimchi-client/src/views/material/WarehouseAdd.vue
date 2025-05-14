@@ -73,9 +73,10 @@
                   <tr v-for="(info,index) in storeWareStatus " v-bind:key="info.inbound_detail_id">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">
-                   <select v-model="info.warehouse_id" class="form-select text-center" style="max-width: 150px; border: 1px solid gray;">
+
+                   <select v-model="info.warehouse_id " class="form-select text-center" style="max-width: 150px; border: 1px solid gray;">
                    <option disabled value="">선택</option>
-                  <option v-for="wh in warehouses" :key="wh.warehouse_type" :value="wh.warehouse_id">{{ wh.warehouse_type }}</option>
+                  <option v-for="(w, index) in wareId" :key="index" :value="w.warehouse_id">{{ w.warehouse_id }}</option>
                   </select>
                   </td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
@@ -121,12 +122,17 @@ export default {
       storeList: [],            // 입고 목록
       storeWareStatus: [],      // 상세 목록
       inbound_id: '',           // 선택된 입고 ID
-      warehouses: [],          
+      warehouses: [],
+      wareId:[],
+      selectedWarehouse:'',       
     };
   },
   created() {
     this.getStoreList();        // 최초 로드 시 입고 목록 조회
     this.getWarehouses();
+    this.wareTypeAdd();
+
+    
   },
   methods: {
     async getStoreList() {
@@ -142,7 +148,7 @@ export default {
     const res = await axios.get('/api/warehouseList');
     
     // 중복 제거된 warehouse_id만 추출
-    const uniqueList = [...new Set(res.data.map(item => item.warehouse_id))];
+    const uniqueList = [...new Set(res.data.map(item => item.warehouse_type))];
 
     // 필요한 형태로 다시 가공
     this.warehouses = uniqueList.map(id => ({ warehouse_id: id }));
@@ -157,7 +163,7 @@ export default {
         const res = await axios.get(`/api/storeWareList/${storeId}`);
         this.storeWareStatus = res.data;
         this.inbound_id = storeId;
-
+        this.warehouse_id = '';
         // 기본값 설정: quality_result 기준으로 inbound_type 세팅
         this.storeWareStatus.forEach(item => {  
           if (!item.inbound_type) {
@@ -170,6 +176,18 @@ export default {
       }
     },
 
+    // 창고입고 상세에서 창고선택 드롭다운창에 warehouse_id넣기
+    async wareTypeAdd() {
+  try {
+    let ajaxRes = await axios.get('/api/wareDetailId');
+    this.wareId = ajaxRes.data.filter(item =>
+      ['WHS-001', 'WHS-002', 'WHS-003'].includes(item.warehouse_id)
+    );
+    console.log('-----------------------------', this.wareId);
+  } catch (err) {
+    console.log('창고 목록 오류:', err);
+  }
+},
     async wareAdd() {
       try {
         const saveList = this.storeWareStatus.map(item => ({
@@ -179,9 +197,11 @@ export default {
           inbound_amount: item.inbound_amount,
           mate_id: item.mate_id,
           employee_id: '홍길동',
-          inbound_id: this.inbound_id
+          inbound_id: this.inbound_id,
+          warehouse_id: this.selectedWarehouse
+          
         }));
-
+        
         if (saveList.length === 0) {
           alert('입고 항목이 없습니다.');
           return;

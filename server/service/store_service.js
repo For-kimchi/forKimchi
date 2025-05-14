@@ -85,23 +85,35 @@ const storeById = async (storeId) => {
   return list;
 };
 
-// 창고조회
-const wareAll = async() => {
-  let list = await mariaDB.query('selectWarehouses');
+// LOT별 창고현황조회
+const wareAll = async(warehouse_id) => {
+  let list = await mariaDB.query('warehouseLotList', [warehouse_id]);
   return list;
 };
-
-// LOT별 창고조회
-const getGroupedByMaterial = async() => {
-  let list = await mariaDB.query('groupBywareList');
+// 자재묶음별 창고현황조회
+const getGroupedByMaterial = async(warehouse_id) => {
+  let list = await mariaDB.query('groupBywareList', [warehouse_id]);
   return list;
-}
+};
 
 // 자재별 합계 창고조회
 const getWarehouseList = async() => {
   let list = await mariaDB.query('warehouseLotList');
   return list;
 }
+
+// 창고현황페이지에서 드롭다운 (warehouse_id 조회)
+const wareIdAll = async() => {
+  let list = await mariaDB.query('warehouseIdAll');
+  return list;
+}
+
+// 창고입고페이지에서 드롭다운 (warehouse_id 조회)
+const wareDtId = async() => {
+  let list = mariaDB.query('warehouseDtId');
+  return list;
+}
+
 
 // 창고저장
 const insertWarehouse = async(wareList) => {
@@ -247,4 +259,6 @@ module.exports = {
   getGroupedByMaterial,
   getWarehouseList,
   storedtList,
+  wareIdAll,
+  wareDtId,
 }

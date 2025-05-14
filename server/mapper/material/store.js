@@ -105,6 +105,8 @@ const selectDetailStore =
   ib.vendor_id,
   employee_id(ib.employee_id) AS employee_id,
   ib.memo,
+  wr.warehouse_type,
+  wr.warehouse_id,
 
   ibd.inbound_detail_id,
   MAX(ibd.mate_id) AS mate_id, 
@@ -124,6 +126,8 @@ const selectDetailStore =
 
 FROM t_mate_inbound ib
 JOIN t_mate_inbound_detail ibd ON ib.inbound_id = ibd.inbound_id
+JOIN t_mate_warehouse mtw ON ibd.mate_id = mtw.mate_id
+LEFT JOIN t_warehouse wr ON mtw.warehouse_id = wr.warehouse_id
 LEFT JOIN t_quality_mate qm ON ibd.inbound_detail_id = qm.inbound_detail_id
 LEFT JOIN t_quality_mate_detail qmd ON qm.quality_id = qmd.quality_id
 
@@ -201,14 +205,32 @@ VALUES (?, ?, ?, ? ,'1p', '')`;
 
 // 창고현황조회
 const selectWarehouses = 
-`SELECT warehouse_id,
-	      mate_lot,
-        mate_id(mate_id) mate_name,
-        mate_id,
-	      mate_amount,
-        date_type(inbound_date) inbound_date,
-        employee_id(employee_id) employee_id
-FROM t_mate_warehouse`;
+`SELECT 
+  w.warehouse_id,
+  d.mate_lot,
+  d.mate_id,
+  d.mate_amount,
+  d.inbound_date,
+  d.employee_id
+FROM t_mate_inbound_detail d
+JOIN t_warehouse w ON w.warehouse_id = d.warehouse_id
+WHERE w.warehouse_id = ?
+ORDER BY d.inbound_date DESC`;
+
+// 창고현황페이지에서 warehouse_id(드롭다운) 조회
+const warehouseIdAll =
+`SELECT 
+  warehouse_id,
+  warehouse_type
+FROM t_warehouse
+`;
+
+// 창고입고페이지에서 warehouse_id(드롭다운) 조회
+const warehouseDtId =
+`SELECT 
+  warehouse_id,
+  warehouse_type
+FROM t_warehouse`;
 
 
 // 창고입고상세에서 저장버튼 클릭시 창고에 DB저장
@@ -244,14 +266,16 @@ WHERE inbound_id =?`;
 // 창고 LOT별 전체조회
 const warehouseLotList =
 `SELECT 
-    warehouse_id,
-    mate_lot,
-    mate_id,
-    mate_amount,
-    inbound_date,
-    employee_id
-FROM t_mate_warehouse
-ORDER BY inbound_date DESC`;
+  w.warehouse_id,
+  m.mate_lot,
+  m.mate_id,
+  m.mate_amount,
+  m.inbound_date,
+  m.employee_id
+FROM t_mate_warehouse m
+JOIN t_warehouse w ON w.warehouse_id = m.warehouse_id
+WHERE w.warehouse_id = ?
+ORDER BY m.inbound_date DESC`;
 
 // `SELECT 
 //     w.warehouse_type,
@@ -262,15 +286,18 @@ ORDER BY inbound_date DESC`;
 //     employee_id
 // FROM t_mate_warehouse mw JOIN t_warehouse w ON (mw.warehouse_id = w.warehouse_id)
 // ORDER BY inbound_date DESC`;
+
 // 창고 자재별 묶음 합계조회
 const groupBywareList =
 `SELECT 
-    mate_id(mate_id) mate_id,
-    SUM(mate_amount) AS mate_amount,
-    MAX(inbound_date) AS last_inbound_date,
-    COUNT(*) AS lot_count
+  mate_id,
+  SUM(mate_amount) AS mate_amount,
+  MAX(inbound_date) AS last_inbound_date,
+  COUNT(DISTINCT mate_lot) AS lot_count
 FROM t_mate_warehouse
-GROUP BY mate_id`;
+WHERE warehouse_id = ?
+GROUP BY mate_id
+ORDER BY last_inbound_date DESC`;
 
 // 자재입고삭제
 
@@ -305,4 +332,6 @@ module.exports = {
   warehouseLotList,
   groupBywareList,
   storeDetailList,
+  warehouseIdAll,
+  warehouseDtId,
 }

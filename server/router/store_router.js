@@ -3,6 +3,7 @@ const router = express.Router();
 
 const storeService = require('../service/store_service.js');
 const mateService = require('../service/material_service.js');
+const { route } = require('./material_router.js');
 
 
 // 발주서 조회
@@ -82,6 +83,19 @@ router.post('/insertWarehouse', async (req, res) => {
   }
 });
 
+// 창고현황페이지에서 warehouse_id(드롭다운) 조회
+router.get('/wareId', async (req, res) => {
+  let search = req.query;
+  let result = await storeService.wareIdAll(search);
+  res.send(result);
+})
+
+// 창고입고페이지에서 warehouse_id(드롭다운) 조회
+router.get('/wareDetailId', async (req, res) => {
+  let search = req.query;
+  let result = await storeService.wareDtId(search);
+  res.send(result);
+})
 
 // 창고조회
 // router.get('/warehouseList', async (req, res) => {
@@ -91,16 +105,15 @@ router.post('/insertWarehouse', async (req, res) => {
 // });
 
 router.get('/warehouseList', async (req, res) => {
-  const type = req.query.type;
+  const { type, warehouse_id } = req.query;
 
   try {
     let result;
 
     if (type === 'group') {
-      result = await storeService.getGroupedByMaterial();
+      result = await storeService.getGroupedByMaterial(warehouse_id);
     } else {
-      // 기본은 LOT별
-      result = await storeService.wareAll();
+      result = await storeService.wareAll(warehouse_id);
     }
 
     res.send(result);
