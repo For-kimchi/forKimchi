@@ -25,14 +25,14 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>제품ID</th>
-              <th>제품명</th>
+              <th class="text-center">제품ID</th>
+              <th class="text-center">제품명</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in results" :key="item.prod_id" @click="selectItem(item)" style="cursor: pointer">
-              <td>{{ item.prod_id }}</td>
-              <td>{{ item.prod_name }}</td>
+              <td class="text-center">{{ item.prod_id }}</td>
+              <td class="text-center">{{ item.prod_name }}</td>
             </tr>
           </tbody>
         </table>

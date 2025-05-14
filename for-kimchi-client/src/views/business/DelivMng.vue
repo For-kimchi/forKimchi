@@ -16,62 +16,62 @@
       </div>
       <div class="row mt-3 px-3">
         <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
-            <input :value="orderDetail.vendor_name" type="text" class="form-control border text-center" readonly />
+            <input :value="orderDetail.vendor_name" type="text" class="form-control border text-center"   @keydown.prevent
+            @input.prevent />
           </div>
         </div>
         <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">납품일자</label>
             <input :value="formatDate(orderDetail.deliv_due_date)" type="date" class="form-control border text-center"
-              readonly />
+            @keydown.prevent
+            @input.prevent />
           </div>
         </div>
         <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">담당자명</label>
-            <input v-model="userInfo.employee_name" type="text" class="form-control border text-center" readonly />
+            <input v-model="userInfo.employee_name" type="text" class="form-control border text-center"   @keydown.prevent
+            @input.prevent />
           </div>
         </div>
         <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">비고</label>
-            <input v-model="orderDetail.memo" type="text" class="form-control border text-center" readonly />
+            <input v-model="orderDetail.memo" type="text" class="form-control border text-center"   @keydown.prevent
+            @input.prevent />
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="card mt-3 mb-5">
-      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
-          <h6 class="text-white text-capitalize ps-3">납품대상제품</h6>
-        </div>
-      </div>
-      <div class="row mt-3 px-3">
+      <div class="row my-3 px-3">
         <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">제품명</label>
-            <input :value="orderDetail.prod_name" type="text" class="form-control border text-center" readonly />
+            <input :value="orderDetail.prod_name" type="text" class="form-control border text-center"   @keydown.prevent
+            @input.prevent />
           </div>
         </div>
         <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">제품ID</label>
-            <input :value="orderDetail.prod_id" type="text" class="form-control border text-center" readonly />
+            <input :value="orderDetail.prod_id" type="text" class="form-control border text-center"   @keydown.prevent
+            @input.prevent />
           </div>
         </div>
         <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">주문수량</label>
-            <input v-model="orderDetail.order_amount" type="number" class="form-control border text-center" readonly />
+            <input v-model="orderDetail.order_amount" type="number" class="form-control border text-center"   @keydown.prevent
+            @input.prevent />
           </div>
         </div>
         <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">잔여수량</label>
-            <input v-model="remain" type="number" class="form-control border text-center" readonly />
+            <input v-model="remain" type="number" class="form-control border text-center fw-bold text-danger"   @keydown.prevent
+            @input.prevent />
           </div>
         </div>
       </div>
@@ -121,7 +121,7 @@ import { mapState } from 'pinia';
 import { useUserStore } from "@/stores/user"; 
 
 export default {
-  name: "주문관리",
+  name: "납품관리",
   components: {
     ProdModal,
     VendorModal,
@@ -131,10 +131,6 @@ export default {
     return {
       prods: [],
       showOrderDetail: false,
-      employee: {
-        employee_id: 'EMP-001',
-        employee_name: '김영업',
-      },
       orderDetail: {},
     }
   },
@@ -158,6 +154,21 @@ export default {
   created() {},
   methods: {
     async register() {
+
+      if (!this.orderDetail.order_detail_id) {
+        alert('납품대상을 먼저 조회 해주세요.');
+        return;
+      }
+
+      if (this.remain < 0) {
+        alert('총 납품수량은 주문수량을 초과할 수 없습니다.');
+        return;
+      }
+
+      if (this.remain == this.orderDetail.order_amount) {
+        alert('납품수량이 입력되지 않았습니다.');
+        return;
+      }
 
       let delivDetails = []
 

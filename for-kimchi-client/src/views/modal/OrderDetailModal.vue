@@ -35,18 +35,20 @@
         <table class="table table-hover" >
           <thead>
             <tr>
-              <th>주문상세ID</th>
-              <th>제품ID</th>
-              <th>주문수량</th>
-              <th>납품예정일자</th>
+              <th class="text-center">주문상세ID</th>
+              <th class="text-center">제품ID</th>
+              <th class="text-center">제품명</th>
+              <th class="text-center">주문수량</th>
+              <th class="text-center">납품예정일자</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in results" :key="item.key" @click="selectItem(item)" style="cursor: pointer;">
-              <td>{{ item.order_detail_id }}</td>
-              <td>{{ item.prod_id }}</td>
-              <td>{{ item.order_amount }}</td>
-              <td>{{ yyyyMMdd(item.deliv_due_date) }}</td>
+              <td class="text-center">{{ item.order_detail_id }}</td>
+              <td class="text-center">{{ item.prod_id }}</td>
+              <td class="text-center">{{ item.prod_name }}</td>
+              <td class="text-center">{{ item.order_amount }}</td>
+              <td class="text-center">{{ formatDate(item.deliv_due_date) }}</td>
             </tr>
           </tbody>
         </table>
@@ -58,6 +60,7 @@
 
 <script>
 import axios from 'axios';
+import { formatDate, formatDateAfter } from '../../utils/common';
 
 export default {
   props: {
@@ -65,8 +68,8 @@ export default {
   },
   data() {
     return {
-      searchStart: this.getTodayDate(0),
-      searchEnd: this.getTodayDate(7),
+      searchStart: this.formatDate(),
+      searchEnd: this.formatDateAfter(null, 14),
       results: [],
     };
   },
@@ -88,23 +91,15 @@ export default {
       this.$emit('close');
     },
     resetState() {
-      this.searchStart = this.getTodayDate(0);
-      this.searchEnd = this.getTodayDate(7);
+      this.searchStart = this.formatDate(),
+      this.searchEnd = this.formatDateAfter(null, 14),
       this.results = []
     },
-    getTodayDate(plus) {
-      const today = new Date();
-
-      today.setDate(today.getDate() + plus);
-
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    },
-      yyyyMMdd(fullDateTime) { 
-        let date = new Date(fullDateTime);
-        return date.toISOString().split('T')[0]
+      formatDate(dateString) {
+        return formatDate(dateString);
+      },
+      formatDateAfter(dateString, after) {
+        return formatDateAfter(dateString, after);
       }
   },
   emits: ['close', 'select'],

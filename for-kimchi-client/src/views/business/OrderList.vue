@@ -83,8 +83,8 @@
                 <td class="text-center">{{ info.order_id}}</td>
                 <td class="text-center">{{ formatDate(info.order_date)}}</td>
                 <td class="text-center">{{ info.vendor_name }}</td>
-                <td class="text-center">{{ info.employee_id }}</td>
-                <td class="text-center">{{ info.manager_id }}</td>
+                <td class="text-center">{{ info.employee_name }}</td>
+                <td class="text-center">{{ info.manager_name }}</td>
                 <td class="text-center">{{ codeToName(info.order_final_status, codes) }}</td>
                 <td class="text-center">{{ info.memo }}</td>
               </tr>
@@ -114,7 +114,7 @@
           <tbody>
             <tr v-for="(info, index) in orderDetails" v-bind:key="info.order_detail_id">
               <td class="text-center">{{ info.order_detail_id }}</td>
-              <td class="text-center">{{ info.prod_id }}</td>
+              <td class="text-center">{{ info.prod_name }}</td>
               <td class="text-center">{{ info.order_amount }}</td>
               <td class="text-center">{{ formatDate(info.deliv_due_date) }}</td>
               <td class="text-center">{{ codeToName(info.order_status, detailCodes) }}</td>
@@ -303,6 +303,7 @@
     created() {
       this.getOrderStatus();
       this.getOrderDetailStatus();
+      this.getOrders();
     },
   }
 </script>
