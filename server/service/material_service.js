@@ -1,94 +1,97 @@
 const mariaDB = require('../mapper/mapper.js');
-const { convertObjToQuery } = require('../utils/converts');
+const {
+    convertObjToQuery,
+    convertObjToAry
+} = require('../utils/converts');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts.js');
 
 // 전체발주조회
 const mateReqAll = async (searchList) => {
-  console.log(searchList);
-  // let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
+    console.log(searchList);
+    // let searchKeyword = Object.keys(searchList).length > 0 ? convertObjToQuery(searchList) : '';
 
-  let param = {
-    searchKeyword: ''
-  }
-
-  let {
-    startDate,
-    endDate,
-    ...others
-  } = searchList;
-
-  for (let key of Object.keys(others)) {
-    if (others[key]) {
-      param.searchKeyword += ` AND LOWER(${key}) LIKE LOWER('%${others[key]}%')`;
+    let param = {
+        searchKeyword: ''
     }
-  }
 
-  if (startDate && endDate) {
-    param.searchKeyword += ` AND req_date BETWEEN '${startDate}' AND '${endDate}'`;
-  }
+    let {
+        startDate,
+        endDate,
+        ...others
+    } = searchList;
 
-  console.log(param)
+    for (let key of Object.keys(others)) {
+        if (others[key]) {
+            param.searchKeyword += ` AND LOWER(${key}) LIKE LOWER('%${others[key]}%')`;
+        }
+    }
 
-  // :searchKeyword => AND a = b AND c = d
-  let list = await mariaDB.query('selectMateReq', param);
-  return list;
+    if (startDate && endDate) {
+        param.searchKeyword += ` AND req_date BETWEEN '${startDate}' AND '${endDate}'`;
+    }
+
+    console.log(param)
+
+    // :searchKeyword => AND a = b AND c = d
+    let list = await mariaDB.query('selectMateReq', param);
+    return list;
 };
 
 // 자재발주페이지에서 검색결과에 따른 발주조회
 const searchOrder = async (company, startDate, endDate, orderStatus, supplier) => {
-  const conn = await db.getConnection();
-  try {
-    const params = [
-      company, `%${company}%`,
-      startDate, startDate, endDate,
-      orderStatus, orderStatus,
-      supplier, `%${supplier}%`
-    ];
+    const conn = await db.getConnection();
+    try {
+        const params = [
+            company, `%${company}%`,
+            startDate, startDate, endDate,
+            orderStatus, orderStatus,
+            supplier, `%${supplier}%`
+        ];
 
-    const [rows] = await conn.query(selectMateReqWithSearch, params);
-    return rows;
-  } catch (err) {
-    console.error(err);
-    throw new Error("검색 중 오류");
-  } finally {
-    conn.release();
-  }
+        const [rows] = await conn.query(selectMateReqWithSearch, params);
+        return rows;
+    } catch (err) {
+        console.error(err);
+        throw new Error("검색 중 오류");
+    } finally {
+        conn.release();
+    }
 };
 
 // 발주조회페이지 승인버튼
 const mateConfirm = async (mateInfo) => {
 
-  let res = {
-    success: true,
-  }
-
-  try {
-    conn = await mariaDB.getConnection();
-    await conn.beginTransaction();
-
-    let {
-      mates,
-      employee_id
-    } = mateInfo;
-
-    let selectedSql = await mariaDB.selectedQuery('updateMateStatus', {});
-
-    for (let mate of mates) {
-      let result = await conn.query(selectedSql, ['2o', employee_id, mate.req_id]);
+    let res = {
+        success: true,
     }
-    conn.commit();
-    return res;
 
-  } catch (err) {
-    console.log(err);
-    if (conn) conn.rollback();
-    res.success = false;
-    return res;
+    try {
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
 
-  } finally {
-    if (conn) conn.release();
-  }
+        let {
+            mates,
+            employee_id
+        } = mateInfo;
+
+        let selectedSql = await mariaDB.selectedQuery('updateMateStatus', {});
+
+        for (let mate of mates) {
+            let result = await conn.query(selectedSql, ['2o', employee_id, mate.req_id]);
+        }
+        conn.commit();
+        return res;
+
+    } catch (err) {
+        console.log(err);
+        if (conn) conn.rollback();
+        res.success = false;
+        return res;
+
+    } finally {
+        if (conn) conn.release();
+    }
 
 }
 
@@ -100,167 +103,211 @@ const mateConfirm = async (mateInfo) => {
 
 // 발주상세조회
 const mateReqById = async (mateNo) => {
-  let list = await mariaDB.query('selectMateDetail', mateNo);
-  return list;
+    let list = await mariaDB.query('selectMateDetail', mateNo);
+    return list;
 };
 
 // 회사검색(발주관리페이지)
 const vendorId = async () => {
-  let list = await mariaDB.query('insertVenId');
-  return list;
+    let list = await mariaDB.query('insertVenId');
+    return list;
 };
 
 // 자재검색 (발주관리페이지)
 const mateList = async (mateName) => {
-  let list = await mariaDB.query('searchMateList', mateName);
-  return list;
+    let list = await mariaDB.query('searchMateList', mateName);
+    return list;
 };
 
 // 자재발주관리페이지 발주서리스트 조회
 const mateAll = async () => {
-  let list = await mariaDB.query('mateListAll')
-  return list;
+    let list = await mariaDB.query('mateListAll')
+    return list;
 };
 
 // 자재발주페이지 발주상세조회
 const selectMateInfo = async (reqId) => {
-  let list = await mariaDB.query('selectMateDetail', reqId);
-  return list;
+    let list = await mariaDB.query('selectMateDetail', reqId);
+    return list;
 };
 
 // 자재발주관리페이지 발주서 삭제버튼
 const deleteMaterial = async (reqId) => {
-  let result = await mariaDB.query('deleteMateBtn', reqId);
-  return result;
-};
-
-// 자재발주관리에서 req_id가 있을경우 수정 (update)
-const updateMates = async (updateData) => {
-  let result = await mariaDB.query('updateMateQuery', updateData);
-  return result;
+    let result = await mariaDB.query('deleteMateBtn', reqId);
+    return result;
 };
 
 // 생산지시조회
 const mateOrder = async () => {
-  let list = await mariaDB.query('mateOrderList');
-  return list;
+    let list = await mariaDB.query('mateOrderList');
+    return list;
 }
 
 
 // 발주저장버튼
 const insertMates = async (mateSaveInfo) => {
-  let list = ['mate_id', 'mate_name'];
-  // let result = await mariaDB.query('insertMate', addList);
-  // let addList = converterAray.convertObjToAry(mateSaveInfo, list);
-  let conn;
+    let list = ['mate_id', 'mate_name'];
+    // let result = await mariaDB.query('insertMate', addList);
+    // let addList = converterAray.convertObjToAry(mateSaveInfo, list);
+    let conn;
 
-  try {
-    conn = await mariaDB.getConnection();
-    await conn.beginTransaction();
+    try {
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
 
-    // detail 분리
-    const {
-      mate_detail_list,
-      ...mateInfos
-    } = mateSaveInfo;
+        // detail 분리
+        const {
+            mate_detail_list,
+            ...mateInfos
+        } = mateSaveInfo;
 
-    let selectedSql = await mariaDB.selectedQuery('matePlanKey', {});
-    let lastMate = await conn.query(selectedSql, {});
-    let lastMateId = lastMate[0].req_id;
+        let selectedSql = await mariaDB.selectedQuery('matePlanKey', {});
+        let lastMate = await conn.query(selectedSql, {});
+        let lastMateId = lastMate[0].req_id;
 
-    // 부모 key 생성
-    let newMateId = keys.getNextKeyId(lastMateId);
-    mateInfos.req_id = newMateId;
+        // 부모 key 생성
+        let newMateId = keys.getNextKeyId(lastMateId);
+        mateInfos.req_id = newMateId;
 
-    // 부모테이블 column 정보 배열
-    let mateCloumn = ['req_id', 'vendor_id', 'employee_id', 'req_due_date'];
-    let mateAdd = converts.convertObjToAry(mateInfos, mateCloumn);
+        // 부모테이블 column 정보 배열
+        let mateCloumn = ['req_id', 'vendor_id', 'employee_id', 'req_due_date'];
+        let mateAdd = converts.convertObjToAry(mateInfos, mateCloumn);
 
-    // 부모테이블 insert
-    selectedSql = await mariaDB.selectedQuery('insertMainMate', mateAdd);
-    let result = await conn.query(selectedSql, mateAdd);
+        // 부모테이블 insert
+        selectedSql = await mariaDB.selectedQuery('insertMainMate', mateAdd);
+        let result = await conn.query(selectedSql, mateAdd);
 
-    // 마지막 req_detail_id 조회
-    selectedSql = await mariaDB.selectedQuery('mateDetailKey', {});
-    let lastMateDetail = await conn.query(selectedSql, {});
-    let lastMateDetailId = lastMateDetail[0].req_detail_id;
-    console.log(lastMateDetailId);
+        // 마지막 req_detail_id 조회
+        selectedSql = await mariaDB.selectedQuery('mateDetailKey', {});
+        let lastMateDetail = await conn.query(selectedSql, {});
+        let lastMateDetailId = lastMateDetail[0].req_detail_id;
+        console.log(lastMateDetailId);
 
-    for (let MateDetailInfo of mate_detail_list) {
-      // order key 생성
-      let newMateDetailId = keys.getNextKeyId(lastMateDetailId);
-      MateDetailInfo.req_detail_id = newMateDetailId;
-      // 상위에서 등록한 newMateId 사용
-      MateDetailInfo.req_id = newMateId;
+        for (let MateDetailInfo of mate_detail_list) {
+            // order key 생성
+            let newMateDetailId = keys.getNextKeyId(lastMateDetailId);
+            MateDetailInfo.req_detail_id = newMateDetailId;
+            // 상위에서 등록한 newMateId 사용
+            MateDetailInfo.req_id = newMateId;
 
-      // mate_name을 mate_id로 변경  할필요없어서 주석
-      // mateChangeId
-      // let mate_name = MateDetailInfo.mate_id;
-      // console.log("===========================");
-      // console.log(mate_name);
-      // selectedSql = await mariaDB.selectedQuery('mateChangeId', mate_name);
-      // let mate_id = await conn.query(selectedSql, mate_name);
-      // console.log("===========================");
-      // console.log(mate_id);
-      // MateDetailInfo.mate_id = mate_id
-      // 등록할 컬럼 정의(mateDetail 등록)
+            // mate_name을 mate_id로 변경  할필요없어서 주석
+            // mateChangeId
+            // let mate_name = MateDetailInfo.mate_id;
+            // console.log("===========================");
+            // console.log(mate_name);
+            // selectedSql = await mariaDB.selectedQuery('mateChangeId', mate_name);
+            // let mate_id = await conn.query(selectedSql, mate_name);
+            // console.log("===========================");
+            // console.log(mate_id);
+            // MateDetailInfo.mate_id = mate_id
+            // 등록할 컬럼 정의(mateDetail 등록)
 
-      let mateDetailCloumn = ['req_detail_id', 'req_id', 'mate_id', 'req_amount', 'memo'];
-      let addInfo = converts.convertObjToAry(MateDetailInfo, mateDetailCloumn);
+            let mateDetailCloumn = ['req_detail_id', 'req_id', 'mate_id', 'req_amount', 'memo'];
+            let addInfo = converts.convertObjToAry(MateDetailInfo, mateDetailCloumn);
 
-      // detail insert 쿼리 실행
-      selectedSql = await mariaDB.selectedQuery('insertMatese', addInfo);
-      await conn.query(selectedSql, addInfo);
-      // insertMatese
-      // 다음 detail_id 생성을 위해 저장
-      lastMateDetailId = newMateDetailId;
+            // detail insert 쿼리 실행
+            selectedSql = await mariaDB.selectedQuery('insertMatese', addInfo);
+            await conn.query(selectedSql, addInfo);
+            // insertMatese
+            // 다음 detail_id 생성을 위해 저장
+            lastMateDetailId = newMateDetailId;
+        }
+
+        // for(let mateSave of mateSaveInfo){
+        //   // let mateParam ={mate_req_id: mateSave.req_id,
+        //   //                 mate_vendor_id: mateSave.vendor_id,                                  
+        //   //                 mate_employee_id: mateSave.employee_id};
+        //   // let mateSaveInfos = [mateParam];
+        //   // console.log('mateSave = ' + mateSave);
+        //   //         let addList = converterAray.convertObjToAry(mateSave, list);
+        //   //         console.log('addList = ' + addList);
+        //   //         selectedSql = await mariaDB.selectedQuery('insertMates',addList);
+        //   //         let result = await conn.query(selectedSql, addList);
+        //           // let results = await mariaDB.query('insertMate', addList);
+        //       };
+
+        await conn.commit();
+
+        return result;
+        //  에러 뜨면 rollback
+    } catch (err) {
+        if (conn) conn.rollback();
+        console.log('자재발주상세 등록 오류:', err);
+        // 커넥션 초기화
+    } finally {
+        if (conn) conn.release();
     }
-
-    // for(let mateSave of mateSaveInfo){
-    //   // let mateParam ={mate_req_id: mateSave.req_id,
-    //   //                 mate_vendor_id: mateSave.vendor_id,                                  
-    //   //                 mate_employee_id: mateSave.employee_id};
-    //   // let mateSaveInfos = [mateParam];
-    //   // console.log('mateSave = ' + mateSave);
-    //   //         let addList = converterAray.convertObjToAry(mateSave, list);
-    //   //         console.log('addList = ' + addList);
-    //   //         selectedSql = await mariaDB.selectedQuery('insertMates',addList);
-    //   //         let result = await conn.query(selectedSql, addList);
-    //           // let results = await mariaDB.query('insertMate', addList);
-    //       };
-
-    await conn.commit();
-
-    return result;
-    //  에러 뜨면 rollback
-  } catch (err) {
-    if (conn) conn.rollback();
-    console.log('자재발주상세 등록 오류:', err);
-    // 커넥션 초기화
-  } finally {
-    if (conn) conn.release();
-  }
 };
 
 // 발주관리페이지에서 발주서 클릭시 값 넘기기
 const mateListClick = async (reqId) => {
-  let list = await mariaDB.query('selectReqMate', reqId);
-  return list;
+    let list = await mariaDB.query('selectReqMate', reqId);
+    return list;
+};
+
+// 자재발주관리에서 req_id가 있을경우 수정 (update)
+const updateMates = async (updateData) => {
+    let conn;
+    try {
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
+
+        let selectedSql = await mariaDB.selectedQuery('deleteMateDetail', updateData.req_id);
+        let result = await conn.query(selectedSql, updateData.req_id);
+
+        selectedSql = await mariaDB.selectedQuery('mateDetailKey', {});
+        let lastMateDetail = await conn.query(selectedSql, {});
+        let lastMateDetailId = lastMateDetail[0].req_detail_id;
+
+        for (let MateDetailInfo of updateData.mate_detail_list) {
+            let newMateDetailId = keys.getNextKeyId(lastMateDetailId);
+            MateDetailInfo.req_detail_id = newMateDetailId;
+            MateDetailInfo.req_id = updateData.req_id;
+
+            let mateDetailCloumn = ['req_detail_id', 'req_id', 'mate_id', 'req_amount', 'memo'];
+            let addInfo = converts.convertObjToAry(MateDetailInfo, mateDetailCloumn);
+
+            // detail insert 쿼리 실행
+            selectedSql = await mariaDB.selectedQuery('insertMatese', addInfo);
+            result = await conn.query(selectedSql, addInfo);
+            // insertMatese
+            // 다음 detail_id 생성을 위해 저장
+            lastMateDetailId = newMateDetailId;
+        }
+
+        let req_fields = ["vendor_id", "req_due_date", "employee_id", "req_id"];
+        console.log("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
+        console.log(updateData);
+        console.log(converts.convertObjToAry(updateData, req_fields));
+        console.log("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
+        selectedSql = await mariaDB.selectedQuery('updateMateByReq_id', convertObjToAry(updateData, req_fields));
+        result = await conn.query(selectedSql, convertObjToAry(updateData, req_fields));
+
+        await conn.commit();
+
+        return result;
+    } catch (err) {
+        if (conn) conn.rollback();
+        console.log('자재발주 수정 오류:', err);
+    } finally {
+        if (conn) conn.release();
+    }
+    return result;
 };
 
 
 module.exports = {
-  mateReqAll,
-  mateReqById,
-  vendorId,
-  mateList,
-  insertMates,
-  mateAll,
-  deleteMaterial,
-  searchOrder,
-  mateConfirm,
-  selectMateInfo,
-  updateMates,
-  mateOrder,
-  mateListClick,
+    mateReqAll,
+    mateReqById,
+    vendorId,
+    mateList,
+    insertMates,
+    mateAll,
+    deleteMaterial,
+    searchOrder,
+    mateConfirm,
+    selectMateInfo,
+    updateMates,
+    mateOrder,
+    mateListClick,
 }

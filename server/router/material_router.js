@@ -125,11 +125,10 @@ router.post('/mateSave', async (req, res) => {
 }); 
 
 // 자재발주관리 저장버튼 클릭시 (req_id가 있으면 put, req_id가 없으면 post)
-router.put('/mateSave/:req_id', async (req, res) => {
-  const req_id = req.params.req_id;
-  const mate_detail_list = req.body;
-
-  let result = await mateService.updateMates(req_id, mate_detail_list).catch((err) => console.log(err));
+router.put('/mateSave', async (req, res) => {
+  const updateData = req.body;
+  console.log(updateData);
+  let result = await mateService.updateMates(updateData).catch((err) => console.log(err));
   res.send(result);
 });
 

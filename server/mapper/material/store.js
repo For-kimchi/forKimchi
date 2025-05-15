@@ -21,21 +21,15 @@ FROM t_mate_warehouse
 ORDER BY mate_lot DESC
 LIMIT 1`;
 
-// `SELECT req_id
-//         ,date_type(inbound_date) inbound_date
-//         ,vendor_id(vendor_id) vendor_id
-//         ,employee_id(employee_id) employee_id
-//         ,memo
-//   FROM t_mate_inbound`;
 
 // 입고조회
 const selectStoreList = 
 `SELECT 
   i.inbound_id,
   date_type(i.inbound_date) AS inbound_date,
-  i.vendor_id,
+  vendor_id(i.vendor_id) vendor_name,
   v.vendor_name,
-  employee_id(i.employee_id) AS employee_id,
+  employee_id(i.employee_id) AS employee_name,
   i.memo,
   CASE
     WHEN SUM(CASE WHEN id.inbound_status = '1p' THEN 1 ELSE 0 END) > 0 THEN '검사요청'
@@ -44,8 +38,8 @@ const selectStoreList =
     ELSE '기타'
   END AS inbound_final_status
 FROM t_mate_inbound i
-JOIN t_mate_inbound_detail id ON i.inbound_id = id.inbound_id
-JOIN t_vendor v ON i.vendor_id = v.vendor_id 
+LEFT JOIN t_mate_inbound_detail id ON i.inbound_id = id.inbound_id
+LEFT JOIN t_vendor v ON i.vendor_id = v.vendor_id 
 WHERE 1=1
   :searchKeyword
 GROUP BY 
@@ -62,8 +56,8 @@ const selectStoreMateList =
 `SELECT 
 	        req_id,
           date_type(req_date) req_date,
-          vendor_id(vendor_id) vendor_id,
-          employee_id(employee_id) employee_id,
+          vendor_id(vendor_id) vendor_name,
+          employee_id(employee_id) employee_name,
 	        date_type(req_due_date) req_due_date,
           sub_code(req_status) req_status,
 	        memo,
@@ -89,8 +83,8 @@ WHERE req_id = ?;`;
 const selectStore =
 `SELECT date_type(req_date) req_date
         ,req_id
-        ,vendor_id(vendor_id) vendor_id
-        ,employee_id(employee_id) employee_id
+        ,vendor_id(vendor_id) vendor_name
+        ,employee_id(employee_id) employee_name
         ,date_type(req_due_date) req_due_date
         ,memo
   FROM t_mate_req
@@ -102,14 +96,14 @@ const selectDetailStore =
 `SELECT 
   ib.inbound_id,
   DATE_FORMAT(ib.inbound_date, '%Y-%m-%d') AS inbound_date,
-  ib.vendor_id,
+  vendor_id(ib.vendor_id) vendor_name,
   employee_id(ib.employee_id) AS employee_id,
   ib.memo,
   wr.warehouse_type,
   wr.warehouse_id,
 
   ibd.inbound_detail_id,
-  MAX(ibd.mate_id) AS mate_id, 
+  MAX(mate_id(ibd.mate_id)) AS mate_name, 
   MAX(ibd.inbound_amount) AS inbound_amount,  
   MAX(ibd.memo) AS detail_memo,
 
@@ -142,7 +136,7 @@ const storeDetailList =
 `SELECT inbound_detail_id
         ,inbound_amount
         ,sub_code(inbound_status) inbound_status
-        ,mate_id
+        ,mate_id(mate_id) mate_name
         ,memo
 FROM t_mate_inbound_detail
 WHERE inbound_id = ?`;
@@ -152,8 +146,8 @@ const selectWareStatus =
 `SELECT 
 	      ib.inbound_id
         ,date_type(ib.inbound_date) inbound_date
-        ,ib.vendor_id
-        ,employee_id(ib.employee_id) employee_id
+        ,vendor_id(ib.vendor_id) vendor_name
+        ,employee_id(ib.employee_id) employee_name
         ,ib.memo
         ,sub_code(ibt.inbound_status) inbound_status
 FROM t_mate_inbound ib
@@ -167,8 +161,8 @@ const selectStoreStatus =
 `SELECT 
   i.inbound_id,
   date_type(i.inbound_date) inbound_date,
-  vendor_id(i.vendor_id) vendor_id,
-  employee_id(i.employee_id) employee_id,
+  vendor_id(i.vendor_id) vendor_name,
+  employee_id(i.employee_id) employee_name,
   i.memo,
   CASE
     WHEN SUM(CASE WHEN id.inbound_status = '1p' THEN 1 ELSE 0 END) > 0 THEN '검사요청'
@@ -208,10 +202,10 @@ const selectWarehouses =
 `SELECT 
   w.warehouse_id,
   d.mate_lot,
-  d.mate_id,
+  mate_id(d.mate_id) mate_name,
   d.mate_amount,
   d.inbound_date,
-  d.employee_id
+  employee_id(d.employee_id) employee_name
 FROM t_mate_inbound_detail d
 JOIN t_warehouse w ON w.warehouse_id = d.warehouse_id
 WHERE w.warehouse_id = ?
@@ -221,6 +215,7 @@ ORDER BY d.inbound_date DESC`;
 const warehouseIdAll =
 `SELECT 
   warehouse_id,
+  warehouse_name,
   warehouse_type
 FROM t_warehouse
 `;
@@ -229,8 +224,10 @@ FROM t_warehouse
 const warehouseDtId =
 `SELECT 
   warehouse_id,
+  warehouse_name,
   warehouse_type
-FROM t_warehouse`;
+FROM t_warehouse
+WHERE warehouse_type = '1h'`;
 
 
 // 창고입고상세에서 저장버튼 클릭시 창고에 DB저장
@@ -267,30 +264,21 @@ WHERE inbound_id =?`;
 const warehouseLotList =
 `SELECT 
   w.warehouse_id,
+  w.warehouse_name,
   m.mate_lot,
-  m.mate_id,
+  mate_id(m.mate_id) mate_name,
   m.mate_amount,
-  m.inbound_date,
-  m.employee_id
+  date_type(m.inbound_date) inbound_date,
+  employee_id(m.employee_id) employee_name
 FROM t_mate_warehouse m
 JOIN t_warehouse w ON w.warehouse_id = m.warehouse_id
 WHERE w.warehouse_id = ?
 ORDER BY m.inbound_date DESC`;
 
-// `SELECT 
-//     w.warehouse_type,
-//     mate_lot,
-//     mate_id,
-//     mate_amount,
-//     inbound_date,
-//     employee_id
-// FROM t_mate_warehouse mw JOIN t_warehouse w ON (mw.warehouse_id = w.warehouse_id)
-// ORDER BY inbound_date DESC`;
-
 // 창고 자재별 묶음 합계조회
 const groupBywareList =
 `SELECT 
-  mate_id,
+  mate_id(mate_id) mate_name,
   SUM(mate_amount) AS mate_amount,
   MAX(inbound_date) AS last_inbound_date,
   COUNT(DISTINCT mate_lot) AS lot_count
@@ -298,17 +286,6 @@ FROM t_mate_warehouse
 WHERE warehouse_id = ?
 GROUP BY mate_id
 ORDER BY last_inbound_date DESC`;
-
-// 자재입고삭제
-
-
-// 자재입고상세삭제
-
-
-// 자재입고수정
-
-
-// 자재입고 상세수정
 
 
 module.exports = {
