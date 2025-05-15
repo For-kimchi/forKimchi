@@ -10,7 +10,7 @@
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
-          <h6 class="text-white text-capitalize ps-3">제품정보</h6>
+          <h6 class="text-white text-capitalize ps-3">제품정보조회</h6>
         </div>
       </div>
       <div class="row g-2 my-3 px-3">
@@ -104,7 +104,10 @@
                     <td class="text-center">{{ info.proc_id }}</td>
                     <td class="text-center">{{ info.proc_name }}</td>
                     <td class="text-center">{{ codeToName(info.proc_type, codes) }}</td>
-                    <td class="text-center"><button class="btn btn-success m-0" @click="addRows(index)">추가</button></td>
+                    <td class="text-center">
+                      <button v-if="!procFlow.flow_details.some(detail => detail.proc_id == info.proc_id)" class="btn btn-success m-0" @click="addRows(index)">추가</button>
+                      <button v-else class="btn btn-light m-0" disabled>추가</button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -177,6 +180,10 @@
         this.getProcFlow();
       },
       searchFlow() {
+        if (!this.prod.prod_id) {
+          alert('제품을 먼저 선택해주세요');
+          return;
+        }
         this.getFlow();
       },
       removeRows(index) {
@@ -200,6 +207,11 @@
       },
       async save() {
 
+        if (!this.prod.prod_id) {
+          alert('제품을 먼저 선택해주세요');
+          return;
+        }
+        
         this.procFlow.employee_id = this.userInfo.employee_id;
 
         let res = await axios.post('/api/basicProcFlow', this.procFlow)

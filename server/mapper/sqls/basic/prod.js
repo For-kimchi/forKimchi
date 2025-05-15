@@ -27,7 +27,7 @@ const insertProd =
  (?, ?, ?, ?, ?)`;
 
 // 제품 갱신
-const updateProd =
+const updateBasicProd =
   `UPDATE t_prod
  SET ?
  WHERE prod_id = ?`;
@@ -48,7 +48,7 @@ LIMIT 1`;
 module.exports = {
   selectProd,
   insertProd,
-  updateProd,
+  updateBasicProd,
   deleteProd,
   selectLastProd,
 }

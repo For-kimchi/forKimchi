@@ -4,7 +4,7 @@
       <div class="custom-modal">
         <!-- 제목 -->
         <div class="modal-header mb-3">
-          <h5 class="modal-title">납품대상 조회</h5>
+          <h5 class="modal-title">주문정보조회</h5>
         </div>
 
         <!-- 검색 영역 -->
@@ -47,7 +47,7 @@
               <td class="text-center">{{ item.order_detail_id }}</td>
               <td class="text-center">{{ item.prod_id }}</td>
               <td class="text-center">{{ item.prod_name }}</td>
-              <td class="text-center">{{ item.order_amount }}</td>
+              <td class="text-center">{{ item.remain_amount }}</td>
               <td class="text-center">{{ formatDate(item.deliv_due_date) }}</td>
             </tr>
           </tbody>

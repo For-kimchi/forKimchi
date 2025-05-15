@@ -44,8 +44,8 @@ const selectStoreList =
     ELSE '기타'
   END AS inbound_final_status
 FROM t_mate_inbound i
-JOIN t_mate_inbound_detail id ON i.inbound_id = id.inbound_id
-JOIN t_vendor v ON i.vendor_id = v.vendor_id 
+LEFT JOIN t_mate_inbound_detail id ON i.inbound_id = id.inbound_id
+LEFT JOIN t_vendor v ON i.vendor_id = v.vendor_id 
 WHERE 1=1
   :searchKeyword
 GROUP BY 
