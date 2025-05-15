@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="getBasicVendor">조회</button>
-        <!-- <button class="btn btn-info ms-2" @click="resetForm">등록</button> -->
+        <button class="btn btn-secondary ms-2" @click="resetSearch">초기화</button>
       </div>
     </div>
 
@@ -172,7 +172,20 @@
         this.selected = {
         };
       },
+      resetSearch() {
+        this.searchName = '';
+        this.searchId = '';
+        this.searchType = '';
+      },
       async save() {
+
+        if (!this.selected.vendor_name ||
+          !this.selected.vendor_number ||
+          !this.selected.vendor_type) {
+          alert('입력되지 않은 정보가 있습니다');
+          return;
+        }
+
         let result = await axios.post('/api/basicVendor', this.selected)
           .catch(err => console.log(err));
         console.log(result);

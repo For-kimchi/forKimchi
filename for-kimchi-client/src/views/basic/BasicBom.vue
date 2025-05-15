@@ -10,7 +10,7 @@
     <div class="card my-4">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
-          <h6 class="text-white text-capitalize ps-3">제품정보</h6>
+          <h6 class="text-white text-capitalize ps-3">제품정보조회</h6>
         </div>
       </div>
       <div class="row g-2 my-3 px-3">
@@ -134,7 +134,8 @@
                       {{ codeToName(info.mate_type, codes) }}
                     </td>
                     <td class="text-center">
-                      <button class="btn btn-success m-0" @click="addRows(index)">추가</button>
+                      <button v-if="!bom.bom_details.some(detail => detail.mate_id == info.mate_id)" class="btn btn-success m-0" @click="addRows(index)">추가</button>
+                      <button v-else class="btn btn-light m-0" disabled>추가</button>
                     </td>
                   </tr>
                 </tbody>
@@ -209,6 +210,10 @@ export default {
       this.getBom();
     }, 
     searchMaterial() {
+      if (!this.prod.prod_id) {
+        alert('제품을 먼저 선택해주세요');
+        return;
+      }
       this.getMate();
     },
     removeRows(index) {
@@ -228,6 +233,18 @@ export default {
       }
     },
     async save() {
+
+      if (!this.prod.prod_id) {
+        alert('제품을 먼저 선택해주세요')
+        return;
+      }
+
+      for (let detail of this.bom.bom_details) {
+        if (!detail.mate_amount) {
+          alert('수량이 입력되지 않은 자재 항목이 있습니다')
+          return;
+        }
+      }
 
       this.bom.employee_id = this.userInfo.employee_id;
 

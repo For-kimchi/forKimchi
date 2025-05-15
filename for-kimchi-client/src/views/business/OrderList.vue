@@ -3,11 +3,17 @@
     <!-- 검색 -->
     <div class="row">
       <div class="col text-end">
-        <button class="btn btn-success" @click="getOrders">조회</button>
         <button class="btn btn-info ms-2" @click="registerOrder">등록</button>
         <button class="btn btn-warning ms-2" @click="modifyOrder">수정</button>
-        <!-- <button class="btn btn-danger ms-2" @click="removeOrder">삭제</button> -->
+        <button class="btn btn-danger ms-2" @click="removeOrder">삭제</button>
         <button class="btn btn-dark ms-2" @click="confirmOrder">승인</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col text-end">
+        <button class="btn btn-success" @click="getOrders">조회</button>
+        <button class="btn btn-secondary ms-2" @click="resetSearch">초기화</button>
       </div>
     </div>
 
@@ -27,7 +33,7 @@
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">주문상태</label>
-            <select v-model="searchType" class="form-select text-center">
+            <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
@@ -85,7 +91,17 @@
                 <td class="text-center">{{ info.vendor_name }}</td>
                 <td class="text-center">{{ info.employee_name }}</td>
                 <td class="text-center">{{ info.manager_name }}</td>
-                <td class="text-center">{{ codeToName(info.order_final_status, codes) }}</td>
+                <td class="text-center">
+                  <button class="btn btn-sm m-0 text-white" :class="{'btn-info': info.order_final_status === '1a',
+                                                    'btn-success': info.order_final_status === '2a',
+                                                    'btn-danger': info.order_final_status === '3a',
+                                                    'btn-secondary': info.order_final_status === '4a'
+                                                    }" disabled>
+                                                    {{ codeToName(info.order_final_status, codes) }}
+                                                  </button>
+
+
+                </td>
                 <td class="text-center">{{ info.memo }}</td>
               </tr>
             </tbody>
@@ -94,7 +110,7 @@
       </div>
     </div>
 
-    <div class="card mb-5">
+    <div class="card mb-5" v-if="orderDetails.length != 0">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
           <h6 class="text-white text-capitalize ps-3">주문상세내역</h6>
@@ -117,7 +133,15 @@
               <td class="text-center">{{ info.prod_name }}</td>
               <td class="text-center">{{ info.order_amount }}</td>
               <td class="text-center">{{ formatDate(info.deliv_due_date) }}</td>
-              <td class="text-center">{{ codeToName(info.order_status, detailCodes) }}</td>
+              <td class="text-center">
+                <button class="btn btn-sm m-0 text-white" :class="{'btn-info': info.order_status === '1z',
+                                                    'btn-success': info.order_status === '2z',
+                                                    'btn-danger': info.order_status === '3z',
+                                                    'btn-secondary': info.order_status === '4z'
+                                                    }" disabled>
+                                                    {{ codeToName(info.order_status, detailCodes) }}
+                                                  </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -203,10 +227,12 @@
           selected: false
         }));
         this.allSelected = false;
+        this.selectedIndex = null;
+        this.orderDetails = [];
       },
       async getOrderDetails(index) {
         this.selectedIndex = index;
-
+        
         let result =
           await axios.get(`/api/order/${this.orders[index].order_id}`)
           .catch(err => console.log(err));
@@ -241,7 +267,6 @@
             if (res.data.success) {
               alert('선택된 항목이 승인되었습니다.');
               this.getOrders();
-              this.orderDetails = [];
 
             } else {
               alert('승인 처리 중 오류가 발생했습니다.');
@@ -282,6 +307,12 @@
         // } else {
         //   alert('선택된 항목이 없습니다')
         // }
+      },
+      resetSearch() {
+        this.searchName = '';
+        this.searchType = '';
+        this.searchStartDate = formatDate();
+        this.searchEndDate = formatDate();
       },
       toggleAll() {
         this.orders.forEach(item => {

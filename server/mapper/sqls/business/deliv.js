@@ -13,7 +13,8 @@ const selectDelivTarget =
  ORD.vendor_id,
  VE.vendor_name,
  PR.prod_name,
-(ORDD.order_amount - PRD_DELIV(ORDD.order_detail_id)) order_amount,
+ ORDD.order_amount,
+(ORDD.order_amount - PRD_DELIV(ORDD.order_detail_id)) remain_amount,
  ORDD.deliv_due_date,
  ORDD.order_status,
  ORDD.memo
@@ -22,8 +23,9 @@ LEFT JOIN t_order ORD ON ORDD.order_id = ORD.order_id
 LEFT JOIN t_prod PR ON ORDD.prod_id = PR.prod_id
 LEFT JOIN t_vendor VE ON ORD.vendor_id = VE.vendor_id
 WHERE deliv_due_date BETWEEN ? AND ?
-ORDER BY deliv_due_date) DEL
-WHERE order_amount > 0
+) DEL
+WHERE remain_amount > 0
+ORDER BY deliv_due_date
 `;
 //WHERE order_status = '4z' 나중에 데이터 있으면 필요한 조건
 
@@ -82,7 +84,9 @@ const selectDeliv =
         v.vendor_name,
         d.employee_id,
         e.employee_name,
-        d.memo
+        d.memo,
+        od.order_amount,
+        PRD_DELIV(od.order_detail_id) deliv_total_amount
  FROM t_deliv d
  LEFT JOIN t_order_detail od ON d.order_detail_id = od.order_detail_id
  LEFT JOIN t_order o ON od.order_id = o.order_id

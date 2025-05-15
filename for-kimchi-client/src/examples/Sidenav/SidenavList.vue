@@ -28,7 +28,8 @@
             <SidenavCollapseItem refer="/ordersmng" miniIcon="receipt_long" text="주문등록/수정"/>
             <SidenavCollapseItem refer="/delivs" miniIcon="local_shipping" text="납품조회"/>
             <SidenavCollapseItem refer="/delivsmng" miniIcon="local_shipping" text="납품관리"/>
-            <SidenavCollapseItem refer="/prodwh" miniIcon="save_alt" text="제품입고"/>
+            <SidenavCollapseItem refer="/prodinbound" miniIcon="save_alt" text="제품입고"/>
+            <SidenavCollapseItem refer="/prodwh" miniIcon="save_alt" text="제품현황"/>
           </template>
         </sidenav-collapse>
       </li>
@@ -41,7 +42,7 @@
           </template>
           <template v-slot:list>
             <SidenavCollapseItem refer="/Prodplan" miniIcon="" text="생산계획관리"/>
-            <SidenavCollapseItem refer="/ProdOrderInfos" miniIcon="" text="생산지시관리"/>
+            <SidenavCollapseItem refer="/ProdOrderInfo" miniIcon="" text="생산지시관리"/>
             <SidenavCollapseItem refer="/Prodprocess" miniIcon="" text="생산공정관리"/>
             <SidenavCollapseItem refer="/Prodprocwork" miniIcon="" text="생산이력관리"/>
           </template>

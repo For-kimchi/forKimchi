@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="search">조회</button>
-        <!-- <button class="btn btn-info ms-2" @click="resetForm">등록</button> -->
+        <button class="btn btn-secondary ms-2" @click="resetSearch">초기화</button>
       </div>
     </div>
 
@@ -127,42 +127,53 @@
         action: '등록',
       };
     },
-    computed: {
-    },
+    computed: {},
     methods: {
-    async getBasicMate() {
-      const params = {};
-      
-      if (this.searchName) params.mate_name = this.searchName;
-      if (this.searchId) params.mate_id = this.searchId;
-      if (this.searchType) params.mate_type = this.searchType;
+      async getBasicMate() {
+        const params = {};
 
-      let res = await axios.get('/api/basicMate', {
-        params
-      })
-        .catch(err => console.log(err));
-      this.items = res.data;
-    },
-    async getMateType() {
-      let res = await axios.get(`/api/codes/U1`)
-        .catch(err => console.log(err));
-      this.codes = res.data;
-    },
+        if (this.searchName) params.mate_name = this.searchName;
+        if (this.searchId) params.mate_id = this.searchId;
+        if (this.searchType) params.mate_type = this.searchType;
+
+        let res = await axios.get('/api/basicMate', {
+            params
+          })
+          .catch(err => console.log(err));
+        this.items = res.data;
+      },
+      async getMateType() {
+        let res = await axios.get(`/api/codes/U1`)
+          .catch(err => console.log(err));
+        this.codes = res.data;
+      },
       search() {
         this.getBasicMate();
       },
       editItem(item) {
         this.action = '수정',
-        this.selected = {
-          ...item
-        };
+          this.selected = {
+            ...item
+          };
       },
       resetForm() {
         this.action = '등록',
-        this.selected = {
-        };
+          this.selected = {};
+      },
+      resetSearch() {
+        this.searchName = '';
+        this.searchId = '';
+        this.searchType = '';
       },
       async save() {
+
+        if (!this.selected.mate_name ||
+          !this.selected.mate_unit ||
+          !this.selected.mate_type) {
+          alert('입력되지 않은 정보가 있습니다');
+          return;
+        }
+
         let result = await axios.post('/api/basicMate', this.selected)
           .catch(err => console.log(err));
         console.log(result);

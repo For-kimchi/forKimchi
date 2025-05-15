@@ -3,7 +3,7 @@
     <!-- 검색 -->
     <div class="row">
       <div class="col text-end">
-        <button class="btn btn-success" @click="openOrderDetailModal">납품대상조회</button>
+        <button class="btn btn-success" @click="openOrderDetailModal">주문정보조회</button>
         <button class="btn btn-info ms-2" @click="register">저장</button>
       </div>
     </div>
@@ -11,7 +11,7 @@
     <div class="card mt-3 mb-5">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
-          <h6 class="text-white text-capitalize ps-3">납품정보</h6>
+          <h6 class="text-white text-capitalize ps-3">주문정보</h6>
         </div>
       </div>
       <div class="row mt-3 px-3">
@@ -63,7 +63,7 @@
         <div class="col-md-3">
           <div class="d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">주문수량</label>
-            <input v-model="orderDetail.order_amount" type="number" class="form-control border text-center"   @keydown.prevent
+            <input v-model="orderDetail.remain_amount" type="number" class="form-control border text-center"   @keydown.prevent
             @input.prevent />
           </div>
         </div>
@@ -136,12 +136,12 @@ export default {
   },
   computed: {
     remain() {
-      if (this.orderDetail.order_amount) {
+      if (this.orderDetail.remain_amount) {
         let sum = 0;
         for (let prod of this.prods) {
           sum += prod.deliv_amount ? prod.deliv_amount : 0;
         }
-        return this.orderDetail.order_amount - sum;
+        return this.orderDetail.remain_amount - sum;
       } else {
         return 0;
       }
@@ -165,7 +165,7 @@ export default {
         return;
       }
 
-      if (this.remain == this.orderDetail.order_amount) {
+      if (this.remain == this.orderDetail.remain_amount) {
         alert('납품수량이 입력되지 않았습니다.');
         return;
       }
@@ -180,7 +180,7 @@ export default {
 
       let params = {
         order_detail_id: this.orderDetail.order_detail_id,
-        employee_id: this.employee.employee_id,
+        employee_id: this.userInfo.employee_id,
         memo: '',
         remain: this.remain,
         deliv_details: delivDetails,

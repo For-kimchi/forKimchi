@@ -50,6 +50,7 @@ import OrderList from "../views/business/OrderList.vue";
 import OrderMng from "../views/business/OrderMng.vue";
 import DelivList from "../views/business/DelivList.vue";
 import DelivMng from "../views/business/DelivMng.vue";
+import ProdInbound from "../views/business/ProdInbound.vue";
 import ProdWarehouse from "../views/business/ProdWarehouse.vue";
 
 //basic (기준관리)
@@ -409,12 +410,21 @@ const routes = [
      }
   },
   {
+    path: "/prodinbound",
+    name: "ProdInbound",
+    component: ProdInbound,
+    meta: { 
+      requiresAuth: true,
+      pageName: '제품입고',
+     }
+  },
+  {
     path: "/prodwh",
     name: "ProdWarehouse",
     component: ProdWarehouse,
     meta: { 
       requiresAuth: true,
-      pageName: '제품입고',
+      pageName: '제품현황',
      }
   },
 ];
