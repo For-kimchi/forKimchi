@@ -12,13 +12,7 @@
             <div class="col-md-3">
               <div class="d-flex align-items-center">
                 <label class="form-label me-2 mb-0 " style="width: 100px;">자재명</label>
-                <input v-model="searchName" type="text" class="form-control border text-center" placeholder="제품명" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">자재ID</label>
-                <input v-model="searchId" type="text" class="form-control border text-center" placeholder="제품ID" />
+                <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명 : 엔터"  @keyup.enter="searchMateName(searchName)"/>
               </div>
             </div>
           </div>
@@ -27,6 +21,8 @@
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
@@ -40,6 +36,8 @@
                 <tbody>
                   <tr v-for="(info, index) in mateQualityViewall" :key="info.quality_id"
                     v-on:click="mateQualityViewDetail(info.quality_id)">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle text-center">{{info.inbound_id}}</td>
                     <td class="align-middle text-center">{{info.inbound_detail_id}}</td>
                     <td class="align-middle text-center">{{ info.quality_id }}</td>
                     <td class="align-middle text-center">{{ info.mate_id }}</td>
@@ -66,7 +64,7 @@
     </div>
     <div class="text-end pe-3 ">
     <button class="btn btn-info ms-2 me-2" @click="downloadPdf">
-    품질성적서 다운로드
+        품질성적서 다운로드
     </button>
     </div>
     <div class="row">
@@ -78,10 +76,11 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: scroll;">
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">기준치</th>
@@ -91,6 +90,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in mateQualityViewdetail" v-bind:key="option_id" style="cursor: pointer;">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard }}</td>
@@ -130,6 +130,7 @@
         mateQualityViewDropdown: [],
         mateQualityViewall: [],
         mateQualityViewdetail: [],
+        searchName: '',
       }
     },
     computed: {
@@ -148,10 +149,6 @@
     created() {
       this.mateQualityViewDropDown();
       this.mateQualityViewAll();
-    },
-    watch() {
-      this.info.result == '합격'
-      
     },
     methods: {
 
@@ -207,17 +204,23 @@
         console.error("PDF 다운로드 실패:", err);
       }
     },
-  
-
-
-
-
       async mateQualityViewDropDown() {
         let ajaxRes =
           await axios.get(`/api/mateQualityViewDropDown`)
           .catch(err => console.log(err));
         this.mateQualityViewDropdown = ajaxRes.data;
       },
+
+      async searchMateName(sId) {
+      if(!sId) {
+        this.mateQualityViewAll();
+        return;
+      }
+      let ajaxRes = await axios.get(`/api/selectMateName/${sId}`)
+                               .catch(err => console.log(err));
+      this.mateQualityViewall = ajaxRes.data;
+      },
+
       async mateQualityViewAll() {
         let ajaxRes =
           await axios.get(`/api/mateQualityViewAll`)

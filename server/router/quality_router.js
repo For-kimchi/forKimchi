@@ -57,6 +57,12 @@ router.post('/mateQualityViewAll', async (req, res) => {
   res.send(testList);
 });
 
+// 검색조건 (자재명)
+router.get('/selectMateName/:id', async (req, res) => {
+  let mId = req.params.id;
+  let selectMateId = await quality_service.selectMateName(mId);
+  res.send(selectMateId);
+});
 //--------------------------------------------------------
 
 // 제품검사요청
@@ -98,6 +104,12 @@ router.get('/prodQualityViewDetail/:id', async (req, res) => {
   res.send(prodQualityViewDetail);
 });
 
+// 검색조건 (제품명)
+router.get('/selectProdName/:id', async (req, res) => {
+  let pId = req.params.id;
+  let selectProdName = await quality_service.selectProdName(pId);
+  res.send(selectProdName);
+})
 // -------------------------
 
 // 검사항목관리

@@ -8,7 +8,7 @@
           <!--항목명 div-->
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">자재검사</h6>
+              <h6 class="text-white text-capitalize ps-3">제품검사</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -16,6 +16,7 @@
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                  <tr>  
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산지시LOT</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">설비ID</th>
@@ -27,6 +28,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_id" v-on:click="prodQualityWait(index)" style="cursor: pointer;">
+                      <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                       <td class="align-middle text-center">{{ info.prod_order_lot }}</td>
                       <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
                       <td class="align-middle text-center">{{ info.equip_id }}</td>
@@ -60,6 +62,7 @@
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사이름</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준</th>
@@ -69,9 +72,10 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in prodQualitywait" v-bind:key="info.option_id" style="cursor: pointer;">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
-                    <td class="align-middle text-center">{{ info.option_standard}}</td>
+                    <td class="align-middle text-center">{{ info.option_standard}} {{ info.option_operator}}</td>
                     <td class="align-middle text-center">{{ info.result}}</td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
@@ -137,11 +141,18 @@
           newResult.forEach(info => {
             const result_value = info.quality_result_value;
             const standard = info.option_standard;
+            const operator = info.option_operator;
             if (!isNaN(result_value) && !isNaN(standard)) {
-              info.result = result_value >= standard ? '합격' : '불합격';
-            } else {
-              info.result = '대기';
+              if(result_value == null || result_value == ''){
+                info.result = '대기';
+              } else if(operator == '이하') {
+                info.result = result_value <= standard ? '합격' : '불합격';
+              } else if(operator == '이상'){
+                info.result = result_value >= standard ? '합격' : '불합격';
             }
+          }else{
+            info.result = '대기';
+        }
           });
         },
         deep: true
@@ -176,7 +187,7 @@
         let save = false;
         for (let idx of this.prodQualitywait) {
           let val = Object.hasOwn(idx, 'quality_result_value');
-          if (!val || idx.quality_result_value <= 0) {
+          if (!val || idx.quality_result_value == 0) {
             alert("검사결과값 을 입력하세요.");
             return;
           }

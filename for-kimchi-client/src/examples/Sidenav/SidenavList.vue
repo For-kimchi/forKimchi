@@ -73,8 +73,8 @@
             <i class="material-icons-round opacity-10 fs-5">checklist</i>
           </template>
           <template v-slot:list>
-            <sidenav-collapse-item refer="/mateQuality" miniIcon="list_alt" text="자재수입검사조회"/>
-            <sidenav-collapse-item refer="/mateQualityControl" miniIcon="manage_search" text="자재수입검사관리"/>
+            <sidenav-collapse-item refer="/mateQuality" miniIcon="list_alt" text="자재검사조회"/>
+            <sidenav-collapse-item refer="/mateQualityControl" miniIcon="manage_search" text="자재검사관리"/>
             <sidenav-collapse-item refer="/prodQuality" miniIcon="list_alt" text="제품검사조회"/>            
             <sidenav-collapse-item refer="/prodQualityControl" miniIcon="manage_search" text="제품검사관리"/>
             <sidenav-collapse-item refer="/qualityManager" miniIcon="build_circle" text="검사기준관리"/>
