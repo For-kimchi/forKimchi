@@ -76,7 +76,7 @@ router.post('/insertWarehouse', async (req, res) => {
   try {
     let warehouseInfo = req.body;
     let result = await storeService.insertWarehouse(warehouseInfo);
-    res.json(result);
+    res.send(result);
   } catch (err) {
     console.error(err);
     res.status(500).send('저장 오류');

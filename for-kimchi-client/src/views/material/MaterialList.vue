@@ -1,10 +1,16 @@
 <template>
 
-  <div class="text-end">
-    <button @click="handleSearch" class="btn btn-success">조회</button>
-    <button class="btn btn-danger" @click="goToMatmaPage" >신규</button>
-    <button class="btn btn-info" @click="confirmMate">승인</button>
-  </div> 
+<div class="text-end mb-3">
+  <button @click="handleSearch" class="btn btn-success me-2 shadow rounded-pill">
+    🔍 조회
+  </button>
+  <button class="btn btn-danger me-2 shadow rounded-pill" @click="goToMatmaPage">
+    ➕ 신규
+  </button>
+  <button class="btn btn-info shadow rounded-pill" @click="confirmMate">
+    ✅ 승인
+  </button>
+</div>
 
   <!-- 자재발주조회 -->
   <div class="row">
@@ -95,7 +101,7 @@
                       <button class="btn btn-sm" :class="{
                                                           'btn-primary': info.req_status === '발주등록',
                                                           'btn-success': info.req_status === '발주승인',
-                                                           'btn-secondary': info.req_status === '발주마감'
+                                                          'btn-secondary': info.req_status === '발주마감'
                                                           }"disabled>{{ info.req_status === '발주등록' ? '📝' : info.req_status === '발주승인' ? '✅' : '📦' }} {{ info.req_status }} </button></td>
                       <td>{{ info.memo }}</td>
                       <td>{{ info.confirm_date }}</td>
@@ -159,6 +165,11 @@
 <script>
 import axios from 'axios';
 import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
+  // stores 
+  import { useUserStore } from "@/stores/user"; 
+  // state, getter => mapState 
+  // actions => mapActions 
+  import { mapState } from 'pinia';
 
 export default {
   name: 'MaterialManagement',
@@ -221,7 +232,7 @@ export default {
 
       let params = {
         mates: selectedItems,
-        employee_id: 'EMP-001',
+        employee_id: this.userInfo.employee_id,
       }
       
       if (selectedItems.length > 0) {
@@ -239,6 +250,13 @@ export default {
           alert('선택된 항목이 없습니다.');
         }
     }
+    
+  },
+  computed: {
+    ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
   },
 
 };

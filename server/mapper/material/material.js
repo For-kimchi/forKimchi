@@ -39,9 +39,7 @@ const selectMateReq =
 `SELECT 
 	        req_id,
           date_type(req_date) req_date,
-          mr.vendor_id,
-          v.vendor_name,
-          employee_id,
+          vendor_id(mr.vendor_id) vendor_name,
           employee_id(employee_id) employee_name,
 	        date_type(req_due_date) req_due_date,
           sub_code(req_status) req_status,
@@ -55,41 +53,6 @@ WHERE 1=1
 :searchKeyword
 `;
 
-// 자재발주조회에서 검색 결과에 맞는 값만 조회
-const selectMateReqWithSearch = `
-  SELECT 
-    req_id,
-    date_type(req_date) req_date,
-    vendor_id(vendor_id) vendor_id,
-    employee_id(employee_id) employee_id,
-    date_type(req_due_date) req_due_date,
-    sub_code(req_status) req_status,
-    memo,
-    date_type(confirm_date) confirm_date,
-    employee_id(manager_id) manager_id
-  FROM t_mate_req
-  WHERE 1=1
-    AND (? IS NULL OR vendor_id LIKE ?)
-    AND (? IS NULL OR req_date BETWEEN ? AND ?)
-    AND (? IS NULL OR req_status = ?)
-    AND (? IS NULL OR employee_id LIKE ?)
-`;
-
-// 입고관리에서 발주서 전체조회(발주승인건만)
-// const selectMateStore =
-//   `SELECT 
-// 	req_id,
-//     date_type(req_date) req_date,
-//     vendor_id(vendor_id) vendor_id,
-//     employee_id(employee_id) employee_id,
-// 	date_type(req_due_date) req_due_date,
-//     sub_code(req_status) req_status,
-// 	memo,
-//     date_type(confirm_date) confirm_date,
-//     employee_id(manager_id) manager_id
-// FROM t_mate_req
-// WHERE req_status = '2o'
-// `;
 
 // 자재발주상세조회 (No,품목코드,품목명,납품예정일,,수량,단위,검사여부,비고)
 const selectMateDetail =
@@ -114,7 +77,7 @@ WHERE req_id= ?`;
 // 거래처 검색
 const insertVenId =
 `SELECT DISTINCT
-        vendor_id
+        vendor_id(vendor_id) vendor_name
 FROM t_mate_req
 ORDER BY vendor_id`;
 
@@ -150,17 +113,6 @@ const insertMainMate =
                         ,memo)
 VALUES(SYSDATE(), ?, ?, ?, ?, '1o', '')`;
 
-// 자재발주관리페이지 발주서 클릭시 값 넣기
-
-
-// 자재발주관리페이지에서 선택항목 update
-const updateMateQuery =
-`UPDATE t_mate_req
- SET vendor_id = ?
-    , employee_id = ?
-    , req_due_date = ?
-    , memo = ?
- WHERE req_id = ?`
 
 // 자재발주 상세등록버튼(저장)
 const insertMatese =
@@ -180,10 +132,11 @@ const mateListAll =
     mrd.mate_id,
     mrd.req_amount,
     mrd.memo,
-    sub_code(mr.req_status) req_status, 
-    vendor_id(mr.vendor_id) vendor_id,
+    sub_code(mr.req_status) req_status,
+    vendor_id,
+    vendor_id(mr.vendor_id) vendor_name,
     date_type(mr.req_date) req_date,
-    employee_id(mr.employee_id) employee_id,
+    employee_id(mr.employee_id) employee_name,
     date_type(mr.req_due_date) req_due_date,
     mt.mate_name,
     mt.mate_unit
@@ -193,29 +146,19 @@ JOIN t_mate mt ON mrd.mate_id = mt.mate_id
 WHERE mr.req_status = '1o'
 ORDER BY mr.req_due_date
 `;
-// `SELECT 
-// 	        req_id,
-//           date_type(req_date) req_date,
-//           vendor_id(vendor_id) vendor_id,
-//           employee_id(employee_id) employee_id,
-// 	        date_type(req_due_date) req_due_date,
-//           sub_code(req_status) req_status,
-// 	        memo,
-//           date_type(confirm_date) confirm_date,
-//           employee_id(manager_id) manager_id
-// FROM t_mate_req
-// WHERE req_status = '1o' `
 
-
-// 자재발주관리페이지에서 행클릭
+// 자재발주관리페이지에서 행클릭시 값 자동입력
 const selectReqMate =
 `SELECT mr.mate_id,
 		    tm.mate_name,
         mr.req_amount,
         tm.mate_unit,
-        mr.req_id
+        mr.req_id,
+        tmr.req_due_date,
+        vendor_id(tmr.vendor_id) vendor_name
 FROM t_mate_req_detail mr
 LEFT JOIN t_mate tm ON mr.mate_id = tm.mate_id
+JOIN t_mate_req tmr ON mr.req_id = tmr.req_id
 WHERE mr.req_id = ?`;
 
 
@@ -253,18 +196,6 @@ SET ?
 WHERE req_id = ? 
 AND mate_id = ?;
 `
-// 자재이름을 ID로 변환시키는 쿼리 필요없어서 주석
-// const mateChangeId =`
-// SELECT mate_id
-// FROM t_mate
-// WHERE mate_name = ?
-// `;
-
-
-// 자재창고 입고 //
-
-
-// 선출창고 출고 //
 
 // 생산지시전체조회
 const mateOrderList =
@@ -273,12 +204,26 @@ const mateOrderList =
         prod_id(prod_id) prod_id,
         date_type(order_date) order_date,
         order_amount,
-        employee_id(employee_id) employee_id,
+        employee_id(employee_id) employee_name,
         sub_code(order_status) order_status
 FROM t_prod_order
 WHERE order_status = '2d'
 ` 
 
+const deleteMateDetail = `
+DELETE 
+FROM t_mate_req_detail
+WHERE req_id = ?
+`;
+
+const updateMateByReq_id = `
+UPDATE t_mate_req
+  SET
+    vendor_id = ?,
+    req_due_date = ?,
+    employee_id = ?
+WHERE req_id = ?
+`;
 
 
 module.exports = {
@@ -296,8 +241,11 @@ module.exports = {
     deleteDetailMate,
     deleteMateBtn,
     updateMateStatus,
-    updateMateQuery,
+    // updateMateQuery,
     mateOrderList,
     selectReqMate,
     mateListAll,
+
+    deleteMateDetail,       // 자재 발주 상세 삭제 (자재 발주 id)
+    updateMateByReq_id,             // 자재 발주 수정 (자재 발주 id)
 }

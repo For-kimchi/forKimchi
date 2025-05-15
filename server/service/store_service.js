@@ -116,49 +116,48 @@ const wareDtId = async() => {
 
 
 // 창고저장
-const insertWarehouse = async(wareList) => {
-  
+const insertWarehouse = async (wareList) => {
   let conn;
-  try{
+  try {
     let columnList = ['mate_lot', 'mate_id', 'inbound_detail_id', 'warehouse_id', 'mate_amount', 'employee_id'];
-    
+
     conn = await mariaDB.getConnection();
     await conn.beginTransaction();
 
-    
     let inbound_id = wareList[0].inbound_id;
     for (let item of wareList) {
-      if(item.inbound_type == "입고") {
-      // lot 생성 select seletMateLot
-      selectedSql = await mariaDB.selectedQuery('seletMateLot');
-      let lots = await conn.query(selectedSql);
-      lots = lots[0].mate_lot;
+      if (item.inbound_type == "입고") {
+        // lot 생성 select seletMateLot
+        selectedSql = await mariaDB.selectedQuery('seletMateLot');
+        let lots = await conn.query(selectedSql);
+        lots = lots[0].mate_lot;
 
-      let newLot = keys.getNextKeyId(lots);
-      item.mate_lot = newLot;
-      
-    item.mate_amount = item.inbound_amount;
-      
-    let values = converterAry(item, columnList);
-    selectedSql = await mariaDB.selectedQuery('insertWarehouse', values);
-    let result = await conn.query(selectedSql, values);
+        let newLot = keys.getNextKeyId(lots);
+        item.mate_lot = newLot;
 
-    selectedSql = await mariaDB.selectedQuery('updateInbound', {});
-    let results = await conn.query(selectedSql, ['3p', item.inbound_detail_id ]);
+        item.mate_amount = item.inbound_amount;
+
+        let values = converterAry(item, columnList);
+        console.log(values);
+        selectedSql = await mariaDB.selectedQuery('insertWarehouse', values);
+        let result = await conn.query(selectedSql, values);
+
+        selectedSql = await mariaDB.selectedQuery('updateInbound', {});
+        result = await conn.query(selectedSql, ['3p', item.inbound_detail_id]);
       } else {
         selectedSql = await mariaDB.selectedQuery('updateInbound', {});
-        let results = await conn.query(selectedSql, ['4p', item.inbound_detail_id] );
+        result = await conn.query(selectedSql, ['4p', item.inbound_detail_id]);
       }
-  }
-    
+    }
+
     await conn.commit();
-  return result;
-  //  에러 뜨면 rollback
-  }catch(err){
-      if(conn) conn.rollback();
-  // 커넥션 초기화
-  }finally{
-      if(conn) conn.release();
+    return result[0];
+    //  에러 뜨면 rollback
+  } catch (err) {
+    if (conn) conn.rollback();
+    // 커넥션 초기화
+  } finally {
+    if (conn) conn.release();
   }
   // return { success: true };
 };

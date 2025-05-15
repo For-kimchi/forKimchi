@@ -58,8 +58,8 @@
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_id }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.vendor_name }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_due_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                     <td class="align-middle font-weight-bolder text-center"><button class="btn btn-sm btn-success" disabled>{{ info.req_status }}</button></td>
@@ -92,7 +92,7 @@
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">발주수량
                     </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">검사수량
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
@@ -129,6 +129,11 @@
 
 <script>
 import axios from 'axios'
+  // stores 
+  import { useUserStore } from "@/stores/user"; 
+  // state, getter => mapState 
+  // actions => mapActions 
+  import { mapState } from 'pinia';
 
 export default {
   name: "orderprod",
@@ -142,6 +147,12 @@ export default {
       mate_id: [],
       vendor_id: [],
     }
+  },
+  computed: {
+    ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
   },
   created() {
     this.storeMateAll();
@@ -199,7 +210,7 @@ export default {
           inbound_amount: item.inbound_amount,
           memo: item.memo || '',
         })),
-        employee_id: 'EMP-001',
+        employee_id: this.userInfo.employee_id,
         vendor_id: this.selectedInfo.vendor_id, // 클릭한 발주서에서 가져오기
       };
 

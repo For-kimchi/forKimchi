@@ -49,7 +49,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">발주수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
-                    <!-- <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">발주서 등록</th> -->
+                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">발주서 등록</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,9 +62,9 @@
                     <td class="align-middle text-center"><button class="btn btn-sm btn-warning" disabled>{{ info.order_status }}</button></td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                     <td>
-                    <!-- <button class="btn btn-sm btn-primary" @click="handleRegisterOrder(info)">
+                    <button class="btn btn-sm btn-primary" @click="handleRegisterOrder(info)">
                     발주 등록
-                    </button> -->
+                    </button>
                     </td>
                   </tr>
                 </tbody>

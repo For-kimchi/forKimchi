@@ -53,7 +53,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_name }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                     <td class="align-middle text-center">
                     <button class= "btn btn-sm" :class="{ 'btn-warning': info.inbound_final_status === '검사요청',
@@ -95,7 +95,7 @@
                   <tr v-for="(info,index) in storeDtList" v-bind:key="inbound_detail_id">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.mate_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.mate_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
                     </tr>
@@ -110,6 +110,11 @@
 </template>
 <script>
 import axios from 'axios'
+  // stores 
+  import { useUserStore } from "@/stores/user"; 
+  // state, getter => mapState 
+  // actions => mapActions 
+  import { mapState } from 'pinia';
 
 export default {
   
@@ -125,6 +130,12 @@ export default {
     created(){
       this.getStoreList();
     },
+    computed: {
+    ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
+  },
     methods : {
     async getStoreList() {
       let ajaxRes = 
