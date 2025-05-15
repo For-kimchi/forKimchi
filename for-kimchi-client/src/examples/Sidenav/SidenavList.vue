@@ -28,7 +28,8 @@
             <SidenavCollapseItem refer="/ordersmng" miniIcon="receipt_long" text="주문등록/수정"/>
             <SidenavCollapseItem refer="/delivs" miniIcon="local_shipping" text="납품조회"/>
             <SidenavCollapseItem refer="/delivsmng" miniIcon="local_shipping" text="납품관리"/>
-            <SidenavCollapseItem refer="/prodwh" miniIcon="save_alt" text="제품입고"/>
+            <SidenavCollapseItem refer="/prodinbound" miniIcon="save_alt" text="제품입고"/>
+            <SidenavCollapseItem refer="/prodwh" miniIcon="save_alt" text="제품현황"/>
           </template>
         </sidenav-collapse>
       </li>
@@ -41,7 +42,7 @@
           </template>
           <template v-slot:list>
             <SidenavCollapseItem refer="/Prodplan" miniIcon="" text="생산계획관리"/>
-            <SidenavCollapseItem refer="/ProdOrderInfos" miniIcon="" text="생산지시관리"/>
+            <SidenavCollapseItem refer="/ProdOrderInfo" miniIcon="" text="생산지시관리"/>
             <SidenavCollapseItem refer="/Prodprocess" miniIcon="" text="생산공정관리"/>
             <SidenavCollapseItem refer="/Prodprocwork" miniIcon="" text="생산이력관리"/>
           </template>
@@ -72,8 +73,8 @@
             <i class="material-icons-round opacity-10 fs-5">checklist</i>
           </template>
           <template v-slot:list>
-            <sidenav-collapse-item refer="/mateQuality" miniIcon="list_alt" text="자재수입검사조회"/>
-            <sidenav-collapse-item refer="/mateQualityControl" miniIcon="manage_search" text="자재수입검사관리"/>
+            <sidenav-collapse-item refer="/mateQuality" miniIcon="list_alt" text="자재검사조회"/>
+            <sidenav-collapse-item refer="/mateQualityControl" miniIcon="manage_search" text="자재검사관리"/>
             <sidenav-collapse-item refer="/prodQuality" miniIcon="list_alt" text="제품검사조회"/>            
             <sidenav-collapse-item refer="/prodQualityControl" miniIcon="manage_search" text="제품검사관리"/>
             <sidenav-collapse-item refer="/qualityManager" miniIcon="build_circle" text="검사기준관리"/>

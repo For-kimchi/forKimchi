@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="search">조회</button>
-        <!-- <button class="btn btn-info ms-2" @click="resetForm">등록</button> -->
+        <button class="btn btn-secondary ms-2" @click="resetForm">초기화</button>
       </div>
     </div>
 
@@ -119,7 +119,9 @@
 
 <script>
   import axios from 'axios';
-  import { codeToName } from '../../utils/common';
+  import {
+    codeToName
+  } from '../../utils/common';
 
   export default {
     name: "제품관리",
@@ -167,7 +169,21 @@
         this.action = '등록',
           this.selected = {};
       },
+      resetSearch() {
+        this.searchName = '';
+        this.searchId = '';
+        this.searchType = '';
+      },
       async save() {
+
+        if (!this.selected.prod_name ||
+          !this.selected.prod_size ||
+          !this.selected.prod_unit ||
+          !this.selected.prod_type) {
+          alert('입력되지 않은 정보가 있습니다');
+          return;
+        }
+
         let result = await axios.post('/api/basicProd', this.selected)
           .catch(err => console.log(err));
         console.log(result);

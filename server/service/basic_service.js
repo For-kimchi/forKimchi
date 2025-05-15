@@ -31,7 +31,7 @@ const postProd = async (body) => {
   let result;
   if (body.prod_id) {
 
-    result = await mariaDB.query("updateProd", [body, body.prod_id]);
+    result = await mariaDB.query("updateBasicProd", [body, body.prod_id]);
 
   } else {
 

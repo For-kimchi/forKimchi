@@ -6,26 +6,6 @@
       <button class="btn btn-primary ms-1 me-1">주문서</button>
     </nav>
     <div class="row">
-        <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-                    <h6 class="text-white text-capitalize ps-3">검색</h6>
-                </div>
-            </div>
-            <div>
-            <ul class="list-group list-group-horizontal">
-                <li class="list-group-item">제품코드</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">제품명</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">일정</li>
-                <li class="list-group-item"><input type="date"> ~ <input type="date"></li>
-                <li class="list-group-item"><button class="btn btn-success ms-2 me-2" @:click="test">조회</button></li>
-            </ul>
-            </div>
-        </div>
-    </div>
-    <div class="row">
         <!-- 행 영역 div-->
       <div class="col-12">
         <!-- 테이블 div-->
@@ -49,12 +29,11 @@
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">거래처ID</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문담당자</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">주문등록일자</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info,index) in orderList" v-bind:key="info.order_id" v-on:click="getOrderDtList(info.order_id)">
-                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-warning p-2 m-2" v-on:click.stop="planAdd(index)">주문서 추가</button></td>
+                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-warning p-2 m-2" v-on:click.stop="planAdd(index)">생산계획추가</button></td>
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.order_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.order_date }}</td>
@@ -62,7 +41,6 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.reg_date }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -90,7 +68,6 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">주문수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">납품예정일자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -100,7 +77,6 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.prod_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.order_amount }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.deliv_due_date }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>

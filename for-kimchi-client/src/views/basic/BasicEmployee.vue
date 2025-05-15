@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="getBasicEmployee">조회</button>
-        <!-- <button class="btn btn-info ms-2" @click="resetForm">등록</button> -->
+        <button class="btn btn-secondary ms-2" @click="resetSearch">초기화</button>
       </div>
     </div>
 
@@ -211,7 +211,25 @@
         this.action = '등록',
         this.selected = {};
       },
+      resetSearch() {
+        this.searchName = '';
+        this.searchId = '';
+        this.searchType = '';
+        this.searchStatus = '';
+        this.searchDept = '';
+      },
       async save() {
+
+        if (!this.selected.employee_name ||
+          !this.selected.employee_email ||
+          !this.selected.employee_status ||
+          !this.selected.employee_type ||
+          !this.selected.employee_dept
+        ) {
+          alert('입력되지 않은 정보가 있습니다');
+          return;
+        }
+
         let res = await axios.post('/api/basicEmployee', this.selected)
           .catch(err => console.log(err));
 

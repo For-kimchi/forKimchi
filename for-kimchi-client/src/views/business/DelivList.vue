@@ -4,6 +4,7 @@
     <div class="row">
       <div class="col text-end">
         <button class="btn btn-success" @click="getDelivs">조회</button>
+        <button class="btn btn-secondary ms-2" @click="resetSearch">초기화</button>
       </div>
     </div>
 
@@ -62,8 +63,9 @@
                     <th class="text-center font-weight-bolder">납품일자</th>
                     <th class="text-center font-weight-bolder">거래처</th>
                     <th class="text-center font-weight-bolder">담당자</th>
+                    <th class="text-center font-weight-bolder">주문수량</th>
+                    <th class="text-center font-weight-bolder">납품수량</th>
                     <th class="text-center font-weight-bolder">납품상태</th>
-                    <th class="text-center font-weight-bolder">비고</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -73,8 +75,9 @@
                     <td class="text-center">{{ formatDate(info.deliv_date)}}</td>
                     <td class="text-center">{{ info.vendor_name }}</td>
                     <td class="text-center">{{ info.employee_name }}</td>
+                    <td class="text-center">{{ info.order_amount }}</td>
+                    <td class="text-center">{{ info.deliv_total_amount }}</td>
                     <td class="text-center">{{ codeToName(info.deliv_status, codes) }}</td>
-                    <td class="text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -82,7 +85,7 @@
           </div>
         </div>
 
-        <div class="card mb-5">
+        <div class="card mb-5" v-if="delivDetails.length != 0">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">납품상세내역</h6>
@@ -167,6 +170,12 @@ export default {
       },
       codeToName(code, codeArray) {
         return codeToName(code, codeArray);
+      },
+      resetSearch() {
+        this.searchName = '';
+        this.searchType = '';
+        this.searchStartDate = formatDate();
+        this.searchEndDate = formatDate();
       }
     },
     created() {

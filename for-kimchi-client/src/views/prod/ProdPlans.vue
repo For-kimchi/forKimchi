@@ -4,30 +4,6 @@
       <button class="btn btn-primary ms-1 me-1">생산계획</button>
       <router-link to="/orderprod"><button class="btn btn-info ms-2 me-2">주문서</button></router-link>
     </nav>
-    <!-- 검색
-     <div class="text-end">
-        <button class="btn btn-success ms-2 me-2">조회</button>
-     </div> -->
-    <div class="row">
-        <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-                    <h6 class="text-white text-capitalize ps-3">검색</h6>
-                </div>
-            </div>
-            <div>
-            <ul class="list-group list-group-horizontal">
-                <li class="list-group-item">제품코드</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">제품명</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">일정</li>
-                <li class="list-group-item"><input type="date"> ~ <input type="date"></li>
-                <button class="btn btn-success ms-2 me-2">조회</button>
-            </ul>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <!-- 행 영역 div-->
       <div class="col-12">
@@ -80,7 +56,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="text-end pe-3 ">
+            <div class="text-end pe-3">
               <!-- 승인버튼에 세션값을 통해 권한이 있을경우에만 작동하도록 조건을 넣어줘야함 -->
               <button class="btn btn-success ms-2 me-2" @click="permiBtn()">승인</button>
               <button class="btn btn-info ms-2 me-2"  @click="planDetailSave(proddtlist)">저장</button>
@@ -110,7 +86,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.plan_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.prod_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.order_amount }}</td>
-                    <td class="align-middle font-weight-bolder text-center"><input class="text-center" type="number" v-model="info.plan_amount"></td>
+                    <td class="align-middle font-weight-bolder text-center"><input class="text-center" type="number" v-model="info.plan_amount" style="width: 100px;"></td>
 
                     <td class="align-middle font-weight-bolder text-center" v-if="info.order_amount - info.plan_amount <= 0">0</td>
                     <td class="align-middle font-weight-bolder text-center" v-else>{{info.order_amount - info.plan_amount}}</td>
@@ -155,7 +131,7 @@ export default {
       ...mapState(useUserStore, [
       "isLoggedIn",
       "userInfo",
-    ])
+    ]),
     },
     // 생산계획 조회
     methods : {
@@ -177,18 +153,23 @@ export default {
         }));
       },
       async planDetailSave(planDetailList){
+        planDetailList.forEach((item =>{
+          console.log(item);
 
+        }));
         // 항목선택여부 알림.
-        if(Object.keys(planDetailList).length > 0){
-            let  ajaxRes =
-            await axios.put(`/api/planDetailSave`, planDetailList)
-                       .catch(err => console.log(err));
-            this.update = ajaxRes.data;
-            alert('저장 완료');
+        // if(Object.keys(planDetailList).length > 0){
+        //   if(planDetailList.plan_amount){
+        //     let  ajaxRes =
+        //     await axios.put(`/api/planDetailSave`, planDetailList)
+        //                .catch(err => console.log(err));
+        //     this.update = ajaxRes.data;
+        //     alert('저장 완료');
+        //   }
 
-        }else{
-          alert('항목이 선택되지 않았습니다.')
-        };
+        // }else{
+        //   alert('항목이 선택되지 않았습니다.')
+        // };
       },
       checkeds(){
         this.proddtlist.forEach(item => {

@@ -50,6 +50,7 @@ router.put('/plandtbtn', async(req, res)=>{
 });
 
 // prodOrderService 생산지시
+
 // 생산지시 전체조회
 router.get('/prodOrder', async(req, res)=>{
   let OrderList = await prodOrderService.selectProdOrderList();
@@ -73,6 +74,13 @@ router.get('/prodOrder/:id', async(req, res)=>{
 router.put('/prodOrder', async(req, res)=>{
   let prodOrder = req.body
   let result = await prodOrderService.insertProdOrder(prodOrder);
+  res.send(result);
+});
+
+// 생산지시 승인버튼(수정)
+router.put('/orderCheck', async(req, res)=>{
+  let orderCheck = req.body
+  let result = await prodOrderService.orderCheck(orderCheck);
   res.send(result);
 });
 

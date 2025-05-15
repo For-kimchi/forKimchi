@@ -16,10 +16,11 @@ ORDER BY inbound_detail_id
 // 자재검사요청 (대기-상세)
 const mateQualityWait = 
 `
-SELECT 
+SELECT
 	qo.option_id,
     qo.option_name,
     qo.option_standard,
+	sub_code(qo.option_operator) option_operator,
     qo.option_method
 FROM t_mate_inbound_detail id
 JOIN t_quality_std qs ON id.mate_id = qs.target_id
@@ -78,10 +79,11 @@ select
       t_quality_mate m on (t.inbound_detail_id = m.inbound_detail_id)
       group by mate_id
 `;
-// 자재수입검사조회
+// 자재검사조회
 const mateQualityViewAll =
 `
 SELECT DISTINCT
+    md.inbound_id,
 	q.inbound_detail_id,
     q.quality_id,
     md.mate_id,
@@ -94,9 +96,31 @@ FROM
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
 ORDER BY
-	inbound_detail_id DESC
+	inbound_id DESC
 `;
-// 자재수입검사조회 (상세)
+
+// 검색조건 (자재명)
+const selectMateName =
+`
+SELECT DISTINCT
+    md.inbound_id,
+	q.inbound_detail_id,
+    q.quality_id,
+    md.mate_id,
+    mate_id(md.mate_id) mate_name,
+    q.quality_amount,
+    q.quality_pass_amount,
+    q.quality_fail_amount,
+	sub_code(quality_final_result) final_result
+FROM 
+	t_quality_mate q join
+    t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
+WHERE mate_id(md.mate_id) LIKE ?
+ORDER BY
+	inbound_id DESC
+`;
+
+// 자재검사조회 (상세)
 const mateQualityViewDetail = 
 `
 SELECT DISTINCT
@@ -108,9 +132,13 @@ SELECT DISTINCT
 FROM 
 	t_quality_mate t join
     t_quality_mate_detail m on (t.quality_id = m.quality_id)join
-    t_quality_option o on (m.option_id = o.option_id)
+    t_quality_option o on (m.option_id = o.option_id) join
+    t_quality_std_detail qsd on (o.option_id = qsd.option_id) join
+    t_quality_std qs on (qsd.std_id = qs.std_id)
 where m.quality_id= ?
+and std_status = '1bb'
 `;
+
 // key
 const selectLastmateQuality = 
 `
@@ -152,7 +180,8 @@ SELECT
 	qo.option_id,
     qo.option_name,
     qo.option_standard,
-    qo.option_method
+    qo.option_method,
+    qo.option_operator
 FROM t_prod_proc pp
 JOIN t_quality_std qs ON pp.prod_id = qs.target_id
 JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
@@ -206,6 +235,26 @@ select
 from
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
 order by tqp.prod_proc_id
+`;
+
+// 제품검사조회
+const selectProdName =
+`
+select
+	tqp.prod_proc_id,
+    tqp.quality_id,
+    prod_id(tpp.prod_id) prod_name,
+    tpp.prod_id,
+    tqp.quality_amount,
+    tqp.quality_pass_amount,
+    tqp.quality_fail_amount,
+    sub_code(tqp.quality_final_result) final_result
+from
+	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
+WHERE 
+	prod_id(tpp.prod_id) LIKE ?
+order by 
+	tqp.prod_proc_id DESC
 `;
 
 // 제품검사조회 (상세)
@@ -443,6 +492,7 @@ module.exports = {
      mateWaitInsert,
      updateMateQuality,
      updateMate,
+     selectMateName,
     // 제품
      prodQualityReq,
      prodQualityWait,
@@ -454,6 +504,7 @@ module.exports = {
      prodQualityInsert,
      prodWaitInsert,
      updateProd,
+     selectProdName,
     // 검사항목관리
      selectOption,
      insertOption,

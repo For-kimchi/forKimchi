@@ -1,4 +1,5 @@
-
+// 오늘날짜 가져오기 (매개변수 없을떄)
+// 있으면 데이터포맷
 export function formatDate(dateString) {
 
   let date;
@@ -35,7 +36,7 @@ export function formatDateAfter(dateString, after) {
   return `${year}-${month}-${day}`;
 
 }
-
+// 상태값 변경 ID = NAME
 export function codeToName(code, codeArray) {
   
   for (let item of codeArray) {

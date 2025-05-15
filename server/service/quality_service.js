@@ -135,6 +135,13 @@ const mateQualityViewDetail = async (detailId) => {
   return list;
 }
 
+// 검색조건 (자재명)
+const selectMateName = async (mId) => {
+  mId = '%' + mId + '%'
+  console.log(mId);
+  let search = await mariaDB.query('selectMateName', mId);
+  return search;
+}
 // -------------------------------------------------------------------
 
 //제품검사요청
@@ -251,6 +258,12 @@ const prodQualityViewDetail = async (detailId) => {
   return list;
 }
 
+// 검사조건 (제품명)
+const selectProdName =async (pId) => {
+  pId = '%' + pId + '%'
+  let list = await mariaDB.query('selectProdName', pId);
+  return list;
+}
 // ---------------------------------------------
 
 // 검사항목조회
@@ -461,6 +474,7 @@ module.exports = {
   mateQualityViewAll,
   mateQualityViewDetail,
   updateMateQuality,
+  selectMateName,
   // 제품
   prodQualityReq,
   prodQualityWait,
@@ -468,6 +482,7 @@ module.exports = {
   prodQualityViewAll,
   prodQualityViewDetail,
   prodQualityInsert,
+  selectProdName,
   // 검사항목
   selectOption,
   insertOption,

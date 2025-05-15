@@ -4,7 +4,7 @@
     <div class="row mt-3">
       <div class="col text-end">
         <button class="btn btn-success" @click="search">조회</button>
-        <!-- <button class="btn btn-info ms-2" @click="resetForm">등록</button> -->
+        <button class="btn btn-secondary ms-2" @click="resetSearch">초기화</button>
       </div>
     </div>
 
@@ -120,42 +120,52 @@
         action: '등록',
       };
     },
-    computed: {
-    },
+    computed: {},
     methods: {
-    async getBasicProc() {
-      const params = {};
-      
-      if (this.searchName) params.proc_name = this.searchName;
-      if (this.searchId) params.proc_id = this.searchId;
-      if (this.searchType) params.proc_type = this.searchType;
+      async getBasicProc() {
+        const params = {};
 
-      let res = await axios.get('/api/basicProc', {
-        params
-      })
-        .catch(err => console.log(err));
-      this.items = res.data;
-    },
-    async getProcType() {
-      let res = await axios.get(`/api/codes/G1`)
-        .catch(err => console.log(err));
-      this.codes = res.data;
-    },
+        if (this.searchName) params.proc_name = this.searchName;
+        if (this.searchId) params.proc_id = this.searchId;
+        if (this.searchType) params.proc_type = this.searchType;
+
+        let res = await axios.get('/api/basicProc', {
+            params
+          })
+          .catch(err => console.log(err));
+        this.items = res.data;
+      },
+      async getProcType() {
+        let res = await axios.get(`/api/codes/G1`)
+          .catch(err => console.log(err));
+        this.codes = res.data;
+      },
       search() {
         this.getBasicProc();
       },
       editItem(item) {
         this.action = '수정',
-        this.selected = {
-          ...item
-        };
+          this.selected = {
+            ...item
+          };
       },
       resetForm() {
         this.action = '등록',
-        this.selected = {
-        };
+        this.selected = {};
+      },
+      resetSearch() {
+        this.searchName = '';
+        this.searchId = '';
+        this.searchType = '';
       },
       async save() {
+
+        if (!this.selected.proc_name ||
+          !this.selected.proc_type) {
+          alert('입력되지 않은 정보가 있습니다');
+          return;
+        }
+
         let result = await axios.post('/api/basicProc', this.selected)
           .catch(err => console.log(err));
         console.log(result);
