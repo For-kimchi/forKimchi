@@ -1,9 +1,9 @@
 <template>
     <div class="container-fluid py-4">
     <nav class="text-center">
-      <button class="btn btn-primary ms-1 me-1">생산지시</button>
-      <router-link to="/ProdOrderInfo"><button class="btn btn-info ms-2 me-2">생산지시등록</button></router-link>
-      <router-link to="/ProdMate"><button class="btn btn-info ms-2 me-2">자재관리</button></router-link>
+      <button class="btn btn-primary ms-1 me-1">생산지시이력</button>
+      <!-- <router-link to=""><button class="btn btn-info ms-2 me-2">생산지시등록</button></router-link>
+      <router-link to=""><button class="btn btn-info ms-2 me-2">자재관리</button></router-link> -->
     </nav>
     <!-- 검색
      <div class="text-end">

@@ -15,10 +15,10 @@ const vendor = require('./sqls/basic/vendor.js');
 const order = require('./sqls/business/order.js');
 const deliv = require('./sqls/business/deliv.js');
 // 생산
-const plan = require('./production/prodPlan.js');
-const prodOrder = require('./production/prodOrder.js');
-const prodProcess = require('./production/prodProcess.js');
-const prodMate = require('./production/prodMate.js');
+const plan = require('./sqls/production/prodPlan.js');
+const prodOrder = require('./sqls/production/prodOrder.js');
+const prodProcess = require('./sqls/production/prodProcess.js');
+const prodMate = require('./sqls/production/prodMate.js');
 // 검사
 const quality = require('./quality/quality.js');
 module.exports = {

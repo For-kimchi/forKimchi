@@ -41,7 +41,7 @@
           </template>
           <template v-slot:list>
             <SidenavCollapseItem refer="/Prodplan" miniIcon="" text="생산계획관리"/>
-            <SidenavCollapseItem refer="/Prodorder" miniIcon="" text="생산지시관리"/>
+            <SidenavCollapseItem refer="/ProdOrderInfos" miniIcon="" text="생산지시관리"/>
             <SidenavCollapseItem refer="/Prodprocess" miniIcon="" text="생산공정관리"/>
             <SidenavCollapseItem refer="/Prodprocwork" miniIcon="" text="생산이력관리"/>
           </template>
