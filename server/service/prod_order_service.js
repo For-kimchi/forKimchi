@@ -41,24 +41,24 @@ const selectProdMateList = async() =>{
 };
 // 생산지시자재 BOM
 const selectProdBomList = async(prodid) =>{
-    let conn;
-    try{
-        conn = await mariaDB.getConnection();
-        await conn.beginTransaction();
-        // prod_name = prod_id
-        selectedSql = await mariaDB.selectedQuery('selectProdName', prodid);
-        let prodId = await conn.query(selectedSql, prodid);
-        prodId = prodId[0].prod_id;
-        
-        selectedSql = await mariaDB.selectedQuery('selectBomsBomDetail', prodId);
-        let result = await conn.query(selectedSql, prodId);
-        conn.commit();
-        return result;
-    }catch(err){
-        if(conn) conn.rollback();
-    }finally{
-        if(conn) conn.release();
-    }
+    // prod_name = prod_id
+    // selectedSql = await mariaDB.selectedQuery('selectProdName', prodid);
+    let prodId = await mariaDB.query('selectProdName', prodid);
+    prodId = prodId[0].prod_id;
+    
+    // selectedSql = await mariaDB.selectedQuery('selectBomsBomDetail', prodId);
+    let result = await mariaDB.query('selectBomsBomDetail', prodId);
+    return result;
+    // let conn;
+    // try{
+    //     conn = await mariaDB.getConnection();
+    //     await conn.beginTransaction();
+    //     conn.commit();
+    // }catch(err){
+    //     if(conn) conn.rollback();
+    // }finally{
+    //     if(conn) conn.release();
+    // }
 };
 
 // 생산지시 등록
@@ -68,13 +68,16 @@ const insertProdOrder = async(prodOrder) =>{
     try{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
-                
+
+        // 생산지시 중 상세계획 상태변경
         selectedSql = await mariaDB.selectedQuery('updatePlanDetailStatus', prodOrder.plan_detail_id);
         let status = await conn.query(selectedSql, prodOrder.plan_detail_id);
 
+        // 최근LOT 조회
         selectedSql = await mariaDB.selectedQuery('selectProdOrderLimit', {});
         let lastLot = await conn.query(selectedSql, {});
 
+        // prod_id 변환
         let prodName = prodOrder.prod_id
         selectedSql = await mariaDB.selectedQuery('selectProdName', prodName);
         let prodId = await conn.query(selectedSql, prodName);
@@ -82,14 +85,13 @@ const insertProdOrder = async(prodOrder) =>{
         let lastOrderLot = lastLot[0].prod_order_lot;
         let newOrderLot = keys.getNextKeyId(lastOrderLot);
 
+        // 생성된 키를 포함하여 등록.
         prodOrder.prod_order_lot = newOrderLot;
         prodOrder.prod_id = prodId;
-        let cloumn = ['plan_detail_id', 'prod_order_lot', 'prod_id', 'order_date', 'order_amount', 'employee_id'];
+        let cloumn = ['plan_detail_id', 'prod_order_lot', 'prod_id', 'order_date', 'order_amount'];
         let convert = converts.convertObjToAry(prodOrder, cloumn);
-        
         selectedSql = await mariaDB.selectedQuery('insertProdOrderInfo', convert);
         let lastPlan = await conn.query(selectedSql, convert);
-
 
         conn.commit();
     }catch(err){
@@ -98,6 +100,30 @@ const insertProdOrder = async(prodOrder) =>{
         if(conn) conn.release();
     }
 };
+
+// 생산지시 승인
+const orderCheck = async(orderCheck) =>{
+    let conn;
+    try{
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
+        
+        for(let check of orderCheck){
+            let param = [check.employee_id, check.prod_order_lot];
+            console.log(param);
+            selectedSql = await mariaDB.selectedQuery('updateProdOrderBtn', param);
+            let lastPlan = await conn.query(selectedSql, param);
+        }
+
+        conn.commit();
+        return list;
+    }catch(err){
+        if(conn) conn.rollback();
+    }finally{
+        if(conn) conn.release();
+    }
+};
+
 // 생산공정
 // 생산공정을 위한 지시 조회 selectProdProcess
 const selectProdProcess = async() =>{
@@ -122,9 +148,10 @@ const selectProdProcFlowInfo = async(prodLot) =>{
         // 공정흐름도 조회
         selectedSql = await mariaDB.selectedQuery('selectProdProcFlowInfo', prodId);
         let Info = await conn.query(selectedSql, prodId);
+
+        // 반복문 공정 합계
         let sumList = [];
-        // 반복문
-        for(let procFlow of Info){
+       for(let procFlow of Info){
             let params = [prodLot, procFlow.proc_id, prodLot, procFlow.proc_id];
             // 각 합계 구하기
             selectedSql = await mariaDB.selectedQuery('selectSumProdProcList', params);
@@ -232,4 +259,5 @@ module.exports = {
     insertProdProcList,
     updateStartTime,
     updateEndTime,
+    orderCheck,
 }

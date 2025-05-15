@@ -1,34 +1,10 @@
 <template>
-    <div class="container-fluid">
+    <div class="container-fluid py-4">
     <nav class="text-center">
       <!-- <router-link to="/ProdOrder"><button class="btn btn-info me-2">생산지시</button></router-link> -->
       <router-link to="/ProdOrderInfo"><button class="btn btn-info me-2">생산지시등록</button></router-link>
       <button class="btn btn-primary">자재관리</button>
     </nav>
-    <!-- 검색
-     <div class="text-end">
-        <button class="btn btn-success ms-2 me-2">조회</button>
-     </div> -->
-    <div class="row">
-        <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
-                    <h6 class="text-white text-capitalize ps-3">검색</h6>
-                </div>
-            </div>
-            <div>
-            <ul class="list-group list-group-horizontal">
-                <li class="list-group-item">제품코드</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">제품명</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">일정</li>
-                <li class="list-group-item"><input type="date"> ~ <input type="date"></li>
-                <button class="btn btn-success ms-2 me-2">조회</button>
-            </ul>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <!-- 행 영역 div-->
       <div class="col-12">
