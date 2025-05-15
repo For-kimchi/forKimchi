@@ -2,8 +2,36 @@ const mariaDB = require('../mapper/mapper');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts')
 
+const getPmo = async (query) => {
+  console.log(query);
+  let list = await mariaDB.query("selectPmo", [query.order_status]);
+  return list;
+}
+
+const getPmoOne = async (id) => {
+  console.log(id);
+  let list = await mariaDB.query("selectPmoOne", [id]);
+  return list;
+}
+
+const putPmo = async (body) => {
+
+  let res = {
+    success: true,
+  }
+
+  console.log(body);
+  let result = await mariaDB.query("updatePmo", ['3d', body.prod_order_lot]);
+
+  if (result.affectedRows > 0) {
+    return res;
+  } 
+
+  res.success = false;
+  return res;
+}
+
 const postPmo = async (PmoInfo) => {
-  console.log(PmoInfo);
 
   let res = {
     success: true,
@@ -40,7 +68,7 @@ const postPmo = async (PmoInfo) => {
 
     selectedSql = await mariaDB.selectedQuery('selectLastPmh', {});
     last = await conn.query(selectedSql, {});
-    
+
     console.log(last);
 
     lastId = last[0].pmh_id;
@@ -51,7 +79,7 @@ const postPmo = async (PmoInfo) => {
       let mateStock = await conn.query(selectedSql, detail.mate_id);
 
       let inbound_amount = detail.inbound_amount;
-      
+
       console.log(inbound_amount);
 
       for (let mate of mateStock) {
@@ -60,7 +88,7 @@ const postPmo = async (PmoInfo) => {
 
         if (inbound_amount >= mate.mate_stock_amount) {
           hold_amount = mate.mate_stock_amount;
-        } else if (inbound_amount < mate.mate_stock_amount ) {
+        } else if (inbound_amount < mate.mate_stock_amount) {
           hold_amount = inbound_amount;
         }
 
@@ -103,5 +131,8 @@ const postPmo = async (PmoInfo) => {
 }
 
 module.exports = {
+  getPmo,
+  getPmoOne,
+  putPmo,
   postPmo,
 }
