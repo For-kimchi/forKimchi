@@ -1,3 +1,46 @@
+const selectPmo =
+`
+SELECT
+prod_order_lot,
+plan_detail_id,
+po.prod_id,
+prod_name,
+order_date,
+order_amount,
+po.employee_id,
+employee_name,
+order_status
+FROM t_prod_order po
+JOIN t_employee e ON po.employee_id = e.employee_id
+JOIN t_prod p ON po.prod_id = p.prod_id
+WHERE order_status = ?
+ORDER BY order_date
+`;
+
+const selectPmoOne =
+`
+SELECT 
+bd.mate_id,
+mate_amount,
+mate_name,
+mate_unit,
+mate_type,
+sub_code_name
+FROM t_bom b
+JOIN t_bom_detail bd ON b.bom_id = bd.bom_id
+JOIN t_mate m ON bd.mate_id = m.mate_id
+JOIN t_sub_code sc ON m.mate_type = sc.sub_code 
+WHERE b.bom_status = '1t'
+AND prod_id = ?
+`;
+
+const updatePmo =
+`
+UPDATE t_prod_order
+SET order_status = ?
+WHERE prod_order_lot = ?
+`;
+
 const selectLastPmo = 
 `SELECT pmo_id
 FROM t_prod_mate_order
@@ -31,6 +74,9 @@ VALUES
 `;
 
 module.exports = {
+  selectPmo,
+  selectPmoOne,
+  updatePmo,
   selectLastPmo,
   insertPmo,
   selectLastPmh,

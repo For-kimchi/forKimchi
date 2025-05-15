@@ -213,21 +213,34 @@ const postOrderConfirm = async (orderInfo) => {
   }
 };
 
-const deleteOrder = async (params) => {
+const deleteOrder = async (query) => {
 
   let res = {
     success: true,
   }
 
-  let result = await mariaDB.query('deleteOrder', params);
+  try {
+    conn = await mariaDB.getConnection();
+    await conn.beginTransaction();
+    
+    let selectedSql = await mariaDB.selectedQuery('deleteOrder', {});
+    result = await conn.query(selectedSql, [query.order_id]);
 
-  if (result.affectedRows > 0) {
+    selectedSql = await mariaDB.selectedQuery('deleteOrderDetailAll', {});
+    result = await conn.query(selectedSql, [query.order_id]);
+
+    conn.commit();
+
     return res;
-  } else {
+  } catch (err) {
+    console.log(err);
+    if (conn) conn.rollback();
+
     res.success = false;
     return res;
+  } finally {
+    if (conn) conn.release();
   }
-
 }
 
 const getDelivTarget = async (params) => {

@@ -111,6 +111,11 @@ WHERE order_id = ?
 WHERE order_detail_id = ?
  `;
 
+  const deleteOrderDetailAll =
+ `DELETE FROM t_order_detail
+WHERE order_id = ?
+ `;
+
 module.exports = {
   selectLastOrder,
   selectLastOrderDetail,
@@ -125,4 +130,5 @@ module.exports = {
   updateOrderDetail,
   deleteOrder,
   deleteOrderDetail,
+  deleteOrderDetailAll,
 }
