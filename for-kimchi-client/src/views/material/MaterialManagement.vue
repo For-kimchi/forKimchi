@@ -147,7 +147,7 @@
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">발주서수정</h6>
+              <h6 class="text-white text-capitalize ps-3">발주서</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -161,28 +161,34 @@
                     <th>발주번호</th>
                     <th>거래처</th>
                     <th>사용자명</th>
+                    <th>자재명</th>
+                    <th>수량</th>
+                    <th>단위</th>
                     <th>납기예정일자</th>
                     <th>발주상태</th>
                     <th>비고</th>
-                    <th>승인일자</th>
-                    <th>승인자</th>
+                    <!-- <th>승인일자</th>
+                    <th>승인자</th> -->
                     <th>삭제</th>
                   </tr>
                 </thead>
                 <tbody>
                   <template v-if="materialList.length > 0">
-                    <tr v-for="(info, index) in materialList" :key="info.id" @click="">
+                    <tr v-for="(info, index) in materialList" :key="info.id" @click="updateMateList(info.req_id)">
                       <td>{{ index + 1 }}</td>
                       <!-- <td><MaterialCheckbox></MaterialCheckbox></td> -->
                       <td>{{ info.req_date }}</td>
                       <td>{{ info.req_id }}</td>
                       <td>{{ info.vendor_id }}</td>
                       <td>{{ info.employee_id }}</td>
+                      <td>{{ info.mate_name }}</td>
+                      <td>{{ info.req_amount }}</td>
+                      <td>{{ info.mate_unit }}</td>
                       <td>{{ info.req_due_date }}</td>
                       <td><button class="btn btn-sm btn-warning" disabled>{{ info.req_status }}</button></td>
                       <td>{{ info.memo }}</td>
-                      <td>{{ info.confirm_date }}</td>
-                      <td>{{ info.manager_id }}</td>
+                      <!-- <td>{{ info.confirm_date }}</td>
+                      <td>{{ info.manager_id }}</td> -->
                       <!-- <td>{{ info.req_status }}({{ typeof info.req_status }})</td> -->
                       <td>
                       <button class="btn btn-danger" @click.stop="deleteRow(index)" v-if="info.req_status == '발주등록'">삭제</button>
@@ -259,15 +265,13 @@ this.getMateList();
     goToProdOrderPage() {
     this.$router.push({ name: 'MateProdOrder' });
   },
-  
     toggleAll(listName, event) {
-      const isChecked = event.target.checked;
-      this[listName].forEach(item => {
-        item.selected = isChecked;
-      });
+    const isChecked = event.target.checked;
+    this[listName].forEach(item => { item.selected = isChecked;});
     },
-    handleClick() {
-  axios.get('/api/mateList', {
+
+  handleClick() {
+    axios.get('/api/mateList', {
     params: { mate_name: this.search.material }
   })
   .then((response) => {
@@ -277,18 +281,13 @@ this.getMateList();
     console.error('검색 실패:', error);
   });
 },
-// 발주관리페이지 발주항목 클릭시 수정(값 자동 입력)
-// async updateMateList(idx) {
-//     let id = this.materialList[idx].req_id;
-//     let ajaxRes = await axios.get(`/api/materialList/${id}`)
-//                               .catch(err => console.log(err));
-//      this.selectedList = ajaxRes.data;
-//      this.vendor.vendor_name = this.materialList[idx].vendor_id;
-//      this.req_due_date = this.materialList[idx].req_due_date;
-//     //  this.mate_name = this.mateListInsert[idx].mate_name;
-//     //  this.req_amount = this.mateListInsert[idx].req_amount;
-//     //  this.mate_unit = this.mateListInsert[idx].mate_unit;
-// },
+// 발주관리페이지 발주항목 클릭시 자재리스트 자동 입력
+async updateMateList(reqId) {
+  let ajaxRes = await axios.get(`/api/mateListInsert/${reqId}`)
+                          .catch(err=> console.log(err));
+                           console.log('조회 결과:', ajaxRes.data);
+  this.selectedList = ajaxRes.data;
+},
 // this.action = '수정';
 // this.updates = { ...info };
 
@@ -324,7 +323,7 @@ async getMateList() {
 // 자재발주관리에서 삭제버튼 클릭시 발주삭제
 async deleteRow(index) {
   
-    const reqId = this.materialList[index].req_id; // 뒤에는 실제불러올 값인 req_id가 들어가야한다.
+    const reqId = this.materialList[index].req_detail_id; // 뒤에는 실제불러올 값인 req_id가 들어가야한다.
 
     if (!confirm('정말 삭제하시겠습니까?')) 
     return;
@@ -370,7 +369,7 @@ async deleteRow(index) {
         mate_name: item.mate_name,
         mate_unit: item.mate_unit,
         req_amount: 0,
-      // mate_unit: item.mate_unit,
+      // mate_unit: item.mate_unit, 
       selected: false
       })));
       this.searchMate = this.searchMate.filter(item => !item.selected);
@@ -378,8 +377,8 @@ async deleteRow(index) {
     moveToCustomer() {
       const movingItems = this.selectedList.filter(item => item.selected);
       this.searchMate.push(...movingItems.map(item => ({
-      mate_id: item.equip_id,
-      mate_name: item.equip_name,
+       mate_id: item.mate_id,
+      mate_name: item.mate_name,
       req_amount: item.req_amount,
       mate_unit: item.mate_unit,  
       selected: false
@@ -433,21 +432,36 @@ async deleteRow(index) {
 
 
 
-
-  async mateAdd() {
-  if (this.selectedList.length === 0) {
-    alert("저장할 항목이 없습니다.");
+// 빈값에 대한 각각의 alert창 구성
+    async mateAdd() {
+  // 회사명 확인
+  if (!this.vendor || !this.vendor.vendor_id) {
+    alert("회사명을 입력하세요.");
     return;
   }
 
+  // 납기 예정일 확인
+  if (!this.req_due_date) {
+    alert("납기예정일자를 입력하세요.");
+    return;
+  }
+
+  // 자재 선택 여부 확인
+  if (this.selectedList.length === 0) {
+    alert("자재가 없습니다.");
+    return;
+  }
+
+  // 자재 수량 확인
   const mateAmounts = this.selectedList.filter(item => !item.req_amount || item.req_amount <= 0);
   if (mateAmounts.length > 0) {
     alert("수량을 모두 입력해주세요.");
     return;
   }
 
+  // 서버로 보낼 데이터 구성
   const mateInfo = {
-      mate_detail_list: this.selectedList.map(item => ({
+    mate_detail_list: this.selectedList.map(item => ({
       mate_id: item.mate_id,
       req_amount: item.req_amount,
     })),
@@ -455,13 +469,13 @@ async deleteRow(index) {
     employee_id: 'EMP-001',
     req_due_date: this.req_due_date,
   };
+
   try {
     const ajaxRes = await axios.post(`/api/mateSave`, mateInfo);
     if (ajaxRes.data.affectedRows > 0) {
       alert("저장되었습니다.");
       this.resetForm();
       this.getMateList();
-
       this.$router.push('/matma');
     } else {
       alert("저장이 실패하였습니다.");
@@ -471,6 +485,7 @@ async deleteRow(index) {
     alert("저장 중 오류가 발생했습니다.");
   }
 },
+
 
   // async mateAdd() {
   //     let info = this.mateList[mate_id];
@@ -507,19 +522,19 @@ async deleteRow(index) {
   },
   mounted() {
   this.fetchCompanies();
-  const autoMaterials = sessionStorage.getItem('auto_materials');
-  if (autoMaterials) {
-    const data = JSON.parse(autoMaterials);
+  // const autoMaterials = sessionStorage.getItem('auto_materials');
+  // if (autoMaterials) {
+  //   const data = JSON.parse(autoMaterials);
 
-    // 예시: editForm에 값 세팅
-    this.editForm.prod_order_lot = data.prod_order_lot;
-    this.editForm.order_date = data.order_date;
-    this.editForm.order_amount = data.order_amount;
-    this.editForm.order_status = data.order_status;
-    this.editForm.memo = data.memo;
+  //   // 예시: editForm에 값 세팅
+  //   this.editForm.prod_order_lot = data.prod_order_lot;
+  //   this.editForm.order_date = data.order_date;
+  //   this.editForm.order_amount = data.order_amount;
+  //   this.editForm.order_status = data.order_status;
+  //   this.editForm.memo = data.memo;
 
-    sessionStorage.removeItem('auto_materials'); // 한 번만 사용
-  }
+  //   sessionStorage.removeItem('auto_materials'); // 한 번만 사용
+  // }
   },
 }
 </script>

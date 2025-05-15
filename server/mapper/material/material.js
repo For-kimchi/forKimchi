@@ -96,7 +96,7 @@ const selectMateDetail =
 `SELECT 
 		    req_detail_id,
         req_id,
-        mate_id(mate_id) mate_id,
+        mate_id(mate_id) mate_id, 
         req_amount,
         memo
 FROM t_mate_req_detail
@@ -108,7 +108,7 @@ const updateMateStatus =
 SET req_status = ?,
     confirm_date = SYSDATE(),
     manager_id = ?
-WHERE req_id= ?`
+WHERE req_id= ?`;
 
 
 // 거래처 검색
@@ -150,6 +150,9 @@ const insertMainMate =
                         ,memo)
 VALUES(SYSDATE(), ?, ?, ?, ?, '1o', '')`;
 
+// 자재발주관리페이지 발주서 클릭시 값 넣기
+
+
 // 자재발주관리페이지에서 선택항목 update
 const updateMateQuery =
 `UPDATE t_mate_req
@@ -170,19 +173,38 @@ VALUES(?, ?, ?, ?, ?)
 `;
 
 // 자재발주관리페이지에서 발주서전체리스트 조회
-const selectDeleteList =
+const mateListAll =
 `SELECT 
-	        req_id,
-          date_type(req_date) req_date,
-          vendor_id(vendor_id) vendor_id,
-          employee_id(employee_id) employee_id,
-	        date_type(req_due_date) req_due_date,
-          sub_code(req_status) req_status,
-	        memo,
-          date_type(confirm_date) confirm_date,
-          employee_id(manager_id) manager_id
-FROM t_mate_req
-WHERE req_status = '1o' `
+	mrd.req_detail_id,
+    mrd.req_id,
+    mrd.mate_id,
+    mrd.req_amount,
+    mrd.memo,
+    sub_code(mr.req_status) req_status, 
+    vendor_id(mr.vendor_id) vendor_id,
+    date_type(mr.req_date) req_date,
+    employee_id(mr.employee_id) employee_id,
+    date_type(mr.req_due_date) req_due_date,
+    mt.mate_name,
+    mt.mate_unit
+FROM t_mate_req_detail mrd
+LEFT JOIN t_mate_req mr ON mrd.req_id = mr.req_id
+JOIN t_mate mt ON mrd.mate_id = mt.mate_id
+WHERE mr.req_status = '1o'
+ORDER BY mr.req_due_date
+`;
+// `SELECT 
+// 	        req_id,
+//           date_type(req_date) req_date,
+//           vendor_id(vendor_id) vendor_id,
+//           employee_id(employee_id) employee_id,
+// 	        date_type(req_due_date) req_due_date,
+//           sub_code(req_status) req_status,
+// 	        memo,
+//           date_type(confirm_date) confirm_date,
+//           employee_id(manager_id) manager_id
+// FROM t_mate_req
+// WHERE req_status = '1o' `
 
 
 // 자재발주관리페이지에서 행클릭
@@ -190,17 +212,18 @@ const selectReqMate =
 `SELECT mr.mate_id,
 		    tm.mate_name,
         mr.req_amount,
-        tm.mate_unit
+        tm.mate_unit,
+        mr.req_id
 FROM t_mate_req_detail mr
 LEFT JOIN t_mate tm ON mr.mate_id = tm.mate_id
-WHERE mr.req_detail_id = ?`;
+WHERE mr.req_id = ?`;
 
 
 // 자재발주관리페이지에서 자재리스트 중 선택항목 삭제버튼
 const deleteMateBtn =
 `DELETE 
-FROM t_mate_req
-WHERE req_id =?`
+FROM t_mate_req_detail
+WHERE req_detail_id =?`
 
 
 
@@ -270,11 +293,11 @@ module.exports = {
     mateCode,
     insertMateDetail,
     detailMateInserts,
-    selectDeleteList,
     deleteDetailMate,
     deleteMateBtn,
     updateMateStatus,
     updateMateQuery,
     mateOrderList,
     selectReqMate,
+    mateListAll,
 }

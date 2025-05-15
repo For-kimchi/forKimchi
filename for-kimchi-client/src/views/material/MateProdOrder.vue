@@ -1,5 +1,12 @@
 <template>
   <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12 text-end">
+       <button class="btn btn-outline-primary mb-2" @click="goToBack">
+        📋 닫기
+      </button>
+  </div>
+</div>
     <!-- 검색 -->
     <!-- <div class="row">
       <div class="card my-4">
@@ -42,11 +49,11 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">발주수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
-                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">발주서 등록</th>
+                    <!-- <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">발주서 등록</th> -->
                     </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in mateOrderList" :key="info.prod_order_lot" @click="viewProdOrderDetail(info)">
+                  <tr v-for="(info, index) in mateOrderList" :key="info.prod_order_lot" @click=""> <!--@click="viewProdOrderDetail(info)-->
                     <td class="align-middle text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.prod_order_lot }}</td>
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
@@ -55,9 +62,9 @@
                     <td class="align-middle text-center"><button class="btn btn-sm btn-warning" disabled>{{ info.order_status }}</button></td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                     <td>
-                    <button class="btn btn-sm btn-primary" @click="handleRegisterOrder(info)">
+                    <!-- <button class="btn btn-sm btn-primary" @click="handleRegisterOrder(info)">
                     발주 등록
-                    </button>
+                    </button> -->
                     </td>
                   </tr>
                 </tbody>
@@ -161,6 +168,9 @@ export default {
       sessionStorage.setItem('auto_materials', JSON.stringify(materials));
       this.$router.push('/matma');
     },
+    goToBack() {
+      this.$router.push('/matma');
+    }
   },
 };
 </script>

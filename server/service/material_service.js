@@ -118,7 +118,7 @@ const mateList = async (mateName) => {
 
 // 자재발주관리페이지 발주서리스트 조회
 const mateAll = async () => {
-  let list = await mariaDB.query('selectDeleteList')
+  let list = await mariaDB.query('mateListAll')
   return list;
 };
 
@@ -243,8 +243,8 @@ const insertMates = async (mateSaveInfo) => {
 };
 
 // 발주관리페이지에서 발주서 클릭시 값 넘기기
-const mateListClick = async (mateInfo) => {
-  let list = await mariaDB.query('selectReqMate', mateInfo);
+const mateListClick = async (reqId) => {
+  let list = await mariaDB.query('selectReqMate', reqId);
   return list;
 };
 

@@ -30,8 +30,16 @@
             <!--항목명 div-->
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3 px-3 d-flex justify-content-between align-items-center">
-             <h6 class="text-white text-capitalize m-0">창고현황</h6>
-    
+             <!-- 창고 드롭다운 추가 -->
+              <div class="d-flex align-items-center gap-2">
+                <h6 class="text-white text-capitalize m-0">창고현황</h6>
+                  <select v-model="selectedWarehouse" @change="wareSearch" class="form-select ms-3" style="width: 150px; height: 35px;">
+                      <option disabled value="">창고 선택</option>
+                      <option v-for="(info, index) in wareId.filter(w => w.warehouse_id !== 'WHS-004')" :key="index" :value="info.warehouse_id"> <!--filter를 써서 WHS-004는 드롭다운에서 제외-->
+                        {{ info.warehouse_id }}
+                      </option>
+                  </select>
+              </div>
             <div class="btn-group bg-white rounded px-2 py-1 shadow-sm" role="group" aria-label="조회 방식 선택">
               <input type="radio" class="btn-check" id="lotView" value="lot" v-model="searchType" @change="wareSearch" autocomplete="off">
               <label class="btn btn-sm btn-outline-success mb-0" for="lotView">LOT별 조회</label>
@@ -109,20 +117,36 @@ export default {
       return{
        wareList:null,
        searchType : 'lot', // 기본조회방식
+       wareId:[],
+       selectedWarehouse: '',
       };
     },
     created(){
       this.wareSearch();
+      this.wareById(); 
     },
     methods : {
      async wareSearch() {
-    try {
-      this.wareList = null;
-      let ajaxRes = await axios.get(`/api/warehouseList?type=${this.searchType}`);
-      this.wareList = ajaxRes.data;
-    } catch (err) {
-      console.error('창고현황 조회 실패:', err);
-    }
+  try {
+    this.wareList = null;
+    
+    const params = {
+      type: this.searchType,
+      warehouse_id: this.selectedWarehouse
+    };
+
+    let ajaxRes = await axios.get('/api/warehouseList', { params });
+    this.wareList = ajaxRes.data;
+  } catch (err) {
+    console.error('창고현황 조회 실패:', err);
+  }
+},
+    // 드롭다운에 warehouse_id 넣기
+    async wareById() {
+      let ajaxRes = await axios.get(`/api/wareId`)
+                              .catch(err=> console.log(err));
+      this.wareId = ajaxRes.data;
+      // console.log('wareId------------------------',this.wareId);  // created()안에 쓰인거니까 this를 써야 됨.. 
     },
     
 
