@@ -67,7 +67,7 @@
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10"></th>
                     <td class="align-middle text-end">
                       <button class="btn bg-gradient-info w-20 mb-0 m-2 p-2" @click="addOrders()">추가</button>
-                      <button class="btn bg-gradient-primary w-20 mb-0 m-2 p-2">취소</button>
+                      <button class="btn bg-gradient-primary w-20 mb-0 m-2 p-2" @click="close()">취소</button>
                     </td>
                   </tr>
                   <tr>
@@ -205,7 +205,6 @@ export default {
         this.planDetailId = info.plan_detail_id;
         this.planDetailProd = info.prod_id;
         this.prodDate = formatDate();
-        this.prodAmount = info.plan_amount;
       },
       // 추가 버튼
       async addOrders(){
@@ -216,13 +215,19 @@ export default {
         };
         // 선택 했는지 안했는지 확인
         if(info.plan_detail_id != null && info.prod_id != null){
-        let ajaxRes =
-        await axios.put(`/api/prodOrder`, info)
-                    .catch(err=> console.log(err));
-          let Order = ajaxRes.date;
-
-         await this.selectProdDetailList();
-         await this.clickDtList(this.idx);
+          if(this.prodAmount < 0 || this.prodAmount == null){
+            alert('생산지시수량을 입력해주세요.');
+          }else{
+            let ajaxRes =
+            await axios.put(`/api/insertProdOrder`, info)
+            .catch(err=> console.log(err));
+            let Order = ajaxRes.date;
+            alert('생산지시 완료.');
+            console.log(Order);
+            this.prodAmount = '';
+            await this.selectProdDetailList();
+            await this.clickDtList(this.idx);
+          }
         }else{
           alert('추가하고싶은 항목을 선택해주세요.')
         };
@@ -265,6 +270,15 @@ export default {
         }else{
           alert('항목이 선택되지 않았습니다.')
         };
+      },
+      // 취소버튼
+      async close(){
+        this.prodOrderList = [];
+        this.planDetailId = '';
+        this.planDetailProd = '';
+        this.prodDate = '';
+        this.prodAmount = '';
+        await this.selectProdDetailList();
       },
 
     }
