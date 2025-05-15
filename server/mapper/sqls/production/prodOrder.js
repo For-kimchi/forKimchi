@@ -65,9 +65,15 @@ INSERT INTO t_prod_order(plan_detail_id,
                          prod_id,
                          order_date,
                          order_amount,
-                         employee_id,
                          order_status)
-VALUES (?, ?, ?, ?, ?, ?, '1d')
+VALUES (?, ?, ?, ?, ?,'1d')
+`;
+// 생산지시 승인 버튼
+const updateProdOrderBtn =`
+UPDATE t_prod_order 
+SET order_status = '2d',
+    employee_id = ?
+WHERE prod_order_lot = ?
 `;
 
 // 생산지시 중 상세계획 상태변경
@@ -136,4 +142,5 @@ module.exports = {
     selectProdOrderList,
     selectBomsBomDetail,
     updatePlanDetailStatus,
+    updateProdOrderBtn,
 }
