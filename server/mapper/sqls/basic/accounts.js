@@ -3,14 +3,11 @@
 
 const selectLogin =
   `SELECT employee_id,
-        employee_email,
         employee_pwd,
         employee_name,
-        employee_dept,
-        employee_type,
-        employee_status,
-        employee_tel,
-        employee_date
+        sub_code(employee_dept) dept_name,
+        sub_code(employee_type) type_name,
+        sub_code(employee_status) status_name
  FROM t_employee
  WHERE employee_email = ?`;
 

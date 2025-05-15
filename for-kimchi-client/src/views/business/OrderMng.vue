@@ -77,7 +77,7 @@
                       <input class="form-control border text-center" type="text" v-model="info.prod_name" @keydown.prevent
                         @click="openProdModal(index)" placeholder="제품명"></td>
                     <td class="text-center">
-                      <input class="form-control border text-center" type="text" v-model="info.prod_id" readonly></td>
+                      <input class="form-control border text-center" type="text" v-model="info.prod_id" readonly  placeholder="제품ID"></td>
                     <td class="text-center">
                       <input class="form-control border text-center" type="number" v-model="info.order_amount"></td>
                     <td class="text-center">
@@ -141,9 +141,24 @@
     },
     methods: {
       async register() {
-        if (this.orderDetails.length == 0) {
-          alert('상세 항목이 없습니다.');
-        } else {
+
+          if (!this.order.vendor_id) {
+            alert('거래처 정보가 없습니다.');
+            return;
+          }
+
+          if (this.orderDetails.length == 0) {
+            alert('상세 항목이 없습니다.');
+            return;
+          }
+
+          for (let detail of this.orderDetails) {
+            if (!detail.prod_id || !detail.order_amount) {
+              alert('미완성된 상세 항목이 있습니다.');
+              return;
+            }
+          }
+
           let params = {
             order_id: this.order.order_id,
             vendor_id: this.order.vendor_id,
@@ -162,8 +177,6 @@
           } else {
             alert('주문 등록 중 오류가 발생했습니다.');
           }
-
-        }
       },
       formatDate(dateString) {
         return formatDate(dateString);

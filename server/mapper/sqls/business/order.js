@@ -35,13 +35,17 @@ const selectOrder =
         order_final_status,
         o.vendor_id,
         v.vendor_name,
-        employee_id,
+        o.employee_id,
+        e.employee_name,
         reg_date,
         manager_id,
+        em.employee_name manager_name,
         confirm_date,
         memo
  FROM t_order o 
- JOIN t_vendor v ON o.vendor_id = v.vendor_id
+ LEFT JOIN t_vendor v ON o.vendor_id = v.vendor_id
+ LEFT JOIN t_employee e ON o.employee_id = e.employee_id
+ LEFT JOIN t_employee em ON o.manager_id = em.employee_id
  WHERE 1=1
  :searchKeyword
  ORDER BY order_id DESC`;
@@ -104,7 +108,7 @@ WHERE order_id = ?
 
  const deleteOrderDetail =
  `DELETE FROM t_order_detail
-WHERE order_detail_ = ?
+WHERE order_detail_id = ?
  `;
 
 module.exports = {

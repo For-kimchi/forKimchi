@@ -23,7 +23,7 @@
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">납품상태</label>
-            <select v-model="searchType" class="form-select text-center">
+            <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
                 {{ code.sub_code_name }}
@@ -54,7 +54,7 @@
           </div>
           <div class="card-body px-0 py-2" style="max-height: 300px; overflow: auto;">
             <!-- <div class="table-responsive p-0"> -->
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center table-hover mb-0">
                 <thead>
                   <tr>
                     <th class="text-center font-weight-bolder">납품ID</th>
@@ -67,12 +67,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in delivs" v-bind:key="info.order_id" @click="getDelivDetails(info.deliv_id)">
+                  <tr v-for="(info, index) in delivs" :class="selectedIndex === index ? 'table-active' : ''" v-bind:key="info.order_id" @click="getDelivDetails(index)">
                     <td class="text-center">{{ info.deliv_id}}</td>
                     <td class="text-center">{{ info.order_detail_id}}</td>
                     <td class="text-center">{{ formatDate(info.deliv_date)}}</td>
                     <td class="text-center">{{ info.vendor_name }}</td>
-                    <td class="text-center">{{ info.employee_id }}</td>
+                    <td class="text-center">{{ info.employee_name }}</td>
                     <td class="text-center">{{ codeToName(info.deliv_status, codes) }}</td>
                     <td class="text-center">{{ info.memo }}</td>
                   </tr>
@@ -93,18 +93,18 @@
                 <thead>
                   <tr>
                     <th class="text-center font-weight-bolder">납품상세ID</th>
-                    <th class="text-center font-weight-bolder">납품ID</th>
                     <th class="text-center font-weight-bolder">제품LOT</th>
                     <th class="text-center font-weight-bolder">제품ID</th>
+                    <th class="text-center font-weight-bolder">제품명</th>
                     <th class="text-center font-weight-bolder">납품수량</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in delivDetails" v-bind:key="info.deliv_detail_id">
                     <td class="text-center">{{ info.deliv_detail_id }}</td>
-                    <td class="text-center">{{ info.deliv_id }}</td>
                     <td class="text-center">{{ info.prod_lot }}</td>
                     <td class="text-center">{{ info.prod_id }}</td>
+                    <td class="text-center">{{ info.prod_name }}</td>
                     <td class="text-center">{{ info.deliv_amount }}</td>
                   </tr>
                 </tbody>
@@ -128,6 +128,7 @@ export default {
         delivs : [],
         delivDetails : [],
         codes: [],
+        selectedIndex: null,
       }
     },
     methods : {
@@ -149,9 +150,10 @@ export default {
 
         this.delivs = result.data;
       },
-      async getDelivDetails(delivId) {
+      async getDelivDetails(index) {
+        this.selectedIndex = index;
         let result = 
-        await axios.get(`/api/deliv/${delivId}`)
+        await axios.get(`/api/deliv/${this.delivs[index].deliv_id}`)
                    .catch(err => console.log(err));
         this.delivDetails = result.data;
       },
@@ -169,6 +171,7 @@ export default {
     },
     created() {
       this.getDelivType();
+      this.getDelivs();
     }
 }
 

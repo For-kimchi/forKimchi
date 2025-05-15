@@ -18,7 +18,9 @@
         </div>
         <ul class="navbar-nav justify-content-end">
           <li class="nav-item d-flex align-items-center">
-            <span class="me-2 font-weight-bolder" v-if="isLoggedIn">{{ userInfo.employee_name ? userInfo.employee_name + ' 님, 환영합니다' : '' }}</span>
+            <span class="me-3 font-weight-bolder" v-if="isLoggedIn">
+              {{ userInfo.employee_name }} ({{ userInfo.dept_name }}, {{ userInfo.type_name }}) 님, 환영합니다
+            </span>
           </li>
           <li class="nav-item d-flex align-items-center">
               <button class="btn btn-danger m-0 me-2" v-if="isLoggedIn" @click="logout">로그아웃</button>

@@ -18,9 +18,9 @@ const selectDelivTarget =
  ORDD.order_status,
  ORDD.memo
 FROM t_order_detail ORDD
-JOIN t_order ORD ON ORDD.order_id = ORD.order_id
-JOIN t_prod PR ON ORDD.prod_id = PR.prod_id
-JOIN t_vendor VE ON ORD.vendor_id = VE.vendor_id
+LEFT JOIN t_order ORD ON ORDD.order_id = ORD.order_id
+LEFT JOIN t_prod PR ON ORDD.prod_id = PR.prod_id
+LEFT JOIN t_vendor VE ON ORD.vendor_id = VE.vendor_id
 WHERE deliv_due_date BETWEEN ? AND ?
 ORDER BY deliv_due_date) DEL
 WHERE order_amount > 0
@@ -81,11 +81,13 @@ const selectDeliv =
         o.vendor_id,
         v.vendor_name,
         d.employee_id,
+        e.employee_name,
         d.memo
  FROM t_deliv d
- JOIN t_order_detail od ON d.order_detail_id = od.order_detail_id
- JOIN t_order o ON od.order_id = o.order_id
- JOIN t_vendor v ON o.vendor_id = v.vendor_id
+ LEFT JOIN t_order_detail od ON d.order_detail_id = od.order_detail_id
+ LEFT JOIN t_order o ON od.order_id = o.order_id
+ LEFT JOIN t_vendor v ON o.vendor_id = v.vendor_id
+ LEFT JOIN t_employee e ON d.employee_id = e.employee_id
  WHERE 1=1
  :searchKeyword
  ORDER BY deliv_id DESC`;
