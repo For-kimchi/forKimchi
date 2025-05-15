@@ -12,7 +12,7 @@
         aria-hidden="true"
         id="iconSidenav"
       ></i>
-      <a class="m-0 navbar-brand" href="/">
+      <!-- <a class="m-0 navbar-brand" href="/">
         <img
           :src="
             sidebarType === 'bg-white' ||
@@ -23,10 +23,20 @@
           class="navbar-brand-img h-100"
           alt="main_logo"
         />
-        <span class="ms-2 font-weight-bold text-white"
-          >For Kimchi</span
-        >
-      </a>
+      </a> -->
+      <div class="m-0 navbar-brand" @click="home"> 
+        <!-- <img
+          :src="
+            sidebarType === 'bg-white' ||
+            (sidebarType === 'bg-transparent' && !isDarkMode)
+              ? logoDark
+              : logo
+          "
+          class="navbar-brand-img h-100"
+          alt="main_logo"
+        /> -->
+        <h4 class="ms-2 font-weight-bold text-white">For 김치</h4>
+      </div>
     </div>
     <hr class="horizontal light mt-0 mb-2" />
     <sidenav-list />
@@ -53,5 +63,10 @@ export default {
   computed: {
     ...mapState(useEventStore, ["isRTL", "sidebarType", "isDarkMode"]),
   },
+  methods: {
+    home() {
+      this.$router.push('/');
+    }
+  }
 };
 </script>

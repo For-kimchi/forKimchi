@@ -23,8 +23,9 @@
 import Sidenav from "./examples/Sidenav";
 import Navbar from "@/examples/Navbars/Navbar.vue";
 import AppFooter from "@/examples/Footer.vue";
-import { useEventStore } from '@/stores/event';
 import { mapState, mapActions } from 'pinia';
+import { useEventStore } from '@/stores/event';
+import { useUserStore } from "@/stores/user";
 
 export default {
   name: "App",
@@ -50,6 +51,10 @@ export default {
       "showConfig",
       "hideConfigButton",
     ]),
+    ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
   },
   beforeMount() {
     const store = useEventStore();

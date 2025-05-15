@@ -3,24 +3,27 @@ require('dotenv').config({path : './mapper/configs/dbConfig.env'})
 // console.log(process.env);
 const express = require('express');
 const app = express();
-
 const session = require('express-session');
+
 // router 등록
-const custRouter = require('./router/customer_router.js');
 
 // basic
 const basicRouter = require('./router/basic_router.js')
+const businessRouter = require('./router/business_router.js')
+const accountRouter = require('./router/account_router.js')
 
 // 어진 
 const materialRouter = require('./router/material_router.js');
+const storeRouter = require('./router/store_router.js');
 
 // 혁진
 const qualityRouter = require('./router/quality_router.js');
 
 // 유환
-const prodRouter = require('./router/prod_router.js');
+const prodRouter = require('./router/plan_router.js');
 const { quaReqAll } = require('./service/quality_service.js');
 
+const prodMatreRouter = require('./router/prod_mate_router.js')
 
 // 미들웨어
 // 기본적으로 넣어야할 부분이 있음. content-type에 대한 부분.
@@ -44,8 +47,6 @@ let sessionSetting = session({
  // Session 설정 등록
 app.use(sessionSetting);
 
-
-
 app.listen(3000, ()=>{
   console.log('Server Start');
   console.log('http://localhost:3000');
@@ -56,19 +57,21 @@ app.listen(3000, ()=>{
 app.get('/', (req, res)=>{
   res.send('Welcome!!');
 });
-app.use('/', custRouter);
-app.use('/', basicRouter);
 
+app.use('/', basicRouter);
+app.use('/', businessRouter);
+app.use('/', accountRouter);
 
 // 어진
 app.use('/', materialRouter);
-
+app.use('/', storeRouter);
 
 // 유환
 app.use('/', prodRouter);
+app.use('/', prodMatreRouter);
+
 // 혁진
 app.use('/', qualityRouter);
-
 
 // service를 먼저 만들어야함.
 // 아직은 구조익숙해지기위해서 거꾸러 작업함.

@@ -1,9 +1,9 @@
-// 최초 제품/자재 ID 생성
+// 최초 제품/자재 ID 생성 시간정보없는애들 키
 // 제품 : P, 자재 : M
 const getFirstUniqueId = (prefix) => {
   return `${prefix}-001`;
 }
-
+// 최신키 매개변수로 추가
 const getNextUniqueId = (uniqueId) => {
   const parts = uniqueId.split('-');
   if (parts.length < 2) {
@@ -71,9 +71,43 @@ const getNextKeyId = (keyId) => {
   return `${prefix}-${todayStr}-${newNumber}`;
 }
 
+const getNextKeyIdDummy = (keyId, prefix) => {
+  if (!keyId.startsWith(prefix)) {
+    throw new Error('Prefix does not match');
+  }
+
+  const rest = keyId.slice(prefix.length);
+  const originalDate = rest.slice(0, 8);
+  const number =rest.slice(8);
+
+  // 오늘 날짜 구하기 (yyyymmdd)
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const todayStr = `${yyyy}${mm}${dd}`;
+
+  let newNumber;
+  if (originalDate === todayStr) {
+    // 날짜가 같으면 번호 +1
+    let num = parseInt(number, 10);
+    if (isNaN(num)) {
+      throw new Error('마지막 부분이 숫자가 아닙니다.');
+    }
+    num += 1;
+    newNumber = String(num).padStart(number.length, '0');
+  } else {
+    // 날짜가 다르면 번호 리셋 (001)
+    newNumber = '001';
+  }
+
+  return `${prefix}${todayStr}${newNumber}`;
+}
+
 module.exports = {
   getFirstUniqueId,
   getNextUniqueId,
   getFirstKeyId,
   getNextKeyId,
+  getNextKeyIdDummy,
 }

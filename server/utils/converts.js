@@ -44,7 +44,7 @@ const convertObjToQueryLike = (target, selected = []) => {
         let columnName = fields[i];
         let columnValue = target[columnName];
         // 컬럼명        = '조건값'          AND(혹은 OR) 
-        queryWhere += `${columnName} LiKE '%${columnValue}%' ${selected[i] ?? ''}`
+        queryWhere += `${columnName} LIKE '%${columnValue}%' ${selected[i] ?? ''}`
         // ?? : 변수의 값이 null이거나 undefined 일 경우 기본값을 설정
     }
     // SQL문 사용된 문자열(searchKeyword)에 해당 결과를 매핑해서 전달

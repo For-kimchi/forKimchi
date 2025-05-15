@@ -1,64 +1,48 @@
 <template>
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-body px-0 pb-2">
-          <div class="table-responsive p-0">
-            <table class="table align-items-center mb-0">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>아이디</th>
-                  <th>이름</th>
-                  <th>연락처</th>
-                </tr>
-              </thead>
-              <tbody>
-                <template v-if="count > 0">
-                  <tr v-for="(info, index) in customerList" v-bind:key="info.id">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ info.equip_id }}</td>
-                    <td>{{ info.equip_name }}</td>
-                    <td>{{ info.equip_type }}</td>
-                  </tr>
-                </template>
-                <tr v-else>
-                  <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <!-- <div
+    class="page-header align-items-start min-vh-80"
+    style="background-image: url('https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80');">
+     -->
+  <div class="page-header align-items-start min-vh-90">
+    <!-- <span class="mask bg-gradient-dark opacity-6"></span> -->
+    <div class="container my-auto">
+      <div class="row">
+          <h1>For 김치, </h1>
+          <h3>MES for kimchi production</h3>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
-import axios from 'axios';
+import Navbar from "@/examples/PageLayout/Navbar.vue";
+import MaterialInput from "@/components/MaterialInput.vue";
+import MaterialSwitch from "@/components/MaterialSwitch.vue";
+import MaterialButton from "@/components/MaterialButton.vue";
+import { mapActions } from "pinia";
+import { useEventStore } from "@/stores/event";
+import { userUserStore } from "@/stores/user";
+import axios from "axios";
 
 export default {
+  name: "홈",
   data() {
     return {
-      customerList: [],
     }
   },
-  computed: {
-    count() {
-      return this.customerList.length;
-    }
-  }
-  ,methods: {
-    async getCustomers() {
-      let res = await axios.get('/api/equips')
-      .catch(err => console.log(err));
-      this.customerList = res.data;
-    },
-  }
-  ,created() {
-    // this.getCustomers();
-  }
-}
+  components: {
+  },
+  beforeMount() {
+    // this.toggleEveryDisplay();
+    // this.toggleHideConfig();
+  },
+  beforeUnmount() {
+    // this.toggleEveryDisplay();
+    // this.toggleHideConfig();
+  },
+  methods: {
+    ...mapActions(useEventStore, ["toggleEveryDisplay", "toggleHideConfig"]),
+    ...mapActions(userUserStore, ["login"]),
+  },
+};
 </script>

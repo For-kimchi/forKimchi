@@ -2,6 +2,7 @@
   <div class="w-auto h-auto collapse navbar-collapse max-height-vh-100 h-100" id="sidenav-collapse-main">
     <ul class="navbar-nav">
 
+      <!-- 영업 -->
       <li class="nav-item">
         <!-- collapseRef : router 에 등록된 path name 등록 ( '/' 는 제외 )-->
         <!-- navText : 화면에 표시될 이름 -->
@@ -19,162 +20,70 @@
         <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="영업">
           <template v-slot:icon>
             <!-- 표시될 아이콘 이름 -->
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
+            <i class="material-icons-round opacity-10 fs-5">inventory</i>
           </template>
           <!-- slot 에 하위 컴포넌트 추가 -->
           <template v-slot:list>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="orders" navText="주문관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="delivs" navText="납품관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
+            <SidenavCollapseItem refer="/orders" miniIcon="receipt_long" text="주문조회"/>
+            <SidenavCollapseItem refer="/ordersmng" miniIcon="receipt_long" text="주문등록/수정"/>
+            <SidenavCollapseItem refer="/delivs" miniIcon="local_shipping" text="납품조회"/>
+            <SidenavCollapseItem refer="/delivsmng" miniIcon="local_shipping" text="납품관리"/>
+            <SidenavCollapseItem refer="/prodwh" miniIcon="save_alt" text="제품입고"/>
           </template>
         </sidenav-collapse>
       </li>
 
+      <!-- 생산 -->
       <li class="nav-item">
-        <!-- collapseRef : router 에 등록된 path name 등록 ( '/' 는 제외 )-->
-        <!-- navText : 화면에 표시될 이름 -->
-        <!-- collapse : 확장 여부 true/false-->
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="생산">
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">table_view</i>
+          </template>
+          <template v-slot:list>
+            <SidenavCollapseItem refer="/Prodplan" miniIcon="" text="생산계획관리"/>
+            <SidenavCollapseItem refer="/ProdOrderInfos" miniIcon="" text="생산지시관리"/>
+            <SidenavCollapseItem refer="/Prodprocess" miniIcon="" text="생산공정관리"/>
+            <SidenavCollapseItem refer="/Prodprocwork" miniIcon="" text="생산이력관리"/>
+          </template>
+        </sidenav-collapse>
+      </li>
+
+      <!-- 자재 -->
+      <li class="nav-item">
         <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="자재">
           <template v-slot:icon>
-            <!-- 표시될 아이콘 이름 -->
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
           </template>
-          <!-- slot 에 하위 컴포넌트 추가 -->
           <template v-slot:list>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="materlist" navText="자재발주조회">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="matma" navText="자재발주관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="storeList" navText="입고조회">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="storema" navText="입고관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
+            <SidenavCollapseItem refer="/materlist" miniIcon="" text="자재발주조회"/>
+            <SidenavCollapseItem refer="/matma" miniIcon="" text="자재발주관리"/>
+            <SidenavCollapseItem refer="/storeList" miniIcon="" text="입고조회"/>
+            <SidenavCollapseItem refer="/storema" miniIcon="" text="입고관리"/>
+            <SidenavCollapseItem refer="/warehouseAdd" miniIcon="" text="창고입고"/>
+            <SidenavCollapseItem refer="/warehouseList" miniIcon="" text="창고현황"/>
           </template>
         </sidenav-collapse>
       </li>
 
+      <!-- 품질관리 -->
       <li class="nav-item">
-        <!-- collapseRef : router 에 등록된 path name 등록 ( '/' 는 제외 )-->
-        <!-- navText : 화면에 표시될 이름 -->
-        <!-- collapse : 확장 여부 true/false-->
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="생산">
-
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="검사">
           <template v-slot:icon>
-            <!-- 표시될 아이콘 이름 -->
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
+            <i class="material-icons-round opacity-10 fs-5">checklist</i>
           </template>
-          <!-- slot 에 하위 컴포넌트 추가 -->
           <template v-slot:list>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="Prodplan" navText="생산계획관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">content_paste</i>
-              </template>
-            </sidenav-collapse>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="Prodorder" navText="생산지시관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">content_paste</i>
-              </template>
-            </sidenav-collapse>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="Prodprocess" navText="생산공정관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">view_in_ar</i>
-              </template>
-            </sidenav-collapse>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="Prodprocwork" navText="생산공정운영">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">apps</i>
-              </template>
-            </sidenav-collapse> 
+            <sidenav-collapse-item refer="/mateQuality" miniIcon="list_alt" text="자재수입검사조회"/>
+            <sidenav-collapse-item refer="/mateQualityControl" miniIcon="manage_search" text="자재수입검사관리"/>
+            <sidenav-collapse-item refer="/prodQuality" miniIcon="list_alt" text="제품검사조회"/>            
+            <sidenav-collapse-item refer="/prodQualityControl" miniIcon="manage_search" text="제품검사관리"/>
+            <sidenav-collapse-item refer="/qualityManager" miniIcon="build_circle" text="검사기준관리"/>
+            <sidenav-collapse-item refer="/qualityList" miniIcon="science" text="검사항목관리"/>
           </template>
         </sidenav-collapse>
       </li>
 
-      <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="Examples">
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
-          </template>
-          <template v-slot:list>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="tables" navText="Tables">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="notifications"
-              navText="Notifications">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="billing"
-              navText="Billing">
-              <template v-slot:icon>
-                <!-- 표시될 아이콘 이름 -->
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="dashboard"
-              navText="Dashboard">
-              <template v-slot:icon>
-                <!-- 표시될 아이콘 이름 -->
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="profile"
-              navText="Profile">
-              <template v-slot:icon>
-                <!-- 표시될 아이콘 이름 -->
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="signIn" navText="SignIn">
-              <template v-slot:icon>
-                <!-- 표시될 아이콘 이름 -->
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="signUp" navText="SignUp">
-              <template v-slot:icon>
-                <!-- 표시될 아이콘 이름 -->
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-          </template>
-        </sidenav-collapse>
-      </li>
-
-      <!-- 기준관리 -->
-      <li class="nav-item">
+       <!-- 기준관리 -->
+       <li class="nav-item">
         <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="기준관리">
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
@@ -182,61 +91,32 @@
           <template v-slot:list>
             <SidenavCollapseItem refer="/basicprod" miniIcon="" text="제품관리"/>
             <SidenavCollapseItem refer="/basicmate" miniIcon="" text="자재관리"/>
-            <!-- <SidenavCollapseItem refer="/basicbom" miniIcon="P" text="BOM관리"/> -->
+            <SidenavCollapseItem refer="/basicbom" miniIcon="" text="BOM관리"/>
             <SidenavCollapseItem refer="/basicproc" miniIcon="" text="공정관리"/>
-            <SidenavCollapseItem refer="/basicemp" miniIcon="" text="사원관리"/>
+            <SidenavCollapseItem refer="/basicprocflow" miniIcon="" text="공정흐름도관리"/>
+            <SidenavCollapseItem refer="/basicvendor" miniIcon="" text="거래처관리"/>
+            <sidenav-collapse-item refer="/basicemp" miniIcon="" text="사원관리"/>
           </template>
         </sidenav-collapse>
       </li>
-      <li class="nav-item">
-        <!-- collapseRef : router 에 등록된 path name 등록 ( '/' 는 제외 )-->
-        <!-- navText : 화면에 표시될 이름 -->
-        <!-- collapse : 확장 여부 true/false-->
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="검사">
+
+      <!-- Example -->
+      <!-- <li class="nav-item">
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="Examples">
           <template v-slot:icon>
-            <!-- 표시될 아이콘 이름 -->
-            <i class="material-icons-round opacity-10 fs-5">table_view</i>
+            <i class="material-icons-round opacity-10 fs-5">close</i>
           </template>
-          <!-- slot 에 하위 컴포넌트 추가 -->
           <template v-slot:list>
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="mateQuality" navText="자재수입검사조회">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="mateQualityControl" navText="자재수입검사관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="prodQuality" navText="제품검사조회">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="prodQualityControl" navText="제품검사관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="qualityManager" navText="검사기준관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
-
-            <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="orders" navText="검사항목관리">
-              <template v-slot:icon>
-                <i class="material-icons-round opacity-10 fs-5">table_view</i>
-              </template>
-            </sidenav-collapse>
+            <SidenavCollapseItem refer="/tables" miniIcon="" text="Tables"/>
+            <SidenavCollapseItem refer="/notifications" miniIcon="" text="Notifications"/>
+            <SidenavCollapseItem refer="/billing" miniIcon="" text="Billing"/>
+            <SidenavCollapseItem refer="/dashboard" miniIcon="" text="Dashboard"/>
+            <SidenavCollapseItem refer="/profile" miniIcon="" text="Profile"/>
+            <SidenavCollapseItem refer="/signIn" miniIcon="" text="SignIn"/>
+            <SidenavCollapseItem refer="/signUp" miniIcon="" text="SignUp"/>
           </template>
         </sidenav-collapse>
-      </li>
+      </li> -->
 
     </ul>
   </div>

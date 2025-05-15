@@ -1,110 +1,100 @@
 <template>
   <div class="container-fluid py-4">
     <div class="row">
+      <!-- 행 영역 div-->
       <div class="col-12">
-        <div class="d-flex align-items-center justify-content-end mb-3 px-3 ">
-          <MaterialButton class="btn btn-info" @click="handleInspection">
-            추가
-          </MaterialButton>
-        </div>
-        <MaterialAlert>자재검사</MaterialAlert>
-        <h4>검사요청</h4>
+        <!-- 테이블 div-->
         <div class="card my-4">
+          <!--항목명 div-->
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">자재검사</h6>
+            </div>
+          </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
-                <thead class="table-header">
+            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+              <table class="table align-items-center mb-0 table-hover">
+                <thead>
                   <tr>
-                    <th>발주번호</th>
-                    <th>자재명</th>
-                    <th>자재번호</th>
-                    <th>LOT</th>
-                    <MaterialCheckbox></MaterialCheckbox>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
+                <tbody>
+                  <tr v-for="(info, index) in mateQualityreq" v-bind:key="info.inbound_detail_id"
+                    v-on:click="mateQualityWait(index)" style="cursor: pointer;" :class="selectedIndex === index ? 'table-active' : ''">
+                    <td class="align-middle text-center">{{ info.inbound_detail_id }}</td>
+                    <td class="align-middle text-center">{{ info.inbound_id }}</td>
+                    <td class="align-middle text-center">{{ info.mate_id }}</td>
+                    <td class="align-middle text-center">{{ info.mate_name }}</td>
+                    <td class="align-middle text-center">{{ info.inbound_amount }}</td>
+                    <td class="align-middle text-center">{{ info.inbound_status }}</td>
+                    <td class="align-middle text-center">{{ info.memo }}</td>
+                  </tr>
+                </tbody>
               </table>
-              <div style="max-height: 200px; overflow-y: auto;">
-                <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
-                  <tbody>
-                    <template v-if="mateCount > 0">
-                      <tr v-for="(info, index) in mateQuality" :key="info.id" @click="" style="cursor: pointer;">
-                        <!--클릭안에 -> getQualityDetail(info.id)-->
-                        <td>{{ info.quality_date }}</td>
-                        <td>{{ info.mate_name }}</td>
-                        <td>{{ info.mate_lot }}</td>
-                        <td>{{ info.sub_code_name }}</td>
-                        <td>{{ info.result }}</td>
-
-                      </tr>
-                    </template>
-                    <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
             </div>
           </div>
         </div>
       </div>
+      <!-- row div-->
     </div>
-  </div>
-
-  <div class="container-fluid py-4">
     <div class="row">
-      <!-- 영역 -->
-      <div class="d-flex align-items-center justify-content-end mb-3 px-3 ">
-        <MaterialButton class="btn btn-info me-2" @click="handleIncoming">
-          검사
-        </MaterialButton>
-
-        <MaterialButton class="btn btn-warning" @click="handleInspection">
-          반려
-        </MaterialButton>
-      </div>
-      <!--까지 -->
       <div class="col-12">
-        <h4>검사대기</h4>
+        <div class="text-end pe-3 ">
+          <!-- 승인버튼에 세션값을 통해 권한이 있을경우에만 작동하도록 조건을 넣어줘야함 -->
+          <button class="btn btn-success ms-2 me-2" @click="test">검사</button>
+        </div>
         <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">검사대기</h6>
+            </div>
+          </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
+            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+              <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
-                    <th>검사일자</th>
-                    <th>항목</th>
-                    <th>규격</th>
-                    <th>방법</th>
-                    <th>검사결과</th>
-                    <th>
-                      <MaterialCheckbox></MaterialCheckbox>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호
                     </th>
-                    <th>상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사이름
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
+
                   </tr>
                 </thead>
+                <tbody>
+                  <tr v-for="(info, index) in mateQualitywait" v-bind:key="info.option_id" style="cursor: pointer;">
+                    <td class="align-middle text-center">{{ info.option_id }}</td>
+                    <td class="align-middle text-center">{{ info.option_name }}</td>
+                    <td class="align-middle text-center">{{ info.option_standard}}</td>
+                    <td class="align-middle text-center"><input type="number" v-model="info.quality_result_value"></td>
+                    <td class="align-middle text-center">
+                      <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
+                        style="width: 60px; text-align: center;">
+                        {{ info.result }}
+                      </span>
+                      <span v-else-if="info.result === '불합격'" class="badge badge-sm bg-gradient-danger"
+                        style="width: 60px; text-align: center;">
+                        {{ info.result }}
+                      </span>
+                      <span v-else class="badge badge-sm bg-gradient-warning" style="width: 60px; text-align: center;">
+                        {{ info.result }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
               </table>
-              <div style="max-height: 200px; overflow-y: auto;">
-                <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
-                  <tbody>
-                    <template v-if="detailCount > 0">
-                      <tr v-for="(info, index) in mateQualityDetail" :key="info.id" @click="" style="cursor: pointer;">
-                        <td>{{ info.quality_date }}</td>
-                        <td>{{ info.option_name }}</td>
-                        <td>{{ info.option_standard }}</td>
-                        <td>{{ info.option_spec}}</td>
-                        <td>{{ info.sub_code_name}}</td>
-                        <td>
-                          <MaterialCheckbox></MaterialCheckbox>
-                        </td>
-                        <td>{{info.quality_result}}</td>
-                      </tr>
-                    </template>
-                    <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
             </div>
           </div>
         </div>
@@ -112,75 +102,111 @@
     </div>
   </div>
 </template>
-
 <script>
   import axios from 'axios';
-  import MaterialAlert from '../../components/MaterialAlert.vue';
-  import MaterialAvatar from '../../components/MaterialAvatar.vue';
-  import MaterialBadge from '../../components/MaterialBadge.vue';
-  import MaterialButton from '../../components/MaterialButton.vue';
-  import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
-  import MaterialInput from '../../components/MaterialInput.vue';
-  import MaterialRadio from '../../components/MaterialRadio.vue';
-  import MaterialSwitch from '../../components/MaterialSwitch.vue';
-  import MaterialTextarea from '../../components/MaterialTextarea.vue';
+
+  // pinia import
+  // stores 
+  import {
+    useUserStore
+  } from "@/stores/user";
+  // state, getter => mapState 
+  // actions => mapActions 
+  import {
+    mapState
+  } from 'pinia';
 
   export default {
-    components: {
-      MaterialAlert,
-      MaterialAvatar,
-      MaterialBadge,
-      MaterialButton,
-      MaterialCheckbox,
-      MaterialInput,
-      MaterialRadio,
-      MaterialSwitch,
-      MaterialTextarea,
-    },
     data() {
       return {
-        mateQuality: [],
-        mateQualityDetail: [],
-        mateLotDetail: [],
-        selectedMaterial: '',
-        searchKeyword: '',
+        mateQualityreq: [],
+        mateQualitywait: [],
+        selected: [],
       }
     },
     computed: {
-      mateCount() {
-        return this.mateQuality.length;
-      },
-      detailCount() {
-        return this.mateQualityDetail.length;
-      },
-      mateLot() {
-        return this.mateLotDetail.length;
+      // ...mapState(store, []), ...mapActions(store, [])
+      // stores 에 등록된 이름으로 사용
+      // 아래 처럼 등록했을 경우 computed 에 등록된 값과 동일하게 사용
+      // 로그인 유저 정보는 userInfo 에 객체 형태로 저장되어있음
+      // 아래 와 같은 형태로 사용
+      // <template></template> 내부에서는 userInfo.employee_id
+      // export default {} 내부에서는 this.userInfo.employee_id
+      ...mapState(useUserStore, [
+        "isLoggedIn",
+        "userInfo",
+      ])
+    },
+    created() {
+      this.mateQualityReq();
+    },
+    watch: {
+      mateQualitywait: {
+        handler(newResult) {
+          newResult.forEach(info => {
+            const result_value = info.quality_result_value;
+            const standard = info.option_standard;
+            if (!isNaN(result_value) && !isNaN(standard)) {
+              info.result = result_value >= standard ? '합격' : '불합격';
+            } else {
+              info.result = '대기';
+            }
+          });
+        },
+        deep: true
       }
     },
     methods: {
-      async getQuality() {
-        let res = await axios.get('/api/quality')
+      // 자재검사요청 (요청)
+      async mateQualityReq() {
+        let ajaxRes =
+          await axios.get(`/api/mateQualityReq`)
           .catch(err => console.log(err));
-        this.mateQuality = res.data;
+        this.mateQualityreq = ajaxRes.data;
       },
-      async getQualityDetail() {
-        let res = await axios.get(`/api/quality-detail`)
+      // 자재검사요청상세 (대기)
+      async mateQualityWait(index) {
+        this.selected = this.mateQualityreq[index];
+        let ajaxRes =
+          await axios.get(`/api/mateQualityWait/${this.selected.inbound_detail_id}`)
           .catch(err => console.log(err));
-        this.mateQualityDetail = res.data;
+        this.mateQualitywait = ajaxRes.data;
       },
-      async getMateLot() {
-        let res = await axios.get(`/api/quality-lot`)
-          .catch(err => console.log(err));
-        this.mateLotDetail = res.data;
-      },
-      search() {
+      // 검사버튼
+      async test() {
+        let param = {
+          inbound_detail_id: this.selected.inbound_detail_id,
+          details: this.mateQualitywait
+        };
+        // 검사결과값 입력여부 체크
+        // 비정상
+        let save = false;
+        for (let idx of this.mateQualitywait) {
+          let val = Object.hasOwn(idx, 'quality_result_value');
+          if (!val || idx.quality_result_value <= 0) {
+            alert("검사결과값 을 입력하세요.");
+            return;
+          }
+        }
+        // 정상
+        let testlist = await axios.post('/api/mateInsert', param)
+          .catch(err => console.log(err))
+        console.log(testlist);
+        if (testlist.data.affectedRows > 0) {
+          alert('저장이 완료되었습니다');
+          //
+          // this.mateQualityreq = [];
+          this.mateQualityreq.filter(item => item.inbound_detail_id !== this.selected.inbound_detail_id);
+          this.selected = {};
+          this.mateQualitywait = [];
+        } else {
+          alert('저장 과정에서 오류가 발생했습니다');
+        }
 
       },
-    },
-    created() {
-      this.getQuality();
-      this.getQualityDetail();
-      this.getMateLot();
+      // addRow() {
+      //   this.mateQualitywait.push({});
+      // }
     }
   }
 </script>

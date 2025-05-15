@@ -1,102 +1,66 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"></link>
 <template>
-  <div class="text-end">
-    <button @click="handleSearch" class="btn btn-success">조회</button>
-    <button class="btn btn-danger" @click="goToMatmaPage" >신규</button>
-    <button class="btn btn-info">수정</button>
-    <button class="btn btn-warning">입고마감</button>
-  </div> 
-
-  <!-- 입고발주조회 -->
-  <div class="row">
-    <div class="card my-4">
-      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-          <h6 class="text-white text-capitalize ps-3"></h6>
-        </div>
-      </div>
-
-      <div class="card-body">
-        <ul class="list-group list-group-horizontal">
-          <li class="list-group-item" style="margin-left: 10px;">회사</li>
-          <li class="list-group-item"><input type="text" v-model="search.company"></li>
-          <li class="list-group-item" style="margin-left: 20px;">등록일</li>
-          <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date" v-model="search.endDate"></li>
-          <li class="list-group-item" style="margin-left: 20px;">입고번호</li>
-          <li class="list-group-item"><input type="text" v-model="search.orderNumber"></li>
-        </ul>
-
-        <ul class="list-group list-group-horizontal flex-wrap mt-3">
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">품목</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-            <input type="text" v-model="search.item" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;">
-            <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
-          </li>
-          <!-- 거래처 -->
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">거래처</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-              <input type="text" v-model="search.supplier" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;"/>
-            <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i>
-          </li>
-
-            <!-- 발주상태 -->
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">진행상태</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-          <select v-model="search.orderStatus" class="form-select" style="min-width: 130px;">
-            <option disabled value="" style="text-align: center;">선택하세요</option>
-            <option value="진행중">입고대기</option>
-            <option value="발주마감">진행중</option>
-            <option value="승인대기">입고마감</option>
-          </select>
-          </li>
-            <!-- 검색 아이콘 -->
-          <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer;"></i>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- 입고발주 조회리스트 -->
   <div class="container-fluid py-4">
+    <!-- 검색 -->
+
     <div class="row">
-      <div class="col-12">
         <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">검색</h6>
+                </div>
+            </div>
+            <div>
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">거래처</li>
+                <li class="list-group-item"><input type="text" v-model="search.vendor_name" ></li>
+                <li class="list-group-item">입고일자</li>
+                <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date" v-model="search.endDate"></li>
+                <!-- <li class="list-group-item">일정</li>
+                <li class="list-group-item"><input type="date"> ~ <input type="date"></li> -->
+                <li class="list-group-item"><button class="btn btn-success ms-2 me-2" @:click="getStoreList">조회</button></li>
+            </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- 행 영역 div-->
+      <div class="col-12">
+        <!-- 테이블 div-->
+        <div class="card my-4">
+            <!--항목명 div-->
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">입고조회</h6>
+            </div>
+          </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th>No</th>
-                    <th>선택</th>
-                    <th>입고일자</th>
-                    <th>입고번호</th>
-                    <th>거래처</th>
-                    <th>사용자명</th>
-                    <th>품목수</th>
-                    <th>비고</th>
-                    <th>수정일</th>
-                    <th>수정자</th>
-                    
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재입고ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고일자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-if="matReqList.length > 0">
-                    <tr v-for="(info, index) in matReqList" :key="info.id" @click="handleRowClick(info)">
-                      <td>{{ index + 1 }}</td>
-                      <td><MaterialCheckbox></MaterialCheckbox></td>
-                      <td>{{ info.req_date }}</td>
-                      <td>{{ info.req_id }}</td>
-                      <td>{{ info.vendor_id }}</td>
-                      <td>{{ info.employee_id }}</td>
-                      <td>{{ info.req_amount }}</td>
-                      <td>{{ info.req_status }}</td>
-                      <td>{{ info.memo }}</td>
-                      <td>{{ info.confirm_date }}</td>
-                      <td>{{ info.manager_id }}</td>
-                    </tr>
-                  </template>
-                  <tr v-else>
-                    <td colspan="11" style="text-align: center;">검색어를 입력하세요.</td>
+                  <tr v-for="(info,index) in storeList" v-bind:key="info.inbound_id" v-on:click="getStoreDtList(info.inbound_id)">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_date }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.vendor_name }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_name }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
+                    <td class="align-middle text-center">
+                    <button class= "btn btn-sm" :class="{ 'btn-warning': info.inbound_final_status === '검사요청',
+                                                          'btn-info': info.inbound_final_status === '검사완료',
+                                                          'btn-success': info.inbound_final_status === '입고완료'
+                                                          }"disabled>{{ info.inbound_final_status }}</button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -104,109 +68,91 @@
           </div>
         </div>
       </div>
+    <!-- row div-->
     </div>
-  </div>
-
-    <!-- 입고발주 상세조회 -->
-    <div class="container-fluid py-4">
-      <div class="row">
-        <div class="col-12">
-          <div class="card my-4">
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>발주번호</th>
-                      <th>진행상태</th>
-                      <th>품목코드</th>
-                      <th>품목명</th>
-                      <th>수량</th>
-                      <th>단위</th>
-                      <th>창고</th>
-                      <th>LOT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- <template v-if="count > 0 "> -->
-                      <tr v-for="(info, index) in mateList" :key="info.id" style="cursor: pointer;">
-                        <td>{{ index + 1 }}</td>
-                        <td>{{ info.mate_id }}</td>
-                        <td>{{ info.mate_name }}</td>
-                        <td>{{ info.req_due_date }}</td>
-                        <td>{{ info.req_amount }}</td>
-                        <td>{{ info.mate_unit }}</td>
-                        <td>{{ info.memo }}</td>
-                      </tr>
-                    <!-- </template> -->
-                    <!-- <tr v-else>
-                      <td colspan="4">현재 데이터가 존재하지 않습니다</td>
-                    </tr> -->
-                  </tbody>
-                </table>
-              </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">입고상세</h6>
             </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재입고상세ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(info,index) in storeDtList" v-bind:key="inbound_detail_id">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.mate_name }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
+                    </tr>
+                </tbody>
+              </table>
+              </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 </template>
-    
 <script>
-import axios from 'axios';
-import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
+import axios from 'axios'
+  // stores 
+  import { useUserStore } from "@/stores/user"; 
+  // state, getter => mapState 
+  // actions => mapActions 
+  import { mapState } from 'pinia';
 
 export default {
-  name: 'MaterialManagement',
-  components: {
-    MaterialCheckbox,
-  },
-  data() {
-    return {
-      search: {
-        company: '',
-        startDate: '',
-        endDate: '',
-        orderNumber: '',
-        item: '',
-        supplier: '',
-        orderStatus: '',
-      },
-      matReqList: [],
-      selectedInfo: {},        // 클릭한 상세 데이터
-      mateList: [],
-    };
-  },
-  methods: {
-    handleSearch() {
-      // 검색 조건을 사용하여 API 요청을 보냅니다.
-      axios
-        .get('/api/materials', {
-          params: this.search,
-        })
-        .then((response) => {
-          this.matReqList = response.data;
-        })
-        .catch((error) => {
-          console.error('검색 실패:', error);
-        });
+  
+    data() {
+      return{
+        storeList: [],
+        storeDtList: [],
+        search: {
+
+        },
+      }
     },
-    handleRowClick(info) {
-      this.selectedInfo = info;
-      axios
-        .get(`/api/materials/${info.req_id}`,{
-        })
-        .then((response) => {
-          this.mateList = response.data;
-        })
-        .catch((error) => {
-          console.log('검색 실패:', error);
-        });
+    created(){
+      this.getStoreList();
     },
-    goToMatmaPage() {
-      this.$router.push('/matma'); // Vue Router를 사용하여 페이지 이동
-    }
+    computed: {
+    ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
   },
-};
+    methods : {
+    async getStoreList() {
+      let ajaxRes = 
+      await axios.get(`/api/storeList`, {
+        params: this.search,
+      })
+                  .catch (err => console.log(err));
+      this.storeList = ajaxRes.data;
+    },
+    async getStoreDtList(storeId) {
+      let ajaxRes =
+      await axios.get(`/api/storeList/${storeId}`)
+                .catch(err => console.log(err));
+      this.storeDtList = ajaxRes.data;
+    },
+
+  }
+}
+
 </script>

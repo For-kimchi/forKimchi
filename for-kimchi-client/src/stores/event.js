@@ -5,7 +5,7 @@ export const useEventStore = defineStore('event', {
     hideConfigButton: false,
     isPinned: true,
     showConfig: false,
-    sidebarType: "bg-gradient-dark",
+    sidebarType: "bg-success",
     isRTL: false,
     color: "success",
     isNavFixed: false,
