@@ -5,20 +5,14 @@
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">자재검사결과</h6>
+              <h6 class="text-white text-capitalize ps-3">제품검사결과</h6>
             </div>
           </div>
           <div class="row g-2 my-3 px-3">
             <div class="col-md-3">
               <div class="d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">제품명</label>
-                <input v-model="searchName" type="text" class="form-control border text-center" placeholder="제품명" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">제품ID</label>
-                <input v-model="searchId" type="text" class="form-control border text-center" placeholder="제품ID" />
+                <label class="form-label me-2 mb-0 " style="width: 100px;">자재명</label>
+                <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명 : 엔터"  @keyup.enter="searchProdName(searchName)"/>
               </div>
             </div>
           </div>
@@ -27,6 +21,7 @@
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
@@ -39,6 +34,7 @@
                 </thead>
                 <tbody>
                      <tr v-for="(info, index) in prodQualityViewall" :key="info.quality_id" v-on:click="prodQualityViewDetail(info.quality_id)" style="cursor: pointer;">
+                        <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                         <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
                         <td class="align-middle text-center">{{ info.quality_id }}</td>
                         <td class="align-middle text-center">{{ info.prod_name }}</td>
@@ -72,7 +68,7 @@
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">자재검사상세</h6>
+              <h6 class="text-white text-capitalize ps-3">제품검사상세</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -80,6 +76,7 @@
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">기준치</th>
@@ -89,6 +86,7 @@
                 </thead>
                 <tbody>
                       <tr v-for="(info, index) in prodQualityViewdetail" v-bind:key="info.id" style="cursor: pointer;">
+                        <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                         <td class="align-middle text-center">{{ info.option_id }}</td>
                         <td class="align-middle text-center">{{ info.option_name }}</td>
                         <td class="align-middle text-center">{{ info.option_standard }}</td>
@@ -128,6 +126,7 @@
         prodQualityViewDropdown :[],
         prodQualityViewall :[],
         prodQualityViewdetail :[],
+        searchName : '',
       }
     },
     computed: {
@@ -204,6 +203,17 @@
         console.error("PDF 다운로드 실패:", err);
       }
     },
+      // 검사조건 (제품명)
+      async searchProdName(pId) {
+        if(!pId) {
+          this.prodQualityViewAll();
+          return;
+        }
+        let ajaxRes =
+        await axios.get(`/api/selectProdName/${pId}`)
+                   .catch(err => console.log(err));
+        this.prodQualityViewall = ajaxRes.data;
+      },
 
       async prodQualityViewDropDown() {
         let ajaxRes =
