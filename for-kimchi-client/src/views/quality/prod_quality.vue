@@ -47,10 +47,10 @@
                         <td class="align-middle text-center">{{ info.quality_pass_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_fail_amount }}</td>
                         <td class="align-middle text-center">
-                          <span v-if="info.final_result === '최종합격'" class="badge badge-sm bg-gradient-info" style="width: 60px; text-align: center;">
+                          <span v-if="info.final_result === '최종합격'" class="badge badge-sm bg-gradient-info" style="width: 70px; text-align: center;">
                             {{ info.final_result }}
                           </span>
-                          <span v-else class="badge badge-sm bg-gradient-danger" style="width: 60px; text-align: center;">
+                          <span v-else class="badge badge-sm bg-gradient-danger" style="width: 70px; text-align: center;">
                             {{ info.final_result }}
                           </span>
                         </td>
@@ -61,6 +61,11 @@
           </div>
         </div>
       </div>
+    </div>
+      <div class="text-end pe-3 ">
+    <button class="btn btn-info ms-2 me-2" @click="downloadPdf">
+    품질성적서 다운로드
+    </button>
     </div>
     <div class="row">
       <div class="col-12">
@@ -78,6 +83,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">기준치</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사결과</th>
                   </tr>
                 </thead>
@@ -86,11 +92,12 @@
                         <td class="align-middle text-center">{{ info.option_id }}</td>
                         <td class="align-middle text-center">{{ info.option_name }}</td>
                         <td class="align-middle text-center">{{ info.option_standard }}</td>
+                        <td class="align-middle text-center">{{ info.quality_result_value }}</td>
                         <td class="align-middle text-center">
-                          <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info" style="width: 60px; text-align: center;">
+                          <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info" style="width: 70px; text-align: center;">
                             {{ info.result }}
                           </span>
-                          <span v-else class="badge badge-sm bg-gradient-danger" style="width: 60px; text-align: center;">
+                          <span v-else class="badge badge-sm bg-gradient-danger" style="width: 70px; text-align: center;">
                             {{ info.result }}
                           </span>
                         </td>
@@ -144,6 +151,60 @@
 
     },
     methods: {
+
+          // pdf
+      async downloadPdf() {
+      try {
+        // 템플릿 파일을 가져옴
+        const response = await axios.get('/templates/quality_report_prod.html');
+        let templateHtml = response.data;
+
+        // 동적으로 데이터를 템플릿에 삽입
+        const tableRows = this.prodQualityViewdetail.map(info => `
+          <tr>
+            <td>${info.option_id}</td>
+            <td>${info.option_name}</td>
+            <td>${info.option_standard}</td>
+            <td>${info.quality_result_value}</td>
+            <td>${info.result === '합격' ? '<span style="color: green;">합격</span>' : '<span style="color: red;">불합격</span>'}</td>
+          </tr>
+        `).join('');
+
+        const allPassed = this.prodQualityViewdetail.every(info => info.result === '합격');
+        const finalResult = allPassed ? '최종합격' : '최종불합격';
+
+        templateHtml = templateHtml
+          .replace('{{ prod_name }}', this.prodQualityViewall[0]?.prod_name || 'N/A')
+          .replace('{{ prod_id }}', this.prodQualityViewall[0]?.prod_id || 'N/A')
+          .replace('{{ quality_id }}', this.prodQualityViewall[0]?.quality_id || 'N/A')
+          .replace('{{ date }}', new Date().toLocaleDateString())
+          .replace('{{ table_rows }}', tableRows)
+          .replace('{{ final_result }}', finalResult || 'N/A');
+
+        // 임시 DOM에 HTML 추가
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = templateHtml;
+        document.body.appendChild(tempElement);
+
+        // PDF로 변환
+        const opt = {
+          margin: 0.3,
+          filename: `품질성적서_${new Date().toISOString().slice(0, 10)}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        // PDF 다운로드
+        await html2pdf().set(opt).from(tempElement).save();
+
+        // 변환 후 임시 DOM 제거
+        document.body.removeChild(tempElement);
+      } catch (err) {
+        console.error("PDF 다운로드 실패:", err);
+      }
+    },
+
       async prodQualityViewDropDown() {
         let ajaxRes =
         await axios.get(`/api/prodQualityViewDropDown`)

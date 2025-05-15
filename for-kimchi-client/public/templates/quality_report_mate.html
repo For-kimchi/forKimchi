@@ -1,0 +1,72 @@
+<!-- public/templates/quality_report.html -->
+<html>
+  <head>
+    <style>
+      /* 스타일을 여기에 추가 */
+      body {
+        font-family: 'Malgun Gothic', sans-serif;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .table-bordered {
+        border: 1px solid #ddd;
+      }
+      .table-bordered th,
+      .table-bordered td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="p-4">
+      <h3 class="text-center mb-4">품질성적서</h3>
+
+      <table class="table table-bordered mb-4">
+        <tr>
+          <th style="width: 150px;">자재명</th>
+          <td>{{ mate_name }}</td>
+          <th style="width: 150px;">자재ID</th>
+          <td>{{ mate_id }}</td>
+        </tr>
+        <tr>
+          <th>검사ID</th>
+          <td>{{ quality_id }}</td>
+        </tr>
+      </table>
+
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th>검사번호</th>
+            <th>검사명</th>
+            <th>기준치</th>
+            <th>측정값</th>
+            <th>결과</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ table_rows }}
+        </tbody>
+      </table>
+
+      <div class="mt-4">
+        <strong>최종 판정 결과: </strong>
+        <span>{{ final_result }}</span>
+      </div>
+
+      <div class="mt-5">
+        <table style="width: 100%; text-align: center;">
+          <tr>
+            <td>검사자 서명: __________</td>
+            <td>검토자 서명: __________</td>
+            <td>승인자 서명: __________</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
