@@ -90,7 +90,7 @@
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_fail_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_pass_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.proc_type}}</span></td>
-                      <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '품질검사대상' && info.count > 0"><button class="btn btn-danger p-2 m-0" @click.stop="addQuality(index)">품질검사요청</button></td>
+                      <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '품질검사대상' && info.count > 0"><span class="badge badge-sm bg-gradient-danger" @click.stop="addQuality(index)">품질검사요청</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.count == info.status && info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정완료</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정진행중</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
