@@ -179,9 +179,10 @@
       },
       // 자재검사요청상세 (대기)
       async mateQualityWait(index) {
-        this.selected = this.mateQualityreq[index];
+        this.selectedIndex = index;
+        let id = this.mateQualityreq[index].inbound_detail_id;
         let ajaxRes =
-          await axios.get(`/api/mateQualityWait/${this.selected.inbound_detail_id}`)
+          await axios.get(`/api/mateQualityWait/${id}`)
           .catch(err => console.log(err));
         this.mateQualitywait = ajaxRes.data;
       },

@@ -27,7 +27,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_id" v-on:click="prodQualityWait(index)" style="cursor: pointer;">
+                  <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_id" 
+                  v-on:click="prodQualityWait(index)" :class="selectedIndex === index ? 'table-active' : '' " style="cursor: pointer;">
                       <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                       <td class="align-middle text-center">{{ info.prod_order_lot }}</td>
                       <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
@@ -117,6 +118,7 @@
         prodQualityreq :[],
         prodQualitywait : [],
         selected: {},
+        selectedIndex: null,
       }
     },
     computed: {
@@ -169,10 +171,10 @@
 
       // 제품검사요청 (대기)
       async prodQualityWait(index){
-        this.selected = this.prodQualityreq[index];
-
+        this.selectedIndex = index;
+        let id = this.prodQualityreq[index].prod_id
         let ajaxRes = 
-          await axios.get(`/api/prodQualityWait/${this.selected.prod_id}`)
+          await axios.get(`/api/prodQualityWait/${id}`)
                    .catch(err => console.log(err));
                    this.prodQualitywait = ajaxRes.data;
       },

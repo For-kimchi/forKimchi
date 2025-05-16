@@ -24,7 +24,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사수량</th>
@@ -35,11 +35,11 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in mateQualityViewall" :key="info.quality_id"
-                    v-on:click="mateQualityViewDetail(info.quality_id)">
+                    v-on:click="mateQualityViewDetail(index)" :class="selectedIndex === index ? 'table-active' : ''">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{info.inbound_id}}</td>
                     <td class="align-middle text-center">{{info.inbound_detail_id}}</td>
-                    <td class="align-middle text-center">{{ info.quality_id }}</td>
+                    <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                     <td class="align-middle text-center">{{ info.mate_id }}</td>
                     <td class="align-middle text-center">{{ info.mate_name }}</td>
                     <td class="align-middle text-center">{{ info.quality_amount }}</td>
@@ -131,6 +131,8 @@
         mateQualityViewall: [],
         mateQualityViewdetail: [],
         searchName: '',
+        selectedIndex: null,
+        
       }
     },
     computed: {
@@ -147,7 +149,6 @@
     ])
     },
     created() {
-      this.mateQualityViewDropDown();
       this.mateQualityViewAll();
     },
     methods: {
@@ -227,7 +228,9 @@
           .catch(err => console.log(err));
         this.mateQualityViewall = ajaxRes.data;
       },
-      async mateQualityViewDetail(detailId) {
+      async mateQualityViewDetail(idx) {
+         this.selectedIndex = idx;
+        let detailId = this.mateQualityViewall[idx].quality_id;
         let ajaxRes =
           await axios.get(`api/mateQualityViewDetail/${detailId}`)
           .catch(err => console.log(err));
@@ -236,9 +239,9 @@
       async insertResult() {
         
       },
-      addRow() {
-        this.mateQualityViewdetail.push({});
-      }
+      // addRow() {
+      //   this.mateQualityViewdetail.push({});
+      // }
     }
   }
 </script>
