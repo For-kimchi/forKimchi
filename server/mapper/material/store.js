@@ -28,7 +28,6 @@ const selectStoreList =
   i.inbound_id,
   date_type(i.inbound_date) AS inbound_date,
   vendor_id(i.vendor_id) vendor_name,
-  v.vendor_name,
   employee_id(i.employee_id) AS employee_name,
   i.memo,
   CASE
