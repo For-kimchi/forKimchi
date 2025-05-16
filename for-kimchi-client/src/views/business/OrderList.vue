@@ -202,10 +202,17 @@
               }
             });
           } else {
-            alert('승인완료된 건은 수정할 수 없습니다')
+            this.$swal({
+              text: "승인완료된 건은 수정할 수 없습니다",
+              icon: "warning"
+            });
           }
         } else {
-          alert('선택된 항목이 없습니다')
+          // sweetalert 문자+아이콘
+          this.$swal({
+            text: "선택된 항목이 없습니다",
+            icon: "warning"
+          });
         }
       },
       async getOrders() {
@@ -232,7 +239,7 @@
       },
       async getOrderDetails(index) {
         this.selectedIndex = index;
-        
+
         let result =
           await axios.get(`/api/order/${this.orders[index].order_id}`)
           .catch(err => console.log(err));
@@ -258,22 +265,47 @@
         }
 
         if (selectedItems.length > 0) {
-          if (confirm('선택한 항목을 승인하시겠습니까?')) {
-            let res = await axios.post(`/api/orderConfirm`, params)
-              .catch(err => console.log(err));
 
-            console.log(res.data);
+          // sweetalert2 문자+아이콘+확인
+          this.$swal({
+            text: "선택된 항목을 승인하시겠습니까?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "승인",
+            cancelButtonText: "취소",
+          }).then(async result => {
+            if (result.isConfirmed) {
+              let res = await axios.post(`/api/orderConfirm`, params)
+                .catch(err => console.log(err));
 
-            if (res.data.success) {
-              alert('선택된 항목이 승인되었습니다.');
-              this.getOrders();
+              console.log(res.data);
 
-            } else {
-              alert('승인 처리 중 오류가 발생했습니다.');
+              if (res.data.success) {
+                // sweetalert 문자+아이콘
+                this.$swal({
+                  text: "선택된 항목이 승인되었습니다",
+                  icon: "success"
+                });
+
+                this.getOrders();
+
+              } else {
+                // sweetalert 문자+아이콘
+                this.$swal({
+                  text: "삭제 처리 중 오류가 발생했습니다",
+                  icon: "error"
+                });
+              }
             }
-          }
+          });
         } else {
-          alert('선택된 항목이 없습니다.');
+          // sweetalert 문자+아이콘
+          this.$swal({
+            text: "선택된 항목이 없습니다",
+            icon: "warning"
+          });
         }
       },
       async removeOrder() {
@@ -282,28 +314,55 @@
           let selectedOrder = this.orders[this.selectedIndex];
 
           if (selectedOrder.order_final_status == '1a') {
-            if (confirm('선택한 항목을 삭제하시겠습니까?')) {
-            let res = await axios.delete(`/api/order`, {
-              params: {
-                order_id: selectedOrder.order_id
+
+            // sweetalert 문자+아이콘+확인
+            this.$swal({
+              text: "선택된 항목을 삭제하시겠습니까?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "삭제",
+              cancelButtonText: "취소",
+            }).then(async result => {
+              if (result.isConfirmed) {
+                let res = await axios.delete(`/api/order`, {
+                    params: {
+                      order_id: selectedOrder.order_id
+                    }
+                  })
+                  .catch(err => console.log(err));
+
+                if (res.data.success) {
+                  // sweetalert 문자+아이콘
+                  this.$swal({
+                    text: "선택된 항목이 삭제되었습니다",
+                    icon: "success"
+                  });
+                  this.getOrders();
+                  this.orderDetails = [];
+                } else {
+                  // sweetalert 문자+아이콘
+                  this.$swal({
+                    text: "삭제 처리 중 오류가 발생했습니다",
+                    icon: "error"
+                  });
+                }
               }
             })
-              .catch(err => console.log(err));
-
-            if (res.data.success) {
-              alert('선택된 항목이 삭제되었습니다.');
-              this.getOrders();
-              this.orderDetails = [];
-
-            } else {
-              alert('삭제 처리 중 오류가 발생했습니다.');
-            }
-          }
           } else {
-            alert('승인완료된 건은 삭제할 수 없습니다')
+            // sweetalert 문자+아이콘
+            this.$swal({
+              text: "승인완료된 건은 삭제할 수 없습니다",
+              icon: "warning"
+            });
           }
         } else {
-          alert('선택된 항목이 없습니다')
+          // sweetalert 문자+아이콘
+          this.$swal({
+            text: "선택된 항목이 없습니다",
+            icon: "warning"
+          });
         }
       },
       resetSearch() {

@@ -34,6 +34,7 @@ import OrderProd from "../views/prod/OrderProd.vue";
 import ProdOrderInfo from "../views/prod/ProdOrderInfos.vue";
 import ProdMate from "../views/prod/ProdMates.vue";
 
+import ProdMateOrder from "../views/material/ProdMateOrder.vue";
 // 김어진 (자재발주)
 import MaterialList from "../views/material/MaterialList.vue";
 import MaterialManagement from "../views/material/MaterialManagement.vue";
@@ -230,6 +231,15 @@ const routes = [
       requiresAuth: true,
       pageName: '검사항목관리',
     }
+  },
+  {
+    path: "/prodMateOrder",
+    name: "ProdMateOrder",
+    component: ProdMateOrder,
+    meta: { 
+      requiresAuth: true,
+      pageName: '자재출고관리',
+     }
   },
   // 김어진 (자재발주)
   {

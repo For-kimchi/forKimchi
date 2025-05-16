@@ -4,6 +4,10 @@ require('dotenv').config({path : './mapper/configs/dbConfig.env'})
 const express = require('express');
 const app = express();
 const session = require('express-session');
+const path = require("path");
+
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
 
 // router 등록
 
@@ -54,24 +58,28 @@ app.listen(3000, ()=>{
 // 라우팅
 
 // 루트 등록은 기본적으로 하나 해주는게 좋음.
-app.get('/', (req, res)=>{
-  res.send('Welcome!!');
+app.get("/", function (req, res, next) {
+  res.sendFile(path.join(__dirname, "./public", "index.html"));
 });
 
-app.use('/', basicRouter);
-app.use('/', businessRouter);
-app.use('/', accountRouter);
+app.use('/api', basicRouter);
+app.use('/api', businessRouter);
+app.use('/api', accountRouter);
 
 // 어진
-app.use('/', materialRouter);
-app.use('/', storeRouter);
+app.use('/api', materialRouter);
+app.use('/api', storeRouter);
 
 // 유환
-app.use('/', prodRouter);
-app.use('/', prodMatreRouter);
+app.use('/api', prodRouter);
+app.use('/api', prodMatreRouter);
 
 // 혁진
-app.use('/', qualityRouter);
+app.use('/api', qualityRouter);
 
 // service를 먼저 만들어야함.
 // 아직은 구조익숙해지기위해서 거꾸러 작업함.
+
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, "./public", "index.html"));
+});

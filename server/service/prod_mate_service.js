@@ -31,6 +31,9 @@ const putPmo = async (body) => {
   return res;
 }
 
+const getPmoOneAll = async () => {}
+
+
 const postPmo = async (PmoInfo) => {
 
   let res = {
@@ -133,6 +136,7 @@ const postPmo = async (PmoInfo) => {
 module.exports = {
   getPmo,
   getPmoOne,
+  getPmoOneAll,
   putPmo,
   postPmo,
 }
