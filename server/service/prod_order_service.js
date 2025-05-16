@@ -76,44 +76,50 @@ const insertProdOrder = async(prodOrder) =>{
         // 최근LOT 조회
         selectedSql = await mariaDB.selectedQuery('selectProdOrderLimit', {});
         let lastLot = await conn.query(selectedSql, {});
-
+        
         // prod_id 변환
         let prodName = prodOrder.prod_id
-        selectedSql = await mariaDB.selectedQuery('selectProdName', prodName);
+        selectedSql = await mariaDB.selectedQuery('selectProdOrderName', prodName);
         let prodId = await conn.query(selectedSql, prodName);
-        prodId = prodId[0].prod_id
+        prodId = prodId[0].prod_id;
         let lastOrderLot = lastLot[0].prod_order_lot;
         let newOrderLot = keys.getNextKeyId(lastOrderLot);
-
+        
         // 생성된 키를 포함하여 등록.
         prodOrder.prod_order_lot = newOrderLot;
         prodOrder.prod_id = prodId;
         let cloumn = ['plan_detail_id', 'prod_order_lot', 'prod_id', 'order_date', 'order_amount'];
         let convert = converts.convertObjToAry(prodOrder, cloumn);
         selectedSql = await mariaDB.selectedQuery('insertProdOrderInfo', convert);
-        let lastPlan = await conn.query(selectedSql, convert);
+        let result = await conn.query(selectedSql, convert);
 
         conn.commit();
+        return result;
     }catch(err){
         if(conn) conn.rollback();
+        console.log(err);
     }finally{
         if(conn) conn.release();
     }
 };
 
-// 생산지시 승인
+// 생산지시 승인 생산지시모두가 승인이 된다면 생산계획은 생산계획완료로 상태가 변경되야함.
 const orderCheck = async(orderCheck) =>{
     let conn;
     try{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
-        
+        console.log(orderCheck);
         for(let check of orderCheck){
             let param = [check.employee_id, check.prod_order_lot];
             console.log(param);
             selectedSql = await mariaDB.selectedQuery('updateProdOrderBtn', param);
             let lastPlan = await conn.query(selectedSql, param);
         }
+
+        // 모든 항목 승인 여부 확인.
+        // selectedSql = await mariaDB.selectedQuery('updateProdOrderStatusinfo', param);
+        // let lastPlan = await conn.query(selectedSql, param);
 
         conn.commit();
         return list;

@@ -21,7 +21,7 @@ ORDER BY prod_order_lot DESC
 LIMIT 1
 `;
 // prod_id 변환
-const selectProdName =`
+const selectProdOrderName =`
 SELECT prod_id
 FROM t_prod
 WHERE prod_name = ?
@@ -82,6 +82,20 @@ UPDATE t_prod_plan_detail
 SET plan_status = '3c'
 WHERE plan_detail_id = ?
 `;
+// -------------------------------추가해야함
+// 생산지시 승인 했을때 모든항목 승인여부 확인
+const selectProdOrderStatusinfo =`
+SELECT order_status
+FROM t_prod_order
+WHERE plan_detail_id = ?
+`;
+
+// 승인여부확인 후 작동하는 쿼리
+const updateProdOrderStatusinfo =`
+UPDATE t_prod_plan_detail
+SET plan_status = ?
+WHERE plan_detail_id = ?
+`;
 
 // ----------------------------------------------------------------
 // 선출창고관리
@@ -137,10 +151,12 @@ module.exports = {
     selectplanOrderInfo,
     insertProdOrderInfo,
     selectProdOrderLimit,
-    selectProdName,
+    selectProdOrderName,
     selectProdMate,
     selectProdOrderList,
     selectBomsBomDetail,
     updatePlanDetailStatus,
     updateProdOrderBtn,
+    selectProdOrderStatusinfo,
+    updateProdOrderStatusinfo,
 }

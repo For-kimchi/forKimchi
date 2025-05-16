@@ -71,7 +71,7 @@ router.get('/prodOrder/:id', async(req, res)=>{
 });
 
 // 생산지시 등록
-router.put('/prodOrder', async(req, res)=>{
+router.put('/insertProdOrder', async(req, res)=>{
   let prodOrder = req.body
   let result = await prodOrderService.insertProdOrder(prodOrder);
   res.send(result);
