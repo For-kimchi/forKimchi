@@ -109,6 +109,14 @@ FROM t_prod_order
 WHERE prod_order_lot = ?
 LIMIT 1
 `;
+
+// 공정상태 확인 후 공정 완료처리
+const selectProdProcStatus =`
+SELECT proc_status
+FROM t_prod_proc
+WHERE prod_order_lot = ?
+`;
+
 module.exports = {
   selectProdProcess,
   selectProdProcFlowInfo,

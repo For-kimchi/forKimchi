@@ -198,14 +198,14 @@ const selectProdProcInfo = async(lot) =>{
         if(conn) conn.release();
     }
 };
-// 생산 공정 등록 insertProdProcList
+// 생산 공정 등록 insertProdProcList 모든 공정을 확인하고 공정상태가 다 끝이 났다면 공정완료
 const insertProdProcList = async(procList) =>{
      let conn;
     try{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
         let result;
-
+        // lot번호를 통해서 상태변경
         let lot = [procList[0].prod_order_lot];
         selectedSql = await mariaDB.selectedQuery('updateOrderStatuss', lot);
         result = await conn.query(selectedSql, lot);
@@ -232,6 +232,7 @@ const insertProdProcList = async(procList) =>{
             result = await conn.query(selectedSql, convert);
             // console.log('여기까지 도달?');
             };
+            
             conn.commit();
             return result;
             }catch(err){

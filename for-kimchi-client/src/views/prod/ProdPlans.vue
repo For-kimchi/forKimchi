@@ -30,7 +30,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(index)">
+                  
+                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" :class="this.idx === index ? 'table-active' : ''"
+                   v-on:click="proddtList(index)">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.plan_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
@@ -118,7 +120,7 @@ export default {
         proddtlist :[],
         checkAll: false,
         check:false,
-        idx: 0,
+        idx: null,
         status1: false,
         status2: false,
       }
