@@ -70,15 +70,15 @@ VALUES
 (?, ?, ?, ?, ?)
 `;
 // 자재검사조회 (드롭다운)
-const mateQualityViewDropDown =
-`
-select 
-      mate_id
- from 
-      t_mate_inbound_detail t JOIN 
-      t_quality_mate m on (t.inbound_detail_id = m.inbound_detail_id)
-      group by mate_id
-`;
+// const mateQualityViewDropDown =
+// `
+// select 
+//       mate_id
+//  from 
+//       t_mate_inbound_detail t JOIN 
+//       t_quality_mate m on (t.inbound_detail_id = m.inbound_detail_id)
+//       group by mate_id
+// `;
 // 자재검사조회
 const mateQualityViewAll =
 `
@@ -116,6 +116,28 @@ FROM
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
 WHERE mate_id(md.mate_id) LIKE ?
+ORDER BY
+	inbound_id DESC
+`;
+
+// 자재검색조건 (합격 불합격)
+const selectResultMate = 
+`
+SELECT DISTINCT
+    md.inbound_id,
+	q.inbound_detail_id,
+    q.quality_id,
+    md.mate_id,
+    mate_id(md.mate_id) mate_name,
+    q.quality_amount,
+    q.quality_pass_amount,
+    q.quality_fail_amount,
+	sub_code(quality_final_result) final_result
+FROM 
+	t_quality_mate q join
+    t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
+WHERE 1=1
+	:searchKeyword
 ORDER BY
 	inbound_id DESC
 `;
@@ -484,7 +506,7 @@ module.exports = {
      mateQualityReq,
      mateQualityInsert,
      mateQualityWait,
-     mateQualityViewDropDown,
+    //  mateQualityViewDropDown,
      mateQualityViewAll,
      mateQualityViewDetail,
      selectLastmateQuality,
@@ -493,6 +515,7 @@ module.exports = {
      updateMateQuality,
      updateMate,
      selectMateName,
+     selectResultMate,
     // 제품
      prodQualityReq,
      prodQualityWait,

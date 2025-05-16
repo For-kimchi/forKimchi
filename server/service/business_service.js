@@ -106,7 +106,6 @@ const postOrder = async (orderInfo) => {
         result = await conn.query(selectedSql, param);
 
         console.log(result);
-
         lastId = newId;
       }
     }

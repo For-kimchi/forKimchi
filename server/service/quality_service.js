@@ -141,7 +141,12 @@ const selectMateName = async (mId) => {
   console.log(mId);
   let search = await mariaDB.query('selectMateName', mId);
   return search;
-}
+};
+
+// 자재검색조건 (합격, 불합격)
+const selectResultMate = async () => {
+  
+};
 // -------------------------------------------------------------------
 
 //제품검사요청
@@ -365,28 +370,21 @@ const deleteOptionControl = async (id) => {
 // 검사기준조회
 const getStds = async (params) => {
   let target_id = params.target_id;
-
   let list = await mariaDB.query('selectStd', target_id);
-
   let std;
 
   if (list.length > 0) {
     std = list[0];
-
     if (std.std_id) {
       list = await mariaDB.query('selectStdDetail', std.std_id);
     }
-
     std.std_details = list;
-
   } else {
-
     std = {
       target_id: target_id,
       std_details: [],
     }
   }
-
   return std;
 };
 

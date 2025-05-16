@@ -23,9 +23,9 @@
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">양품수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">불량수량</th>
@@ -33,12 +33,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                     <tr v-for="(info, index) in prodQualityViewall" :key="info.quality_id" v-on:click="prodQualityViewDetail(info.quality_id)" style="cursor: pointer;">
+                     <tr v-for="(info, index) in prodQualityViewall" :key="info.quality_id" 
+                     v-on:click="prodQualityViewDetail(index)" :class="selectedIndex === index ? 'table-active' : ''" style="cursor: pointer;">
                         <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                         <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
-                        <td class="align-middle text-center">{{ info.quality_id }}</td>
-                        <td class="align-middle text-center">{{ info.prod_name }}</td>
+                        <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                         <td class="align-middle text-center">{{ info.prod_id }}</td>
+                        <td class="align-middle text-center">{{ info.prod_name }}</td>
                         <td class="align-middle text-center">{{ info.quality_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_pass_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_fail_amount }}</td>
@@ -127,6 +128,7 @@
         prodQualityViewall :[],
         prodQualityViewdetail :[],
         searchName : '',
+        selectedIndex : null,
       }
     },
     computed: {
@@ -227,15 +229,17 @@
                    .catch(err => console.log(err));
                    this.prodQualityViewall = ajaxRes.data;
       },
-      async prodQualityViewDetail(detailId){
+      async prodQualityViewDetail(idx){
+        this.selectedIndex = idx;
+        let detailId = this.prodQualityViewall[idx].quality_id;
         let ajaxRes =
         await axios.get(`api/prodQualityViewDetail/${detailId}`)
                    .catch(err => console.log(err));
         this.prodQualityViewdetail = ajaxRes.data;
       },
-      addRow() {
-        this.prodQualityViewdetail.push({});
-      }
+      // addRow() {
+      //   this.prodQualityViewdetail.push({});
+      // }
     }
   }
 </script>
