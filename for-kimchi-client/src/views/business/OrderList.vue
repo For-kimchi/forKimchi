@@ -280,8 +280,6 @@
               let res = await axios.post(`/api/orderConfirm`, params)
                 .catch(err => console.log(err));
 
-              console.log(res.data);
-
               if (res.data.success) {
                 // sweetalert 문자+아이콘
                 this.$swal({

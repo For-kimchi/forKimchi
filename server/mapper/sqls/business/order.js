@@ -55,6 +55,8 @@ const selectOrder =
         order_id,
         od.prod_id,
         p.prod_name,
+        p.prod_unit,
+        p.prod_size,
         order_amount,
         deliv_due_date,
         order_status,

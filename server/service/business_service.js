@@ -408,6 +408,50 @@ const getOrderOne = async (id) => {
   return res;
 }
 
+// 제품 입고
+const postProdWarehouse = async (body) => {
+
+  let res = {
+    success: true,
+  }
+
+  console.log(body);
+
+  let {
+    details,
+    ...info
+  } = body;
+
+  console.log(details);
+
+  details = converts.groupArray(details, 'warehouse_id', 'inbound_amount');
+
+  console.log(details);
+  
+  try {
+    conn = await mariaDB.getConnection();
+    await conn.beginTransaction();
+
+    
+    
+    
+    conn.commit();
+
+    return res;
+  } catch (err) {
+    // error 발생 시 console 출력 및 rollback
+    console.log(err);
+    
+    if (conn) conn.rollback();
+
+    res.success = false;
+    return res;
+  } finally {
+    // connection 반환
+    if (conn) conn.release();
+  }
+}
+
 module.exports = {
   postOrder,
   getOrder,
@@ -420,4 +464,5 @@ module.exports = {
   getDeliv,
   getDelivDetail,
   getOrderOne,
+  postProdWarehouse,
 }

@@ -177,7 +177,7 @@ export default {
     },
     // 드롭다운에 warehouse_id 넣기
     async wareById() {
-      let ajaxRes = await axios.get(`/api/wareId`)
+      let ajaxRes = await axios.get(`/api/warehouse/1h`)
         .catch(err => console.log(err));
       this.wareId = ajaxRes.data;
       // console.log('wareId------------------------',this.wareId);  // created()안에 쓰인거니까 this를 써야 됨.. 

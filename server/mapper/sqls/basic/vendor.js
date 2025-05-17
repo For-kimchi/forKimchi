@@ -16,6 +16,7 @@ vendor_type
 FROM t_vendor
 WHERE 1=1
 :searchKeyword
+OR vendor_type = '3m'
 ORDER BY vendor_id`;
 
 // 거래처 등록

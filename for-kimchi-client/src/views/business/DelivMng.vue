@@ -112,8 +112,6 @@
 </template>
 <script>
 import axios from 'axios';
-import ProdModal from '../modal/ProdModal.vue';
-import VendorModal from '../modal/VendorModal.vue';
 import OrderDetailModal from '../modal/OrderDetailModal.vue';
 import { formatDate, codeToName} from '@/utils/common';
 
@@ -123,8 +121,6 @@ import { useUserStore } from "@/stores/user";
 export default {
   name: "납품관리",
   components: {
-    ProdModal,
-    VendorModal,
     OrderDetailModal,
   },
   data() {
