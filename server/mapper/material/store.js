@@ -286,6 +286,15 @@ WHERE warehouse_id = ?
 GROUP BY mate_id
 ORDER BY last_inbound_date DESC`;
 
+const selectWarehouseByType =
+`
+SELECT
+  warehouse_id,
+  warehouse_name
+FROM t_warehouse
+WHERE warehouse_type = ?
+ORDER BY warehouse_id
+`;
 
 module.exports = {
   insertStoreMain,
@@ -310,4 +319,5 @@ module.exports = {
   storeDetailList,
   warehouseIdAll,
   warehouseDtId,
+  selectWarehouseByType,
 }

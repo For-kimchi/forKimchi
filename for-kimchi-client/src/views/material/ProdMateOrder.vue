@@ -21,7 +21,7 @@
                       <th class="text-center font-weight-bolder">생산수량</th>
                       <th class="text-center font-weight-bolder">생산일자</th>
                       <th class="text-center font-weight-bolder">담당자</th>
-                      <!-- <th class="text-center font-weight-bolder">상세지시상태</th> -->
+                      <th class="text-center font-weight-bolder">생산지시상태</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -32,7 +32,7 @@
                       <td class="text-center">{{info.order_amount}}</td>
                       <td class="text-center">{{ formatDate(info.order_date)}}</td>
                       <td class="text-center">{{info.employee_name}}</td>
-                      <!-- <td class="text-center"><span class="badge badge-sm bg-gradient-success">{{info.order_status}}</span></td> -->
+                      <td class="text-center"><span class="badge badge-sm bg-gradient-success">{{ '자재요청중' }}</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -52,7 +52,7 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="text-end pe-3">
-            <button class="btn btn-success" @click="addClick">자재출고</button>
+            <button class="btn btn-success mb-0" @click="addClick">자재출고</button>
             </div>
             <div class="table-responsive p-0" style="max-height: 300px;"> 
               <table class="table align-items-center justify-content-center mb-0 table-hover">
@@ -61,7 +61,9 @@
                     <th class="text-center font-weight-bolder">자재ID</th>
                     <th class="text-center font-weight-bolder">자재명</th>
                     <th class="text-center font-weight-bolder">요청수량</th>
-                    <th class="text-center font-weight-bolder">재고량</th>
+                    <th class="text-center font-weight-bolder">재고</th>
+                    <th class="text-center font-weight-bolder">출고수량</th>
+                    <th class="text-center font-weight-bolder">잔여재고</th>
                     <th class="text-center font-weight-bolder">단위</th>
                     <th class="text-center font-weight-bolder">분류</th>
                   </tr>
@@ -72,7 +74,13 @@
                     <td class="text-center">{{info.mate_id}}</td>
                     <td class="text-center">{{info.mate_name}}</td>
                     <td class="text-center">{{info.mate_amount * selectedOrder.order_amount}}</td>
-                    <td class="text-center">{{info.mate_amount * selectedOrder.order_amount}}</td>
+                    <td class="text-center" :class="info.mate_stock_amount < info.outbound_amount ? 'text-danger': ''">{{info.mate_stock_amount}}</td>
+                    <td class="text-center">                      
+                      <input class="form-control border text-center" type="number" v-model="info.outbound_amount">
+                    </td>
+                    <td class="text-center">
+                      {{ info.mate_stock_amount - info.outbound_amount > 0 ? info.mate_stock_amount - info.outbound_amount : 0 }}
+                    </td>
                     <td class="text-center">{{info.mate_unit}}</td>
                     <td class="text-center">{{info.sub_code_name}}</td>
                   </tr>
@@ -94,17 +102,40 @@
 import axios from 'axios';
 import { formatDate } from '../../utils/common';
 
+  // pinia import
+  // stores 
+  import {
+    useUserStore
+  } from "@/stores/user";
+  // state, getter => mapState 
+  // actions => mapActions 
+  import {
+    mapState
+  } from 'pinia';
+
 export default {
     name: "Prodorder",
     data(){
         return{
           prodOrderLists: [],
           prodBomLists: [],
-          prodBomListInfos: [],
           number:'',
           selectedOrderRow: null,
           selectedOrder: {},
         }
+    },
+    computed: {
+      // ...mapState(store, []), ...mapActions(store, [])
+      // stores 에 등록된 이름으로 사용
+      // 아래 처럼 등록했을 경우 computed 에 등록된 값과 동일하게 사용
+      // 로그인 유저 정보는 userInfo 에 객체 형태로 저장되어있음
+      // 아래 와 같은 형태로 사용
+      // <template></template> 내부에서는 userInfo.employee_id
+      // export default {} 내부에서는 this.userInfo.employee_id
+      ...mapState(useUserStore, [
+        "isLoggedIn",
+        "userInfo",
+      ])
     },
     created(){
       this.prodOrderList();
@@ -114,7 +145,7 @@ export default {
         let ajaxRes =
         await axios.get(`/api/prodMateOrder`, {
           params: {
-            order_status: '3d',
+            order_status: '2d',
           }
         }).catch(err => console.log(err));
 
@@ -129,24 +160,54 @@ export default {
                     .catch(err => console.log(err));
         this.prodBomLists = ajaxRes.data;
         for (let item of this.prodBomLists) {
-          item.inbound_amount = item.mate_amount * this.selectedOrder.order_amount;
+          item.outbound_amount = item.mate_amount * this.selectedOrder.order_amount;
         }
       },
       // 자재요청 클릭
       async addClick(){
-        // let params = {
-        //   prod_order_lot: this.selectedOrder.prod_order_lot,
-        // }
 
-        // let res = await axios.put('/api/prodMateOrder', params)
-        // .catch(err => console.log(err));
+        if (this.prodBomLists.length == 0) {
+          this.$swal(
+            {
+              text: "선택된 자재 요청 정보가 없습니다",
+              icon: "warning"
+            }
+          );
+          return;
+        }
+
+        if (this.prodBomLists.some(item => item.mate_stock_amount < item.outbound_amount)) {
+          this.$swal(
+            {
+              text: "재고량이 부족한 자재가 있습니다",
+              icon: "warning"
+            }
+          );
+          return;
+        }
+
+        let params = {
+          employee_id: this.userInfo.employee_id,
+          prod_order_lot: this.selectedOrder.prod_order_lot,
+          details : this.prodBomLists,
+        }
+
+        let res = await axios.post('/api/prodMateOrder', params)
+        .catch(err => console.log(err));
         
-        // if (res.data.success) {
-        //   alert('자재출고가 완료되었습니다');
-        //   this.prodOrderList();
-        // } else {
-        //   alert('자재출고 중 오류가 발생했습니다');
-        // }
+        if (res.data.success) {
+            this.$swal({
+              text: "자재출고가 완료되었습니다",
+              icon: "success"
+            });
+          this.prodOrderList();
+          this.prodBomLists = [];
+        } else {
+            this.$swal({
+              text: "자재출고 중 오류가 발생했습니다",
+              icon: "error"
+            });
+        }
       },
       formatDate(dateString) {
         return formatDate(dateString);

@@ -245,6 +245,10 @@ const insertStore = async(storeSaveInfo) => {
     }
 };
 
+const warehouse = async(id) => {
+  let list = mariaDB.query('selectWarehouseByType', id);
+  return list;
+}
 
 module.exports = {
   insertStore,
@@ -260,4 +264,5 @@ module.exports = {
   storedtList,
   wareIdAll,
   wareDtId,
+  warehouse,
 }

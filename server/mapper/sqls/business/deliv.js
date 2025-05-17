@@ -109,6 +109,11 @@ const selectDeliv =
  WHERE deliv_id = ?
  ORDER BY deliv_detail_id DESC`;
 
+ const insertProdWarehouse = 
+ `
+ CALL insert_prod_warehouse(?, ?, ?, ?, ?, ?)
+ `;
+
 module.exports = {
   selectDelivTarget,
   selectDelivProdTarget,
@@ -119,4 +124,5 @@ module.exports = {
   updatePlotStatus,
   selectDeliv,
   selectDelivDetail,
+  insertProdWarehouse,
 }

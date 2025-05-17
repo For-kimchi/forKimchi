@@ -75,4 +75,11 @@ router.get('/orderOne', async(req, res)=>{
   res.send(result);
 });
 
+// 제품 입고
+router.post('/prodWarehouse', async(req, res) => {
+  let body = req.body;
+  let result = await business_service.postProdWarehouse(body);
+  res.send(result);
+});
+
 module.exports = router;

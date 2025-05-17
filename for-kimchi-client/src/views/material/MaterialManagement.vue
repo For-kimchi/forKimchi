@@ -152,7 +152,7 @@
       </div>
     </div>
   </div>
-  <VendorModal :visible="showVendor" @close="showVendor = false" @select="onSelectVendor" />
+  <VendorModal :visible="showVendor" @close="showVendor = false" @select="onSelectVendor" :vendor_type="'1m'" />
   <!-- 자재발주조회리스트 -->
   <div class="container-fluid py-4">
     <div class="row">
