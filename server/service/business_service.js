@@ -429,8 +429,23 @@ const postProdWarehouse = async (body) => {
   console.log(details);
   
   try {
-    conn = await mariaDB.getConnection();
+    let conn = await mariaDB.getConnection();
     await conn.beginTransaction();
+
+    let column = ['warehouse_id', 'prod_order_lot', 'prod_id', 'prod_amount', 'employee_id'];
+
+    for (let detail of details) {
+
+      detail.prod_order_lot = info.prod_order_lot;
+      detail.prod_amount = info.inbound_amount;
+
+      let param = converts.convertObjToAry(detail, column);
+      
+      let selectedSql = await mariaDB.selectedQuery('insertProdWarehouse', param)
+      let result = await conn.query(selectedSql, param);
+      
+      console.log(result);
+    }
 
     
     
