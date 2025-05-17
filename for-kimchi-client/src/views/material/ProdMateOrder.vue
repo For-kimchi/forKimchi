@@ -21,7 +21,7 @@
                       <th class="text-center font-weight-bolder">생산수량</th>
                       <th class="text-center font-weight-bolder">생산일자</th>
                       <th class="text-center font-weight-bolder">담당자</th>
-                      <!-- <th class="text-center font-weight-bolder">상세지시상태</th> -->
+                      <th class="text-center font-weight-bolder">생산지시상태</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -32,7 +32,7 @@
                       <td class="text-center">{{info.order_amount}}</td>
                       <td class="text-center">{{ formatDate(info.order_date)}}</td>
                       <td class="text-center">{{info.employee_name}}</td>
-                      <!-- <td class="text-center"><span class="badge badge-sm bg-gradient-success">{{info.order_status}}</span></td> -->
+                      <td class="text-center"><span class="badge badge-sm bg-gradient-success">{{ '자재요청중' }}</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -145,7 +145,7 @@ export default {
         let ajaxRes =
         await axios.get(`/api/prodMateOrder`, {
           params: {
-            order_status: '3d',
+            order_status: '2d',
           }
         }).catch(err => console.log(err));
 

@@ -111,7 +111,7 @@ const selectDeliv =
 
  const insertProdWarehouse = 
  `
- CALL insert_prod_warehouse(?, ?, ?, ?, ?)
+ CALL insert_prod_warehouse(?, ?, ?, ?, ?, ?)
  `;
 
 module.exports = {

@@ -429,15 +429,24 @@ const postProdWarehouse = async (body) => {
   console.log(details);
   
   try {
-    let conn = await mariaDB.getConnection();
+    conn = await mariaDB.getConnection();
     await conn.beginTransaction();
 
-    let column = ['warehouse_id', 'prod_order_lot', 'prod_id', 'prod_amount', 'employee_id'];
+    await conn.query("CALL new_prod_lot(@lot_id)");
+
+    const rows = await conn.query("SELECT @lot_id AS lot_id");
+
+    console.log(rows);
+
+    let new_lot = rows[0].lot_id;
+
+    let column = ['prod_lot', 'warehouse_id', 'prod_order_lot', 'prod_id', 'prod_amount', 'employee_id'];
 
     for (let detail of details) {
-
+      
+      detail.prod_lot = new_lot;
       detail.prod_order_lot = info.prod_order_lot;
-      detail.prod_amount = info.inbound_amount;
+      detail.prod_amount = detail.inbound_amount;
 
       let param = converts.convertObjToAry(detail, column);
       
@@ -446,10 +455,12 @@ const postProdWarehouse = async (body) => {
       
       console.log(result);
     }
+    
+    selectedSql = await mariaDB.selectedQuery('updatePmo', {});
+    let result = await conn.query(selectedSql, ['6d', pmo.prod_order_lot]);
 
-    
-    
-    
+    console.log(result);
+
     conn.commit();
 
     return res;

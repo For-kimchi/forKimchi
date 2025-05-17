@@ -56,7 +56,7 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="text-end pe-3">
-            <button class="btn btn-success mb-0" @click="addClick">자재요청</button>
+            <!-- <button class="btn btn-success mb-0" @click="addClick">자재요청</button> -->
             </div>
             <div class="table-responsive p-0" style="max-height: 300px;"> 
               <table class="table align-items-center justify-content-center mb-0 table-hover">

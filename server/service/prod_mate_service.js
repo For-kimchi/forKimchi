@@ -110,7 +110,7 @@ const postPmo = async (PmoInfo) => {
     }
 
     selectedSql = await mariaDB.selectedQuery('updatePmo', {});
-    let result = await conn.query(selectedSql, ['4d', pmo.prod_order_lot]);
+    let result = await conn.query(selectedSql, ['3d', pmo.prod_order_lot]);
     
     console.log(result);
 

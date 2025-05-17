@@ -64,14 +64,14 @@
             <div class="row pe-3">
               <div class="col d-flex justify-content-end align-items-center gap-3">
                 <div class="fw-bold text-secondary">
-                  생산량: <span class="text-dark">{{ selectedOrderAmount }}</span>
+                  생산량 : <span class="text-dark">{{ selectedOrderAmount }}</span>
                 </div>
                 <div class="fw-bold text-secondary">
-                  입고량: <span
+                  | 입고량 : <span
                     :class=" selectedOrderAmount < inboundTotalAmount ? 'text-danger' : 'text-dark'">{{ inboundTotalAmount }}</span>
                 </div>
                 <div class="fw-bold text-secondary">
-                  잔여량: <span 
+                  | 잔여량 : <span 
                   :class=" selectedOrderAmount < inboundTotalAmount ? 'text-danger' : 'text-dark'">{{ selectedOrderAmount - inboundTotalAmount >= 0 ? selectedOrderAmount - inboundTotalAmount : 0 }}</span>
                 </div>
                 <button class="btn btn-success m-0" @click="addRow">추가</button>
@@ -217,6 +217,8 @@ export default {
         }
 
       }, resetList() {
+
+        if (this.prodInboundLists.length > 0)  {
         this.$swal({
             text: `입고 정보를 초기화하시겠습니까?`,
             icon: "question",
@@ -230,6 +232,7 @@ export default {
               this.prodInboundLists = [];
             }
           });
+        }
       },
       async addClick(){
 
