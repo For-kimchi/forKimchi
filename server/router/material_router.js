@@ -33,13 +33,6 @@ router.post('/mateConfirm', async (req, res) => {
   res.send(result);
 });
 
-// 입고관리 발주서조회(발주승인건만)
-// router.get('/storeMate', async(req, res) => {
-//   let search = req.query;
-//   let matList = await mateService.storeMateAll(search)
-//                                 .catch(err=> console.log(err));
-//   res.send(matList);
-// })
 
 // 발주상세조회
 router.get('/materials/:id', async(req, res)=> {
@@ -70,20 +63,12 @@ router.get('/mateListInsert/:id', async (req,res) => {
   res.send(reqInfo);
 });
 
-
-
-// 자재발주관리페이지 발주서 삭제
-// router.delete('/materialList/:Id', async (req, res) => {
-//   try {
-//     let reqId= req.params.id;
-//     await mateService.deleteMaterial(reqId); 
-//     res.status(200).send('삭제 완료');
-//   } catch (err) {
-//     console.error('삭제 에러:', err);
-//     res.status(500).send('삭제 중 오류 발생');
-//   }
-// });
-
+// 생산지시에 따른 BOM 조회
+router.get('/mateBom/:id', async(req,res) => { 
+  let id = req.params.id;
+  let bomList = await mateService.mateBom(id);
+  res.send (bomList);
+})
 
 // 자재발주관리페이지 발주서 삭제
 router.delete('/materialList/:reqId', async (req,res) => {
@@ -91,7 +76,6 @@ router.delete('/materialList/:reqId', async (req,res) => {
   let result = await mateService.deleteMaterial(reqId);
   res.send(result);
 });
-
 
 // 회사조회
 router.get('/vendors', async(req,res) => {
@@ -137,6 +121,13 @@ router.get('/mateOrder', async (req, res) => {
   let list = req.query;
   let mateOrderList = await mateService.mateOrder(list);
   res.send(mateOrderList);
+})
+
+// 생산지시조회에서 발주등록시 발주저장버튼 (DB등록)
+router.post('/mateBom', async (req, res) => {
+  let param = req.body;
+  let result = await mateService.mateBomSave(param);
+  res.send(result);
 })
 
 module.exports = router;

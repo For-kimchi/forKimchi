@@ -24,6 +24,28 @@ WHERE mate_name = ?
 ORDER BY mate_id DESC
 LIMIT 1`;
 
+// 생산지시 BOM조회
+const mateBom =
+`SELECT 
+  po.prod_order_lot,
+  po.prod_id,
+  td.mate_id,
+  m.mate_name,
+  m.mate_unit,
+  td.mate_amount,
+  po.order_amount
+FROM t_prod_order po
+LEFT JOIN t_bom b ON po.prod_id = b.prod_id
+LEFT JOIN t_bom_detail td ON b.bom_id = td.bom_id
+LEFT JOIN t_mate m ON td.mate_id = m.mate_id
+WHERE po.prod_order_lot = ? AND b.bom_status = '1t';`
+
+// 생산지시에서 발주등록 버튼
+const mateBomId =
+`INSERT INTO
+  
+`;
+
 // 발주리스트를 통한 detail등록
 const insertMateDetail = 
 `INSERT INTO t_mate_req_detail (
@@ -200,14 +222,18 @@ AND mate_id = ?;
 // 생산지시전체조회
 const mateOrderList =
 `SELECT 
-        prod_order_lot,
-        prod_id(prod_id) prod_id,
-        date_type(order_date) order_date,
-        order_amount,
-        employee_id(employee_id) employee_name,
-        sub_code(order_status) order_status
-FROM t_prod_order
+        po.prod_order_lot,
+        prod_id(po.prod_id) prod_id,
+        date_type(po.order_date) order_date,
+        po.order_amount,
+        employee_id(po.employee_id) employee_name,
+        sub_code(po.order_status) order_status,
+        bd.mate_amount
+FROM t_prod_order po
+LEFT JOIN t_bom b ON po.prod_id = b.prod_id
+LEFT JOIN t_bom_detail bd ON b.bom_id = bd.bom_id
 WHERE order_status = '2d'
+GROUP BY po.prod_order_lot, po.prod_id, po.order_date, po.order_amount, po.employee_id, po.order_status
 ` 
 
 const deleteMateDetail = `
@@ -248,4 +274,5 @@ module.exports = {
 
     deleteMateDetail,       // 자재 발주 상세 삭제 (자재 발주 id)
     updateMateByReq_id,             // 자재 발주 수정 (자재 발주 id)
+    mateBom, // BOM에 따른 생산지시 조회
 }

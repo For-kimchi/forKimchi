@@ -128,10 +128,10 @@
                       {{ info.mate_name }}
                     </td>
                     <td class="text-center">
-                      {{ info.mate_unit }}
+                      {{ info.mate_unit }}  
                     </td>
                     <td class="text-center">
-                      {{ codeToName(info.mate_type, codes) }}
+                      {{ codeToName(info.mate_type, codes) }} 
                     </td>
                     <td class="text-center">
                       <button v-if="!bom.bom_details.some(detail => detail.mate_id == info.mate_id)" class="btn btn-success m-0" @click="addRows(index)">추가</button>
