@@ -164,8 +164,8 @@
             <div class="card-body px-0 pb-2" >
                 <div class="table-responsive p-0">
                   <div class=" text-end">
-                    <button class="btn btn-success mx-2" @click="addList()" :disable="!isValue">공정생성</button>
-                    <button class="btn btn-info mx-2" @click="addinsert(procFlowList)" :disable="!isValue">공정저장</button>
+                    <button class="btn btn-success mx-2" @click="addList()" :disable="!isValue">➕<span class="mx-2">공정생성</span></button>
+                    <button class="btn btn-info mx-2" @click="addinsert(procFlowList)" :disable="!isValue">✔<span class="mx-2">공정저장</span></button>
                   </div>
                 <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
@@ -317,7 +317,7 @@ export default {
                                   proc_order_amount: this.prodProdProcessInfo.order_amount,
                                   proc_id: this.procFlow[this.number].proc_id});
       },
-      // 공정저장버튼(procFlowList)
+      // 공정저장버튼(procFlowList) employee값도 같이 넘겨야함.
       async addinsert(list){
         // input값이 빈값이라면 저장 취소.
         this.amount = 0;
