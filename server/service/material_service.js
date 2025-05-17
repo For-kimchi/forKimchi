@@ -137,12 +137,24 @@ const deleteMaterial = async (reqId) => {
     return result;
 };
 
+// 생산지시에 따른 BOM 조회
+const mateBom = async (id) => {
+    let list = await mariaDB.query('mateBom', id);
+    return list;
+};
+
+
 // 생산지시조회
 const mateOrder = async () => {
     let list = await mariaDB.query('mateOrderList');
     return list;
 }
 
+// 생산지시조회에서 발주등록버튼
+const mateBomSave = async(prodId) => {
+    let result = await mariaDB.query('mateBomId',prodId);
+    return result;
+}
 
 // 발주저장버튼
 const insertMates = async (mateSaveInfo) => {
@@ -276,10 +288,7 @@ const updateMates = async (updateData) => {
         }
 
         let req_fields = ["vendor_id", "req_due_date", "employee_id", "req_id"];
-        console.log("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
-        console.log(updateData);
-        console.log(converts.convertObjToAry(updateData, req_fields));
-        console.log("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
+
         selectedSql = await mariaDB.selectedQuery('updateMateByReq_id', convertObjToAry(updateData, req_fields));
         result = await conn.query(selectedSql, convertObjToAry(updateData, req_fields));
 
@@ -310,4 +319,6 @@ module.exports = {
     updateMates,
     mateOrder,
     mateListClick,
+    mateBom,
+    mateBomSave,
 }
