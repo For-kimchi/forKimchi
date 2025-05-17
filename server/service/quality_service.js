@@ -172,7 +172,7 @@ const prodQualityInsert = async (prodInfo) => {
 
     // 구조 분해 할당 (detail 분리)
     const {
-      details,
+      details_,
       ...prod
     } = prodInfo;
 
@@ -190,7 +190,7 @@ const prodQualityInsert = async (prodInfo) => {
     let prodParam = converts.convertObjToAry(prod, prodColumn);
 
     // 검사결과
-    const result_ = details.every(item => item.result == '합격')
+    const result_ = details_.every(item => item.result == '합격')
     prodParam.push(result_ ? '1x' : '2x');
 
     // prodQuality insert
@@ -207,7 +207,7 @@ const prodQualityInsert = async (prodInfo) => {
     let lastProdDetail = await conn.query(selectedSql, {});
     let lastProdDetailId = lastProdDetail[0].quality_detail_id;
 
-    for (let detail of details) {
+    for (let detail of details_) {
       
       // prodQuality detail key 생성
       let newProdDetailId = keys.getNextKeyId(lastProdDetailId);

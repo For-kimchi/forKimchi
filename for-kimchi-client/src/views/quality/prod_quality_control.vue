@@ -19,24 +19,24 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산지시LOT</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">설비ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">투입량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_id" 
+                  <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_proc_id" 
                   v-on:click="prodQualityWait(index)" :class="selectedIndex === index ? 'table-active' : '' " style="cursor: pointer;">
                       <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                       <td class="align-middle text-center">{{ info.prod_order_lot }}</td>
                       <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
-                      <td class="align-middle text-center">{{ info.equip_id }}</td>
                       <td class="align-middle text-center">{{ info.proc_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_name }}</td>
                       <td class="align-middle text-center">{{ info.proc_input_amount }}</td>
+                      <td class="align-middle text-center">{{ info.proc_status }}</td>
                     </tr>
                 </tbody>
               </table>
@@ -77,7 +77,7 @@
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}} {{ info.option_operator}}</td>
-                    <td class="align-middle text-center">{{ info.result}}</td>
+                    <td class="align-middle text-center"><input type="number" placeholder="검사기준입력" v-model="info.quality_result_value"></td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
                         style="width: 60px; text-align: center;">
@@ -172,7 +172,8 @@
       // 제품검사요청 (대기)
       async prodQualityWait(index){
         this.selectedIndex = index;
-        let id = this.prodQualityreq[index].prod_id
+        this.selected = this.prodQualityreq[index];
+        let id = this.prodQualityreq[index].prod_proc_id
         let ajaxRes = 
           await axios.get(`/api/prodQualityWait/${id}`)
                    .catch(err => console.log(err));
@@ -182,7 +183,7 @@
       async test() {
         let param = {
           prod_proc_id: this.selected.prod_proc_id,
-          details: this.prodQualitywait
+          details_: this.prodQualitywait
         };
         // 검사결과값 입력여부 체크
         // 비정상
@@ -200,8 +201,7 @@
         console.log(testlist);
         if (testlist.data.affectedRows > 0) {
           alert('저장이 완료되었습니다');
-          //
-          // this.prodQualityreq = [];
+
           this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected.prod_proc_id);
           this.selected = {};
           this.prodQualitywait = [];
