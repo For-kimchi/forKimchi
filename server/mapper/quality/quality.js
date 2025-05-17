@@ -150,6 +150,7 @@ SELECT DISTINCT
     option_name, 
     option_standard,
     quality_result_value,
+    sub_code(option_operator) option_operator,
     sub_code(m.quality_result) result
 FROM 
 	t_quality_mate t join
@@ -187,6 +188,7 @@ SELECT
 	proc_id,
 	prod_id,
     prod_id (prod_id) prod_name,
+    sub_code(proc_status) proc_status,
 	proc_input_amount
 FROM
 	t_prod_proc
@@ -203,7 +205,7 @@ SELECT
     qo.option_name,
     qo.option_standard,
     qo.option_method,
-    qo.option_operator
+    sub_code(qo.option_operator) option_operator
 FROM t_prod_proc pp
 JOIN t_quality_std qs ON pp.prod_id = qs.target_id
 JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
@@ -226,7 +228,7 @@ quality_pass_amount,
 quality_fail_amount
 )
 VALUES
-(?, ?, CURRENT_TIMESTAMP, '1x', '1w', 10, 20, 30)
+(?, ?, CURRENT_TIMESTAMP, ?, '1w', 10, 20, 30)
 `;
 
 // 검사상세 결과값
@@ -237,10 +239,10 @@ INSERT INTO t_quality_prod_detail
 VALUES
 (?, ?, ?, ?, ?)
 `;
-// 제품검사조회 (드롭다운)
-const prodQualityViewDropDown =
-`select distinct t.prod_id 
-from t_prod_proc t JOIN t_quality_prod m on (t.prod_proc_id = m.prod_proc_id)`;
+// // 제품검사조회 (드롭다운)
+// const prodQualityViewDropDown =
+// `select distinct t.prod_id 
+// from t_prod_proc t JOIN t_quality_prod m on (t.prod_proc_id = m.prod_proc_id)`;
 
 // 제품검사조회
 const prodQualityViewAll =
@@ -259,7 +261,7 @@ from
 order by tqp.prod_proc_id
 `;
 
-// 제품검사조회
+// 제품검사조회 (제품이름)
 const selectProdName =
 `
 select
@@ -286,6 +288,7 @@ const prodQualityViewDetail =
     option_name, 
     option_standard,
     quality_result_value,
+    sub_code(option_operator) option_operator,
     sub_code(m.quality_result) result
 FROM 
 	t_quality_prod t join
@@ -519,7 +522,7 @@ module.exports = {
     // 제품
      prodQualityReq,
      prodQualityWait,
-     prodQualityViewDropDown,
+    //  prodQualityViewDropDown,
      prodQualityViewAll,
      prodQualityViewDetail,
      selectLastProdQuality,
