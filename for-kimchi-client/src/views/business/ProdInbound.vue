@@ -1,10 +1,18 @@
 <template>
   <div class="container-fluid">
-    <div class="row mt-3">
+
+    <div class="row">
+      <div class="col text-end">
+        <button class="btn btn-info" @click="addClick">입고</button>
+        <button class="btn btn-secondary ms-2" @click="resetList">초기화</button>
+      </div>
+    </div>
+
+    <div class="row">
       <!-- 행 영역 div-->
       <div class="col-12">
         <!-- 테이블 div-->
-        <div class="card my-4">
+        <div class="card mt-3 mb-5">
           <!--항목명 div-->
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
@@ -30,7 +38,7 @@
                     :class="selectedIndex === index ? 'table-active' : ''">
                     <td class="text-center">{{info.prod_order_lot}}</td>
                     <td class="text-center">{{info.prod_name}}</td>
-                    <td class="text-center">{{info.order_amount}}</td>
+                    <td class="text-center">{{info.order_last_amount}}</td>
                     <td class="text-center">{{ formatDate(info.order_date)}}</td>
                     <td class="text-center">{{info.employee_name}}</td>
                     <td class="text-center"><span class="badge badge-sm bg-gradient-success">{{ '생산완료' }}</span></td>
@@ -44,16 +52,9 @@
       <!-- row div-->
     </div>
 
-        <div class="row">
-      <div class="col text-end">
-        <button class="btn btn-info" @click="addClick">입고</button>
-        <button class="btn btn-secondary ms-2" @click="resetList">초기화</button>
-      </div>
-    </div>
-
     <div class="row">
       <div class="col-12">
-        <div class="card my-4">
+        <div class="card mb-1">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
               <h6 class="text-white text-capitalize ps-3">입고정보</h6>
@@ -206,13 +207,13 @@ export default {
           }).then(result => {
             if (result.isConfirmed) {
               this.selectedIndex = index;
-              this.selectedOrderAmount = this.prodOrderLists[this.selectedIndex].order_amount;
+              this.selectedOrderAmount = this.prodOrderLists[this.selectedIndex].order_last_amount;
               this.prodInboundLists = [];
             }
           });
         } else if (this.selectedIndex != index) {
           this.selectedIndex = index;
-          this.selectedOrderAmount = this.prodOrderLists[this.selectedIndex].order_amount;
+          this.selectedOrderAmount = this.prodOrderLists[this.selectedIndex].order_last_amount;
           this.prodInboundLists = [];
         }
 
@@ -256,7 +257,7 @@ export default {
           return;
         }
 
-        if (this.prodOrderLists[this.selectedIndex].order_amount != this.inboundTotalAmount) {
+        if (this.prodOrderLists[this.selectedIndex].order_last_amount != this.inboundTotalAmount) {
           this.$swal(
             {
               text: '생산량과 입고량이 일치하지 않습니다',
@@ -281,7 +282,7 @@ export default {
               icon: "success"
             });
           this.prodOrderList();
-          this.prodBomLists = [];
+          this.prodInboundLists = [];
         } else {
             this.$swal({
               text: "제품입고 중 오류가 발생했습니다",

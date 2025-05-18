@@ -8,16 +8,17 @@
         </div>
 
         <!-- 검색 영역 -->
+           <h6>납품예정일자</h6>
         <div class="d-flex align-items-center justify-content-between mb-3">
           <!-- 왼쪽: input -->
           <div class="d-flex align-items-center flex-grow-1 me-3">
             <div class="d-flex align-items-center flex-grow-1 me-3">
-              <label class="fw-bold fs-6 mb-0 me-2" style="flex: 0 0 100px;">시작일자</label>
+              <label class="fw-bold fs-6 mb-0 me-2" style="flex: 0 0 80px;">시작일자</label>
               <input v-model="searchStart" type="date" class="form-control border flex-grow-1 text-center"
                 @keyup.enter="search" />
             </div>
             <div class="d-flex align-items-center flex-grow-1">
-              <label class="fw-bold fs-6 mb-0 me-2" style="flex: 0 0 100px;">종료일자</label>
+              <label class="fw-bold fs-6 mb-0 me-2" style="flex: 0 0 80px;">종료일자</label>
               <input v-model="searchEnd" type="date" class="form-control border flex-grow-1 text-center"
                 @keyup.enter="search" />
             </div>
@@ -25,8 +26,8 @@
 
           <!-- 오른쪽: 버튼 -->
           <div class="d-flex gap-2">
-            <button type="button" class="btn btn-success" @click="search">조회</button>
-            <button type="button" class="btn btn-secondary" @click="$emit('close')">닫기</button>
+            <button type="button" class="btn btn-success m-0" @click="search">조회</button>
+            <button type="button" class="btn btn-secondary m-0" @click="$emit('close')">닫기</button>
           </div>
         </div>
         <!-- 검색 결과 테이블 -->

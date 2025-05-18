@@ -21,8 +21,8 @@
             <input v-model="searchName" type="text" class="form-control border text-center" placeholder="거래처명" />
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="mb-3 d-flex align-items-center">
+        <!-- <div class="col-md-3"> -->
+          <!-- <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">납품상태</label>
             <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
@@ -30,8 +30,8 @@
                 {{ code.sub_code_name }}
               </option>
             </select>
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">시작일자</label>
@@ -118,7 +118,7 @@
 </template>
 <script>
 import axios from 'axios';
-import { formatDate, codeToName} from '@/utils/common';
+import { formatDate, formatDateAfter, codeToName} from '@/utils/common';
 
 export default {
     name: "납품조회",
@@ -127,7 +127,7 @@ export default {
         searchName: "",
         searchType: "",
         searchStartDate: formatDate(),
-        searchEndDate: formatDate(),
+        searchEndDate: formatDateAfter(null, 1),
         delivs : [],
         delivDetails : [],
         codes: [],
@@ -142,8 +142,6 @@ export default {
         if (this.searchType) params.deliv_status = this.searchType;
         if (this.searchStartDate) params.startDate = this.searchStartDate;
         if (this.searchEndDate) params.endDate = this.searchEndDate;
-
-        console.log(params);
 
         let result =
         await axios.get(`/api/deliv`, {
@@ -168,6 +166,9 @@ export default {
       formatDate(dateString) {
         return formatDate(dateString);
       },
+      formatDateAfter(dateString, after) {
+        return formatDate(dateString, after);
+      },
       codeToName(code, codeArray) {
         return codeToName(code, codeArray);
       },
@@ -175,7 +176,7 @@ export default {
         this.searchName = '';
         this.searchType = '';
         this.searchStartDate = formatDate();
-        this.searchEndDate = formatDate();
+        this.searchEndDate = formatDateAfter(null, 1);
       }
     },
     created() {

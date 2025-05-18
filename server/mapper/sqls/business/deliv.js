@@ -1,8 +1,6 @@
 // 영업 sql
 // deliv.js
 
-const { selectLastOrder } = require("./order");
-
 // 납품
 const selectDelivTarget =
   `
@@ -23,6 +21,7 @@ LEFT JOIN t_order ORD ON ORDD.order_id = ORD.order_id
 LEFT JOIN t_prod PR ON ORDD.prod_id = PR.prod_id
 LEFT JOIN t_vendor VE ON ORD.vendor_id = VE.vendor_id
 WHERE deliv_due_date BETWEEN ? AND ?
+AND ORDD.order_status = '2z'
 ) DEL
 WHERE remain_amount > 0
 ORDER BY deliv_due_date
@@ -30,53 +29,61 @@ ORDER BY deliv_due_date
 //WHERE order_status = '4z' 나중에 데이터 있으면 필요한 조건
 
 const selectDelivProdTarget =
-  `SELECT PW.prod_lot,
-  PW.prod_id,
-  PR.prod_name,
-  WA.warehouse_id,
-  WA.warehouse_name,
-  (PW.prod_amount - PLOT_USED(PW.prod_lot)) prod_amount,
-  PW.expired_date
-  FROM t_prod_warehouse PW
-  JOIN t_prod PR ON PW.prod_id = PR.prod_id
-  JOIN t_warehouse WA ON PW.warehouse_id = WA.warehouse_id
-  WHERE PW.lot_status <> '3aa'
-  AND PW.prod_id = ?
-  ORDER BY PW.prod_lot
+  `SELECT A.*,
+p.prod_name,
+w.warehouse_name
+FROM (
+SELECT 
+pw.prod_lot,
+pw.warehouse_id,
+pw.prod_id,
+pw.prod_amount,
+(pw.prod_amount - IFNULL(SUM(dd.deliv_amount), 0)) remain_amount,
+pw.inbound_date
+FROM t_prod_warehouse pw
+LEFT JOIN t_deliv_detail dd
+ON pw.prod_lot = dd.prod_lot AND pw.warehouse_id = dd.warehouse_id
+WHERE pw.prod_id = ?
+GROUP BY pw.prod_lot, pw.warehouse_id
+) A 
+JOIN t_prod p ON A.prod_id = p.prod_id
+JOIN t_warehouse w ON A.warehouse_id = w.warehouse_id
+WHERE A.remain_amount > 0
+ORDER BY prod_lot, warehouse_id
 `;
 //기존에 납품된 수량으로 입고수량과 비교해야 함
 
-const selectLastDeliv = 
-`SELECT deliv_id
+const selectLastDeliv =
+  `SELECT deliv_id
 FROM t_deliv
 ORDER BY deliv_id DESC
 LIMIT 1`;
 
-const insertDeliv = 
-`INSERT INTO t_deliv
+const insertDeliv =
+  `INSERT INTO t_deliv
 (deliv_id, order_detail_id, deliv_status, deliv_date, employee_id, memo)
 VALUES
 (?, ?, '2b', CURRENT_TIMESTAMP, ?, ?)`;
 
 const selectLastDelivDetail =
-`SELECT deliv_detail_id
+  `SELECT deliv_detail_id
 FROM t_deliv_detail
 ORDER BY deliv_detail_id DESC
 LIMIT 1`;
 
 const insertDelivDetail =
-`INSERT INTO t_deliv_detail
-(deliv_detail_id, prod_lot, deliv_id, prod_id, deliv_amount, memo)
+  `INSERT INTO t_deliv_detail
+(deliv_detail_id, deliv_id, prod_lot, warehouse_id, prod_id, deliv_amount, memo)
 VALUES
-(?, ?, ?, ?, ?, ?)`;
+(?, ?, ?, ?, ?, ?, ?)`;
 
-const updatePlotStatus = 
-`UPDATE t_prod_warehouse
+const updatePlotStatus =
+  `UPDATE t_prod_warehouse
 SET lot_status = ?
 WHERE prod_lot = ?`;
 
 const selectDeliv =
-`SELECT deliv_id,
+  `SELECT deliv_id,
         d.order_detail_id,
         deliv_status,
         deliv_date,
@@ -96,8 +103,8 @@ const selectDeliv =
  :searchKeyword
  ORDER BY deliv_id DESC`;
 
- const selectDelivDetail =
-`SELECT deliv_detail_id,
+const selectDelivDetail =
+  `SELECT deliv_detail_id,
         deliv_id,
         prod_lot,
         dd.prod_id,
@@ -109,10 +116,63 @@ const selectDeliv =
  WHERE deliv_id = ?
  ORDER BY deliv_detail_id DESC`;
 
- const insertProdWarehouse = 
- `
+const insertProdWarehouse =
+  `
  CALL insert_prod_warehouse(?, ?, ?, ?, ?, ?)
  `;
+
+const selectProdWarehouseLot =
+  `
+SELECT A.*,
+p.prod_name,
+w.warehouse_name
+FROM (
+SELECT 
+pw.prod_lot,
+pw.warehouse_id,
+pw.prod_id,
+pw.prod_amount,
+(pw.prod_amount - IFNULL(SUM(dd.deliv_amount), 0)) remain_amount,
+pw.inbound_date
+FROM t_prod_warehouse pw
+LEFT JOIN t_deliv_detail dd
+ON pw.prod_lot = dd.prod_lot AND pw.warehouse_id = dd.warehouse_id
+GROUP BY pw.prod_lot, pw.warehouse_id
+) A 
+JOIN t_prod p ON A.prod_id = p.prod_id
+JOIN t_warehouse w ON A.warehouse_id = w.warehouse_id
+WHERE A.remain_amount > 0
+ORDER BY prod_lot, warehouse_id
+  `;
+
+const selectProdWarehouseGroup =
+  `
+SELECT 
+A.warehouse_id,
+w.warehouse_name,
+A.prod_id,
+p.prod_name,
+SUM(A.prod_amount) total_prod_amount,
+SUM(A.remain_amount) total_remain_amount
+FROM (
+SELECT 
+pw.prod_lot,
+pw.warehouse_id,
+pw.prod_id,
+pw.prod_amount,
+(pw.prod_amount - IFNULL(SUM(dd.deliv_amount), 0)) remain_amount,
+pw.inbound_date
+FROM t_prod_warehouse pw
+LEFT JOIN t_deliv_detail dd
+ON pw.prod_lot = dd.prod_lot AND pw.warehouse_id = dd.warehouse_id
+GROUP BY pw.prod_lot, pw.warehouse_id
+) A 
+JOIN t_prod p ON A.prod_id = p.prod_id
+JOIN t_warehouse w ON A.warehouse_id = w.warehouse_id
+WHERE A.remain_amount > 0
+GROUP BY prod_id, warehouse_id
+ORDER BY prod_id
+  `;
 
 module.exports = {
   selectDelivTarget,
@@ -125,4 +185,6 @@ module.exports = {
   selectDeliv,
   selectDelivDetail,
   insertProdWarehouse,
+  selectProdWarehouseLot,
+  selectProdWarehouseGroup,
 }

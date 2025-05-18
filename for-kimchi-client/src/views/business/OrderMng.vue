@@ -3,7 +3,7 @@
     <!-- 검색 -->
     <div class="row">
       <div class="col text-end">
-        <button class="btn btn-info ms-2" @click="register">저장</button>
+        <button class="btn btn-info" @click="register">저장</button>
         <button class="btn btn-secondary ms-2" @click="reset">초기화</button>
       </div>
     </div>
@@ -34,15 +34,15 @@
             @click="showVendor = true" placeholder="거래처" />         
           </div>
         </div>
-      </div>
-
-      <div class="row mt-1 px-3">
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">담당자</label>
             <input v-model="userInfo.employee_name" type="text" class="form-control border text-center" placeholder="담당자" />
           </div>
         </div>
+      </div>
+
+      <div class="row mt-1 px-3">
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">비고</label>
@@ -52,7 +52,7 @@
       </div>
     </div>
 
-    <div class="card mb-5">
+    <div class="card mb-1">
       <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
         <div class="bg-gradient-success shadow-success border-radius-lg pt-3 pb-2">
           <h6 class="text-white text-capitalize ps-3">주문상세정보</h6>
