@@ -150,10 +150,17 @@ export default {
 
         // 성공적으로 등록 시 페이지 이동 실패하면 안내
         if(planInfo > 0){
-          alert('계획이 생성되었습니다.');
+          this.$swal({
+                  icon: "success",
+                  title: "계획이 생성되었습니다.",
+                  text: "생성 완료",
+                });
           this.$router.push('/prodplan');
         }else{
-          alert('계획이 등록되지 않았습니다.');
+          this.$swal({
+                  icon: "error",
+                  title: "계획이 등록되지 않았습니다.",
+                });
         }
       }
     }
