@@ -18,28 +18,29 @@
                     </div>
                 <table class="table align-items-center mb-2 table-hover">
                   <tr>
-                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10">생산지시LOT</th>
+                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10 px-3 py-2">생산지시LOT</th>
                     <td class="align-middle font-weight-bolder text-left">{{prodProdProcessInfo.prod_order_lot}}</td>
                   </tr>
                   <tr>
-                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10">제품ID</th>
+                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10 px-3 py-2">제품ID</th>
                     <td class="align-middle font-weight-bolder text-left">{{prodProdProcessInfo.prod_id}}</td>
                   </tr>
                   <tr>
-                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10">생산지시일자</th>
+                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10 px-3 py-2">생산지시일자</th>
                     <td class="align-middle font-weight-bolder text-left">{{prodProdProcessInfo.order_date}}</td>
                   </tr>
                   <tr>
-                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10">생산지시수량</th>
+                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10 px-3 py-2">생산지시수량</th>
                     <td class="align-middle font-weight-bolder text-left">{{prodProdProcessInfo.order_amount}}</td>
                   </tr>
                   <tr>
-                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10">생산지시담당자</th>
+                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10 px-3 py-2">생산지시담당자</th>
                     <td class="align-middle font-weight-bolder text-left">{{prodProdProcessInfo.employee_id}}</td>
                   </tr>
                   <tr>
-                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10">생산지시상태</th>
-                    <td class="align-middle font-weight-bolder text-left"><span class="badge badge-sm bg-gradient-success">{{prodProdProcessInfo.order_status}}</span></td>
+                    <th class="text-left text-uppercase text-secondary font-weight-bolder opacity-10 px-3 py-2">생산지시상태</th>
+                    <td class="align-middle font-weight-bolder text-left" v-if="prodProdProcessInfo.order_status === '생산진행중'"><span class="badge badge-sm bg-gradient-warning ">{{prodProdProcessInfo.order_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-left" v-else><span class="badge badge-sm bg-gradient-success">{{prodProdProcessInfo.order_status}}</span></td>
                   </tr>
               </table>
             </div>
@@ -76,7 +77,7 @@
                     <!-- <tr>
                       <td colspan="8" rowspan="8" class="align-middle text-center ">생산계획을 선택해주세요</td>
                     </tr> -->
-                    <tr v-for="(info,index) in procFlow"  @click="selectProc(index)">
+                    <tr v-for="(info,index) in procFlow"  @click="selectProc(index)" :class="this.number === index ? 'table-active' : ''">
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_seq}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_id}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_name}}</td>
@@ -89,11 +90,20 @@
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_input_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_fail_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.sum_pass_amount}}</td>
-                      <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.proc_type}}</span></td>
-                      <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '품질검사대상' && info.count > 0"><span class="badge badge-sm bg-gradient-danger" @click.stop="addQuality(index)">품질검사요청</span></td>
+
+                      <td class="align-middle font-weight-bolder text-center"  v-if="info.proc_type == '품질검사대상'"><span class="badge badge-sm bg-gradient-primary">{{info.proc_type}}</span></td>
+                      <td class="align-middle font-weight-bolder text-center"  v-else><span class="badge badge-sm bg-gradient-success">{{info.proc_type}}</span></td>
+
+                      <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-primary" v-if="this.num < info.proc_seq">공정대기</span>
+                      <span class="badge badge-sm bg-gradient-secondary" v-else-if="this.num > info.proc_seq">공정완료</span>
+                      <span class="badge badge-sm bg-gradient-primary" v-else-if="this.num === info.proc_seq && this.type === '4e'">검사중</span>
+                      <span class="badge badge-sm bg-gradient-secondary" v-else-if="this.num === info.proc_seq && this.type === '3e'">공정완료</span>
+                      <span class="badge badge-sm bg-gradient-warning" v-else-if="this.num === info.proc_seq && this.type === '2e'">공정진행중</span>
+                      <span class="badge badge-sm bg-gradient-secondary" v-else>공정완료</span></td>
+                      <!-- <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '품질검사대상' && info.count > 0"><span class="badge badge-sm bg-gradient-danger" @click.stop="addQuality(index)">품질검사요청</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.count == info.status && info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정완료</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정진행중</span></td>
-                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정대기</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정대기</span></td> -->
                     </tr>
                   </tbody>
                 </table>
@@ -137,7 +147,8 @@
                       <td class="align-middle font-weight-bolder text-center">{{info.order_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.order_date}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.employee_id}}</td>
-                      <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.order_status}}</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-if="info.order_status === '생산진행중'"><span class="badge badge-sm bg-gradient-warning">{{info.order_status}}</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-success">{{info.order_status}}</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -163,9 +174,13 @@
             </div>
             <div class="card-body px-0 pb-2" >
                 <div class="table-responsive p-0">
-                  <div class=" text-end">
+                  <div class=" text-end" v-if="this.num === (this.number + 1)">
                     <button class="btn btn-success mx-2" @click="addList()" :disable="!isValue">➕<span class="mx-2">공정생성</span></button>
                     <button class="btn btn-info mx-2" @click="addinsert(procFlowList)" :disable="!isValue">✔<span class="mx-2">공정저장</span></button>
+                  </div>
+                  <div class=" text-end" v-else>
+                    <!-- <button class="btn btn-success mx-2" @click="addList()" :disable="!isValue">➕<span class="mx-2">공정생성</span></button>
+                    <button class="btn btn-info mx-2" @click="addinsert(procFlowList)" :disable="!isValue">✔<span class="mx-2">공정저장</span></button> -->
                   </div>
                 <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
@@ -187,7 +202,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{info.prod_proc_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.employee_id}}</td>
                     <td class="align-middle font-weight-bolder text-center" v-if="info.proc_input_amount >= 0">{{info.proc_input_amount}}</td>
-                    <td class="align-middle font-weight-bolder text-center" v-else><input type="number" v-model="info.input_amount" style="width: 100px;"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><input type="number" v-model="info.input_amount" style="width: 100px; background-color: transparent;"></td>
                     <td class="align-middle font-weight-bolder text-center">{{info.proc_fail_amount}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.proc_pass_amount}}</td>
                     <td class="align-middle font-weight-bolder text-center" v-if="info.proc_input_amount >= 0 && info.proc_start_date == null">
@@ -198,7 +213,10 @@
                     <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_input_amount >= 0 && info.proc_end_date == null">
                       <input type="button" class="btn btn-primary m-0" @click="inx(index)" value="공정종료" data-bs-toggle="modal" data-bs-target="#endTime"></td>
                       <td class="align-middle font-weight-bolder text-center" v-else>{{info.proc_end_date}}</td>
-                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.proc_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.proc_status === '공정완료'"><span class="badge badge-sm bg-gradient-secondary">{{info.proc_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_status === '검사진행'"><span class="badge badge-sm bg-gradient-primary">{{info.proc_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_status === '공정진행'"><span class="badge badge-sm bg-gradient-warning">{{info.proc_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-success">{{info.proc_status}}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -249,17 +267,19 @@ export default {
             procFlow: [],
             procFlowList: [],
             // number= 공정흐름도 index
-            number: '',
-            input_amount: '',
-            proc_fail_amount: '',
-            proc_pass_amount: '',
-            indexs: '',
-            prodOrderidx: '',
+            number: null,
+            input_amount: 0,
+            proc_fail_amount: 0,
+            proc_pass_amount: 0,
+            indexs: null,
+            prodOrderidx: 0,
             // 공정상태 확인
             procType: false,
             amount: 0,
             order_amount: 0,
             pass_amount: 0,
+            num: 0,
+            type: '',
         }
     },
     created(){
@@ -290,8 +310,11 @@ export default {
         await axios.get(`/api/prodProcFlow/${prodLot}`)
                     .catch(err => console.log(err));
         this.procFlow = ajaxRes.data;
+        this.num = this.procFlow[0].num;
+        this.type = this.procFlow[0].type;
         // 버튼 클릭시 list 초기화
         this.procFlowList = [];
+        this.number = null;
         // index값 저장
         this.prodOrderidx = index;
         // 값 활용하기위해서 저장
@@ -323,7 +346,11 @@ export default {
         this.amount = 0;
         for(let listcheck of list){
           if(!Object.hasOwn(listcheck, 'input_amount') && !Object.hasOwn(listcheck, 'proc_input_amount')){
-            alert('값이 없습니다.');
+            this.$swal({
+                  icon: "warning",
+                  title: "입력된값이 없습니다.",
+                  text: "입력해주세요",
+                });
             return;
           }
           // 값이 저장안되있는 행
@@ -340,7 +367,11 @@ export default {
         if(this.number > 0){
           this.pass_amount = this.procFlow[this.number - 1].sum_pass_amount;
           if(this.amount > this.pass_amount){
-            alert('투입량이 현재 지시량보다 많습니다.');
+            this.$swal({
+                  icon: "error",
+                  title: "투입량이 현재 지시량보다 많습니다.",
+                  text: "확인해주세요",
+                });
             await this.prodOrder(this.prodOrderidx);
             await this.selectProc(this.number);
             return;
@@ -348,7 +379,11 @@ export default {
           // index가 0번이라면 생산지시의 지시량과 비교
         }else{
           if(this.amount > this.order_amount){
-            alert('투입량이 현재 지시량보다 많습니다.');
+            this.$swal({
+                  icon: "error",
+                  title: "투입량이 현재 지시량보다 많습니다.",
+                  text: "확인해주세요",
+                });
             await this.prodOrder(this.prodOrderidx);
             await this.selectProc(this.number);
             return;
@@ -358,7 +393,6 @@ export default {
         let param = list.filter(item =>{
           return Object.hasOwn(item, 'prod_order_lot');
         });
-
         // 통신처리
         let ajaxRes =
         await axios.post(`/api/insertProdProc`, param)
@@ -366,11 +400,19 @@ export default {
         let result = ajaxRes.data.affectedRows;
         
         if(result > 0){
-          alert('저장되었습니다.');
+          this.$swal({
+                  icon: "success",
+                  title: "저장성공",
+                  text: "저장완료",
+                });
           await this.prodOrder(this.prodOrderidx);
           await this.selectProc(this.number);
         }else{
-          alert('저장에 실패했습니다.');
+          this.$swal({
+                  icon: "error",
+                  title: "저장실패",
+                  text: "문의해주세요",
+                });
           await this.prodOrder(this.prodOrderidx);
           await this.selectProc(this.number);
         }
@@ -382,7 +424,11 @@ export default {
         await axios.put(`/api/updateStartTime/${info}`)
         .catch(err => console.log(err));
         let result = ajaxRes.data.affectedRows;
-        alert('공정이 시작되었습니다.');
+        this.$swal({
+                  icon: "info",
+                  title: "공정이 시작되었습니다.",
+                  text: "불량발생을 줄입시다.",
+                });
         await this.selectProc(this.number);
       },
       // 공정 종료 버튼
@@ -390,24 +436,35 @@ export default {
         let input_amount = this.procFlowList[this.indexs].proc_input_amount;
         // 불량량이 투입량보다 많으면 취소
         if(amount > input_amount){
-          alert('투입량보다 많습니다.취소되었습니다');
+          this.$swal({
+                  icon: "error",
+                  title: "불량량이 투입량보다 많습니다.",
+                  text: "확인해주세요",
+                });
         }else{
+          // null 값 처리
+          if(amount < 0 || amount === null){
+            amount = 0;
+          }
           let id = this.procFlowList[this.indexs].prod_proc_id;
           let pass_amount = input_amount - amount;
           let info = {proc_fail_amount: amount,
-                      proc_pass_amount: pass_amount}
+                      proc_pass_amount: pass_amount,
+                      prod_order_lot: this.prodProdProcessLists[this.prodOrderidx].prod_order_lot,
+                      proc_type: this.procFlow[this.number].proc_type
+                    }
+
           let ajaxRes = 
           await axios.put(`/api/updateEndTime/${id}`, info)
                      .catch(err => console.log(err));
-          let result = ajaxRes.data.affectedRows;
+          let result = ajaxRes.data;
           await this.prodOrder(this.prodOrderidx);
           await this.selectProc(this.number);
-          this.proc_fail_amount= '';
+          this.proc_fail_amount= 0;
         }
       },
       async inx(idx){
         this.indexs = idx;
-        console.log(this.indexs);
       },
       // 품질검사요청 버튼
       async addQuality(idx){

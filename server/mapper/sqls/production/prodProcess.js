@@ -67,6 +67,12 @@ FROM t_prod_proc
 ORDER BY prod_proc_id DESC
 LIMIT 1
 `;
+// employee_name = employee_id로 변환
+const selectEmployeeNameChange = `
+SELECT employee_id
+FROM t_employee
+WHERE employee_name = ?
+`;
 
 // 생산공정 등록
 const insertProdProc =`
@@ -98,9 +104,14 @@ WHERE prod_proc_id = ?
 const updateEndTime =`
 UPDATE t_prod_proc
 SET proc_end_date = sysdate(),
-    proc_status = '3e',
     ?
 WHERE prod_proc_id = ?
+`;
+// 타입명을 통해서 code가져오기
+const selectSubCodeName =`
+SELECT sub_code
+FROM t_sub_code
+WHERE sub_code_name = ?
 `;
 // prod_order_lot정보를 가지고 prod_id를 가져와야함.
 const selectOrderProdId =`
@@ -112,11 +123,16 @@ LIMIT 1
 
 // 공정상태 확인 후 공정 완료처리
 const selectProdProcStatus =`
-SELECT proc_status
-FROM t_prod_proc
-WHERE prod_order_lot = ?
+CALL ProdProcStatusInfo(?)
 `;
-
+// 공정단계 처리 프로시저 임시변수저장
+const selectProcStatus =`
+CALL prodProcStatus(?, @result, @seq)
+`;
+// 프로시저불러오기
+const selectProceduresStatus =`
+SELECT @result AS type, @seq AS num
+`;
 module.exports = {
   selectProdProcess,
   selectProdProcFlowInfo,
@@ -129,4 +145,9 @@ module.exports = {
   selectSumProdProcList,
   selectOrderProdId,
   updateOrderStatuss,
+  selectProdProcStatus,
+  selectProcStatus,
+  selectProceduresStatus,
+  selectEmployeeNameChange,
+  selectSubCodeName,
 }

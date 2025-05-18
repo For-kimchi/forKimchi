@@ -7,7 +7,7 @@
     </nav>
     <div class="row">
         <!-- 행 영역 div-->
-      <div class="col-9">
+      <div class="col-10">
         <!-- 테이블 div-->
         <div class="card my-4">
             <!--항목명 div-->
@@ -28,13 +28,15 @@
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">목표수량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">누적수량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">기지시수량</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">추가수량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산시작일자</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산종료일자</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">상세계획상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in prodDetailList" @click="clickDtList(index)" style="height: 50px; overflow: auto;">
+                  <tr v-for="(info,index) in prodDetailList" @click="clickDtList(index)" style="height: 50px; overflow: auto;"
+                  :class="this.idx === index ? 'table-active' : ''">
                     <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_detail_id}}</td>
@@ -43,9 +45,12 @@
                     <td class="align-middle font-weight-bolder text-center">{{info.sum_amount}}</td>
                     <td class="align-middle font-weight-bolder text-center" v-if="info.plan_amount - info.sum_amount < 0">0</td>
                     <td class="align-middle font-weight-bolder text-center" v-else>{{info.plan_amount - info.sum_amount}}</td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.sum_amount - info.plan_amount < 0">0</td>
+                    <td class="align-middle font-weight-bolder text-center" v-else>{{info.sum_amount - info.plan_amount}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_start_date}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_end_date}}</td>
-                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.plan_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인'"><span class="badge badge-sm bg-gradient-info">{{info.plan_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-warning">{{info.plan_status}}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -53,7 +58,7 @@
           </div>
         </div>
       </div>
-      <div class="col-3">
+      <div class="col-2">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
@@ -135,7 +140,9 @@
                       <td class="align-middle font-weight-bolder text-center">{{info.order_amount}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.order_date}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.employee_id}}</td>
-                      <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{info.order_status}}</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-if="info.order_status === '자재요청중'"><span class="badge badge-sm bg-gradient-success">{{info.order_status}}</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else-if="info.order_status === '자재요청완료'"><span class="badge badge-sm bg-gradient-secondary">{{info.order_status}}</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else-if="info.order_status === '생산진행중'"><span class="badge badge-sm bg-gradient-warning">{{info.order_status}}</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -166,7 +173,7 @@ export default {
           planDetailProd: '',
           prodDate: '',
           prodAmount: '',
-          idx: 0,
+          idx: null,
           checkAll: false,
           check:false,
         }
@@ -216,20 +223,32 @@ export default {
         // 선택 했는지 안했는지 확인
         if(info.plan_detail_id != null && info.prod_id != null){
           if(this.prodAmount < 0 || this.prodAmount == null){
-            alert('생산지시수량을 입력해주세요.');
+            this.$swal({
+                  icon: "warning",
+                  title: "생산지시수량을 입력해주세요.",
+                  text: "입력하세요",
+                });
           }else{
             let ajaxRes =
             await axios.put(`/api/insertProdOrder`, info)
             .catch(err=> console.log(err));
             let Order = ajaxRes.date;
-            alert('생산지시 완료.');
+            this.$swal({
+                  icon: "success",
+                  title: "생산지시완료",
+                  text: "성공",
+                });
             console.log(Order);
             this.prodAmount = '';
             await this.selectProdDetailList();
             await this.clickDtList(this.idx);
           }
         }else{
-          alert('추가하고싶은 항목을 선택해주세요.')
+          this.$swal({
+                  icon: "warning",
+                  title: "추가하고싶은 항목을 선택하세요.",
+                  text: "선택하세요",
+                });
         };
       },
       // 오늘날짜 가져오기
@@ -265,10 +284,18 @@ export default {
             this.proddtlist = ajaxRes.data
             await this.clickDtList(this.idx);
           }else{
-            alert('체크된 항목이 없습니다.')
+            this.$swal({
+                  icon: "warning",
+                  title: "체크된 항목이 없습니다.",
+                  text: "체크하세요",
+                });
           };
         }else{
-          alert('항목이 선택되지 않았습니다.')
+          this.$swal({
+                  icon: "warning",
+                  title: "항목이 선택되지 않았습니다.",
+                  text: "선택하세요",
+                });
         };
       },
       // 취소버튼

@@ -167,10 +167,20 @@ const selectProdProcFlowInfo = async(prodLot) =>{
 
         // 한 행처럼 보이도록 결과물 합치기
         let result =[];
+
         for(let idx in Info){
             result[idx] = {...Info[idx], ...sumList[idx] };
         }
-        
+        // 공정상태구분 프로시저 임시변수 저장
+        selectedSql = await mariaDB.selectedQuery('selectProcStatus', prodLot);
+        let list = await conn.query(selectedSql, prodLot);
+        // 프로시저 호출
+        selectedSql = await mariaDB.selectedQuery('selectProceduresStatus', prodLot);
+        list = await conn.query(selectedSql, prodLot);
+        // 0번쨰 배열에 살짝 끼워넣기ㅎㅎ
+        result[0].type = list[0].type;
+        result[0].num = list[0].num;
+        // result.push();
         conn.commit();
         return result;
     }catch(err){
@@ -215,28 +225,35 @@ const insertProdProcList = async(procList) =>{
             // prodProcId 생성
             selectedSql = await mariaDB.selectedQuery('selectProdProcessId');
             let prodProcId = await conn.query(selectedSql);
-            
+
+            // 생산공정ID 생성 후 변수저장
             prodProcId = prodProcId[0].prod_proc_id;
             let newProcId = keys.getNextKeyId(prodProcId);
             prodProc.prod_proc_id = newProcId;
+            let emp = [];
+            // employee_id 변환 selectEmployeeId
+            emp.push(prodProc.employee_id);
             
+            selectedSql = await mariaDB.selectedQuery('selectEmployeeNameChange', emp);
+            emp = await conn.query(selectedSql, emp);
+            emp = emp[0].employee_id;
+            prodProc.employee_id = emp;
             
+
             // convert employee_id 추가해야함.
             let cloumn = ['prod_proc_id', 'prod_order_lot', 'proc_id', 'employee_id', 'proc_order_amount', 'input_amount'];
             let convert = converts.convertObjToAry(prodProc, cloumn);
-            
-            // console.log(convert);
 
             // 실제 등록
             selectedSql = await mariaDB.selectedQuery('insertProdProc', convert);
             result = await conn.query(selectedSql, convert);
-            // console.log('여기까지 도달?');
             };
             
             conn.commit();
             return result;
             }catch(err){
                 if(conn) conn.rollback();
+                console.log(err);
             }finally{
                 if(conn) conn.release();
             }
@@ -248,9 +265,43 @@ const updateStartTime = async(param) =>{
 };
 // 공정 종료결과 업데이트 updateEndTime
 const updateEndTime = async(param, procId) =>{
-    let list = [param, procId];
-    let result = await mariaDB.query('updateEndTime', list);
-    return result;
+     let conn;
+    try{
+        conn = await mariaDB.getConnection();
+        await conn.beginTransaction();
+        let lot = param.prod_order_lot;
+        let procType = [];
+        delete param.prod_order_lot;
+        procType.push(param.proc_type);
+        
+        sqlectedSQL = await mariaDB.selectedQuery('selectSubCodeName', procType);
+        procType = await conn.query(sqlectedSQL, procType);
+        procType = procType[0].sub_code;
+        
+        let proc_status = '';
+        delete param.proc_type;
+        // 공정타입이 검사공정이라면
+        if(procType === '2g'){
+            proc_status = '4e';
+        }else{
+            proc_status = '3e';
+        }
+        param.proc_status = proc_status;
+        let list = [param, procId];
+        
+        selectedSql = await mariaDB.selectedQuery('updateEndTime', list);
+        let prodProcId = await conn.query(selectedSql, list);
+
+        sqlectedSQL = await mariaDB.selectedQuery('selectProdProcStatus', lot);
+        let result = await conn.query(sqlectedSQL, lot);
+
+        conn.commit();
+        return result;
+        }catch(err){
+            if(conn) conn.rollback();
+        }finally{
+            if(conn) conn.release();
+        }
 };
 module.exports = {
     selectProdOrderList,

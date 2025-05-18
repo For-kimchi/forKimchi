@@ -39,7 +39,9 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.manager_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.reg_date }}</td>
-                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_final_status === '계획승인'"><span class="badge badge-sm bg-gradient-info">{{ info.plan_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_final_status === '계획등록'"><span class="badge badge-sm bg-gradient-warning">{{ info.plan_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-success">{{ info.plan_final_status }}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -74,10 +76,10 @@
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산수량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산필요수량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">추가생산수량</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">상세계획상태</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">납품예정일자</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">시작일자</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">종료일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">상세계획상태</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -94,10 +96,12 @@
                     
                     <td class="align-middle font-weight-bolder text-center" v-if="info.plan_amount - info.order_amount <= 0">0</td>
                     <td class="align-middle font-weight-bolder text-center" v-else>{{info.plan_amount - info.order_amount}}</td>
-                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.deliv_due_date }}</td>
                     <td class="align-middle font-weight-bolder text-center"><input class="text-center" type="date" v-model="info.plan_start_date"></td>
                     <td class="align-middle font-weight-bolder text-center"><input class="text-center" type="date" v-model="info.plan_end_date"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인'"><span class="badge badge-sm bg-gradient-info">{{ info.plan_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_status === '상세계획등록'"><span class="badge badge-sm bg-gradient-warning">{{ info.plan_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -123,6 +127,7 @@ export default {
         idx: null,
         status1: false,
         status2: false,
+        
       }
     },
     created(){
@@ -175,13 +180,25 @@ export default {
             // 입력값이 있는지 확인
             for(let item of planDetailList){
               if(item.plan_amount == '' || item.plan_amount == null){
-                alert('생산수량을 입력하지 않았습니다.');
+                this.$swal({
+                  icon: "error",
+                  title: "생산수량을 입력하지 않았습니다",
+                  text: "입력하세요"
+                });
                 return;
               }else if(item.plan_start_date == '' || item.plan_start_date == null){
-                alert('시작일자가 입력되지않았습니다.');
+                this.$swal({
+                  icon: "error",
+                  title: "시작일자가 입력되지않았습니다.",
+                  text: "입력하세요",
+                });
                 return;
               }else if(item.plan_end_date == '' || item.plan_end_date == null){
-                alert('종료일자가 입력되지않았습니다.');
+                this.$swal({
+                  icon: "error",
+                  title: "종료일자가 입력되지않았습니다.",
+                  text: "입력하세요",
+                });
                 return;
               };
             };
@@ -189,10 +206,18 @@ export default {
             await axios.put(`/api/planDetailSave`, planDetailList)
                        .catch(err => console.log(err));
             this.update = ajaxRes.data;
-            alert('저장 완료');
+            this.$swal({
+                  icon: "success",
+                  title: "저장 완료",
+                  draggable: true
+                });
             await this.proddtList(this.idx);
         }else{
-          alert('항목이 선택되지 않았습니다.')
+          this.$swal({
+                  icon: "error",
+                  title: "항목이 선택되지 않았습니다.",
+                  text: "선택하세요",
+                });
         };
       },
       // 체크항목이 체크되면 하위체크항목들 체크되기
@@ -225,11 +250,19 @@ export default {
             this.proddtlist = ajaxRes.data
             await this.prodList();
           }else{
-            alert('체크된 항목이 없습니다.')
+            this.$swal({
+                  icon: "error",
+                  title: "체크된 항목이 없습니다.",
+                  text: "선택하세요",
+                });
           };
         }else{
-          alert('항목이 선택되지 않았습니다.')
-        };
+          this.$swal({
+              icon: "error",
+              title: "항목이 선택되지 않았습니다.",
+              text: "선택하세요",
+            });
+    };
 
       },
     },
