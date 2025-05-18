@@ -5,6 +5,7 @@ prod_order_lot,
 plan_detail_id,
 po.prod_id,
 prod_name,
+po.order_last_amount,
 order_date,
 order_amount,
 po.employee_id,
@@ -13,8 +14,8 @@ order_status
 FROM t_prod_order po
 JOIN t_employee e ON po.employee_id = e.employee_id
 JOIN t_prod p ON po.prod_id = p.prod_id
-WHERE order_status = ?
-ORDER BY order_date
+WHERE po.order_status = ?
+ORDER BY order_date, prod_order_lot
 `;
 
 const selectPmoOne =

@@ -11,9 +11,9 @@
 
                     <div class="card-body px-0 pb-2">
                         <div class="row align-items-center g-3 px-3">
-                            <div class="col-md-6 d-flex align-items-center gap-3">
-                                <h6 class="mb-0 text-dark text-sm">창고선택</h6>
-                                <select v-model="selectedWarehouse" @change="wareSearch"
+                            <div class="col-md-9 d-flex align-items-center gap-3">
+                                <h6 class="mb-0 text-dark text-sm">제품창고</h6>
+                                <select v-model="warehouseFilter" @change="doFilter"
                                     class="form-select form-select-sm border bg-white text-dark" style="width: 160px;">
                                     <option value="">전체</option>
                                     <option v-for="(info, index) in warehouses" :key="info.warehouse_id"
@@ -21,12 +21,15 @@
                                         {{ info.warehouse_name }}
                                     </option>
                                 </select>
+                                <h6 class="mb-0 text-dark text-sm">제품명</h6>
+                                <input class="form-control form-control-sm border bg-white text-dark" style="width: 160px;" type="text" @change="doFilter" v-model="prodFilter">
+                                <button class="btn btn-secondary btn-group-sm m-0" @click="reset">초기화</button>
                             </div>
 
-                            <div class="col-md-6 d-flex justify-content-md-end">
+                            <div class="col-md-3 d-flex justify-content-md-end">
                                 <div class="btn-group btn-group-sm" role="group" aria-label="조회 방식">
                                     <input type="radio" class="btn-check" id="lotView" value="lot" v-model="searchType"
-                                        @change="wareSearch" autocomplete="off">
+                                        @change="getProdWarehouse" autocomplete="off">
                                     <label class="btn btn-outline-success mb-0 px-3"
                                         :class="searchType === 'lot' ? 'bg-success text-white' : 'bg-white text-success'"
                                         for="lotView">
@@ -34,11 +37,11 @@
                                     </label>
 
                                     <input type="radio" class="btn-check" id="groupView" value="group"
-                                        v-model="searchType" @change="wareSearch" autocomplete="off">
+                                        v-model="searchType" @change="getProdWarehouse" autocomplete="off">
                                     <label class="btn btn-outline-success mb-0 px-3"
                                         :class="searchType === 'group' ? 'bg-success text-white' : 'bg-white text-success'"
                                         for="groupView">
-                                        자재별 조회
+                                        제품별 조회
                                     </label>
                                 </div>
                             </div>
@@ -46,97 +49,65 @@
 
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
-                                <thead>
-                                    <tr v-show="searchType === 'lot'">
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            No</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            창고명
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            LOT
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            자재명
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            입고수량
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            입고일자
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            담당자
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <thead>
-                                    <tr v-show="searchType === 'group'">
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            No</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            자재명
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            입고수량
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            최근 입고일자
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
-                                            LOT 수
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- LOT별 조회일 때 -->
-                                    <template v-if="searchType === 'lot'">
-                                        <tr v-for="(info, index) in wareList" :key="info.prod_lot + '_' + info.warehouse_id">
-                                            <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}
-                                            </td>
-                                            <td class="align-middle font-weight-bolder text-center">
+                                <template v-if="searchType === 'lot'">
+                                    <thead>
+                                        <tr>
+                                        <th class="text-center font-weight-bolder">제품LOT</th>
+                                        <th class="text-center font-weight-bolder">제품명</th>
+                                        <th class="text-center font-weight-bolder">제품창고</th>
+                                        <th class="text-center font-weight-bolder">입고수량</th>
+                                        <th class="text-center font-weight-bolder">출고수량</th>
+                                        <th class="text-center font-weight-bolder">잔여수량</th>
+                                        <th class="text-center font-weight-bolder">입고일자</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(info, index) in filtered" :key="info.prod_lot + '_' + info.warehouse_id">
+                                            <td class="text-center">
+                                                {{ info.prod_lot }}</td>
+                                            <td class="text-center">
+                                                {{ info.prod_name }}</td>
+                                            <td class="text-center">
                                                 {{ info.warehouse_name }}</td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ info.mate_lot }}</td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ info.mate_name }}</td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ info.mate_amount }}</td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ info.inbound_date }}</td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ info.employee_name }}</td>
+                                            <td class="text-center">
+                                                {{ info.prod_amount }}</td>
+                                            <td class="text-center">
+                                                {{ info.prod_amount - info.remain_amount }}</td>
+                                            <td class="text-center">
+                                                {{ info.remain_amount }}</td>
+                                            <td class="text-center">
+                                                {{ formatDate(info.inbound_date) }}</td>
                                         </tr>
-                                    </template>
-                                    <!-- 자재별 묶음 조회일 때 -->
-                                    <template v-else>
-                                        <tr v-for="(info, index) in wareList" :key="info.prod_id">
-                                            <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}
-                                            </td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ info.mate_name }}</td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ info.mate_amount }}</td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ formatDate(info.last_inbound_date) }}
-                                            </td>
-                                            <td class="align-middle font-weight-bolder text-center">
-                                                {{ info.lot_count }}</td>
+                                    </tbody>
+                                </template>
+                                <template v-else>
+                                    <thead>
+                                        <tr>
+                                        <th class="text-center font-weight-bolder">제품ID</th>
+                                        <th class="text-center font-weight-bolder">제품명</th>
+                                        <th class="text-center font-weight-bolder">제품창고</th>
+                                        <th class="text-center font-weight-bolder">입고총량</th>
+                                        <th class="text-center font-weight-bolder">출고총량</th>
+                                        <th class="text-center font-weight-bolder">잔여총량</th>
                                         </tr>
-                                    </template>
-                                </tbody>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(info, index) in filtered" :key="info.prod_id + '_' + info.warehouse_id">
+                                            <td class="text-center">
+                                                {{ info.prod_id }}</td>
+                                            <td class="text-center">
+                                                {{ info.prod_name }}</td>
+                                            <td class="text-center">
+                                                {{ info.warehouse_name }}</td>
+                                            <td class="text-center">
+                                                {{ info.total_prod_amount }}</td>
+                                            <td class="text-center">
+                                                {{ info.total_prod_amount - info.total_remain_amount }}</td>
+                                            <td class="text-center">
+                                                {{ info.total_remain_amount }}</td>
+                                        </tr>
+                                    </tbody>
+                                </template>
                             </table>
                         </div>
                     </div>
@@ -155,9 +126,11 @@
         data() {
             return {
                 prodWarehouses: [],
+                filtered: [],
                 searchType: 'lot',
+                prodFilter: '',
+                warehouseFilter: '',
                 warehouses: [],
-                selectedWarehouse: '',
             };
         },
         created() {
@@ -171,7 +144,6 @@
                 try {
                     const params = {
                         type: this.searchType,
-                        warehouse_id: this.selectedWarehouse,
                     };
 
                     let res = await axios.get('/api/prodWarehouse', {
@@ -179,6 +151,7 @@
                     }).catch(err => console.log(err));
 
                     this.prodWarehouses = res.data;
+                    this.doFilter();
                 } catch (err) {
                     console.error('창고현황 조회 실패:', err);
                 }
@@ -190,6 +163,18 @@
             },
             formatDate(dateString) {
                 return formatDate(dateString);
+            },
+            doFilter() {
+                this.filtered = this.prodWarehouses.filter(item => {
+                        const matchProd = !this.prodFilter || item.prod_name.includes(this.prodFilter);
+                        const matchWarehouse = !this.warehouseFilter || item.warehouse_id === this.warehouseFilter;
+                    return matchProd && matchWarehouse;
+                });
+            },
+            reset() {
+                this.warehouseFilter = '';
+                this.prodFilter = '';
+                this.doFilter();
             }
         }
     }
