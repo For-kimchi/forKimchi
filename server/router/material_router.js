@@ -101,6 +101,13 @@ router.get('/mateList', async (req, res) => {
   }
 });
 
+// 생산지시발주서등록 (발주관리페이지 자재자동입력)
+router.get('/mateBomSaves', async(req, res) => {
+  let list = req.query;
+  let result = await mateService.mateSave(list);
+  res.send(result);
+})
+
 // 자재발주관리 저장버튼 클릭시 (req_id가 있으면 put, req_id가 없으면 post)
 router.post('/mateSave', async (req, res) => {
   const mate_detail_list = req.body;
@@ -123,11 +130,12 @@ router.get('/mateOrder', async (req, res) => {
   res.send(mateOrderList);
 })
 
-// 생산지시조회에서 발주등록시 발주저장버튼 (DB등록)
-router.post('/mateBom', async (req, res) => {
-  let param = req.body;
-  let result = await mateService.mateBomSave(param);
-  res.send(result);
+// 생산지시조회에서 발주등록버튼 클릭시 자동 값 입력(자재쪽)
+router.get('/mateBomInsert/:id', async(req,res) => {
+  let prodId = req.params.id;
+  let bomList = await mateService.mateBomAdd(prodId);
+  res.send(bomList);
 })
+
 
 module.exports = router;

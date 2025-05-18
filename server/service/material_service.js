@@ -156,6 +156,20 @@ const mateBomSave = async(prodId) => {
     return result;
 }
 
+// 생산지시조회에서 발주버튼 클릭시 값 자동입력(자재)
+const mateBomAdd = async(prodId) => {
+    let result = await mariaDB.query('mateBomAdd', prodId);
+    console.log('쿼리 결과:', result);
+    return result;
+}
+
+
+// 생산지시조회에서 발주등록버튼 클릭시 값 자동입력
+// const mateSave = async() => {
+//     let result = await mariaDB.query('mateBomSaves');
+//     await result;
+// }
+
 // 발주저장버튼
 const insertMates = async (mateSaveInfo) => {
     let list = ['mate_id', 'mate_name'];
@@ -202,17 +216,6 @@ const insertMates = async (mateSaveInfo) => {
             // 상위에서 등록한 newMateId 사용
             MateDetailInfo.req_id = newMateId;
 
-            // mate_name을 mate_id로 변경  할필요없어서 주석
-            // mateChangeId
-            // let mate_name = MateDetailInfo.mate_id;
-            // console.log("===========================");
-            // console.log(mate_name);
-            // selectedSql = await mariaDB.selectedQuery('mateChangeId', mate_name);
-            // let mate_id = await conn.query(selectedSql, mate_name);
-            // console.log("===========================");
-            // console.log(mate_id);
-            // MateDetailInfo.mate_id = mate_id
-            // 등록할 컬럼 정의(mateDetail 등록)
 
             let mateDetailCloumn = ['req_detail_id', 'req_id', 'mate_id', 'req_amount', 'memo'];
             let addInfo = converts.convertObjToAry(MateDetailInfo, mateDetailCloumn);
@@ -224,20 +227,6 @@ const insertMates = async (mateSaveInfo) => {
             // 다음 detail_id 생성을 위해 저장
             lastMateDetailId = newMateDetailId;
         }
-
-        // for(let mateSave of mateSaveInfo){
-        //   // let mateParam ={mate_req_id: mateSave.req_id,
-        //   //                 mate_vendor_id: mateSave.vendor_id,                                  
-        //   //                 mate_employee_id: mateSave.employee_id};
-        //   // let mateSaveInfos = [mateParam];
-        //   // console.log('mateSave = ' + mateSave);
-        //   //         let addList = converterAray.convertObjToAry(mateSave, list);
-        //   //         console.log('addList = ' + addList);
-        //   //         selectedSql = await mariaDB.selectedQuery('insertMates',addList);
-        //   //         let result = await conn.query(selectedSql, addList);
-        //           // let results = await mariaDB.query('insertMate', addList);
-        //       };
-
         await conn.commit();
 
         return result;
@@ -321,4 +310,6 @@ module.exports = {
     mateListClick,
     mateBom,
     mateBomSave,
+    mateBomAdd,
+    // mateSave,
 }
