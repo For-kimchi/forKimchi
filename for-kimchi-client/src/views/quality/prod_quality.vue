@@ -155,6 +155,10 @@
 
      // pdf
 async downloadPdf() {
+  this.$swal({
+    text: "다운로드 성공",
+    icon: "success"
+  });
   try {
     const response = await axios.get('/templates/quality_report_prod.html');
     let templateHtml = response.data;

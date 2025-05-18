@@ -144,8 +144,11 @@ const selectMateName = async (mId) => {
 };
 
 // 자재검색조건 (합격, 불합격)
-const selectResultMate = async () => {
-  
+const selectResultMate = async (mResult) => {
+  mResult = '%' + mResult + '%'
+  console.log(mResult);
+  let search_ = await mariaDB.query('selectResultMate', mResult);
+  return search_;
 };
 // -------------------------------------------------------------------
 
@@ -473,6 +476,7 @@ module.exports = {
   mateQualityViewDetail,
   updateMateQuality,
   selectMateName,
+  selectResultMate,
   // 제품
   prodQualityReq,
   prodQualityWait,

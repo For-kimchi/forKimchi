@@ -15,6 +15,12 @@
                 <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명 : 엔터"  @keyup.enter="searchMateName(searchName)"/>
               </div>
             </div>
+            <div class="col-md-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-2 mb-0 " style="width: 100px;">검사결과</label>
+                <input v-model="searchRst" type="text" class="form-control border text-center" placeholder="검사결과 : 엔터"  @keyup.enter="selectResultMate(searchRst)"/>
+              </div>
+            </div>
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
@@ -154,6 +160,10 @@
     methods: {
 
       async downloadPdf() {
+          this.$swal({
+    text: "다운로드 성공",
+    icon: "success"
+  });
   try {
     const response = await axios.get('/templates/quality_report_mate.html');
     let templateHtml = response.data;
@@ -226,6 +236,16 @@
                                .catch(err => console.log(err));
       this.mateQualityViewall = ajaxRes.data;
       },
+      // 작동 X , 이름검색을 하고 난뒤 전체검사를 하면 오류뜸 해결해야함
+      async selectResultMate(id) {
+        if(!id) {
+          this.mateQualityViewAll();
+          return;
+        }
+        let ajaxRes = await axios.get(`/api/selectResultMate/${id}`)
+                                 .catch(err => console.log(err));
+        this.mateQualityViewAll = ajaxRes.data;
+      },
 
       async mateQualityViewAll() {
         let ajaxRes =
@@ -240,9 +260,6 @@
           await axios.get(`api/mateQualityViewDetail/${detailId}`)
           .catch(err => console.log(err));
         this.mateQualityViewdetail = ajaxRes.data;
-      },
-      async insertResult() {
-        
       },
       // addRow() {
       //   this.mateQualityViewdetail.push({});

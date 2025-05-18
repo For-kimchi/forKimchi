@@ -223,7 +223,10 @@ export default {
           ...this.options[index],
         })
       } else {
-        alert('이미 추가된 검사입니다')
+          this.$swal({
+    text: "이미 추가된 검사입니다.",
+    icon: "warning"
+  });
       }
     },
     async save() {
@@ -232,9 +235,15 @@ export default {
       .catch(err => console.log(err));
       
       if (res.data.success) {
-        alert('등록 성공');
+          this.$swal({
+    text: "등록 성공",
+    icon: "success"
+  });
       } else {
-        alert('등록 실패');
+          this.$swal({
+    text: "등록 실패",
+    icon: "error"
+  });
       }
 
     },

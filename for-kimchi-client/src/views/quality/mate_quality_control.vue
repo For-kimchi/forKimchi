@@ -179,6 +179,7 @@
       // 자재검사요청상세 (대기)
       async mateQualityWait(index) {
         this.selectedIndex = index;
+        this.selected = this.mateQualityreq[index];
         let id = this.mateQualityreq[index].inbound_detail_id;
         let ajaxRes =
           await axios.get(`/api/mateQualityWait/${id}`)
@@ -186,35 +187,56 @@
         this.mateQualitywait = ajaxRes.data;
       },
       // 검사버튼
-      async test() {
-        let param = {
-          inbound_detail_id: this.selected.inbound_detail_id,
-          details: this.mateQualitywait
-        };
-        // 검사결과값 입력여부 체크
+// 검사버튼
+async test() {
+  let param = {
+    inbound_detail_id: this.selected.inbound_detail_id,
+    details: this.mateQualitywait
+  };
 
-        // 비정상
-        let save = false;
-        for (let idx of this.mateQualitywait) {
-          let val = Object.hasOwn(idx, 'quality_result_value');
-          if (!val || idx.quality_result_value <= 0) {
-            alert("검사결과값 을 입력하세요.");
-            return;
-          }
-        }
-        // 정상
-        let testlist = await axios.post('/api/mateInsert', param)
-          .catch(err => console.log(err))
-        console.log(testlist);
-        if (testlist.data.affectedRows > 0) {
-          alert('저장이 완료되었습니다');
-          this.mateQualityreq.filter(item => item.inbound_detail_id !== this.selected.inbound_detail_id);
-          this.selected = [];
-          this.mateQualitywait = [];
-        } else {
-          alert('저장 과정에서 오류가 발생했습니다');
-        };
-      },
+  // 검사결과값 입력 여부 체크
+  for (let idx of this.mateQualitywait) {
+    let val = Object.hasOwn(idx, 'quality_result_value');
+    if (!val || idx.quality_result_value <= 0) {
+      this.$swal({
+        text: "검사결과값을 입력하세요.",
+        icon: "warning"
+      });
+      return;
+    }
+  }
+
+  try {
+    const testlist = await axios.post('/api/mateInsert', param);
+    
+    if (testlist.data.affectedRows > 0) {
+      this.$swal({
+        text: "저장이 완료되었습니다",
+        icon: "success"
+      });
+      if (this.selectedIndex !== null && this.selectedIndex >= 0) {
+        this.mateQualityreq.splice(this.selectedIndex, 1);
+      }
+      this.selected = [];
+      this.selectedIndex = null;
+      this.mateQualitywait = [];
+
+    } else {
+      this.$swal({
+        text: "저장 과정에서 오류가 발생했습니다",
+        icon: "error"
+      });
+    }
+
+  } catch (err) {
+    console.error(err);
+          this.$swal({
+        text: "저장 중 오류가 발생했습니다.",
+        icon: "error"
+      });
+  }
+}
+,
       // addRow() {
       //   this.mateQualitywait.push({});
       // }

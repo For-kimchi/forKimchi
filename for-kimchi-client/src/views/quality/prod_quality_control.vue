@@ -179,37 +179,55 @@
                    .catch(err => console.log(err));
                    this.prodQualitywait = ajaxRes.data;
       },
-      // 검사버튼
-      async test() {
-        let param = {
-          prod_proc_id: this.selected.prod_proc_id,
-          details_: this.prodQualitywait
-        };
-        // 검사결과값 입력여부 체크
-        // 비정상
-        let save = false;
-        for (let idx of this.prodQualitywait) {
-          let val = Object.hasOwn(idx, 'quality_result_value');
-          if (!val || idx.quality_result_value == 0) {
-            alert("검사결과값 을 입력하세요.");
-            return;
-          }
-        }
-        // 정상
-        let testlist = await axios.post('/api/prod', param)
-          .catch(err => console.log(err))
-        console.log(testlist);
-        if (testlist.data.affectedRows > 0) {
-          alert('저장이 완료되었습니다');
+    async test() {
+    let param = {
+    prod_proc_id: this.selected.prod_proc_id,
+    details_: this.prodQualitywait
+  };
 
-          this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected.prod_proc_id);
-          this.selected = {};
-          this.prodQualitywait = [];
-        } else {
-          alert('저장 과정에서 오류가 발생했습니다');
-        }
+  // 검사결과값 입력여부 체크
+  for (let idx of this.prodQualitywait) {
+    let val = Object.hasOwn(idx, 'quality_result_value');
+    if (!val || idx.quality_result_value == 0) {
+      this.$swal({
+        text: "검사결과값을 입력하세요.",
+        icon: "warning"
+      });
+      return;
+    }
+  }
 
-      },
+  try {
+    let testlist = await axios.post('/api/prod', param);
+
+    if (testlist.data.affectedRows > 0) {
+      this.$swal({
+        text: "저장이 완료되었습니다.",
+        icon: "success"
+      });
+      // [수정 포인트] 검사 완료된 항목을 prodQualityreq에서 제거
+      // filter 결과를 다시 prodQualityreq에 할당해야 함
+      this.prodQualityreq = this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected.prod_proc_id);
+
+      // 선택 항목 초기화
+      this.selected = {};
+      this.prodQualitywait = [];
+
+    } else {
+      this.$swal({
+        text: "저장 과정에서 오류가 발생했습니다",
+        icon: "error"
+      });
+    }
+
+  } catch (err) {
+    console.log(err);
+          this.$swal({
+        text: "저장 중 오류가 발생했습니다.",
+        icon: "error"
+      });
+  }
+},
       // addRow() {
       //   this.prodQualitywait.push({});
       // }

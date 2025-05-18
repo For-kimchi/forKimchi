@@ -115,7 +115,8 @@ SELECT DISTINCT
 FROM 
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
-WHERE mate_id(md.mate_id) LIKE ?
+WHERE 
+    mate_id(md.mate_id) LIKE ?
 ORDER BY
 	inbound_id DESC
 `;
@@ -136,8 +137,8 @@ SELECT DISTINCT
 FROM 
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
-WHERE 1=1
-	:searchKeyword
+WHERE
+	sub_code(quality_final_result) LIKE ?
 ORDER BY
 	inbound_id DESC
 `;
@@ -182,7 +183,7 @@ LIMIT 1
 // 제품검사요청 (요청)  --- 공정상태 추후 t_sub_code  E : 4e 생성시 코드변경
 const prodQualityReq = 
 `
-SELECT 
+SELECT
 	prod_order_lot,
 	prod_proc_id,
 	proc_id,
@@ -204,8 +205,8 @@ SELECT
 	qo.option_id,
     qo.option_name,
     qo.option_standard,
-    qo.option_method,
-    sub_code(qo.option_operator) option_operator
+    sub_code(qo.option_operator) option_operator,
+    qo.option_method
 FROM t_prod_proc pp
 JOIN t_quality_std qs ON pp.prod_id = qs.target_id
 JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
@@ -239,10 +240,6 @@ INSERT INTO t_quality_prod_detail
 VALUES
 (?, ?, ?, ?, ?)
 `;
-// // 제품검사조회 (드롭다운)
-// const prodQualityViewDropDown =
-// `select distinct t.prod_id 
-// from t_prod_proc t JOIN t_quality_prod m on (t.prod_proc_id = m.prod_proc_id)`;
 
 // 제품검사조회
 const prodQualityViewAll =
@@ -264,7 +261,7 @@ order by tqp.prod_proc_id
 // 제품검사조회 (제품이름)
 const selectProdName =
 `
-select
+SELECT
 	tqp.prod_proc_id,
     tqp.quality_id,
     prod_id(tpp.prod_id) prod_name,
@@ -273,11 +270,11 @@ select
     tqp.quality_pass_amount,
     tqp.quality_fail_amount,
     sub_code(tqp.quality_final_result) final_result
-from
+FROM
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
 WHERE 
 	prod_id(tpp.prod_id) LIKE ?
-order by 
+ORDER BY
 	tqp.prod_proc_id DESC
 `;
 
@@ -294,7 +291,8 @@ FROM
 	t_quality_prod t join
     t_quality_prod_detail m on (t.quality_id = m.quality_id)join
     t_quality_option o on (m.option_id = o.option_id)
-where m.quality_id= ?
+WHERE 
+    m.quality_id= ?
 `;
 
 // 검사완료된 항목 상태값 변경 - 검사 합격 시

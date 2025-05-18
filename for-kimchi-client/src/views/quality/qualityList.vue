@@ -181,11 +181,17 @@
         console.log(result);
 
         if (result.data.affectedRows > 0) {
-          alert('저장이 완료되었습니다');
+                    this.$swal({
+    text: "저장이 완료되었습니다",
+    icon: "success"
+  });
           this.selectOption();
           this.resetForm();
         } else {
-          alert('저장 과정에서 오류가 발생했습니다');
+            this.$swal({
+    text: "저장 과정에서 오류가 발생했습니다",
+    icon: "error"
+  });
         }
       },
 
