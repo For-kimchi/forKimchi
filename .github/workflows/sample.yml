@@ -28,8 +28,7 @@ jobs:
     # 서버에 접속하여 배포 실행          
     - name: SSH into server and deploy
       working-directory: for-kimchi-client
-      run: |
-        scp   -vvv -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no package.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/kimchi/forKimchi/server/public/      
-
+      run: |   
+        scp   -r -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/kimchi/forKimchi/server/public/     
 
         echo '== build end =   =='
