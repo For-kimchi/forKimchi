@@ -42,7 +42,7 @@ WHERE po.prod_order_lot = ? AND b.bom_status = '1t';`
 
 // 생산지시에서 발주등록 버튼클릭시 값 자동입력 (자재에)
   const mateBomAdd =
-  `SELECT 
+  `SELECT
     po.prod_order_lot,
     po.prod_id,
     td.mate_id,
@@ -51,7 +51,7 @@ WHERE po.prod_order_lot = ? AND b.bom_status = '1t';`
     td.mate_amount,
     po.order_amount
   FROM t_prod_order po
-  LEFT JOIN t_bom b ON po.prod_id = b.prod_id
+  LEFT JOIN t_bom b ON po.prod_id = b.prod_id AND b.bom_status = '1t'
   LEFT JOIN t_bom_detail td ON b.bom_id = td.bom_id
   LEFT JOIN t_mate m ON td.mate_id = m.mate_id
   WHERE po.prod_order_lot = ?`;
