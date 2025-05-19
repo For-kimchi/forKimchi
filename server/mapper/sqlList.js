@@ -19,6 +19,7 @@ const plan = require('./sqls/production/prodPlan.js');
 const prodOrder = require('./sqls/production/prodOrder.js');
 const prodProcess = require('./sqls/production/prodProcess.js');
 const prodMate = require('./sqls/production/prodMate.js');
+const prodWork = require('./sqls/production/prodWork.js');
 // 검사
 const quality = require('./quality/quality.js');
 module.exports = {
@@ -45,6 +46,7 @@ module.exports = {
     ...prodOrder,
     ...prodProcess,
     ...prodMate,
+    ...prodWork,
     //검사
     ...quality,
 }

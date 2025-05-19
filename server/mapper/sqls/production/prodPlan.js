@@ -59,8 +59,10 @@ const selectprod =
        t.memo
    FROM t_prod_plan t left join t_order o
                         on (t.order_id = o.order_id)
-   WHERE t.plan_final_status in ('2i','1i')
-   GROUP BY t.plan_id`;
+   WHERE t.plan_final_status in ('1i')
+   GROUP BY t.plan_id
+   ORDER BY reg_date DESC
+   `;
 
 // 상세생산계획 조회
 const selectproddetail =
@@ -81,8 +83,6 @@ const selectproddetail =
  GROUP BY plan_detail_id`;
 
  // 주문서를 통한 plan등록
- // session 등록되면 그값을 emp_id에 저장해야함.
- // 아직안했기때문에 제외시킴.
  const insertorpl =
  `
  INSERT INTO t_prod_plan(plan_id,

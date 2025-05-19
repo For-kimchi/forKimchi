@@ -2,8 +2,8 @@ const mariaDB = require('../mapper/mapper');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts')
 
-const getPmo = async (query) => {
-  let list = await mariaDB.query("selectPmo", [query.order_status]);
+const getPmo = async () => {
+  let list = await mariaDB.query("selectPmo");
   return list;
 }
 
