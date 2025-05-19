@@ -64,8 +64,7 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">창고선택
-                    </th>
+
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
                       자재입고상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명
@@ -74,33 +73,20 @@
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">검사상태
                     </th>
-                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">양품수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">불량품수량</th> -->
-                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고/반품
                     </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">창고선택
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in storeWareStatus" v-bind:key="info.inbound_detail_id">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
-                    <td class="align-middle font-weight-bolder text-center">
-
-                      <select v-model="info.warehouse_id" class="form-select text-center"
-                        style="max-width: 150px; border: 1px solid gray;">
-                        <option value="" selected>선택</option>
-                        <option v-for="(w, index) in wareId" :key="w.warehouse_id" :value="w.warehouse_id">{{
-                          w.warehouse_name }}</option>
-                      </select>
-                    </td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.mate_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.quality_result }}</td>
-                    <!-- <td class="align-middle font-weight-bolder text-center">{{ info.pass_amount }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.fail_amount }}</td> -->
-                    <!-- <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>  -->
+
                     <!-- 드롭다운(입고/반품) -->
                     <td>
                       <select v-model="info.inbound_type" class="form-select me-2 text-center"
@@ -109,8 +95,15 @@
                         <option value="반품">반품</option>
                       </select>
                     </td>
-                    <!-- 드롭다운(입고/반품) -->
-                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
+                    <td v-if="info.inbound_type === '입고'">
+                      <select v-model="info.warehouse_id" class="form-select text-center"
+                        style="max-width: 150px; border: 1px solid gray;">
+                        <option value="" selected>선택</option>
+                        <option v-for="(w, index) in wareId" :key="w.warehouse_id" :value="w.warehouse_id">
+                          {{ w.warehouse_name }}
+                        </option>
+                      </select>
+                    </td>
                   </tr>
                 </tbody>
               </table>

@@ -92,9 +92,8 @@
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">발주수량
                     </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">검사수량
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">검사요청수량
                     </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
 
                 </thead>
@@ -106,9 +105,6 @@
                       <td class="align-middle font-weight-bolder text-center">{{ info.req_amount }}</td>
                       <td class="align-middle font-weight-bolder text-center">
                       <input type="number" v-model.number="info.inbound_amount" @change="amountCheck(info)"></td>
-                      <td>
-                      <input type="text" v-model="info.memo" class="form-control text-center" placeholder="비고 입력">
-                      </td>
                       </tr>
                 </tbody>
               </table>
@@ -146,6 +142,7 @@ export default {
       selectedList: [],
       mate_id: [],
       vendor_id: [],
+      selectedInfo: [],
     }
   },
   computed: {
