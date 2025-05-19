@@ -76,9 +76,23 @@ const queryFormat = function (query, values) {
 // 키는 3종류
 // 자재는 날짜 정보가 필요없어서 제외
 
+const groupArray = function (array, key, value) {
+  const grouped = array.reduce((acc, item) => {
+    if (!acc[item[key]]) {
+      acc[item[key]] = { ...item };
+    } else {
+      acc[item[key]][value] += item[value];
+    }
+    return acc;
+  }, {});
+  
+  return Object.values(grouped);
+}
+
 module.exports = {
     convertObjToAry,
     convertObjToQuery,
     convertObjToQueryLike,
     queryFormat,
+    groupArray,
 }

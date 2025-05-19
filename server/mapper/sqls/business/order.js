@@ -55,6 +55,8 @@ const selectOrder =
         order_id,
         od.prod_id,
         p.prod_name,
+        p.prod_unit,
+        p.prod_size,
         order_amount,
         deliv_due_date,
         order_status,
@@ -111,6 +113,11 @@ WHERE order_id = ?
 WHERE order_detail_id = ?
  `;
 
+  const deleteOrderDetailAll =
+ `DELETE FROM t_order_detail
+WHERE order_id = ?
+ `;
+
 module.exports = {
   selectLastOrder,
   selectLastOrderDetail,
@@ -125,4 +132,5 @@ module.exports = {
   updateOrderDetail,
   deleteOrder,
   deleteOrderDetail,
+  deleteOrderDetailAll,
 }

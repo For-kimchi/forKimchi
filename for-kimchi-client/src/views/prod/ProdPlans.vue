@@ -30,14 +30,18 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" v-on:click="proddtList(index)">
+                  
+                  <tr v-for="(info,index) in prodlist" v-bind:key="info.plan_id" :class="this.idx === index ? 'table-active' : ''"
+                   v-on:click="proddtList(index)">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.plan_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.manager_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.reg_date }}</td>
-                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_final_status === '계획승인'"><span class="badge badge-sm bg-gradient-info">{{ info.plan_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_final_status === '계획등록'"><span class="badge badge-sm bg-gradient-warning">{{ info.plan_final_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-success">{{ info.plan_final_status }}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -56,10 +60,9 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="text-end pe-3">
-              <!-- 승인버튼에 세션값을 통해 권한이 있을경우에만 작동하도록 조건을 넣어줘야함 -->
-              <button class="btn btn-success ms-2 me-2" @click="permiBtn()">승인</button>
-              <button class="btn btn-info ms-2 me-2"  @click="planDetailSave(proddtlist)">저장</button>
+            <div class="text-end pe-3" >
+               <button class="btn btn-success ms-2 me-2" v-if="status2" @click="permiBtn()">승인</button>
+               <button class="btn btn-info ms-2 me-2" v-if="status1"  @click="planDetailSave(proddtlist)">저장</button>
             </div>
             <div class="table-responsive p-0">
               <table class="table align-items-center justify-content-center mb-0 table-hover">
@@ -73,14 +76,14 @@
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산수량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산필요수량</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">추가생산수량</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">상세계획상태</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">납품예정일자</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">시작일자</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">종료일자</th>
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">상세계획상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info,index) in proddtlist" v-bind:key="plan_detail_id">
+                  <tr v-for="(info,index) in proddtlist" v-bind:key="info.plan_detail_id">
                     <td class="align-middle font-weight-bolder text-center"><input type="checkbox" v-model="info.check"></td>
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.plan_detail_id }}</td>
@@ -93,10 +96,12 @@
                     
                     <td class="align-middle font-weight-bolder text-center" v-if="info.plan_amount - info.order_amount <= 0">0</td>
                     <td class="align-middle font-weight-bolder text-center" v-else>{{info.plan_amount - info.order_amount}}</td>
-                    <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.deliv_due_date }}</td>
                     <td class="align-middle font-weight-bolder text-center"><input class="text-center" type="date" v-model="info.plan_start_date"></td>
                     <td class="align-middle font-weight-bolder text-center"><input class="text-center" type="date" v-model="info.plan_end_date"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인'"><span class="badge badge-sm bg-gradient-info">{{ info.plan_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_status === '상세계획등록'"><span class="badge badge-sm bg-gradient-warning">{{ info.plan_status }}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -117,9 +122,11 @@ export default {
       return {
         prodlist : [],
         proddtlist :[],
-        plan_detail_id:'',
         checkAll: false,
         check:false,
+        idx: null,
+        status1: false,
+        status2: false,
         
       }
     },
@@ -142,8 +149,9 @@ export default {
                   this.prodlist = ajaxRes.data;
       },
       // 생산계획 상세 조회
-      async proddtList(idx){
-        let planId = this.prodlist[idx].plan_id;
+      async proddtList(index){
+        this.idx = index;
+        let planId = this.prodlist[index].plan_id;
         let  ajaxRes =
         await axios.get(`/api/proddtlist/${planId}`)
                    .catch(err => console.log(err));
@@ -151,31 +159,74 @@ export default {
           ...item,
           check: false,
         }));
+        // 계획중, 계획승인, 계획등록
+        for(let list of this.proddtlist){
+          if(list.plan_status === '상세계획승인'){
+            this.status1 = false;
+            this.status2 = true;
+          }else if(list.plan_status === '상세계획등록'){
+            this.status1 = true;
+            this.status2 = false;
+          }else if(list.plan_status === '상세지시중'){
+            this.status1 = true;
+            this.status2 = true;
+          }
+        }
       },
+      // 저장 버튼
       async planDetailSave(planDetailList){
-        planDetailList.forEach((item =>{
-          console.log(item);
-
-        }));
-        // 항목선택여부 알림.
-        // if(Object.keys(planDetailList).length > 0){
-        //   if(planDetailList.plan_amount){
-        //     let  ajaxRes =
-        //     await axios.put(`/api/planDetailSave`, planDetailList)
-        //                .catch(err => console.log(err));
-        //     this.update = ajaxRes.data;
-        //     alert('저장 완료');
-        //   }
-
-        // }else{
-        //   alert('항목이 선택되지 않았습니다.')
-        // };
+      // 항목선택여부 알림.
+      if(Object.keys(planDetailList).length > 0){
+            // 입력값이 있는지 확인
+            for(let item of planDetailList){
+              if(item.plan_amount == '' || item.plan_amount == null){
+                this.$swal({
+                  icon: "error",
+                  title: "생산수량을 입력하지 않았습니다",
+                  text: "입력하세요"
+                });
+                return;
+              }else if(item.plan_start_date == '' || item.plan_start_date == null){
+                this.$swal({
+                  icon: "error",
+                  title: "시작일자가 입력되지않았습니다.",
+                  text: "입력하세요",
+                });
+                return;
+              }else if(item.plan_end_date == '' || item.plan_end_date == null){
+                this.$swal({
+                  icon: "error",
+                  title: "종료일자가 입력되지않았습니다.",
+                  text: "입력하세요",
+                });
+                return;
+              };
+            };
+            let  ajaxRes =
+            await axios.put(`/api/planDetailSave`, planDetailList)
+                       .catch(err => console.log(err));
+            this.update = ajaxRes.data;
+            this.$swal({
+                  icon: "success",
+                  title: "저장 완료",
+                  draggable: true
+                });
+            await this.proddtList(this.idx);
+        }else{
+          this.$swal({
+                  icon: "error",
+                  title: "항목이 선택되지 않았습니다.",
+                  text: "선택하세요",
+                });
+        };
       },
+      // 체크항목이 체크되면 하위체크항목들 체크되기
       checkeds(){
         this.proddtlist.forEach(item => {
           item.check = this.checkAll;
         });
       },
+      // 승인버튼
       async permiBtn(){
         let param = [];
         let checkCheck = false;
@@ -199,11 +250,19 @@ export default {
             this.proddtlist = ajaxRes.data
             await this.prodList();
           }else{
-            alert('체크된 항목이 없습니다.')
+            this.$swal({
+                  icon: "error",
+                  title: "체크된 항목이 없습니다.",
+                  text: "선택하세요",
+                });
           };
         }else{
-          alert('항목이 선택되지 않았습니다.')
-        };
+          this.$swal({
+              icon: "error",
+              title: "항목이 선택되지 않았습니다.",
+              text: "선택하세요",
+            });
+    };
 
       },
     },

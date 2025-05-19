@@ -3,7 +3,7 @@
 
     <div class="text-end mb-3">
       <button class="btn btn-success me-2 shadow rounded-pill" @click="mateAdd">
-        💾 저장
+        💾 등록
       </button>
       <button class="btn btn-primary me-2 shadow rounded-pill" @click="mateUpdate">
         ✏️ 수정
@@ -15,7 +15,7 @@
     </div>
     <div class="row">
       <div class="col-12 text-end">
-        <button class="btn btn-outline-primary mb-2" @click="goToProdOrderPage">
+        <button class="btn btn-outline-primary mb-2" @click="openProdOrderModal">
           📋 생산지시서 조회
         </button>
       </div>
@@ -35,8 +35,8 @@
           <div class="card-body">
             <ul class="list-group list-group-horizontal">
               <li class="list-group-item d-flex align-items-center">
-                회사
-                <Modal :visible="isCompanyModalVisible" title="회사 검색" placeholder="회사명 검색" :list="companies"
+                거래처
+                <Modal :visible="isCompanyModalVisible" title="거래처 검색" placeholder="거래처 검색" :list="companies"
                   :selectedValue="selectedCompany" @close="closeCompanySearchModal" @select="selectCompany" />
               </li>
               <li class="list-group-item d-flex align-items-center">
@@ -133,7 +133,7 @@
                 </thead>
                 <tbody>
                   <template v-if="selectedList.length > 0">
-                    <tr v-for="(info, index) in selectedList" :key="info.id">
+                    <tr v-for="(info, index) in selectedList" :key="index">
                       <td><input type="checkbox" v-model="info.selected"></td>
                       <td>{{ info.mate_id }}</td>
                       <td>{{ info.mate_name }}</td>
@@ -152,7 +152,7 @@
       </div>
     </div>
   </div>
-  <VendorModal :visible="showVendor" @close="showVendor = false" @select="onSelectVendor" />
+  <VendorModal :visible="showVendor" @close="showVendor = false" @select="onSelectVendor" :vendor_type="'1m'" />
   <!-- 자재발주조회리스트 -->
   <div class="container-fluid py-4">
     <div class="row">
@@ -169,17 +169,13 @@
                 <thead>
                   <tr>
                     <th>No</th>
-                    <!-- <th>선택</th> -->
                     <th>발주일자</th>
                     <th>발주번호</th>
                     <th>거래처</th>
-                    <th>사용자명</th>
-                    <th>자재명</th>
-                    <th>수량</th>
-                    <th>단위</th>
+                    <th>발주자명</th>
                     <th>납기예정일자</th>
                     <th>발주상태</th>
-                    <th>비고</th>
+                    <!-- <th>비고</th> -->
                     <!-- <th>승인일자</th>
                     <th>승인자</th> -->
                     <th>삭제</th>
@@ -194,12 +190,9 @@
                       <td>{{ info.req_id }}</td>
                       <td>{{ info.vendor_name }}</td>
                       <td>{{ info.employee_name }}</td>
-                      <td>{{ info.mate_name }}</td>
-                      <td>{{ info.req_amount }}</td>
-                      <td>{{ info.mate_unit }}</td>
                       <td>{{ info.req_due_date }}</td>
                       <td><button class="btn btn-sm btn-warning" disabled>{{ info.req_status }}</button></td>
-                      <td>{{ info.memo }}</td>
+                      <!-- <td>{{ info.memo }}</td> -->
                       <!-- <td>{{ info.confirm_date }}</td>
                       <td>{{ info.manager_id }}</td> -->
                       <!-- <td>{{ info.req_status }}({{ typeof info.req_status }})</td> -->
@@ -219,6 +212,9 @@
         </div>
       </div>
     </div>
+    <MateOrderModal v-if="isProdOrderModalOpen" @close="isProdOrderModalOpen = false"
+      @save-order="handleProdOrderSave" />
+
   </div>
 </template>
 
@@ -233,18 +229,24 @@ import { useUserStore } from "@/stores/user";
 // state, getter => mapState 
 // actions => mapActions 
 import { mapState } from 'pinia';
+// import MateModal from '../modal/MateModal.vue';
 
+import MateOrderModal from '../modal/MateOrderModal.vue';
+// const isProdOrderModalOpen = ref(false)
 // import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
 
 
 export default {
+
   name: "Material Management",
   components: {
     Modal,
     VendorModal,
+    MateOrderModal,
   },
   data() {
     return {
+      isProdOrderModalOpen: false,
       selectedList: [],
       selectedCompany: '',
       selectedMaterial: '',
@@ -258,20 +260,13 @@ export default {
       venList: [],
       showVendor: false,
       vendor: {},
-      mateSaveInfo: [],
-      mateList: [],
-      matReqList: [],
       req_due_date: this.formatDateAfter(null, 14),
-      initialMateInfo: null,
-      updates: {},
       action: '수정',
       companies: [],
       materialList: [],
-      mateListInsert: [],
-      
-      // mate_name:[],
-      // req_amount:[],
-      // mate_unit:[],
+      req_amount: null,
+      prodOrder: [],
+      bomList: [],
     };
 
   },
@@ -282,11 +277,53 @@ export default {
       this.materialList = JSON.parse(stored);
       sessionStorage.removeItem('auto_materials'); // 한 번만 쓰고 삭제
     }
-    this.getMateList();
-
   },
 
   methods: {
+    openProdOrderModal() {
+      this.isProdOrderModalOpen = true;
+    },
+    handleProdOrderSave({ prodOrder, bomList }) {
+      console.log("받은 생산지시서: ", prodOrder);
+      console.log("받은 BOM 리스트:dddd ", this.bomList);
+      console.log("selectedList==============", this.selectedList);
+      this.selectedList = bomList.map(item => ({
+        ...item,
+        req_amount: item.mate_amount * item.order_amount,
+        mate_amount: item.mate_amount,
+      }));
+      console.log("selectedList req_amount: ", this.selectedList.map(item => item.req_amount));
+      // bomList에 없는값들 선언
+      this.prod_order_lot = prodOrder.prod_order_lot;
+      this.prod_id = prodOrder.prod_id;
+      // this.order_amount = prodOrder.order_amount;
+
+      // +,-버튼은 객체를 원하고 발주저장버튼은 배열은 원하므로 둘 다 사용하게끔 바꿈
+      // mate_id등은 bomList에 있으니까 여기서 선언
+      // if (Array.isArray(bomList) && bomList.length > 0) {
+      //   this.selectedList = bomList.map(item => {
+      //     console.log('초기 req_amount:', item.mate_amount);  // 실행 가능
+      //     return {
+      //       ...item,
+      //       selected: true,
+      //       req_amount: item.order_amount || 0
+      //     };
+      //   });
+      // }
+
+      // 리스트 테이블에 BOM 목록 채우기
+      // this.selectedList = Array.isArray(bomList) ? bomList : [];
+    },
+
+    // <tr v-for="(info, index) in selectedList" :key="info.id">
+    //      <td><input type="checkbox" v-model="info.selected"></td>
+    //      <td>{{ info.mate_id }}</td>
+    //      <td>{{ info.mate_name }}</td>
+    //      <td><input type="number" v-model="info.req_amount" style="width: 100px;"></td>
+    //      <td>{{ info.mate_unit }}</td>
+    //  </tr>
+
+
     //생산지시조회 페이지 이동
     goToProdOrderPage() {
       this.$router.push({ name: 'MateProdOrder' });
@@ -313,14 +350,37 @@ export default {
 
       let ajaxRes = await axios.get(`/api/mateListInsert/${selected.req_id}`)
         .catch(err => console.log(err));
-      console.log('조회 결과:', ajaxRes.data);
       this.selectedList = ajaxRes.data;
+      console.log("selectedList발주항목클릭1111111111111111111111", this.selectedList)
       this.vendor.vendor_id = selected.vendor_id;
       this.vendor.vendor_name = selected.vendor_name;
-      this.req_due_date = selected.req_due_date; 
+      this.req_due_date = selected.req_due_date;
     },
 
-    
+
+    //   handleModalConfirm(selectedItems) {
+    //   // 모달에서 넘어온 자재들을 selectedList에 저장
+    //   this.selectedList = selectedItems.map(item => ({
+    //     mate_id: item.mate_id,
+    //     mate_code: item.mate_code,
+    //     mate_name: item.mate_name,
+    //     mate_unit: item.mate_unit,
+    //     req_amount: 1 // 기본 수량 1로 설정 (수정 가능)
+    //   }));
+    // },
+    // handleMateAdd(mateList) {
+    //   // mateList: mateModal에서 넘어온 자재 배열
+    //   this.selectedList = mateList.map(item => ({
+    //     mate_id: item.mate_id,
+    //     mate_code: item.mate_code,
+    //     mate_name: item.mate_name,
+    //     mate_unit: item.mate_unit,
+    //     req_amount: 1 // 체크박스 초기 선택 여부
+    //   }));
+    //   this.showModal = false;
+    // },
+
+
 
     // 발주서 리스트 전체조회
     async getMateList() {
@@ -513,8 +573,8 @@ export default {
       const mateInfo = {
         req_id: this.selectedList[0].req_id,
         mate_detail_list: this.selectedList.map(item => ({
-          mate_id: item.mate_id,
-          req_amount: item.req_amount,
+        mate_id: item.mate_id,
+        req_amount: item.req_amount,
         })),
         vendor_id: this.vendor.vendor_id,
         req_due_date: this.req_due_date,
@@ -532,23 +592,23 @@ export default {
 
     formatDateAfter(dateString, after) {
 
-let date;
+      let date;
 
-if (dateString) {
-  date = new Date(dateString);
-} else {
-  date = new Date();
-}
+      if (dateString) {
+        date = new Date(dateString);
+      } else {
+        date = new Date();
+      }
 
-date.setDate(date.getDate() + after);
+      date.setDate(date.getDate() + after);
 
-const year = date.getFullYear();
-const month = String(date.getMonth() + 1).padStart(2, '0');
-const day = String(date.getDate()).padStart(2, '0');
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
 
-return `${year}-${month}-${day}`;
+      return `${year}-${month}-${day}`;
 
-}
+    }
   },
   computed: {
     filteredCompanies() {

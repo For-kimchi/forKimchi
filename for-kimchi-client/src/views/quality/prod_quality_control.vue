@@ -19,23 +19,24 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산지시LOT</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">설비ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">투입량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_id" v-on:click="prodQualityWait(index)" style="cursor: pointer;">
+                  <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_proc_id" 
+                  v-on:click="prodQualityWait(index)" :class="selectedIndex === index ? 'table-active' : '' " style="cursor: pointer;">
                       <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                       <td class="align-middle text-center">{{ info.prod_order_lot }}</td>
                       <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
-                      <td class="align-middle text-center">{{ info.equip_id }}</td>
                       <td class="align-middle text-center">{{ info.proc_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_name }}</td>
                       <td class="align-middle text-center">{{ info.proc_input_amount }}</td>
+                      <td class="align-middle text-center">{{ info.proc_status }}</td>
                     </tr>
                 </tbody>
               </table>
@@ -76,7 +77,7 @@
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}} {{ info.option_operator}}</td>
-                    <td class="align-middle text-center">{{ info.result}}</td>
+                    <td class="align-middle text-center"><input type="number" placeholder="검사기준입력" v-model="info.quality_result_value"></td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
                         style="width: 60px; text-align: center;">
@@ -117,6 +118,7 @@
         prodQualityreq :[],
         prodQualitywait : [],
         selected: {},
+        selectedIndex: null,
       }
     },
     computed: {
@@ -169,45 +171,63 @@
 
       // 제품검사요청 (대기)
       async prodQualityWait(index){
+        this.selectedIndex = index;
         this.selected = this.prodQualityreq[index];
-
+        let id = this.prodQualityreq[index].prod_proc_id
         let ajaxRes = 
-          await axios.get(`/api/prodQualityWait/${this.selected.prod_id}`)
+          await axios.get(`/api/prodQualityWait/${id}`)
                    .catch(err => console.log(err));
                    this.prodQualitywait = ajaxRes.data;
       },
-      // 검사버튼
-      async test() {
-        let param = {
-          prod_proc_id: this.selected.prod_proc_id,
-          details: this.prodQualitywait
-        };
-        // 검사결과값 입력여부 체크
-        // 비정상
-        let save = false;
-        for (let idx of this.prodQualitywait) {
-          let val = Object.hasOwn(idx, 'quality_result_value');
-          if (!val || idx.quality_result_value == 0) {
-            alert("검사결과값 을 입력하세요.");
-            return;
-          }
-        }
-        // 정상
-        let testlist = await axios.post('/api/prod', param)
-          .catch(err => console.log(err))
-        console.log(testlist);
-        if (testlist.data.affectedRows > 0) {
-          alert('저장이 완료되었습니다');
-          //
-          // this.prodQualityreq = [];
-          this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected.prod_proc_id);
-          this.selected = {};
-          this.prodQualitywait = [];
-        } else {
-          alert('저장 과정에서 오류가 발생했습니다');
-        }
+    async test() {
+    let param = {
+    prod_proc_id: this.selected.prod_proc_id,
+    details_: this.prodQualitywait
+  };
 
-      },
+  // 검사결과값 입력여부 체크
+  for (let idx of this.prodQualitywait) {
+    let val = Object.hasOwn(idx, 'quality_result_value');
+    if (!val || idx.quality_result_value == 0) {
+      this.$swal({
+        text: "검사결과값을 입력하세요.",
+        icon: "warning"
+      });
+      return;
+    }
+  }
+
+  try {
+    let testlist = await axios.post('/api/prod', param);
+
+    if (testlist.data.affectedRows > 0) {
+      this.$swal({
+        text: "저장이 완료되었습니다.",
+        icon: "success"
+      });
+      // [수정 포인트] 검사 완료된 항목을 prodQualityreq에서 제거
+      // filter 결과를 다시 prodQualityreq에 할당해야 함
+      this.prodQualityreq = this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected.prod_proc_id);
+
+      // 선택 항목 초기화
+      this.selected = {};
+      this.prodQualitywait = [];
+
+    } else {
+      this.$swal({
+        text: "저장 과정에서 오류가 발생했습니다",
+        icon: "error"
+      });
+    }
+
+  } catch (err) {
+    console.log(err);
+          this.$swal({
+        text: "저장 중 오류가 발생했습니다.",
+        icon: "error"
+      });
+  }
+},
       // addRow() {
       //   this.prodQualitywait.push({});
       // }

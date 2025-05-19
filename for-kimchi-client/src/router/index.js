@@ -34,6 +34,7 @@ import OrderProd from "../views/prod/OrderProd.vue";
 import ProdOrderInfo from "../views/prod/ProdOrderInfos.vue";
 import ProdMate from "../views/prod/ProdMates.vue";
 
+import ProdMateOrder from "../views/material/ProdMateOrder.vue";
 // 김어진 (자재발주)
 import MaterialList from "../views/material/MaterialList.vue";
 import MaterialManagement from "../views/material/MaterialManagement.vue";
@@ -45,6 +46,7 @@ import WarehouseList from "../views/material/WarehouseList.vue";
 import WarehouseAdd from "../views/material/WarehouseAdd.vue";
 // 김어진 (생산지시조회)
 import MateProdOrder from "../views/material/MateProdOrder.vue";
+import MateBom from "../views/material/MateBom.vue";
 //business (영업)
 import OrderList from "../views/business/OrderList.vue";
 import OrderMng from "../views/business/OrderMng.vue";
@@ -231,6 +233,15 @@ const routes = [
       pageName: '검사항목관리',
     }
   },
+  {
+    path: "/prodMateOrder",
+    name: "ProdMateOrder",
+    component: ProdMateOrder,
+    meta: { 
+      requiresAuth: true,
+      pageName: '자재출고관리',
+     }
+  },
   // 김어진 (자재발주)
   {
     path: "/materlist",
@@ -249,6 +260,15 @@ const routes = [
       requiresAuth: true,
       pageName: '자재발주관리',
      }
+  },
+  {
+    path: "/mateBom",
+    name: "MateBom",
+    component: MateBom,
+    meta: {
+      requiresAuth: true,
+      pageName: '생산지시발주',
+    }
   },
   // 김어진(입고)
   {

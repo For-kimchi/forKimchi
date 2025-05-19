@@ -28,7 +28,6 @@ const selectStoreList =
   i.inbound_id,
   date_type(i.inbound_date) AS inbound_date,
   vendor_id(i.vendor_id) vendor_name,
-  v.vendor_name,
   employee_id(i.employee_id) AS employee_name,
   i.memo,
   CASE
@@ -287,6 +286,15 @@ WHERE warehouse_id = ?
 GROUP BY mate_id
 ORDER BY last_inbound_date DESC`;
 
+const selectWarehouseByType =
+`
+SELECT
+  warehouse_id,
+  warehouse_name
+FROM t_warehouse
+WHERE warehouse_type = ?
+ORDER BY warehouse_id
+`;
 
 module.exports = {
   insertStoreMain,
@@ -311,4 +319,5 @@ module.exports = {
   storeDetailList,
   warehouseIdAll,
   warehouseDtId,
+  selectWarehouseByType,
 }

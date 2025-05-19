@@ -141,7 +141,15 @@ const selectMateName = async (mId) => {
   console.log(mId);
   let search = await mariaDB.query('selectMateName', mId);
   return search;
-}
+};
+
+// 자재검색조건 (합격, 불합격)
+const selectResultMate = async (mResult) => {
+  mResult = '%' + mResult + '%'
+  console.log(mResult);
+  let search_ = await mariaDB.query('selectResultMate', mResult);
+  return search_;
+};
 // -------------------------------------------------------------------
 
 //제품검사요청
@@ -167,7 +175,7 @@ const prodQualityInsert = async (prodInfo) => {
 
     // 구조 분해 할당 (detail 분리)
     const {
-      details,
+      details_,
       ...prod
     } = prodInfo;
 
@@ -185,7 +193,7 @@ const prodQualityInsert = async (prodInfo) => {
     let prodParam = converts.convertObjToAry(prod, prodColumn);
 
     // 검사결과
-    const result_ = details.every(item => item.result == '합격')
+    const result_ = details_.every(item => item.result == '합격')
     prodParam.push(result_ ? '1x' : '2x');
 
     // prodQuality insert
@@ -202,7 +210,7 @@ const prodQualityInsert = async (prodInfo) => {
     let lastProdDetail = await conn.query(selectedSql, {});
     let lastProdDetailId = lastProdDetail[0].quality_detail_id;
 
-    for (let detail of details) {
+    for (let detail of details_) {
       
       // prodQuality detail key 생성
       let newProdDetailId = keys.getNextKeyId(lastProdDetailId);
@@ -365,28 +373,21 @@ const deleteOptionControl = async (id) => {
 // 검사기준조회
 const getStds = async (params) => {
   let target_id = params.target_id;
-
   let list = await mariaDB.query('selectStd', target_id);
-
   let std;
 
   if (list.length > 0) {
     std = list[0];
-
     if (std.std_id) {
       list = await mariaDB.query('selectStdDetail', std.std_id);
     }
-
     std.std_details = list;
-
   } else {
-
     std = {
       target_id: target_id,
       std_details: [],
     }
   }
-
   return std;
 };
 
@@ -475,6 +476,7 @@ module.exports = {
   mateQualityViewDetail,
   updateMateQuality,
   selectMateName,
+  selectResultMate,
   // 제품
   prodQualityReq,
   prodQualityWait,

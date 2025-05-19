@@ -23,9 +23,9 @@
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">양품수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">불량수량</th>
@@ -33,12 +33,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                     <tr v-for="(info, index) in prodQualityViewall" :key="info.quality_id" v-on:click="prodQualityViewDetail(info.quality_id)" style="cursor: pointer;">
+                     <tr v-for="(info, index) in prodQualityViewall" :key="info.quality_id" 
+                     v-on:click="prodQualityViewDetail(index)" :class="selectedIndex === index ? 'table-active' : ''" style="cursor: pointer;">
                         <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                         <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
-                        <td class="align-middle text-center">{{ info.quality_id }}</td>
-                        <td class="align-middle text-center">{{ info.prod_name }}</td>
+                        <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                         <td class="align-middle text-center">{{ info.prod_id }}</td>
+                        <td class="align-middle text-center">{{ info.prod_name }}</td>
                         <td class="align-middle text-center">{{ info.quality_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_pass_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_fail_amount }}</td>
@@ -89,7 +90,7 @@
                         <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                         <td class="align-middle text-center">{{ info.option_id }}</td>
                         <td class="align-middle text-center">{{ info.option_name }}</td>
-                        <td class="align-middle text-center">{{ info.option_standard }}</td>
+                        <td class="align-middle text-center">{{ info.option_standard }} {{ info.option_operator }}</td>
                         <td class="align-middle text-center">{{ info.quality_result_value }}</td>
                         <td class="align-middle text-center">
                           <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info" style="width: 70px; text-align: center;">
@@ -127,6 +128,7 @@
         prodQualityViewall :[],
         prodQualityViewdetail :[],
         searchName : '',
+        selectedIndex : null,
       }
     },
     computed: {
@@ -151,70 +153,68 @@
     },
     methods: {
 
-          // pdf
-      async downloadPdf() {
-      try {
-        // 템플릿 파일을 가져옴
-        const response = await axios.get('/templates/quality_report_prod.html');
-        let templateHtml = response.data;
+     // pdf
+async downloadPdf() {
+  this.$swal({
+    text: "다운로드 성공",
+    icon: "success"
+  });
+  try {
+    const response = await axios.get('/templates/quality_report_prod.html');
+    let templateHtml = response.data;
 
-        // 동적으로 데이터를 템플릿에 삽입
-        const tableRows = this.prodQualityViewdetail.map(info => `
-          <tr>
-            <td>${info.option_id}</td>
-            <td>${info.option_name}</td>
-            <td>${info.option_standard}</td>
-            <td>${info.quality_result_value}</td>
-            <td>${info.result === '합격' ? '<span style="color: green;">합격</span>' : '<span style="color: red;">불합격</span>'}</td>
-          </tr>
-        `).join('');
+    // tableRows 생성
+    const tableRows = this.prodQualityViewdetail.map(info => `
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.option_id}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.option_name}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.option_standard} ${info.option_operator}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.quality_result_value}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+          ${info.result === '합격' 
+            ? '<span style="color: green;">합격</span>' 
+            : '<span style="color: red;">불합격</span>'}
+        </td>
+      </tr>
+    `).join('');
 
-        const allPassed = this.prodQualityViewdetail.every(info => info.result === '합격');
-        const finalResult = allPassed ? '최종합격' : '최종불합격';
+    const allPassed = this.prodQualityViewdetail.every(info => info.result === '합격');
+    const finalResult = allPassed 
+      ? '<span style="color: green;">최종합격</span>' 
+      : '<span style="color: red;">최종불합격</span>';
 
-        templateHtml = templateHtml
-          .replace('{{ prod_name }}', this.prodQualityViewall[0]?.prod_name || 'N/A')
-          .replace('{{ prod_id }}', this.prodQualityViewall[0]?.prod_id || 'N/A')
-          .replace('{{ quality_id }}', this.prodQualityViewall[0]?.quality_id || 'N/A')
-          .replace('{{ date }}', new Date().toLocaleDateString())
-          .replace('{{ table_rows }}', tableRows)
-          .replace('{{ final_result }}', finalResult || 'N/A');
+    // 템플릿 치환
+    templateHtml = templateHtml
+      .replace('{{ prod_name }}', this.prodQualityViewall[0]?.prod_name || 'N/A')
+      .replace('{{ prod_id }}', this.prodQualityViewall[0]?.prod_id || 'N/A')
+      .replace('{{ quality_id }}', this.prodQualityViewall[0]?.quality_id || 'N/A')
+      .replace('{{ date }}', new Date().toLocaleDateString())
+      .replace('{{ table_rows }}', tableRows)
+      .replace('{{ final_result }}', finalResult);
 
-        // 임시 DOM에 HTML 추가
-        const tempElement = document.createElement('div');
-        tempElement.innerHTML = templateHtml;
-        document.body.appendChild(tempElement);
+    // 임시 DOM 요소 추가
+    const tempElement = document.createElement('div');
+    tempElement.innerHTML = templateHtml;
+    document.body.appendChild(tempElement);
 
-        // PDF로 변환
-        const opt = {
-          margin: 0.3,
-          filename: `품질성적서_${new Date().toISOString().slice(0, 10)}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
+    // PDF 옵션 설정
+    const opt = {
+      margin: 0.3,
+      filename: `품질성적서_${new Date().toISOString().slice(0, 10)}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
 
-        // PDF 다운로드
-        await html2pdf().set(opt).from(tempElement).save();
+    // PDF 생성 및 다운로드
+    await html2pdf().set(opt).from(tempElement).save();
+    document.body.removeChild(tempElement);
 
-        // 변환 후 임시 DOM 제거
-        document.body.removeChild(tempElement);
-      } catch (err) {
-        console.error("PDF 다운로드 실패:", err);
-      }
-    },
-      // 검사조건 (제품명)
-      async searchProdName(pId) {
-        if(!pId) {
-          this.prodQualityViewAll();
-          return;
-        }
-        let ajaxRes =
-        await axios.get(`/api/selectProdName/${pId}`)
-                   .catch(err => console.log(err));
-        this.prodQualityViewall = ajaxRes.data;
-      },
-
+  } catch (err) {
+    console.error("PDF 다운로드 실패:", err);
+  }
+}
+,
       async prodQualityViewDropDown() {
         let ajaxRes =
         await axios.get(`/api/prodQualityViewDropDown`)
@@ -227,15 +227,17 @@
                    .catch(err => console.log(err));
                    this.prodQualityViewall = ajaxRes.data;
       },
-      async prodQualityViewDetail(detailId){
+      async prodQualityViewDetail(idx){
+        this.selectedIndex = idx;
+        let detailId = this.prodQualityViewall[idx].quality_id;
         let ajaxRes =
         await axios.get(`api/prodQualityViewDetail/${detailId}`)
                    .catch(err => console.log(err));
         this.prodQualityViewdetail = ajaxRes.data;
       },
-      addRow() {
-        this.prodQualityViewdetail.push({});
-      }
+      // addRow() {
+      //   this.prodQualityViewdetail.push({});
+      // }
     }
   }
 </script>

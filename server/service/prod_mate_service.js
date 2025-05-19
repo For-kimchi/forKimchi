@@ -2,15 +2,44 @@ const mariaDB = require('../mapper/mapper');
 const keys = require('../utils/keys');
 const converts = require('../utils/converts')
 
+const getPmo = async (query) => {
+  let list = await mariaDB.query("selectPmo", [query.order_status]);
+  return list;
+}
+
+const getPmoOne = async (id) => {
+  let list = await mariaDB.query("selectPmoOne", [id]);
+  return list;
+}
+
+const putPmo = async (body) => {
+
+  let res = {
+    success: true,
+  }
+
+  console.log(body);
+  let result = await mariaDB.query("updatePmo", ['3d', body.prod_order_lot]);
+
+  if (result.affectedRows > 0) {
+    return res;
+  } 
+
+  res.success = false;
+  return res;
+}
+
+const getPmoOneAll = async () => {}
+
+
 const postPmo = async (PmoInfo) => {
-  console.log(PmoInfo);
 
   let res = {
     success: true,
   }
 
   try {
-    conn = await mariaDB.getConnection();
+    let conn = await mariaDB.getConnection();
     await conn.beginTransaction();
 
     const {
@@ -18,72 +47,72 @@ const postPmo = async (PmoInfo) => {
       ...pmo
     } = PmoInfo;
 
-    let selectedSql = await mariaDB.selectedQuery('selectLastPmo', {});
-    let last = await conn.query(selectedSql, {});
+    // let selectedSql = await mariaDB.selectedQuery('selectLastPmo', {});
+    // let last = await conn.query(selectedSql, {});
 
-    console.log(last);
+    // let lastId = last[0].pmo_id;
 
-    let lastId = last[0].pmo_id;
+    // let newId = keys.getNextKeyId(lastId);
+    // pmo.pmo_id = newId;
 
-    let newId = keys.getNextKeyId(lastId);
-    pmo.pmo_id = newId;
+    // let column = ['pmo_id', 'prod_order_lot', 'employee_id'];
+    // let param = converts.convertObjToAry(pmo, column);
 
-    let column = ['pmo_id', 'prod_order_lot', 'employee_id'];
-    let param = converts.convertObjToAry(pmo, column);
+    // selectedSql = await mariaDB.selectedQuery('insertPmo', param);
+    // let result = await conn.query(selectedSql, param);
 
-    selectedSql = await mariaDB.selectedQuery('insertPmo', param);
-    let result = await conn.query(selectedSql, param);
+    let column = ['prod_order_lot', 'mate_lot', 'mate_id', 'outbound_amount', 'employee_id'];
 
-    console.log(result);
+    // selectedSql = await mariaDB.selectedQuery('selectLastPmu', {});
+    // last = await conn.query(selectedSql, {});
 
-    column = ['pmh_id', 'pmo_id', 'mate_lot', 'mate_id', 'hold_amount'];
-
-    selectedSql = await mariaDB.selectedQuery('selectLastPmh', {});
-    last = await conn.query(selectedSql, {});
-    
-    console.log(last);
-
-    lastId = last[0].pmh_id;
+    // lastId = last[0].pmu_id;
 
     for (let detail of details) {
 
-      selectedSql = await mariaDB.selectedQuery('selectMateStock', {})
+      let selectedSql = await mariaDB.selectedQuery('selectMateStock', {})
       let mateStock = await conn.query(selectedSql, detail.mate_id);
 
-      let inbound_amount = detail.inbound_amount;
-      
-      console.log(inbound_amount);
+      let outbound_amount = detail.outbound_amount;
 
       for (let mate of mateStock) {
 
-        let hold_amount = 0;
+        let used_amount = 0;
 
-        if (inbound_amount >= mate.mate_stock_amount) {
-          hold_amount = mate.mate_stock_amount;
-        } else if (inbound_amount < mate.mate_stock_amount ) {
-          hold_amount = inbound_amount;
+        if (mate.mate_stock_amount == 0) continue;
+
+        if (outbound_amount >= mate.mate_stock_amount) {
+          used_amount = mate.mate_stock_amount;
+        } else if (outbound_amount < mate.mate_stock_amount) {
+          used_amount = outbound_amount;
         }
 
-        newId = keys.getNextKeyId(lastId);
-        detail.pmh_id = newId;
-        detail.pmo_id = pmo.pmo_id;
-        detail.hold_amount = hold_amount;
+        // newId = keys.getNextKeyId(lastId);
+        // detail.pmu_id = newId;
+        detail.prod_order_lot = pmo.prod_order_lot;
+        detail.employee_id = pmo.employee_id;
+        detail.outbound_amount = used_amount;
         detail.mate_lot = mate.mate_lot;
 
         let param = converts.convertObjToAry(detail, column);
 
-        selectedSql = await mariaDB.selectedQuery('insertPmh', param)
+        selectedSql = await mariaDB.selectedQuery('insertPmu', param)
         let result = await conn.query(selectedSql, param);
 
         console.log(result);
 
-        lastId = newId;
+        // lastId = newId;
 
-        inbound_amount -= hold_amount;
+        outbound_amount -= used_amount;
 
-        if (inbound_amount == 0) break;
+        if (outbound_amount == 0) break;
       }
     }
+
+    selectedSql = await mariaDB.selectedQuery('updatePmo', {});
+    let result = await conn.query(selectedSql, ['3d', pmo.prod_order_lot]);
+    
+    console.log(result);
 
     // 정상 완료 시 commit
     conn.commit();
@@ -103,5 +132,9 @@ const postPmo = async (PmoInfo) => {
 }
 
 module.exports = {
+  getPmo,
+  getPmoOne,
+  getPmoOneAll,
+  putPmo,
   postPmo,
 }

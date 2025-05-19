@@ -123,5 +123,10 @@ router.get('/warehouseList', async (req, res) => {
   }
 });
 
+router.get('/warehouse/:id', async (req, res) => {
+  let id = req.params.id;
+  let list = await storeService.warehouse(id);
+  res.send(list);
+})
 
 module.exports = router;  

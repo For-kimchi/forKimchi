@@ -15,6 +15,12 @@
                 <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명 : 엔터"  @keyup.enter="searchMateName(searchName)"/>
               </div>
             </div>
+            <div class="col-md-3">
+              <div class="d-flex align-items-center">
+                <label class="form-label me-2 mb-0 " style="width: 100px;">검사결과</label>
+                <input v-model="searchRst" type="text" class="form-control border text-center" placeholder="검사결과 : 엔터"  @keyup.enter="selectResultMate(searchRst)"/>
+              </div>
+            </div>
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
@@ -24,7 +30,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사수량</th>
@@ -35,11 +41,11 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in mateQualityViewall" :key="info.quality_id"
-                    v-on:click="mateQualityViewDetail(info.quality_id)">
+                    v-on:click="mateQualityViewDetail(index)" :class="selectedIndex === index ? 'table-active' : ''">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{info.inbound_id}}</td>
                     <td class="align-middle text-center">{{info.inbound_detail_id}}</td>
-                    <td class="align-middle text-center">{{ info.quality_id }}</td>
+                    <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                     <td class="align-middle text-center">{{ info.mate_id }}</td>
                     <td class="align-middle text-center">{{ info.mate_name }}</td>
                     <td class="align-middle text-center">{{ info.quality_amount }}</td>
@@ -93,7 +99,7 @@
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
-                    <td class="align-middle text-center">{{ info.option_standard }}</td>
+                    <td class="align-middle text-center">{{ info.option_standard }} {{ info.option_operator }}</td>
                     <td class="align-middle text-center">{{ info.quality_result_value }}</td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
@@ -131,6 +137,8 @@
         mateQualityViewall: [],
         mateQualityViewdetail: [],
         searchName: '',
+        selectedIndex: null,
+        
       }
     },
     computed: {
@@ -147,63 +155,71 @@
     ])
     },
     created() {
-      this.mateQualityViewDropDown();
       this.mateQualityViewAll();
     },
     methods: {
 
-        // pdf
       async downloadPdf() {
-      try {
-        // 템플릿 파일을 가져옴
-        const response = await axios.get('/templates/quality_report_mate.html');
-        let templateHtml = response.data;
+          this.$swal({
+    text: "다운로드 성공",
+    icon: "success"
+  });
+  try {
+    const response = await axios.get('/templates/quality_report_mate.html');
+    let templateHtml = response.data;
 
-        // 동적으로 데이터를 템플릿에 삽입
-        const tableRows = this.mateQualityViewdetail.map(info => `
-          <tr>
-            <td>${info.option_id}</td>
-            <td>${info.option_name}</td>
-            <td>${info.option_standard}</td>
-            <td>${info.quality_result_value}</td>
-            <td>${info.result === '합격' ? '<span style="color: green;">합격</span>' : '<span style="color: red;">불합격</span>'}</td>
-          </tr>
-        `).join('');
+    // tableRows 문자열 생성
+    const tableRows = this.mateQualityViewdetail.map(info => {
+      return `
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.option_id}</td>
+          <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.option_name}</td>
+          <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.option_standard} ${info.option_operator}</td>
+          <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.quality_result_value}</td>
+          <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+            ${info.result === '합격' 
+              ? '<span style="color: green;">합격</span>' 
+              : '<span style="color: red;">불합격</span>'}
+          </td>
+        </tr>
+      `;
+    }).join('');
 
-        const allPassed = this.mateQualityViewdetail.every(info => info.result === '합격');
-        const finalResult = allPassed ? '최종합격' : '최종불합격';
+    const allPassed = this.mateQualityViewdetail.every(info => info.result === '합격');
+    const finalResult = allPassed ? '<span style="color: green;">최종합격</span>' : '<span style="color: red;">최종불합격</span>';
 
-        templateHtml = templateHtml
-          .replace('{{ mate_name }}', this.mateQualityViewall[0]?.mate_name || 'N/A')
-          .replace('{{ mate_id }}', this.mateQualityViewall[0]?.mate_id || 'N/A')
-          .replace('{{ quality_id }}', this.mateQualityViewall[0]?.quality_id || 'N/A')
-          .replace('{{ date }}', new Date().toLocaleDateString())
-          .replace('{{ table_rows }}', tableRows)
-          .replace('{{ final_result }}', finalResult || 'N/A');
+    // 템플릿 내 값 치환
+    templateHtml = templateHtml
+      .replace('{{ mate_name }}', this.mateQualityViewall[this.selectedIndex]?.mate_name || 'N/A')
+      .replace('{{ mate_id }}', this.mateQualityViewall[this.selectedIndex]?.mate_id || 'N/A')
+      .replace('{{ quality_id }}', this.mateQualityViewall[this.selectedIndex]?.quality_id || 'N/A')
+      .replace('{{ final_result }}', finalResult);
 
-        // 임시 DOM에 HTML 추가
-        const tempElement = document.createElement('div');
-        tempElement.innerHTML = templateHtml;
-        document.body.appendChild(tempElement);
+    // {{ table_rows }}는 innerHTML 방식으로 대체 (주의: HTML 주입이므로 escape 불필요)
+    templateHtml = templateHtml.replace('{{ table_rows }}', tableRows);
 
-        // PDF로 변환
-        const opt = {
-          margin: 0.3,
-          filename: `품질성적서_${new Date().toISOString().slice(0, 10)}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
+    // DOM에 삽입
+    const tempElement = document.createElement('div');
+    tempElement.innerHTML = templateHtml;
+    document.body.appendChild(tempElement);
 
-        // PDF 다운로드
-        await html2pdf().set(opt).from(tempElement).save();
+    // PDF 옵션
+    const opt = {
+      margin: 0.3,
+      filename: `품질성적서_${new Date().toISOString().slice(0, 10)}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
 
-        // 변환 후 임시 DOM 제거
-        document.body.removeChild(tempElement);
-      } catch (err) {
-        console.error("PDF 다운로드 실패:", err);
-      }
-    },
+    await html2pdf().set(opt).from(tempElement).save();
+    document.body.removeChild(tempElement);
+
+  } catch (err) {
+    console.error("PDF 다운로드 실패:", err);
+  }
+}
+,
       async mateQualityViewDropDown() {
         let ajaxRes =
           await axios.get(`/api/mateQualityViewDropDown`)
@@ -220,6 +236,16 @@
                                .catch(err => console.log(err));
       this.mateQualityViewall = ajaxRes.data;
       },
+      // 작동 X , 이름검색을 하고 난뒤 전체검사를 하면 오류뜸 해결해야함
+      async selectResultMate(id) {
+        if(!id) {
+          this.mateQualityViewAll();
+          return;
+        }
+        let ajaxRes = await axios.get(`/api/selectResultMate/${id}`)
+                                 .catch(err => console.log(err));
+        this.mateQualityViewAll = ajaxRes.data;
+      },
 
       async mateQualityViewAll() {
         let ajaxRes =
@@ -227,18 +253,17 @@
           .catch(err => console.log(err));
         this.mateQualityViewall = ajaxRes.data;
       },
-      async mateQualityViewDetail(detailId) {
+      async mateQualityViewDetail(idx) {
+         this.selectedIndex = idx;
+        let detailId = this.mateQualityViewall[idx].quality_id;
         let ajaxRes =
           await axios.get(`api/mateQualityViewDetail/${detailId}`)
           .catch(err => console.log(err));
         this.mateQualityViewdetail = ajaxRes.data;
       },
-      async insertResult() {
-        
-      },
-      addRow() {
-        this.mateQualityViewdetail.push({});
-      }
+      // addRow() {
+      //   this.mateQualityViewdetail.push({});
+      // }
     }
   }
 </script>

@@ -46,6 +46,7 @@ import axios from 'axios';
 export default {
   props: {
     visible: Boolean,
+    vendor_type: String,
   },
   data() {
     return {
@@ -56,7 +57,8 @@ export default {
   methods: {
     async searchProd() {
       let params = {
-        vendor_name: this.search
+        vendor_name: this.search,
+        vendor_type: this.vendor_type
       }
 
       let list = await axios.get('/api/basicVendor', {

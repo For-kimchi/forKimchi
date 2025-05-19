@@ -22,7 +22,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
@@ -74,7 +74,6 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
-
                   </tr>
                 </thead>
                 <tbody>
@@ -83,7 +82,7 @@
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}} {{info.option_operator}}</td>
-                    <td class="align-middle text-center"><input type="number" v-model="info.quality_result_value"></td>
+                    <td class="align-middle text-center"><input type="number" placeholder="검사기준입력" v-model="info.quality_result_value"></td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
                         style="width: 60px; text-align: center;">
@@ -179,42 +178,65 @@
       },
       // 자재검사요청상세 (대기)
       async mateQualityWait(index) {
+        this.selectedIndex = index;
         this.selected = this.mateQualityreq[index];
+        let id = this.mateQualityreq[index].inbound_detail_id;
         let ajaxRes =
-          await axios.get(`/api/mateQualityWait/${this.selected.inbound_detail_id}`)
+          await axios.get(`/api/mateQualityWait/${id}`)
           .catch(err => console.log(err));
         this.mateQualitywait = ajaxRes.data;
       },
       // 검사버튼
-      async test() {
-        let param = {
-          inbound_detail_id: this.selected.inbound_detail_id,
-          details: this.mateQualitywait
-        };
-        // 검사결과값 입력여부 체크
+// 검사버튼
+async test() {
+  let param = {
+    inbound_detail_id: this.selected.inbound_detail_id,
+    details: this.mateQualitywait
+  };
 
-        // 비정상
-        let save = false;
-        for (let idx of this.mateQualitywait) {
-          let val = Object.hasOwn(idx, 'quality_result_value');
-          if (!val || idx.quality_result_value <= 0) {
-            alert("검사결과값 을 입력하세요.");
-            return;
-          }
-        }
-        // 정상
-        let testlist = await axios.post('/api/mateInsert', param)
-          .catch(err => console.log(err))
-        console.log(testlist);
-        if (testlist.data.affectedRows > 0) {
-          alert('저장이 완료되었습니다');
-          this.mateQualityreq.filter(item => item.inbound_detail_id !== this.selected.inbound_detail_id);
-          this.selected = [];
-          this.mateQualitywait = [];
-        } else {
-          alert('저장 과정에서 오류가 발생했습니다');
-        };
-      },
+  // 검사결과값 입력 여부 체크
+  for (let idx of this.mateQualitywait) {
+    let val = Object.hasOwn(idx, 'quality_result_value');
+    if (!val || idx.quality_result_value <= 0) {
+      this.$swal({
+        text: "검사결과값을 입력하세요.",
+        icon: "warning"
+      });
+      return;
+    }
+  }
+
+  try {
+    const testlist = await axios.post('/api/mateInsert', param);
+    
+    if (testlist.data.affectedRows > 0) {
+      this.$swal({
+        text: "저장이 완료되었습니다",
+        icon: "success"
+      });
+      if (this.selectedIndex !== null && this.selectedIndex >= 0) {
+        this.mateQualityreq.splice(this.selectedIndex, 1);
+      }
+      this.selected = [];
+      this.selectedIndex = null;
+      this.mateQualitywait = [];
+
+    } else {
+      this.$swal({
+        text: "저장 과정에서 오류가 발생했습니다",
+        icon: "error"
+      });
+    }
+
+  } catch (err) {
+    console.error(err);
+          this.$swal({
+        text: "저장 중 오류가 발생했습니다.",
+        icon: "error"
+      });
+  }
+}
+,
       // addRow() {
       //   this.mateQualitywait.push({});
       // }

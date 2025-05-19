@@ -1,3 +1,52 @@
+const selectPmo =
+`
+SELECT
+prod_order_lot,
+plan_detail_id,
+po.prod_id,
+prod_name,
+po.order_last_amount,
+order_date,
+order_amount,
+po.employee_id,
+employee_name,
+order_status
+FROM t_prod_order po
+JOIN t_employee e ON po.employee_id = e.employee_id
+JOIN t_prod p ON po.prod_id = p.prod_id
+WHERE po.order_status = ?
+ORDER BY order_date, prod_order_lot
+`;
+
+const selectPmoOne =
+`
+SELECT 
+bd.mate_id,
+mate_amount,
+mate_name,
+mate_unit,
+mate_type,
+sub_code_name,
+IFNULL((SELECT
+SUM(mate_stock_amount) 
+FROM t_mate_stock
+WHERE mate_id = bd.mate_id 
+GROUP BY mate_id), 0) mate_stock_amount
+FROM t_bom b
+JOIN t_bom_detail bd ON b.bom_id = bd.bom_id
+JOIN t_mate m ON bd.mate_id = m.mate_id
+JOIN t_sub_code sc ON m.mate_type = sc.sub_code
+WHERE b.bom_status = '1t'
+AND prod_id = ?
+`;
+
+const updatePmo =
+`
+UPDATE t_prod_order
+SET order_status = ?
+WHERE prod_order_lot = ?
+`;
+
 const selectLastPmo = 
 `SELECT pmo_id
 FROM t_prod_mate_order
@@ -21,6 +70,8 @@ const selectMateStock =
 `SELECT mate_lot, mate_stock_amount 
 FROM t_mate_stock
 WHERE mate_id = ?
+AND mate_stock_amount > 0
+ORDER BY mate_lot;
 `;
 
 const insertPmh = 
@@ -30,10 +81,26 @@ VALUES
 (?, ?, ?, ?, ?, null, 'N');
 `;
 
+const selectLastPmu = 
+`SELECT pmu_id
+FROM t_prod_mate_used
+ORDER BY pmu_id DESC
+LIMIT 1`;
+
+const insertPmu = 
+`
+CALL insert_prod_mate_used(?, ?, ?, ?, ?)
+`;
+
 module.exports = {
+  selectPmo,
+  selectPmoOne,
+  updatePmo,
   selectLastPmo,
   insertPmo,
   selectLastPmh,
   selectMateStock,
   insertPmh,
+  selectLastPmu,
+  insertPmu,
 }
