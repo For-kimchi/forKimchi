@@ -1,27 +1,5 @@
 <template>
   <div class="container-fluid py-4">
-    <!-- 검색 -->
-
-    <!-- <div class="row">
-        <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-                    <h6 class="text-white text-capitalize ps-3">검색</h6>
-                </div>
-            </div>
-            <div>
-            <ul class="list-group list-group-horizontal">
-                <li class="list-group-item">자재명</li>
-                <li class="list-group-item"><input type="text"></li>
-                <li class="list-group-item">담당자</li>
-                <li class="list-group-item"><input type="text"></li>
-                 <li class="list-group-item">일정</li>
-                <li class="list-group-item"><input type="date"> ~ <input type="date"></li> 
-                <li class="list-group-item"><button class="btn btn-success ms-2 me-2" @:click="">조회</button></li>
-            </ul>
-            </div>
-        </div>
-    </div> -->
     <div class="row">
       <!-- 행 영역 div-->
       <div class="col-12">
@@ -34,9 +12,9 @@
               <!-- 창고 드롭다운 추가 -->
               <div class="d-flex align-items-center gap-2">
                 <h6 class="text-white text-capitalize m-0">창고현황</h6>
-                <select v-model="selectedWarehouse" @change="wareSearch" class="form-select ms-3"
-                  style="width: 150px; height: 35px; background-color: white; color: black; border: 1px solid #ccc;">
-                  <option disabled value="">창고 선택</option>
+                <select v-model="selectedWarehouse" @change="wareSearch" class="align-middle text-center"
+                  style="width: 150px; height: 35px; margin: 15px;background-color: white; color: black; border: 1px solid #ccc;">
+                  <option disabled value="">창고를 선택하세요</option>
                   <option v-for="(info, index) in wareId.filter(w => w.warehouse_id !== 'WHS-004')" :key="index"
                     :value="info.warehouse_id">
                     {{ info.warehouse_name }}
@@ -63,8 +41,8 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+            <div class="table-responsive p-0" >
+              <table class="table align-items-center mb-0 justify-content-center mb-0 table-hover">
                 <thead>
                   <tr v-show="searchType === 'lot'">
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>

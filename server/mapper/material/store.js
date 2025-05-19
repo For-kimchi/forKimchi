@@ -100,8 +100,6 @@ const selectDetailStore =
   vendor_id(ib.vendor_id) vendor_name,
   employee_id(ib.employee_id) AS employee_id,
   ib.memo,
-  wr.warehouse_type,
-  wr.warehouse_id,
   ibd.mate_id,
 
   ibd.inbound_detail_id,
@@ -122,8 +120,6 @@ const selectDetailStore =
 
 FROM t_mate_inbound ib
 JOIN t_mate_inbound_detail ibd ON ib.inbound_id = ibd.inbound_id
-JOIN t_mate_warehouse mtw ON ibd.mate_id = mtw.mate_id
-LEFT JOIN t_warehouse wr ON mtw.warehouse_id = wr.warehouse_id
 LEFT JOIN t_quality_mate qm ON ibd.inbound_detail_id = qm.inbound_detail_id
 LEFT JOIN t_quality_mate_detail qmd ON qm.quality_id = qmd.quality_id
 
@@ -284,7 +280,7 @@ const warehouseLotList =
 FROM t_mate_warehouse m
 JOIN t_warehouse w ON w.warehouse_id = m.warehouse_id
 WHERE w.warehouse_id = ?
-ORDER BY m.inbound_date DESC`;
+ORDER BY m.inbound_date `;
 
 // 창고 자재별 묶음 합계조회
 const groupBywareList =
@@ -296,7 +292,7 @@ const groupBywareList =
 FROM t_mate_warehouse
 WHERE warehouse_id = ?
 GROUP BY mate_id
-ORDER BY last_inbound_date DESC`;
+ORDER BY last_inbound_date `;
 
 const selectWarehouseByType =
 `
