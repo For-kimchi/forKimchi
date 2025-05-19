@@ -5,6 +5,7 @@ const selectLogin =
   `SELECT employee_id,
         employee_pwd,
         employee_name,
+        employee_email,
         sub_code(employee_dept) dept_name,
         sub_code(employee_type) type_name,
         sub_code(employee_status) status_name

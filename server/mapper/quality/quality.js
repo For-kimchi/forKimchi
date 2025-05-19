@@ -26,7 +26,7 @@ FROM t_mate_inbound_detail id
 JOIN t_quality_std qs ON id.mate_id = qs.target_id
 JOIN t_quality_std_detail qsd ON qs.std_id = qsd.std_id
 JOIN t_quality_option qo ON qsd.option_id = qo.option_id
-WHERE inbound_status = '1p'
+WHERE inbound_status = '1p' AND qs.std_status = '1bb'
 AND inbound_detail_id = ?
 `;
 // 검사결과 최종반영
