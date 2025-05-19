@@ -94,12 +94,18 @@ export default {
       console.log(res.data);
 
       if (res.data.success) {
-        alert('로그인 성공');
+        this.$swal({
+          text: "로그인 성공!",
+          icon: "success"
+        });
         this.employee = res.data.employee;
         this.loginStore(this.employee);
         this.$router.push('/');
       } else {
-        alert('로그인 실패');
+         this.$swal({
+          text: "로그인 실패",
+          icon: "error"
+        });
       }
     },
     openModal() {
