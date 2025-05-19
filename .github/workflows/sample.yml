@@ -1,4 +1,4 @@
-name: test
+vvname: test
 
 on:
  push:
@@ -29,7 +29,7 @@ jobs:
     - name: SSH into server and deploy
       working-directory: for-kimchi-client
       run: |
-        scp   -r -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no package.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/kimchi/forKimchi/server/public/      
+        scp   -vvv -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no package.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/kimchi/forKimchi/server/public/      
 
 
         echo '== build end =   =='
