@@ -22,7 +22,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">투입량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">총생산</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                   </tr>
                 </thead>
@@ -35,7 +35,7 @@
                       <td class="align-middle text-center">{{ info.proc_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_name }}</td>
-                      <td class="align-middle text-center">{{ info.proc_input_amount }}</td>
+                      <td class="align-middle text-center">{{ info.total }}</td>
                       <td class="align-middle text-center">{{ info.proc_status }}</td>
                     </tr>
                 </tbody>
