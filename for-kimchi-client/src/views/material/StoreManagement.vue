@@ -55,7 +55,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in matReqList" v-bind:key="info.id" class="group cursor-pointer" v-on:click="mateDetailInfo(info)">
+                  <tr v-for="(info, index) in matReqList" v-bind:key="info.id" class="group cursor-pointer" v-on:click="mateDetailInfo(info,index)"
+                  :class="selectedOrderRow === index ? 'table-active' : ''" >
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_id }}</td>
@@ -146,6 +147,7 @@ export default {
       mate_id: [],
       vendor_id: [],
       selectedInfo: [],
+      selectedOrderRow: null,
     }
   },
   computed: {
@@ -173,8 +175,9 @@ export default {
     },
 
     // 발주서 클릭한 항목 상세조회
-    mateDetailInfo(info) {
+    mateDetailInfo(info, index) {
       this.selectedInfo = info;
+      this.selectedOrderRow = index;
       axios
         .get(`/api/storeMate/${info.req_id}`)
         .then((response) => {
