@@ -143,20 +143,25 @@ const selectMateName = async (mId) => {
   return search;
 };
 
-// 자재검색조건 (합격, 불합격)
-const selectResultMate = async (mResult) => {
-  mResult = '%' + mResult + '%'
-  console.log(mResult);
-  let search_ = await mariaDB.query('selectResultMate', mResult);
-  return search_;
-};
 // -------------------------------------------------------------------
 
 //제품검사요청
-const prodQualityReq = async () => {
-  let list = await mariaDB.query('prodQualityReq');
-  return list;
-};
+// const prodQualityReq = async () => {
+//   let list = await mariaDB.query('prodQualityReq');
+//   return list;
+// };
+
+  const prodQuality = async (rst) => {
+    let lot = await mariaDB.query('prodQuality1');
+    let selectLot = (lot, {});
+    
+    let procId = await mariaDB.query('prodQuality2');
+    let procId_ = (procId, {});
+
+    let result = await mariaDB.query('prodQuality3');
+    result = [{selectLot}, {procId_}];
+  };
+
 
 //제품검사요청 (대기)
 const prodQualityWait = async (detailId) => {
@@ -476,9 +481,8 @@ module.exports = {
   mateQualityViewDetail,
   updateMateQuality,
   selectMateName,
-  selectResultMate,
   // 제품
-  prodQualityReq,
+  // prodQualityReq,
   prodQualityWait,
   prodQualityViewDropDown,
   prodQualityViewAll,

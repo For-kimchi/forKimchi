@@ -16,11 +16,17 @@
               </div>
             </div>
             <div class="col-md-3">
-              <div class="d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">검사결과</label>
-                <input v-model="searchRst" type="text" class="form-control border text-center" placeholder="검사결과 : 엔터"  @keyup.enter="selectResultMate(searchRst)"/>
-              </div>
-            </div>
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">시작일자</label>
+            <input v-model="searchStartDate" type="date" class="form-control border text-center"/>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">종료일자</label>
+            <input v-model="searchEndDate" type="date" class="form-control border text-center"/>
+          </div>
+        </div>
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
@@ -33,6 +39,7 @@
                     <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사날짜</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">양품수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">불량수량</th>
@@ -48,6 +55,7 @@
                     <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                     <td class="align-middle text-center">{{ info.mate_id }}</td>
                     <td class="align-middle text-center">{{ info.mate_name }}</td>
+                    <td class="align-middle text-center">{{ info.quality_date }}</td>
                     <td class="align-middle text-center">{{ info.quality_amount }}</td>
                     <td class="align-middle text-center">{{ info.quality_pass_amount }}</td>
                     <td class="align-middle text-center">{{ info.quality_fail_amount }}</td>
@@ -129,10 +137,15 @@
   // state, getter => mapState 
   // actions => mapActions 
   import { mapState } from 'pinia';
+  import {
+    formatDate,
+    codeToName
+  } from '@/utils/common';
 
   export default {
     data() {
       return {
+
         mateQualityViewDropdown: [],
         mateQualityViewall: [],
         mateQualityViewdetail: [],
@@ -236,17 +249,6 @@
                                .catch(err => console.log(err));
       this.mateQualityViewall = ajaxRes.data;
       },
-      // 작동 X , 이름검색을 하고 난뒤 전체검사를 하면 오류뜸 해결해야함
-      async selectResultMate(id) {
-        if(!id) {
-          this.mateQualityViewAll();
-          return;
-        }
-        let ajaxRes = await axios.get(`/api/selectResultMate/${id}`)
-                                 .catch(err => console.log(err));
-        this.mateQualityViewAll = ajaxRes.data;
-      },
-
       async mateQualityViewAll() {
         let ajaxRes =
           await axios.get(`/api/mateQualityViewAll`)
@@ -261,9 +263,6 @@
           .catch(err => console.log(err));
         this.mateQualityViewdetail = ajaxRes.data;
       },
-      // addRow() {
-      //   this.mateQualityViewdetail.push({});
-      // }
     }
   }
 </script>
