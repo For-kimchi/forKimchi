@@ -12,26 +12,6 @@
         aria-hidden="true"
         id="iconSidenav"
       ></i>
-      <!-- <a class="m-0 navbar-brand" href="/">
-        <img
-          :src="
-            sidebarType === 'bg-white' ||
-            (sidebarType === 'bg-transparent' && !isDarkMode)
-              ? logoDark
-              : logo
-          "
-          class="navbar-brand-img h-100"
-          alt="main_logo"
-        />
-      </a> -->
-      <!-- <div class="m-0 navbar-brand" @click="home"> 
-        <img
-          :src="'/favicon.png'"
-          class="navbar-brand-img h-100"
-          alt="main_logo"
-        />
-        <h4 class="ms-2 font-weight-bold text-white">For Kimchi</h4>
-      </div> -->
       <div class="m-0 navbar-brand d-flex align-items-center" @click="home">
         <img
           :src="'/favicon.png'"
@@ -39,7 +19,7 @@
           alt="main_logo"
         />
         <span class="ms-2 font-weight-bolder text-white fs-4"
-          >For Kimchi</span
+          >For 김치</span
         >
       </div>
     </div>
