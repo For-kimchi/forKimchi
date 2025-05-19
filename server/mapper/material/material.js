@@ -8,6 +8,12 @@ ORDER BY req_id DESC
 LIMIT 1
 `;
 
+const mateVendorKey =
+  `SELECT vendor_id
+FROM t_vendor
+WHERE vendor_name = ?
+`;
+
 // mateDetailKey
 const mateDetailKey =
   `SELECT req_detail_id
@@ -157,8 +163,8 @@ const insertMainMate =
                         ,employee_id
                         ,req_due_date
                         ,req_status
-                        ,memo)
-VALUES(SYSDATE(), ?, ?, ?, ?, '1o', '')`;
+                        )
+VALUES(SYSDATE(), ?, ?, ?, ?, '1o')`;
 
 
 // 자재발주 상세등록버튼(저장)
@@ -322,4 +328,5 @@ module.exports = {
     updateMateByReq_id,             // 자재 발주 수정 (자재 발주 id)
     mateBom, // BOM에 따른 생산지시 조회
     // mateBomSaves,
+    mateVendorKey,
 }

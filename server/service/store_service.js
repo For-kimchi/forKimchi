@@ -187,7 +187,7 @@ const insertStore = async(storeSaveInfo) => {
     let selectedSql = await mariaDB.selectedQuery('storePlanKey', {});
     let lastStore = await conn.query(selectedSql, {});
     let lastStroreId = lastStore[0].inbound_id;
-
+    console.log(lastStroreId);
     // 부모 key 생성
     let newStoreId = keys.getNextKeyId(lastStroreId);
     storeInfo.inbound_id = newStoreId;
@@ -199,10 +199,11 @@ const insertStore = async(storeSaveInfo) => {
     // 부모테이블 column 정보 배열
     let storeCloumn = ['inbound_id', 'req_id', 'employee_id', 'vendor_id']
     let storeAdd = converts.convertObjToAry(storeInfo, storeCloumn);
-
+    console.log('asdasdasdasdasd', storeAdd);
     // 부모테이블 INSERT
     selectedSql = await mariaDB.selectedQuery('insertStoreMain', storeAdd);
     let result = await conn.query(selectedSql, storeAdd);
+
 
     // 마지막 inbound_detail_id 조회
     selectedSql = await mariaDB.selectedQuery('storeDetailKey', {});
@@ -218,7 +219,7 @@ const insertStore = async(storeSaveInfo) => {
       // 상위에서 등록한 newStoreId 사용
       StoreDetailInfo.inbound_id = newStoreId;
 
-      let storeDetailCloumn = ['inbound_detail_id', 'inbound_id', 'mate_id', 'inbound_amount', 'memo'];
+      let storeDetailCloumn = ['inbound_detail_id', 'inbound_id', 'mate_id', 'inbound_amount', 'memo', ];
       let addInfo = converts.convertObjToAry(StoreDetailInfo, storeDetailCloumn);
 
       // 자식테이블 INSERT

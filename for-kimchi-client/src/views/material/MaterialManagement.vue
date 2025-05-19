@@ -2,6 +2,9 @@
   <div class="container-fluid py-4">
 
     <div class="text-end mb-3">
+      <button class="btn btn-outline-primary mb-2" @click="openProdOrderModal">
+          📋 생산지시서 조회
+      </button>
       <button class="btn btn-success me-2 shadow rounded-pill" @click="mateAdd">
         💾 등록
       </button>
@@ -14,20 +17,13 @@
       </button>
     </div>
     <div class="row">
-      <div class="col-12 text-end">
-        <button class="btn btn-outline-primary mb-2" @click="openProdOrderModal">
-          📋 생산지시서 조회
-        </button>
-      </div>
-    </div>
-    <div class="row">
 
       <div class="col-12">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
 
-              <h6 class="text-white text-capitalize ps-3">검색</h6>
+              <h6 class="text-white text-capitalize ps-3">발주정보입력 </h6>
 
             </div>
           </div>
@@ -56,23 +52,23 @@
       <div class="col-6">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <div class="card-body">
-                <ul class="list-group list-group-horizontal">
-                  <li class="list-group-item d-flex align-items-center">
-                    자재명
-                  </li>
-                  <li class="list-group-item d-flex align-items-center">
-                    <input type="text" v-model="search.material" @keyup.enter="handleClick" class="form-control mb-2"
-                      placeholder="자재명을 입력하세요" />
-                    <i class="fas fa-search d-flex align-items-center"
-                      style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="handleClick(info)"></i>
-                  </li>
-                </ul>
-              </div>
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3"><h6 class="text-white text-capitalize ps-3">자재리스트</h6>
+              <!-- <div class="card-body">
+              </div> -->
             </div>
           </div>
           <div class="card-body px-0 pb-2">
+            <ul class="list-group list-group-horizontal">
+              <li class="list-group-item d-flex align-items-center">
+                자재명
+              </li>
+              <li class="list-group-item d-flex align-items-center">
+                <input type="text" v-model="search.material" @keyup.enter="handleClick" class="form-control mb-2"
+                  placeholder="자재명을 입력하세요" />
+                <i class="fas fa-search d-flex align-items-center"
+                  style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="handleClick(info)"></i>
+              </li>
+            </ul>
             <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
               <table class="table align-items-center mb-0">
                 <thead>
@@ -116,7 +112,7 @@
       <div class="col-5">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3"><h6 class="text-white text-capitalize ps-3">선택된 자재</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -175,9 +171,6 @@
                     <th>발주자명</th>
                     <th>납기예정일자</th>
                     <th>발주상태</th>
-                    <!-- <th>비고</th> -->
-                    <!-- <th>승인일자</th>
-                    <th>승인자</th> -->
                     <th>삭제</th>
                   </tr>
                 </thead>
@@ -192,10 +185,6 @@
                       <td>{{ info.employee_name }}</td>
                       <td>{{ info.req_due_date }}</td>
                       <td><button class="btn btn-sm btn-warning" disabled>{{ info.req_status }}</button></td>
-                      <!-- <td>{{ info.memo }}</td> -->
-                      <!-- <td>{{ info.confirm_date }}</td>
-                      <td>{{ info.manager_id }}</td> -->
-                      <!-- <td>{{ info.req_status }}({{ typeof info.req_status }})</td> -->
                       <td>
                         <button class="btn btn-danger" @click.stop="deleteRow(index)"
                           v-if="info.req_status == '발주등록'">삭제</button>
@@ -296,33 +285,7 @@ export default {
       // bomList에 없는값들 선언
       this.prod_order_lot = prodOrder.prod_order_lot;
       this.prod_id = prodOrder.prod_id;
-      // this.order_amount = prodOrder.order_amount;
-
-      // +,-버튼은 객체를 원하고 발주저장버튼은 배열은 원하므로 둘 다 사용하게끔 바꿈
-      // mate_id등은 bomList에 있으니까 여기서 선언
-      // if (Array.isArray(bomList) && bomList.length > 0) {
-      //   this.selectedList = bomList.map(item => {
-      //     console.log('초기 req_amount:', item.mate_amount);  // 실행 가능
-      //     return {
-      //       ...item,
-      //       selected: true,
-      //       req_amount: item.order_amount || 0
-      //     };
-      //   });
-      // }
-
-      // 리스트 테이블에 BOM 목록 채우기
-      // this.selectedList = Array.isArray(bomList) ? bomList : [];
     },
-
-    // <tr v-for="(info, index) in selectedList" :key="info.id">
-    //      <td><input type="checkbox" v-model="info.selected"></td>
-    //      <td>{{ info.mate_id }}</td>
-    //      <td>{{ info.mate_name }}</td>
-    //      <td><input type="number" v-model="info.req_amount" style="width: 100px;"></td>
-    //      <td>{{ info.mate_unit }}</td>
-    //  </tr>
-
 
     //생산지시조회 페이지 이동
     goToProdOrderPage() {
@@ -356,31 +319,6 @@ export default {
       this.vendor.vendor_name = selected.vendor_name;
       this.req_due_date = selected.req_due_date;
     },
-
-
-    //   handleModalConfirm(selectedItems) {
-    //   // 모달에서 넘어온 자재들을 selectedList에 저장
-    //   this.selectedList = selectedItems.map(item => ({
-    //     mate_id: item.mate_id,
-    //     mate_code: item.mate_code,
-    //     mate_name: item.mate_name,
-    //     mate_unit: item.mate_unit,
-    //     req_amount: 1 // 기본 수량 1로 설정 (수정 가능)
-    //   }));
-    // },
-    // handleMateAdd(mateList) {
-    //   // mateList: mateModal에서 넘어온 자재 배열
-    //   this.selectedList = mateList.map(item => ({
-    //     mate_id: item.mate_id,
-    //     mate_code: item.mate_code,
-    //     mate_name: item.mate_name,
-    //     mate_unit: item.mate_unit,
-    //     req_amount: 1 // 체크박스 초기 선택 여부
-    //   }));
-    //   this.showModal = false;
-    // },
-
-
 
     // 발주서 리스트 전체조회
     async getMateList() {
