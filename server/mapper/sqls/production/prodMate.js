@@ -1,21 +1,16 @@
 const selectPmo =
 `
-SELECT
-prod_order_lot,
-plan_detail_id,
-po.prod_id,
-prod_name,
-po.order_last_amount,
-order_date,
-order_amount,
-po.employee_id,
-employee_name,
-order_status
-FROM t_prod_order po
-JOIN t_employee e ON po.employee_id = e.employee_id
-JOIN t_prod p ON po.prod_id = p.prod_id
-WHERE po.order_status = ?
-ORDER BY order_date, prod_order_lot
+select prod_order_lot,
+	     plan_detail_id,
+       prod_id(prod_id) prod_name,
+       date_type(order_date) order_date,
+       order_amount,
+       employee_id(employee_id) employee_id,
+       sub_code(order_status) order_status,
+       prod_id
+from t_prod_order
+WHERE order_status in ('2d','3d')
+ORDER BY order_date DESC;
 `;
 
 const selectPmoOne =

@@ -11,10 +11,10 @@
                     <h6 class="text-white text-capitalize ps-3">생산지시</h6>
                 </div>
             </div>
-            <div class="card-body px-0 pb-2" >
+            <div class="card-body px-0 pb-2 px-3">
                 <div class="table-responsive p-0">
                     <div class="text-end">
-                    <button class="btn btn-info ms-2 me-2" data-bs-toggle="modal" data-bs-target="#processModal">생산지시선택</button>
+                    <button class="btn btn-info ms-2 me-2 m-1 p-3" data-bs-toggle="modal" data-bs-target="#processModal">생산지시선택</button>
                     </div>
                 <table class="table align-items-center mb-2 table-hover">
                   <tr>
@@ -242,7 +242,7 @@
         </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="reset()">취소</button>
       </div>
     </div>
   </div>
@@ -314,7 +314,7 @@ export default {
         this.type = this.procFlow[0].type;
         // 버튼 클릭시 list 초기화
         this.procFlowList = [];
-        this.number = null;
+        // this.number = null;
         // index값 저장
         this.prodOrderidx = index;
         // 값 활용하기위해서 저장
@@ -397,8 +397,8 @@ export default {
         let ajaxRes =
         await axios.post(`/api/insertProdProc`, param)
                     .catch(err => console.log(err));
-        let result = ajaxRes.data.affectedRows;
-        
+        let result = ajaxRes.data
+        result = result.affectedRows;
         if(result > 0){
           this.$swal({
                   icon: "success",
@@ -473,6 +473,9 @@ export default {
         console.log(info);
         
       },
+      async reset(){
+        this.proc_fail_amount = 0;
+      }
     }
 }
     

@@ -3,11 +3,11 @@
     <nav class="text-center mt-3">
         <!-- <router-link to="/ProdOrder"><button class="btn btn-info ms-1 me-1">생산지시</button></router-link> -->
         <button class="btn btn-primary ms-2 me-2">생산지시등록</button>
-        <router-link to="/ProdMate"><button class="btn btn-info ms-2 me-2">자재관리</button></router-link>
+        <router-link to="/ProdMate"><button class="btn btn-info ms-2 me-2">자재현황</button></router-link>
     </nav>
     <div class="row">
         <!-- 행 영역 div-->
-      <div class="col-9">
+      <div class="col-12">
         <!-- 테이블 div-->
         <div class="card my-4">
             <!--항목명 div-->
@@ -22,7 +22,7 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
-                    <!-- <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산계획ID</th> -->
+                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">추가</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산상세ID</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산제품</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">목표수량</th>
@@ -38,7 +38,8 @@
                   <tr v-for="(info,index) in prodDetailList" @click="clickDtList(index)" style="height: 50px; overflow: auto;"
                   :class="this.idx === index ? 'table-active' : ''">
                     <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
-                    <!-- <td class="align-middle font-weight-bolder text-center">{{info.plan_id}}</td> -->
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인' && info.plan_amount <= info.sum_amount"><button class="btn btn-warning w-100 px-1 m-1"data-bs-toggle="modal" data-bs-target="#insertProc" disabled>지시추가</button></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><button class="btn btn-warning w-100 px-1 m-1"data-bs-toggle="modal" data-bs-target="#insertProc">지시추가</button></td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_detail_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.prod_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_amount}}</td>
@@ -58,45 +59,54 @@
           </div>
         </div>
       </div>
-      <div class="col-3">
-        <div class="card my-4">
-          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-              <h6 class="text-white text-capitalize ps-3">생산지시등록</h6>
+      <!-- Modal -->
+      <div class="modal fade" id="insertProc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              
             </div>
-          </div>
-          <div class="card-body px-0 pb-2" >
-            <div class="table-responsive p-0">
-              <table class="table align-items-center justify-content-center mb-0">
-                  <tr>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10"></th>
-                    <td class="align-middle text-end">
-                      <button class="btn bg-gradient-info w-20 mb-0 m-2 p-2" @click="addOrders()">추가</button>
-                      <button class="btn bg-gradient-primary w-20 mb-0 m-2 p-2" @click="close()">취소</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th class="text-lift text-uppercase text-secondary font-weight-bolder opacity-10 p-2">생산계획상세Id</th>
-                    <td class="align-middle text-start"><input type="text" class="input-group-static border" v-model="planDetailId" disabled></td>
-                  </tr>  
-                  <tr>
-                    <th class="text-lift text-uppercase text-secondary font-weight-bolder opacity-10 p-2">제품명</th>
-                    <td class="align-middle text-start"><input type="text" class="input-group-static border" v-model="planDetailProd" disabled></td>
-                  </tr>
-                  <tr>
-                    <th class="text-lift text-uppercase text-secondary font-weight-bolder opacity-10 p-2">생산일자</th>
-                    <td class="align-middle text-start"><input type="date" class="input-group-static border" v-model="prodDate"></td>
-                  </tr>
-                  <tr>
-                    <th class="text-lift text-uppercase text-secondary font-weight-bolder opacity-10 p-2">생산지시수량</th>
-                    <td class="align-middle text-start"><input type="number" class="input-group-static border" v-model="prodAmount"></td>
-                  </tr>
-              </table>
+            <div class="modal-body">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                  <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">생산지시등록</h6>
+                  </div>
+                </div>
+                <div class="card-body px-0 pb-2" >
+                  <div class="table-responsive p-0">
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <tr>
+                          <td class="align-middle text-end m-2 p-3" colspan="4">
+                            <button class="btn bg-gradient-info w-10 mb-0 m-2 p-2" @click="addOrders()" data-bs-dismiss="modal">추가</button>
+                            <button class="btn bg-gradient-primary w-10 mb-0 m-2 p-2" @click="close()">초기화</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10 p-3 w-50">생산계획상세Id</th>
+                          <td class="align-middle text-start"><input type="text" class="input-group-static border" v-model="planDetailId" disabled></td>
+                          <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10 p-3 w-50">제품명</th>
+                          <td class="align-middle text-start"><input type="text" class="input-group-static border" v-model="planDetailProd" disabled></td>
+                        </tr> 
+                        <tr>
+                          <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10 p-3 w-50">생산종료일자</th>
+                          <td class="align-middle text-start"><input type="date" class="input-group-static border w-100" v-model="planEndDate" disabled></td>
+                          <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10 p-3 w-50">생산일자</th>
+                          <td class="align-middle text-start"><input type="date" class="input-group-static border w-100" v-model="prodDate"></td>
+                        </tr>
+                        <tr>
+                          <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10 p-3 w-50">목표 수량</th>
+                          <td class="align-middle text-start"><input type="number" class="input-group-static border" v-model="planAmount" disabled></td>
+                          <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10 p-3 w-50">생산지시수량</th>
+                          <td class="align-middle text-start"><input type="number" class="input-group-static border" v-model="prodAmount" placeholder="수량을 입력하세요"></td>
+                        </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
     <!-- 상단 영역-->
     <div class="row">
@@ -132,7 +142,7 @@
                     <!-- <tr>
                       <td colspan="8" rowspan="8" class="align-middle text-center ">생산계획을 선택해주세요</td>
                     </tr> -->
-                    <tr v-for="(info,index) in prodOrderList" style="height: 80px; overflow-y: auto;">
+                    <tr v-for="(info,index) in prodOrderList" style="height: 50px; overflow-y: auto;">
                       <td class="align-middle font-weight-bolder text-center"><input type="checkbox" v-model="info.check"></td>
                       <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.prod_order_lot}}</td>
@@ -143,6 +153,7 @@
                       <td class="align-middle font-weight-bolder text-center" v-if="info.order_status === '자재요청중'"><span class="badge badge-sm bg-gradient-success">{{info.order_status}}</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.order_status === '자재요청완료'"><span class="badge badge-sm bg-gradient-secondary">{{info.order_status}}</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.order_status === '생산진행중'"><span class="badge badge-sm bg-gradient-warning">{{info.order_status}}</span></td>
+                      <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">{{info.order_status}}</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -171,6 +182,8 @@ export default {
           prodOrderList: [],
           planDetailId: '',
           planDetailProd: '',
+          planAmount: '',
+          planEndDate: '',
           prodDate: '',
           prodAmount: '',
           idx: null,
@@ -211,6 +224,8 @@ export default {
 
         this.planDetailId = info.plan_detail_id;
         this.planDetailProd = info.prod_id;
+        this.planAmount = info.plan_amount;
+        this.planEndDate = info.plan_end_date;
         this.prodDate = formatDate();
       },
       // 추가 버튼
@@ -231,8 +246,8 @@ export default {
           }else{
             let ajaxRes =
             await axios.put(`/api/insertProdOrder`, info)
-            .catch(err=> console.log(err));
-            let Order = ajaxRes.date;
+                        .catch(err=> console.log(err));
+                        let Order = ajaxRes.date;
             this.$swal({
                   icon: "success",
                   title: "생산지시완료",
@@ -272,7 +287,8 @@ export default {
             // 체크된애들 값을 저장.
             if(orderDetail.check){
               param.push({prod_order_lot: orderDetail.prod_order_lot,
-                          employee_id: this.userInfo.employee_id
+                          employee_id: this.userInfo.employee_id,
+                          plan_detail_id: this.prodDetailList[this.idx].plan_detail_id
                });
               checkCheck = true;
             }
@@ -282,7 +298,14 @@ export default {
             await axios.put(`/api/orderCheck`, param)
                        .catch(err => console.log(err));
             this.proddtlist = ajaxRes.data
+            await this.selectProdDetailList();
             await this.clickDtList(this.idx);
+              this.$swal({
+                  icon: "success",
+                  title: "승인완료",
+                  text: "지시가 승인되었습니다.",
+                });
+                this.checkAll = false;
           }else{
             this.$swal({
                   icon: "warning",
@@ -300,12 +323,12 @@ export default {
       },
       // 취소버튼
       async close(){
-        this.prodOrderList = [];
-        this.planDetailId = '';
-        this.planDetailProd = '';
+        // this.prodOrderList = [];
+        // this.planDetailId = '';
+        // this.planDetailProd = '';
         this.prodDate = '';
         this.prodAmount = '';
-        await this.selectProdDetailList();
+        // await this.selectProdDetailList();
       },
 
     }

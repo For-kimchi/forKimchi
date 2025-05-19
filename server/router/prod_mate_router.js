@@ -3,14 +3,13 @@ const router = express.Router();
 
 const prodMateService = require('../service/prod_mate_service.js');
 
-// 자재 요청 목록 조회
+// 자재요청 현황 목록 조회
 router.get('/prodMateOrder', async(req, res)=>{
-  let query = req.query;
-  let list = await prodMateService.getPmo(query);
+  let list = await prodMateService.getPmo();
   res.send(list);
 });
 
-// 자재 요청 목록 상세 조회
+// 자재요청 현황 목록 상세 조회
 router.get('/prodMateOrder/:id', async(req, res)=>{
   let id = req.params.id
   let list = await prodMateService.getPmoOne(id);
