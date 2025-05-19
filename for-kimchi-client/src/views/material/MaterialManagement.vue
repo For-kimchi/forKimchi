@@ -1,30 +1,27 @@
 <template>
   <div class="container-fluid py-4">
 
-    <div class="text-end mb-3">
-      <button class="btn btn-outline-primary mb-2" @click="openProdOrderModal">
-          📋 생산지시서 조회
+    <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
+      <button class="btn btn-outline-primary " style="min-width: 10px;" @click="openProdOrderModal">
+        📋 생산지시서 조회
       </button>
-      <button class="btn btn-success me-2 shadow rounded-pill" @click="mateAdd">
+      <button class="btn btn-success shadow rounded-pill " style="min-width: 10px;" @click="mateAdd">
         💾 등록
       </button>
-      <button class="btn btn-primary me-2 shadow rounded-pill" @click="mateUpdate">
+      <button class="btn btn-primary shadow rounded-pill " style="min-width: 10px;" @click="mateUpdate">
         ✏️ 수정
       </button>
-      <!-- <button class="btn btn-danger me-2 shadow rounded-pill">🗑 삭제</button> -->
-      <button class="btn btn-secondary shadow rounded-pill" @click="goBack">
+      <!-- <button class="btn btn-danger shadow rounded-pill flex-fill" style="min-width: 120px;">🗑 삭제</button> -->
+      <button class="btn btn-secondary shadow rounded-pill " style="min-width: 10px;" @click="goBack">
         ❌ 닫기
       </button>
     </div>
     <div class="row">
-
       <div class="col-12">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-
               <h6 class="text-white text-capitalize ps-3">발주정보입력 </h6>
-
             </div>
           </div>
 
@@ -38,10 +35,10 @@
               <li class="list-group-item d-flex align-items-center">
                 <input type="text" readonly v-model="vendor.vendor_name">
                 <i class="fas fa-search d-flex align-items-center"
-                  style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="openProdVendor"></i>
+                  style="font-size: 20px; cursor: pointer; margin-left: 10px; " @click="openProdVendor"></i>
               </li>
-              <li class="list-group-item" style="margin-left: 20px;">납기예정일자</li>
-              <li class="list-group-item"><input type="date" v-model="req_due_date"></li>
+              <li class="list-group-item d-flex align-items-center" style="margin-left: 20px; width: 130px;">납기예정일자</li>
+              <li class="list-group-item d-flex align-items-center"><input type="date" v-model="req_due_date"></li>
             </ul>
           </div>
         </div>
@@ -52,13 +49,14 @@
       <div class="col-6">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3"><h6 class="text-white text-capitalize ps-3">자재리스트</h6>
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">자재리스트</h6>
               <!-- <div class="card-body">
               </div> -->
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <ul class="list-group list-group-horizontal">
+            <ul class="list-group list-group-horizontal" style="margin-left: 20px;">
               <li class="list-group-item d-flex align-items-center">
                 자재명
               </li>
@@ -70,7 +68,7 @@
               </li>
             </ul>
             <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center mb-0 justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th><input type="checkbox" @change="toggleAll('searchMate', $event)"></th>
@@ -89,7 +87,7 @@
                     </tr>
                   </template>
                   <tr v-else>
-                    <td colspan="5">현재 데이터가 존재하지 않습니다</td>
+                    <td colspan="5">검색된 자재가 없습니다</td>
                   </tr>
                 </tbody>
               </table>
@@ -112,12 +110,13 @@
       <div class="col-5">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3"><h6 class="text-white text-capitalize ps-3">선택된 자재</h6>
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">선택된 자재</h6>
             </div>
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center mb-0 justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th><input type="checkbox" @change="toggleAll('selectedList', $event)"></th>
@@ -138,7 +137,7 @@
                     </tr>
                   </template>
                   <tr v-else>
-                    <td colspan="5">현재 데이터가 존재하지 않습니다</td>
+                    <td colspan="5">추가된 자재가 없습니다.</td>
                   </tr>
                 </tbody>
               </table>
@@ -160,8 +159,8 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+            <div class="table-responsive p-0" style="max-height: 500px; overflow-y: auto;">
+              <table class="table align-items-center mb-0 justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th>No</th>
@@ -176,10 +175,9 @@
                 </thead>
                 <tbody>
                   <template v-if="materialList.length > 0">
-                    <tr v-for="(info, index) in materialList" :key="info.id" @click="updateMateList(index)">
+                    <tr v-for="(info, index) in materialList" :key="info.id" class="group cursor-pointer" @click="updateMateList(index)">
                       <td>{{ index + 1 }}</td>
-                      <!-- <td><MaterialCheckbox></MaterialCheckbox></td> -->
-                      <td>{{ info.req_date }}</td>
+                      <td >{{ info.req_date }}</td>
                       <td>{{ info.req_id }}</td>
                       <td>{{ info.vendor_name }}</td>
                       <td>{{ info.employee_name }}</td>
@@ -273,9 +271,7 @@ export default {
       this.isProdOrderModalOpen = true;
     },
     handleProdOrderSave({ prodOrder, bomList }) {
-      console.log("받은 생산지시서: ", prodOrder);
-      console.log("받은 BOM 리스트:dddd ", this.bomList);
-      console.log("selectedList==============", this.selectedList);
+
       this.selectedList = bomList.map(item => ({
         ...item,
         req_amount: item.mate_amount * item.order_amount,
@@ -314,7 +310,6 @@ export default {
       let ajaxRes = await axios.get(`/api/mateListInsert/${selected.req_id}`)
         .catch(err => console.log(err));
       this.selectedList = ajaxRes.data;
-      console.log("selectedList발주항목클릭1111111111111111111111", this.selectedList)
       this.vendor.vendor_id = selected.vendor_id;
       this.vendor.vendor_name = selected.vendor_name;
       this.req_due_date = selected.req_due_date;
@@ -332,44 +327,99 @@ export default {
 
     // 자재발주관리에서 삭제버튼 클릭시 발주삭제
     async deleteRow(index) {
+      const reqId = this.materialList[index].req_detail_id;
 
-      const reqId = this.materialList[index].req_detail_id; // 뒤에는 실제불러올 값인 req_id가 들어가야한다.
+      const result = await this.$swal({
+        text: '정말 삭제하시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소',
+      });
 
-      if (!confirm('정말 삭제하시겠습니까?'))
-        return;
+      if (!result.isConfirmed) return;
+
       try {
         await axios.delete(`/api/materialList/${reqId}`);
-        this.materialList.splice(index, 1); // 프론트에서도 삭제
-        alert('삭제되었습니다.');
+        this.materialList.splice(index, 1);
+        await this.$swal({
+          text: '삭제되었습니다.',
+          icon: 'success'
+        });
       } catch (err) {
         console.error('삭제 실패:', err);
-        alert('삭제 중 오류가 발생했습니다.');
+        await this.$swal({
+          text: '삭제 중 오류가 발생했습니다.',
+          icon: 'error'
+        });
       }
     },
 
-    moveToSelected() {
-      const movingItems = this.searchMate.filter(item => item.selected);
-      this.selectedList.push(...movingItems.map(item => ({
-        mate_id: item.mate_id,
-        mate_name: item.mate_name,
-        mate_unit: item.mate_unit,
-        req_amount: 0,
-        // mate_unit: item.mate_unit, 
-        selected: false
-      })));
-      this.searchMate = this.searchMate.filter(item => !item.selected);
-    },
-    moveToCustomer() {
-      const movingItems = this.selectedList.filter(item => item.selected);
-      this.searchMate.push(...movingItems.map(item => ({
-        mate_id: item.mate_id,
-        mate_name: item.mate_name,
-        req_amount: item.req_amount,
-        mate_unit: item.mate_unit,
-        selected: false
-      })));
-      this.selectedList = this.selectedList.filter(item => !item.selected);
-    },
+
+
+moveToSelected() {
+  const movingItems = this.searchMate.filter(item => item.selected);
+
+  // 중복 자재 체크를 위해 이미 selectedList에 있는 mate_id 목록 생성
+  const existingIds = new Set(this.selectedList.map(item => item.mate_id));
+
+  // 중복된 자재 이름을 담을 배열
+  const duplicates = [];
+
+  // 중복이 아닌 자재만 필터링해서 추가할 리스트 생성
+  const itemsToAdd = movingItems.filter(item => {
+    if (existingIds.has(item.mate_id)) {
+      duplicates.push(item.mate_name);
+      return false; // 중복이니 제외
+    }
+    return true; // 중복 아니면 추가
+  });
+
+  // 중복 자재가 있으면 alert 띄우기
+  if (duplicates.length > 0) {
+  this.$swal.fire({
+    icon: 'warning',
+    title: '중복 자재',
+    text: `이미 추가된 자재가 있습니다:\n${duplicates.join(', ')}`,
+    confirmButtonText: '확인'
+  });
+}
+
+
+  // 중복 없는 자재만 selectedList에 추가
+  this.selectedList.push(...itemsToAdd.map(item => ({
+    mate_id: item.mate_id,
+    mate_name: item.mate_name,
+    mate_unit: item.mate_unit,
+    req_amount: 0,
+    selected: false
+  })));
+
+  // searchMate에서 선택된 자재는 삭제 (중복 제외한 나머지만)
+  this.searchMate = this.searchMate.filter(item => !item.selected);
+},
+
+moveToCustomer() {
+  const movingItems = this.selectedList.filter(item => item.selected);
+
+  // searchMate에 이미 있는 자재 ID 목록
+  const existingIds = new Set(this.searchMate.map(item => item.mate_id));
+
+  // 중복 자재는 제외하고 추가
+  const itemsToAdd = movingItems.filter(item => !existingIds.has(item.mate_id));
+
+  this.searchMate.push(...itemsToAdd.map(item => ({
+    mate_id: item.mate_id,
+    mate_name: item.mate_name,
+    req_amount: item.req_amount,
+    mate_unit: item.mate_unit,
+    selected: false
+  })));
+
+  // selectedList에서는 선택된 항목은 무조건 제거
+  this.selectedList = this.selectedList.filter(item => !item.selected);
+},
+
     goBack() {
       this.$router.push('/materlist');
     },
@@ -419,41 +469,51 @@ export default {
 
     // 빈값에 대한 각각의 alert창 구성
     async mateAdd() {
-      // 회사명 확인
       if (!this.vendor || !this.vendor.vendor_id) {
-        alert("회사명을 입력하세요.");
+        // 회사명 확인
+        await this.$swal({
+          text: "회사명을 입력하세요.",
+          icon: "warning"
+        });
         return;
       }
-
-      // 납기 예정일 확인
+      // 납기예정일자 확인
       if (!this.req_due_date) {
-        alert("납기예정일자를 입력하세요.");
+        await this.$swal({
+          text: "납기예정일자를 입력하세요.",
+          icon: "warning"
+        });
         return;
       }
 
-      // 현재 날짜보다 이전 날짜인지 확인
       const today = new Date();
-      today.setHours(0, 0, 0, 0); // 시간 제거 (날짜만 비교)
+      today.setHours(0, 0, 0, 0);
 
       const dueDate = new Date(this.req_due_date);
       if (dueDate < today) {
-        alert("납기예정일자는 오늘 이후 날짜여야 합니다.");
+        await this.$swal({
+          text: "납기예정일자는 오늘 이후 날짜여야 합니다.",
+          icon: "warning"
+        });
         return;
       }
-
-      // 자재 선택 여부 확인
+      // 자재 선택여부 확인
       if (this.selectedList.length === 0) {
-        alert("자재가 없습니다.");
+        await this.$swal({
+          text: "자재가 없습니다.",
+          icon: "warning"
+        });
         return;
       }
-
-      // 자재 수량 확인
+      // 자재 수량확인
       const mateAmounts = this.selectedList.filter(item => !item.req_amount || item.req_amount <= 0);
       if (mateAmounts.length > 0) {
-        alert("수량을 모두 입력해주세요.");
+        await this.$swal({
+          text: "수량을 모두 입력해주세요.",
+          icon: "warning"
+        });
         return;
       }
-
       // 서버로 보낼 데이터 구성
       const mateInfo = {
         mate_detail_list: this.selectedList.map(item => ({
@@ -468,65 +528,95 @@ export default {
       try {
         const ajaxRes = await axios.post(`/api/mateSave`, mateInfo);
         if (ajaxRes.data.affectedRows > 0) {
-          alert("저장되었습니다.");
+          await this.$swal({
+            text: "저장되었습니다.",
+            icon: "success"
+          });
           this.resetForm();
           this.getMateList();
           this.$router.push('/matma');
         } else {
-          alert("저장이 실패하였습니다.");
+          await this.$swal({
+            text: "저장이 실패하였습니다.",
+            icon: "error"
+          });
         }
       } catch (err) {
         console.error(err);
-        alert("저장 중 오류가 발생했습니다.");
+        await this.$swal({
+          text: "저장 중 오류가 발생했습니다.",
+          icon: "error"
+        });
       }
     },
 
     async mateUpdate() {
-      // 회사명 확인
       if (!this.vendor || !this.vendor.vendor_id) {
-        alert("회사명을 입력하세요.");
+        // 회사명 확인
+        await this.$swal({
+          text: "회사명을 입력하세요.",
+          icon: "warning"
+        });
         return;
       }
 
-      // 납기 예정일 확인
       if (!this.req_due_date) {
-        alert("납기예정일자를 입력하세요.");
+        // 납기예정일자 확인
+        await this.$swal({
+          text: "납기예정일자를 입력하세요.",
+          icon: "warning"
+        });
         return;
       }
 
-      // 자재 선택 여부 확인
       if (this.selectedList.length === 0) {
-        alert("자재가 없습니다.");
+        // 자재확인
+        await this.$swal({
+          text: "자재가 없습니다.",
+          icon: "warning"
+        });
         return;
       }
 
-      // 자재 수량 확인
       const mateAmounts = this.selectedList.filter(item => !item.req_amount || item.req_amount <= 0);
       if (mateAmounts.length > 0) {
-        alert("수량을 모두 입력해주세요.");
+        // 자재수량 확인
+        await this.$swal({
+          text: "수량을 모두 입력해주세요.",
+          icon: "warning"
+        });
         return;
       }
-
       // 서버로 보낼 데이터 구성
       const mateInfo = {
         req_id: this.selectedList[0].req_id,
         mate_detail_list: this.selectedList.map(item => ({
-        mate_id: item.mate_id,
-        req_amount: item.req_amount,
+          mate_id: item.mate_id,
+          req_amount: item.req_amount,
         })),
         vendor_id: this.vendor.vendor_id,
         req_due_date: this.req_due_date,
         employee_id: this.userInfo.employee_id,
       };
 
-      await axios.put(`/api/mateSave`, mateInfo).then(res => {
+      await axios.put(`/api/mateSave`, mateInfo).then(async res => {
         if (res.data.affectedRows > 0) {
-          alert("수정이 정상적으로 이루어졌습니다.")
+          await this.$swal({
+            text: "수정이 정상적으로 이루어졌습니다.",
+            icon: "success"
+          });
           this.getMateList();
           this.resetForm();
         }
-      }).catch((err) => console.log(err));
+      }).catch(async (err) => {
+        console.log(err);
+        await this.$swal({
+          text: "수정 중 오류가 발생했습니다.",
+          icon: "error"
+        });
+      });
     },
+
 
     formatDateAfter(dateString, after) {
 

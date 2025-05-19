@@ -92,6 +92,10 @@ export default {
       .catch(err => console.log(err));
 
       if (res.data.success) {
+        this.$swal({
+          text: "로그인 성공!",
+          icon: "success"
+        });
         this.employee = res.data.employee;
         this.loginStore(this.employee);
         this.$router.push('/');
@@ -99,7 +103,7 @@ export default {
         this.$swal({
           title: '로그인 실패',
           text: '이메일 또는 비밀번호를 확인해주세요',
-          icon: 'warning'
+          icon: 'error'
         });
       }
     },

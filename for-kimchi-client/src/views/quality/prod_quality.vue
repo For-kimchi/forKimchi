@@ -11,13 +11,31 @@
           <div class="row g-2 my-3 px-3">
             <div class="col-md-3">
               <div class="d-flex align-items-center">
-                <label class="form-label me-2 mb-0 " style="width: 100px;">자재명</label>
+                <label class="form-label me-2 mb-0 " style="width: 100px;">제품명</label>
                 <input v-model="searchName" type="text" class="form-control border text-center" placeholder="자재명 : 엔터"  @keyup.enter="searchProdName(searchName)"/>
               </div>
             </div>
+                      <div class="col-md-3">
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">시작일자</label>
+            <input v-model="searchStartDate" type="date" class="form-control border text-center"/>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 d-flex align-items-center">
+            <label class="form-label me-2 mb-0 " style="width: 100px;">종료일자</label>
+            <input v-model="searchEndDate" type="date" class="form-control border text-center"/>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 d-flex align-items-center">
+            <button class="btn btn-success me-2" @click="getProdDate">조회</button>
+            <button class="btn btn-secondary" @click="resetSearch">초기화</button>
+          </div>
+        </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
@@ -41,7 +59,7 @@
                         <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                         <td class="align-middle text-center">{{ info.prod_id }}</td>
                         <td class="align-middle text-center">{{ info.prod_name }}</td>
-                        <td class="align-middle text-center">{{ info.quality_date }}</td>
+                        <td class="align-middle text-center">{{ formatDate(info.quality_date) }}</td>
                         <td class="align-middle text-center">{{ info.quality_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_pass_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_fail_amount }}</td>
@@ -75,7 +93,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
@@ -121,6 +139,7 @@
   import { useUserStore } from "@/stores/user"; 
   // state, getter => mapState 
   // actions => mapActions 
+  import { formatDate, formatDateAfter, codeToName} from '@/utils/common';  
   import { mapState } from 'pinia';
 
   export default {
@@ -131,6 +150,8 @@
         prodQualityViewdetail :[],
         searchName : '',
         selectedIndex : null,
+        searchStartDate: formatDate(),
+        searchEndDate: formatDateAfter(null,1),
       }
     },
     computed: {
@@ -147,20 +168,43 @@
     ])
     },
     created() {
-      this.prodQualityViewDropDown();
       this.prodQualityViewAll();
     },
     computed: {
 
     },
     methods: {
-
+            async getProdDate(){
+        const params = {};
+        if(this.searchStartDate) params.startDate = this.searchStartDate;
+        if(this.searchEndDate) params.endDate = this.searchEndDate;
+        let result = 
+        await axios.get(`/api/getProdDate`, {
+          params
+        })
+        .catch(err => console.log(err));
+      this.prodQualityViewall = result.data;
+      },
+      formatDate(dateString){
+        return formatDate(dateString);
+      },
+      formatDateAfter(dateString, after){
+        return formatDate(dateString, after);
+      },
      // pdf
 async downloadPdf() {
+  if (this.prodQualityViewdetail.length === 0) {
+    this.$swal({
+      text: "다운로드 실패 - 검사결과를 클릭하세요!",
+      icon: "warning"
+    });
+    return;
+  }
   this.$swal({
     text: "다운로드 성공",
     icon: "success"
   });
+
   try {
     const response = await axios.get('/templates/quality_report_prod.html');
     let templateHtml = response.data;
@@ -218,6 +262,7 @@ async downloadPdf() {
 }
 ,
       async prodQualityViewDropDown() {
+        
         let ajaxRes =
         await axios.get(`/api/prodQualityViewDropDown`)
                    .catch(err => console.log(err));
@@ -237,6 +282,21 @@ async downloadPdf() {
                    .catch(err => console.log(err));
         this.prodQualityViewdetail = ajaxRes.data;
       },
+      async searchProdName(pId) {
+      if(!pId) {
+        this.prodQualityViewAll();
+        return;
+      }
+      let ajaxRes = await axios.get(`/api/selectProdName/${pId}`)
+                               .catch(err => console.log(err));
+      this.prodQualityViewall = ajaxRes.data;
+      },
+            resetSearch() {
+        this.searchName= '';
+        this.searchStartDate = formatDate();
+        this.searchEndDate = formatDateAfter(null, 1);
+        this.prodQualityViewAll();
+      }
       // addRow() {
       //   this.prodQualityViewdetail.push({});
       // }

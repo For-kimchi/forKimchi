@@ -11,7 +11,7 @@ SELECT
     memo
 FROM t_mate_inbound_detail
 WHERE inbound_status = '1p'
-ORDER BY inbound_detail_id
+ORDER BY inbound_detail_id DESC
 `;
 // 자재검사요청 (대기-상세)
 const mateQualityWait = 
@@ -97,7 +97,7 @@ FROM
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
 ORDER BY
-	inbound_id DESC
+	quality_date DESC
 `;
 
 // 검색조건 (자재명)
@@ -123,10 +123,10 @@ ORDER BY
 `;
 
 // 자재검색조건 (날짜)
-const selectResultDate = 
+const getMateDate = 
 `
 SELECT DISTINCT
-md.inbound_id,
+    md.inbound_id,
 	q.inbound_detail_id,
     q.quality_id,
     md.mate_id,
@@ -139,8 +139,8 @@ md.inbound_id,
 FROM 
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
-WHERE
-	sub_code(quality_final_result) LIKE ?
+WHERE 1=1
+	:searchKeyword
 ORDER BY
 	inbound_id DESC
 `;
@@ -201,36 +201,61 @@ LIMIT 1
 // `;
 
 // 제품검사요청1
-const prodQuality1 = 
-`
-SELECT 
-	prod_id
-FROM t_prod_order
-WHERE prod_order_lot = ?
-`;
+//const prodQuality1 = 
+//`
+//SELECT 
+//	prod_id
+//FROM t_prod_order
+//WHERE prod_order_lot = ?
+//`;
 
 // 제품검사요청2
-const prodQuality2 = 
-`
-SELECT distinct
-	p.proc_id 
-FROM t_proc_flow_detail pfd
-JOIN t_proc p ON pfd.proc_id = p.proc_id
-JOIN t_proc_flow pf ON pf.proc_flow_id = pfd.proc_flow_id
-WHERE proc_flow_status = '1v'
-AND p.proc_type = '2g'
-`;
+//const prodQuality2 = 
+//`
+//SELECT distinct
+//	p.proc_id 
+//FROM t_proc_flow_detail pfd
+//JOIN t_proc p ON pfd.proc_id = p.proc_id
+//JOIN t_proc_flow pf ON pf.proc_flow_id = pfd.proc_flow_id
+//WHERE proc_flow_status = '1v'
+//AND p.proc_type = '2g'
+//`;
 
 // 제품검사요청3
-const prodQuality3 = 
+//const prodQuality3 = 
+//`
+//SELECT
+//	SUM(pp.proc_pass_amount) 총생산량,
+//    po.prod_id,
+//    prod_id(po.prod_id) prod_name
+//FROM t_prod_proc pp JOIN t_prod_order po ON pp.prod_order_lot = po.prod_order_lot
+//WHERE pp.prod_order_lot = ?
+//AND pp.proc_id = ?
+//`;
+
+const prodQualityReq = 
 `
-SELECT
-	SUM(pp.proc_pass_amount) 총생산량,
-    po.prod_id,
-    prod_id(po.prod_id) prod_name
-FROM t_prod_proc pp JOIN t_prod_order po ON pp.prod_order_lot = po.prod_order_lot
-WHERE pp.prod_order_lot = ?
-AND pp.proc_id = ?
+SELECT 
+pp.prod_order_lot,
+pp.prod_proc_id,
+pp.proc_id,
+pp.prod_id,
+prod_id(pp.prod_id) prod_name,
+SUM(pp.proc_input_amount) total,
+sub_code(pp.proc_status) proc_status
+from t_proc p JOIN t_proc_flow_detail pfd on p.proc_id = pfd.proc_id
+JOIN t_proc_flow pf ON pfd.proc_flow_id = pf.proc_flow_id 
+JOIN t_prod_order po ON pf.prod_id = po.prod_id
+JOIN t_prod_proc pp ON po.prod_order_lot = pp.prod_order_lot  AND po.prod_id = pf.prod_id AND pp.proc_id = p.proc_id
+WHERE 
+-- pf.prod_id= 'PRD-007'
+-- AND 
+proc_flow_status = '1v'
+AND order_status= '4d'
+AND p.proc_type = '2g'
+AND pp.proc_status = '4e'
+-- AND pp.prod_order_lot = 'OLOT-20250518-002'
+GROUP BY proc_id DESC
 `;
 
 // 제품검사요청 (대기-상세)
@@ -291,7 +316,7 @@ select
     sub_code(tqp.quality_final_result) final_result
 from
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
-order by tqp.prod_proc_id
+order by DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') DESC
 `;
 
 // 제품검사조회 (제품이름)
@@ -312,6 +337,26 @@ WHERE
 	prod_id(tpp.prod_id) LIKE ?
 ORDER BY
 	tqp.prod_proc_id DESC
+`;
+
+// 제품검사조회 (날짜)
+const getProdDate =
+`
+select 
+	tqp.prod_proc_id,
+    tqp.quality_id,
+    prod_id(tpp.prod_id) prod_name,
+    tpp.prod_id,
+    DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') quality_date,
+    tqp.quality_amount,
+    tqp.quality_pass_amount,
+    tqp.quality_fail_amount,
+    sub_code(tqp.quality_final_result) final_result
+from
+	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
+WHERE 1=1
+:searchKeyword
+order by tqp.prod_proc_id
 `;
 
 // 제품검사조회 (상세)
@@ -552,12 +597,12 @@ module.exports = {
      updateMateQuality,
      updateMate,
      selectMateName,
-     selectResultDate,
+     getMateDate,
     // 제품
-    //  prodQualityReq,
-     prodQuality1,
-     prodQuality2,
-     prodQuality3,
+     prodQualityReq,
+    // prodQuality1,
+    // prodQuality2,
+    // prodQuality3,
      prodQualityWait,
     //  prodQualityViewDropDown,
      prodQualityViewAll,
@@ -568,6 +613,7 @@ module.exports = {
      prodWaitInsert,
      updateProd,
      selectProdName,
+     getProdDate,
     // 검사항목관리
      selectOption,
      insertOption,
