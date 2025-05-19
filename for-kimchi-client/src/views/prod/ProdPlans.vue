@@ -84,7 +84,8 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info,index) in proddtlist" v-bind:key="info.plan_detail_id">
-                    <td class="align-middle font-weight-bolder text-center"><input type="checkbox" v-model="info.check"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인'"><span></span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_status === '상세계획등록'"><input type="checkbox" v-model="info.check"></td>
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.plan_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.prod_id }}</td>
@@ -160,13 +161,14 @@ export default {
           check: false,
         }));
         // 계획중, 계획승인, 계획등록
+        // status1 = 저장  status2 = 승인
         for(let list of this.proddtlist){
           if(list.plan_status === '상세계획승인'){
             this.status1 = false;
             this.status2 = true;
           }else if(list.plan_status === '상세계획등록'){
             this.status1 = true;
-            this.status2 = false;
+            this.status2 = true;
           }else if(list.plan_status === '상세지시중'){
             this.status1 = true;
             this.status2 = true;
