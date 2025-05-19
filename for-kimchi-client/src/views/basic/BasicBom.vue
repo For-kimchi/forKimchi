@@ -211,7 +211,10 @@ export default {
     }, 
     searchMaterial() {
       if (!this.prod.prod_id) {
-        alert('제품을 먼저 선택해주세요');
+        this.$swal({
+          text: '제품을 먼저 선택해주세요',
+          icon: 'warning'
+        });
         return;
       }
       this.getMate();
@@ -228,20 +231,24 @@ export default {
           ...this.materials[index],
           mate_amount: 0,
         })
-      } else {
-        alert('이미 추가된 자재입니다')
       }
     },
     async save() {
 
       if (!this.prod.prod_id) {
-        alert('제품을 먼저 선택해주세요')
+        this.$swal({
+          text: '대상제품을 먼저 선택해주세요',
+          icon: 'warning'
+        });
         return;
       }
 
       for (let detail of this.bom.bom_details) {
         if (!detail.mate_amount) {
-          alert('수량이 입력되지 않은 자재 항목이 있습니다')
+        this.$swal({
+          text: '수량이 입력되지 않은 자재 항목이 있습니다',
+          icon: 'warning'
+        });
           return;
         }
       }
@@ -252,9 +259,15 @@ export default {
       .catch(err => console.log(err));
       
       if (res.data.success) {
-        alert('등록 성공');
+        this.$swal({
+          text: '저장이 완료되었습니다',
+          icon: 'success'
+        });
       } else {
-        alert('등록 실패');
+        this.$swal({
+          text: '저장 중 오류가 발생했습니다다',
+          icon: 'error'
+        });
       }
 
     },

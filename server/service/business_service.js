@@ -150,8 +150,9 @@ const getOrder = async (params) => {
     };
   }
 
-  keyword.searchKeyword = ` AND order_date BETWEEN '${startDate}' AND '${endDate}'` +
-    keyword.searchKeyword;
+  if (startDate && endDate) {
+    keyword.searchKeyword += ` AND DATE(order_date) BETWEEN '${startDate}' AND '${endDate}'`;
+  }
 
   let list = await mariaDB.query("selectOrder", keyword);
   return list;
@@ -393,8 +394,9 @@ const getDeliv = async (params) => {
     };
   }
 
-  keyword.searchKeyword = ` AND deliv_date BETWEEN '${startDate}' AND '${endDate}'` +
-    keyword.searchKeyword;
+  if (startDate && endDate) {
+    keyword.searchKeyword += ` AND DATE(deliv_date) BETWEEN '${startDate}' AND '${endDate}'`;
+  }
 
   let list = await mariaDB.query("selectDeliv", keyword);
   return list;

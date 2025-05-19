@@ -34,28 +34,30 @@
         </div>
 
         <!-- 검색 결과 테이블 -->
+         <div style="max-height: 300px; overflow-y: auto;">
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>대상ID</th>
-              <th>대상명</th>
+              <th class="text-center">대상ID</th>
+              <th class="text-center">대상명</th>
             </tr>
           </thead>
           <tbody>
             <template v-if="selectedType == 'prod'">
               <tr v-for="(item, index) in results" :key="item.prod_id" @click="selectItem(index)" style="cursor: pointer">
-                <td>{{ item.prod_id }}</td>
-                <td>{{ item.prod_name }}</td>
+                <td class="text-center">{{ item.prod_id }}</td>
+                <td class="text-center">{{ item.prod_name }}</td>
               </tr>
             </template>
             <template v-else>
               <tr v-for="(item, index) in results" :key="item.mate_id" @click="selectItem(index)" style="cursor: pointer">
-                <td>{{ item.mate_id }}</td>
-                <td>{{ item.mate_name }}</td>
+                <td class="text-center">{{ item.mate_id }}</td>
+                <td class="text-center">{{ item.mate_name }}</td>
               </tr>
             </template>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   </teleport>

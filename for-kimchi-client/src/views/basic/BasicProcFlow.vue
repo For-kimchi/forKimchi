@@ -67,6 +67,10 @@
                 </draggable>
               </table>
             </div>
+            <div class="text-center text-muted mt-2" style="font-size: 0.9rem;">
+              <i class="material-icons-round" style="vertical-align: middle; font-size: 1rem;">info</i>
+                항목을 마우스로 드래그하여 순서를 변경할 수 있습니다.
+            </div>
           </div>
         </div>
       </div>
@@ -142,7 +146,9 @@
       return {
         showProd: false,
         searchName: '',
-        procFlow: {},
+        procFlow: {
+          flow_details: [],
+        },
         procs: [],
         prod: {},
         codes: []
@@ -181,7 +187,10 @@
       },
       searchFlow() {
         if (!this.prod.prod_id) {
-          alert('제품을 먼저 선택해주세요');
+        this.$swal({
+          text: '제품을 먼저 선택해주세요',
+          icon: 'warning'
+        });
           return;
         }
         this.getFlow();
@@ -198,8 +207,6 @@
             proc_id: this.procs[index].proc_id,
             proc_name: this.procs[index].proc_name,
           })
-        } else {
-          alert('이미 추가된 공정입니다')
         }
       },
       updateRowNumbers() {
@@ -208,7 +215,10 @@
       async save() {
 
         if (!this.prod.prod_id) {
-          alert('제품을 먼저 선택해주세요');
+        this.$swal({
+          text: '대상제품을 먼저 선택해주세요',
+          icon: 'warning'
+        });
           return;
         }
         
@@ -218,9 +228,15 @@
         .catch(err => console.log(err));
 
         if (res.data.success) {
-          alert('등록 성공');
+        this.$swal({
+          text: '저장이 완료되었습니다',
+          icon: 'success'
+        });
         } else {
-          alert('등록 실패');
+        this.$swal({
+          text: '저장 중 오류가 발생했습니다다',
+          icon: 'error'
+        });
         }
 
       },

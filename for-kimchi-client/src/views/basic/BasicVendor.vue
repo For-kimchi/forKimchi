@@ -182,20 +182,28 @@
         if (!this.selected.vendor_name ||
           !this.selected.vendor_number ||
           !this.selected.vendor_type) {
-          alert('입력되지 않은 정보가 있습니다');
+          this.$swal({
+          text: '입력되지 않은 정보가 있습니다',
+          icon: 'warning'
+          });
           return;
         }
 
         let result = await axios.post('/api/basicVendor', this.selected)
           .catch(err => console.log(err));
-        console.log(result);
 
         if (result.data.affectedRows > 0) {
-          alert('저장이 완료되었습니다');
+        this.$swal({
+          text: '저장이 완료되었습니다',
+          icon: 'success'
+        });
           this.getBasicVendor();
           this.resetForm();
         } else {
-          alert('저장 과정에서 오류가 발생했습니다');
+        this.$swal({
+          text: '저장 중 오류가 발생했습니다',
+          icon: 'error'
+        });
         }
 
       },

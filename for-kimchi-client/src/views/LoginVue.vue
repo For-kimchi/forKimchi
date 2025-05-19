@@ -21,7 +21,7 @@
             <div class="card-body">
                 <div class="mb-2">
                   <label class="form-label">이메일</label>
-                  <input v-model="employee_email" type="email" class="form-control border ps-3">
+                  <input v-model="employee_email" type="email" class="form-control border ps-3" @keyup.enter="login">
                 </div>
                 <div class="mb-4">
                   <label class="form-label">비밀번호</label>
@@ -91,15 +91,16 @@ export default {
       let res = await axios.post('/api/login', param)
       .catch(err => console.log(err));
 
-      console.log(res.data);
-
       if (res.data.success) {
-        alert('로그인 성공');
         this.employee = res.data.employee;
         this.loginStore(this.employee);
         this.$router.push('/');
       } else {
-        alert('로그인 실패');
+        this.$swal({
+          title: '로그인 실패',
+          text: '이메일 또는 비밀번호를 확인해주세요',
+          icon: 'warning'
+        });
       }
     },
     openModal() {
