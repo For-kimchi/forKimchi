@@ -32,4 +32,4 @@ jobs:
         scp   -r -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no package.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/kimchi/forKimchi/server/public/      
 
 
-        echo '== build end ==='
+        echo '== build end =   =='
