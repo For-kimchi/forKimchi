@@ -180,7 +180,10 @@
           !this.selected.prod_size ||
           !this.selected.prod_unit ||
           !this.selected.prod_type) {
-          alert('입력되지 않은 정보가 있습니다');
+          this.$swal({
+          text: '입력되지 않은 정보가 있습니다',
+          icon: 'warning'
+          });
           return;
         }
 
@@ -189,11 +192,17 @@
         console.log(result);
 
         if (result.data.affectedRows > 0) {
-          alert('저장이 완료되었습니다');
+        this.$swal({
+          text: '저장이 완료되었습니다',
+          icon: 'success'
+        });
           this.getBasicProd();
           this.resetForm();
         } else {
-          alert('저장 과정에서 오류가 발생했습니다');
+        this.$swal({
+          text: '저장 중 오류가 발생했습니다',
+          icon: 'error'
+        });
         }
       },
       codeToName(code, codeArray) {

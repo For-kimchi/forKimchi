@@ -136,7 +136,7 @@
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">이메일</label>
-            <input v-model="selected.employee_email" type="email" class="form-control border text-center" />
+            <input v-model="selected.employee_email" type="email" class="form-control border text-center" :disabled="action === '수정'"/>
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">연락처</label>
@@ -226,7 +226,10 @@
           !this.selected.employee_type ||
           !this.selected.employee_dept
         ) {
-          alert('입력되지 않은 정보가 있습니다');
+          this.$swal({
+          text: '입력되지 않은 정보가 있습니다',
+          icon: 'warning'
+          });
           return;
         }
 
@@ -234,11 +237,17 @@
           .catch(err => console.log(err));
 
         if (res.data.success > 0) {
-          alert('저장이 완료되었습니다');
+        this.$swal({
+          text: '저장이 완료되었습니다',
+          icon: 'success'
+        });
           this.getBasicEmployee();
           this.resetForm();
         } else {
-          alert('저장 과정에서 오류가 발생했습니다');
+        this.$swal({
+          text: '저장 중 오류가 발생했습니다',
+          icon: 'error'
+        });
         }
 
       },

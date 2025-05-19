@@ -17,26 +17,26 @@
       <div class="row mt-3 px-3">
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">주문ID</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">주문ID</label>
             <input v-model="order.order_id" type="text" class="form-control border text-center" placeholder="주문ID" readonly/>
           </div>
         </div>
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">주문일자</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">주문일자</label>
             <input v-model="order.order_date" type="date" class="form-control border text-center" placeholder="주문일자" />
           </div>
         </div>
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">거래처</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">거래처</label>
             <input v-model="order.vendor_name" type="text" class="form-control border text-center" @keydown.prevent
             @click="showVendor = true" placeholder="거래처" />         
           </div>
         </div>
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">담당자</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">담당자</label>
             <input v-model="userInfo.employee_name" type="text" class="form-control border text-center" placeholder="담당자" />
           </div>
         </div>
@@ -45,7 +45,7 @@
       <div class="row mt-1 px-3">
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">비고</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">비고</label>
             <input v-model="order.memo" type="text" class="form-control border text-center" placeholder="비고" />
           </div>
         </div>

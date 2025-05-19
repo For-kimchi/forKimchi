@@ -173,6 +173,10 @@ const postProc = async (body) => {
 
   console.log(body);
 
+  let res = {
+    success: true,
+  };
+
   let result;
   if (body.proc_id) {
 
@@ -194,7 +198,14 @@ const postProc = async (body) => {
 
   }
 
-  return result;
+  if (result.affectedRows > 0) {
+    return res;
+  } else {
+    res.success = false;
+    return res;
+  }
+
+  // return result;
 };
 
 

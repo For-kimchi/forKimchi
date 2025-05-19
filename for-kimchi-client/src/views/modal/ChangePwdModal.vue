@@ -66,12 +66,18 @@
       async changePwd() {
         
         if (!this.old_pwd || !this.new_pwd || !this.new_pwd_check) {
-          alert('입력되지 않은 정보가 있습니다');
+          this.$swal({
+          text: '입력되지 않은 정보가 있습니다',
+          icon: 'warning'
+        });
           return;
         }
 
         if (this.new_pwd != this.new_pwd_check) {
-          alert('새로운 비밀번호가 일치하지 않습니다');
+          this.$swal({
+          text: '새로운 비밀번호가 일치하지 않습니다',
+          icon: 'warning'
+        });
           return;
         }
 
@@ -81,13 +87,17 @@
           new_pwd: this.new_pwd,
         }).catch(err => console.log(err));
 
-        console.log(res.data);
-
         if (res.data.success) {
-          alert('변경 성공');
+          this.$swal({
+          text: '비밀번호가 변경되었습니다',
+          icon: 'success'
+        });
           this.close();
         } else {
-          alert('변경 실패');
+          this.$swal({
+          text: '비밀번호 변경 중 오류가 발생했습니다다',
+          icon: 'error'
+        });
         }
       },
       close() {

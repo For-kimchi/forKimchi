@@ -162,7 +162,10 @@
 
         if (!this.selected.proc_name ||
           !this.selected.proc_type) {
-          alert('입력되지 않은 정보가 있습니다');
+          this.$swal({
+          text: '입력되지 않은 정보가 있습니다',
+          icon: 'warning'
+          });
           return;
         }
 
@@ -170,12 +173,18 @@
           .catch(err => console.log(err));
         console.log(result);
 
-        if (result.data.affectedRows > 0) {
-          alert('저장이 완료되었습니다');
+        if (result.data.success) {
+        this.$swal({
+          text: '저장이 완료되었습니다',
+          icon: 'success'
+        });
           this.getBasicProc();
           this.resetForm();
         } else {
-          alert('저장 과정에서 오류가 발생했습니다');
+        this.$swal({
+          text: '저장 중 오류가 발생했습니다',
+          icon: 'error'
+        });
         }
 
       },

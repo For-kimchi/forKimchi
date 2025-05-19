@@ -123,7 +123,9 @@
                       {{ codeToName(info.option_operator, codes) }}
                     </td>
                     <td class="text-center">
-                      <button class="btn btn-success m-0" @click="addRows(index)">추가</button>
+                      <!-- <button class="btn btn-success m-0" @click="addRows(index)">추가</button> -->
+                      <button v-if="!std.std_details.some(detail => detail.option_id == info.option_id)" class="btn btn-success m-0" @click="addRows(index)">추가</button>
+                      <button v-else class="btn btn-light m-0" disabled>추가</button>
                     </td>
                   </tr>
                 </tbody>
@@ -209,6 +211,13 @@ export default {
       this.getStd();
     }, 
     searchOptions() {
+      if (!this.std.std_id) {
+        this.$swal({
+    text: "검사대상을 먼저 선택해주세요",
+    icon: "warning"
+  });
+        return;
+      }
       this.getOptions();
     },
     removeRows(index) {
@@ -224,7 +233,7 @@ export default {
         })
       } else {
           this.$swal({
-    text: "이미 추가된 검사입니다.",
+    text: "이미 추가된 검사입니다",
     icon: "warning"
   });
       }
