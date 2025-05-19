@@ -1,7 +1,7 @@
 name: Build Vue and Deploy Node App
 
 on:
-  pull_request:
+  push:
     types: [closed]
     branches:
       - master  
