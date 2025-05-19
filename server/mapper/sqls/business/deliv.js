@@ -121,6 +121,8 @@ const insertProdWarehouse =
  CALL insert_prod_warehouse(?, ?, ?, ?, ?, ?)
  `;
 
+ // TEST
+
 const selectProdWarehouseLot =
   `
 SELECT A.*,
