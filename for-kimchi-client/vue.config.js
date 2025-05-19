@@ -5,11 +5,11 @@ const path = require("path");
 
 module.exports = defineConfig({
   transpileDependencies: true,
-  outputDir: path.resolve("../server/public"),
+  // outputDir: path.resolve("../server/public"),
   // 개발용 임시 서버
   devServer : {
     // Vue.js 실행 시 적용 PORT 변경
-    port : 8099,
+    port : 8081,
      // CORS(Cross Origin Resource Sharing) => proxy setting
     proxy : {
       // 해당 문자열로 시작하는 통신에 적용하는 설정

@@ -169,3 +169,5 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+server.log

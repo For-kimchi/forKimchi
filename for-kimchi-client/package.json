@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --port 4000",
+    "serve": "vue-cli-service serve",
     "build": "cross-env CI=false cross-env PUBLIC_URL=/ vue-cli-service build"
   },
   "dependencies": {
