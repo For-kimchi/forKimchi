@@ -27,7 +27,7 @@ const selectStoreList =
 `SELECT 
   i.inbound_id,
   date_type(i.inbound_date) AS inbound_date,
-  vendor_id(i.vendor_id) vendor_name,
+  vendor_id(i.vendor_id) AS vendor_name,
   employee_id(i.employee_id) AS employee_name,
   i.memo,
   CASE
@@ -47,7 +47,8 @@ GROUP BY
   i.vendor_id,
   v.vendor_name,
   i.employee_id,
-  i.memo;
+  i.memo
+ ORDER BY i.inbound_date DESC;
 `;
 
 // 입고관리에서 발주서리스트 (입고상태추가해야함)
@@ -61,7 +62,8 @@ const selectStoreMateList =
           sub_code(req_status) req_status,
 	        memo,
           date_type(confirm_date) confirm_date,
-          employee_id(manager_id) manager_id
+          employee_id(manager_id) manager_id,
+          vendor_id
 FROM t_mate_req
 WHERE req_status = '2o'
 `;
@@ -100,6 +102,7 @@ const selectDetailStore =
   ib.memo,
   wr.warehouse_type,
   wr.warehouse_id,
+  ibd.mate_id,
 
   ibd.inbound_detail_id,
   MAX(mate_id(ibd.mate_id)) AS mate_name, 
@@ -132,13 +135,22 @@ GROUP BY
 
 // 입고조회페이지 상세조회
 const storeDetailList =
-`SELECT inbound_detail_id
-        ,inbound_amount
-        ,sub_code(inbound_status) inbound_status
-        ,mate_id(mate_id) mate_name
-        ,memo
-FROM t_mate_inbound_detail
-WHERE inbound_id = ?`;
+`SELECT mid.inbound_detail_id,
+        (SELECT inbound_amount
+		  FROM t_mate_inbound_detail
+          WHERE inbound_detail_id = mid.inbound_detail_id) AS 'inbound_amount',
+		(SELECT req_amount
+         FROM t_mate_req_detail
+         WHERE req_id = mai.req_id
+         AND mate_id = mid.mate_id) req_amount
+        ,sub_code(mid.inbound_status) inbound_status
+        ,mate_id(mid.mate_id) mate_name
+        
+FROM t_mate_inbound_detail mid JOIN t_mate_inbound mai ON (mid.inbound_id = mai.inbound_id)
+WHERE mid.inbound_id =?
+GROUP BY mid.inbound_detail_id`;
+
+
 
 // 창고입고조회 (검사완료건만 조회)
 const selectWareStatus = 
@@ -165,7 +177,7 @@ const selectStoreStatus =
   i.memo,
   CASE
     WHEN SUM(CASE WHEN id.inbound_status = '1p' THEN 1 ELSE 0 END) > 0 THEN '검사요청'
-    WHEN COUNT(*) = SUM(CASE WHEN id.inbound_status = '2p' THEN 1 ELSE 0 END) THEN '검사완료'
+    WHEN COUNT(*) = SUM(CASE WHEN id.inbound_status = '2p' THEN 1 ELSE 0 END) THEN '입고검사완료'
     WHEN SUM(CASE WHEN id.inbound_status IN ('3p', '4p') THEN 1 ELSE 0 END) > 0 THEN '입고마감'
     ELSE '기타'
   END AS inbound_final_status

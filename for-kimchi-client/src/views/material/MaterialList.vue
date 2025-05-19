@@ -1,16 +1,16 @@
 <template>
 
-<div class="text-end mb-3">
-  <button @click="handleSearch" class="btn btn-success me-2 shadow rounded-pill">
-    🔍 조회
-  </button>
-  <button class="btn btn-danger me-2 shadow rounded-pill" @click="goToMatmaPage">
-    ➕ 신규
-  </button>
-  <button class="btn btn-info shadow rounded-pill" @click="confirmMate">
-    ✅ 승인
-  </button>
-</div>
+  <div class="text-end mb-3">
+    <button @click="handleSearch" class="btn btn-success me-2 shadow rounded-pill">
+      🔍 조회
+    </button>
+    <button class="btn btn-danger me-2 shadow rounded-pill" @click="goToMatmaPage">
+      ➕ 신규
+    </button>
+    <button class="btn btn-info shadow rounded-pill" @click="confirmMate">
+      ✅ 승인
+    </button>
+  </div>
 
   <!-- 자재발주조회 -->
   <div class="row">
@@ -20,44 +20,24 @@
           <h6 class="text-white text-capitalize ps-3">검색</h6>
         </div>
       </div>
-
       <div class="card-body">
         <ul class="list-group list-group-horizontal">
           <li class="list-group-item" style="margin-left: 10px;">거래처</li>
           <li class="list-group-item"><input type="text" v-model="search.vendor_name"></li>
           <li class="list-group-item" style="margin-left: 20px;">발주일자</li>
-          <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date" v-model="search.endDate"></li>
-          <!-- <li class="list-group-item" style="margin-left: 20px;">발주번호</li>
-          <li class="list-group-item"><input type="text" v-model="search.orderNumber"></li> -->
-        </ul>
-
-        <ul class="list-group list-group-horizontal flex-wrap mt-3">
-          <!-- <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">품목</li> -->
-          <!-- <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-            <input type="text" v-model="search.prod_name" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;"> -->
-            <!-- <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i> -->
-          <!-- </li> -->
-          <!-- 거래처 -->
-          <!-- <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">거래처</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-              <input type="text" v-model="search.supplier" class="form-control me-2" style="border: 1px solid #ccc; box-sizing: border-box;"/> -->
-            <!-- <i class="fas fa-search" style="font-size: 20px; cursor: pointer;"></i> -->
-          <!-- </li> -->
-
-            <!-- 발주상태 -->
+          <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date"
+              v-model="search.endDate"></li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">발주상태</li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-          <select v-model="search.req_status" class="form-select" style="min-width: 130px;">
-            <option disabled value="" style="text-align: center;">선택하세요</option>
-            <option value="1o">발주등록</option>
-            <option value="2o">발주승인</option>
-            <option value="3o">발주마감</option>
-          </select>
-          <!-- 검색 아이콘 -->
-          <!-- <i class="fas fa-search d-flex align-items-center" style="font-size: 20px; cursor: pointer;"></i> -->
+            <select v-model="search.req_status" class="form-select" style="min-width: 130px;">
+              <option value="">전체</option>
+              <option value="1o">발주등록</option>
+              <option value="2o">발주승인</option>
+              <option value="3o">발주마감</option>
+            </select>
           </li>
-            
-          
+        </ul>
+        <ul class="list-group list-group-horizontal flex-wrap mt-3">
         </ul>
       </div>
     </div>
@@ -81,7 +61,6 @@
                     <th>사용자명</th>
                     <th>납기예정일자</th>
                     <th>발주상태</th>
-                    <th>비고</th>
                     <th>승인일자</th>
                     <th>승인자</th>
                   </tr>
@@ -90,20 +69,23 @@
                   <template v-if="matReqList.length > 0">
                     <tr v-for="(info, index) in matReqList" :key="info.id" @click="handleRowClick(info)">
                       <td>{{ index + 1 }}</td>
-                      <td>           
-                        <input type="checkbox" v-if="info.req_status === '발주등록'" v-model="info.selected" @change="check"></td>
+                      <td>
+                        <input type="checkbox" v-if="info.req_status === '발주등록'" v-model="info.selected"
+                          @change="check">
+                      </td>
                       <td>{{ info.req_date }}</td>
                       <td>{{ info.req_id }}</td>
                       <td>{{ info.vendor_name }}</td>
                       <td>{{ info.employee_name }}</td>
                       <td>{{ info.req_due_date }}</td>
                       <td class="align-middle text-center">
-                      <button class="btn btn-sm" :class="{
+                        <button class="btn btn-sm" :class="{
                                                           'btn-primary': info.req_status === '발주등록',
                                                           'btn-success': info.req_status === '발주승인',
                                                           'btn-secondary': info.req_status === '발주마감'
-                                                          }"disabled>{{ info.req_status === '발주등록' ? '📝' : info.req_status === '발주승인' ? '✅' : '📦' }} {{ info.req_status }} </button></td>
-                      <td>{{ info.memo }}</td>
+                                                          }" disabled>{{ info.req_status === '발주등록' ? '📝' :
+                          info.req_status === '발주승인' ? '✅' : '📦' }} {{ info.req_status }} </button>
+                      </td>
                       <td>{{ info.confirm_date }}</td>
                       <td>{{ info.manager_name }}</td>
                     </tr>
@@ -120,46 +102,44 @@
     </div>
   </div>
 
-    <!-- 자재발주 상세조회 -->
-    <div class="container-fluid py-4">
-      <div class="row">
-        <div class="col-12">
-          <div class="card my-4">
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>자재발주상세ID</th>
-                      <th>자재발주ID</th>
-                      <th>자재명</th>
-                      <th>발주수량</th>
-                      <th>비고</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- <template v-if="count > 0 "> -->
-                      <tr v-for="(info, index) in mateList" :key="info.id" style="cursor: pointer;">
-                        <td>{{ index + 1 }}</td>
-                        <td>{{ info.req_detail_id }}</td>
-                        <td>{{ info.req_id }}</td>
-                        <td>{{ info.mate_id }}</td>
-                        <td>{{ info.req_amount }}</td>
-                        <td>{{ info.memo }}</td>
-                      </tr>
-                    <!-- </template> -->
-                    <!-- <tr v-else>
+  <!-- 자재발주 상세조회 -->
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>자재발주상세ID</th>
+                    <th>자재발주ID</th>
+                    <th>자재명</th>
+                    <th>발주수량</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- <template v-if="count > 0 "> -->
+                  <tr v-for="(info, index) in mateList" :key="info.id" style="cursor: pointer;">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ info.req_detail_id }}</td>
+                    <td>{{ info.req_id }}</td>
+                    <td>{{ info.mate_id }}</td>
+                    <td>{{ info.req_amount }}</td>
+                  </tr>
+                  <!-- </template> -->
+                  <!-- <tr v-else>
                       <td colspan="4">현재 데이터가 존재하지 않습니다</td>
                     </tr> -->
-                  </tbody>
-                </table>
-              </div>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 </template>
     
 <script>

@@ -38,8 +38,11 @@ const postPmo = async (PmoInfo) => {
     success: true,
   }
 
+  let conn;
+  
   try {
-    let conn = await mariaDB.getConnection();
+
+    conn = await mariaDB.getConnection();
     await conn.beginTransaction();
 
     const {

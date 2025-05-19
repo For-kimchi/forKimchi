@@ -7,7 +7,7 @@
     </nav>
     <div class="row">
         <!-- 행 영역 div-->
-      <div class="col-10">
+      <div class="col-9">
         <!-- 테이블 div-->
         <div class="card my-4">
             <!--항목명 div-->
@@ -22,7 +22,7 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">순번</th>
-                    <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산계획ID</th>
+                    <!-- <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산계획ID</th> -->
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산상세ID</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">생산제품</th>
                     <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10">목표수량</th>
@@ -38,7 +38,7 @@
                   <tr v-for="(info,index) in prodDetailList" @click="clickDtList(index)" style="height: 50px; overflow: auto;"
                   :class="this.idx === index ? 'table-active' : ''">
                     <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{info.plan_id}}</td>
+                    <!-- <td class="align-middle font-weight-bolder text-center">{{info.plan_id}}</td> -->
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_detail_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.prod_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_amount}}</td>
@@ -58,7 +58,7 @@
           </div>
         </div>
       </div>
-      <div class="col-2">
+      <div class="col-3">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">

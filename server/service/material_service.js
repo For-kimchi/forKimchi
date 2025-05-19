@@ -189,6 +189,7 @@ const insertMates = async (mateSaveInfo) => {
 
         let selectedSql = await mariaDB.selectedQuery('matePlanKey', {});
         let lastMate = await conn.query(selectedSql, {});
+        
         let lastMateId = lastMate[0].req_id;
 
         // 부모 key 생성
@@ -199,7 +200,7 @@ const insertMates = async (mateSaveInfo) => {
         let mateCloumn = ['req_id', 'vendor_id', 'employee_id', 'req_due_date'];
         let mateAdd = converts.convertObjToAry(mateInfos, mateCloumn);
 
-        // 부모테이블 insert
+        // // 부모테이블 insert
         selectedSql = await mariaDB.selectedQuery('insertMainMate', mateAdd);
         let result = await conn.query(selectedSql, mateAdd);
 
@@ -223,6 +224,7 @@ const insertMates = async (mateSaveInfo) => {
             // detail insert 쿼리 실행
             selectedSql = await mariaDB.selectedQuery('insertMatese', addInfo);
             await conn.query(selectedSql, addInfo);
+
             // insertMatese
             // 다음 detail_id 생성을 위해 저장
             lastMateDetailId = newMateDetailId;

@@ -40,10 +40,9 @@
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재입고ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고일자</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">거래처</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">담당자</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
                   </tr>
                 </thead>
@@ -51,10 +50,9 @@
                   <tr v-for="(info,index) in storeList" v-bind:key="info.inbound_id" v-on:click="getStoreDtList(info.inbound_id)">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_name }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.employee_name }}</td>
-                    <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
                     <td class="align-middle text-center">
                     <button class= "btn btn-sm" :class="{ 'btn-warning': info.inbound_final_status === '검사요청',
                                                           'btn-info': info.inbound_final_status === '검사완료',
@@ -86,9 +84,10 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재입고상세ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">자재명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">발주수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">미입고수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">입고상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -96,7 +95,9 @@
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.mate_name }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.req_amount }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_amount }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ (info.req_amount - info.inbound_amount) }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_status }}</td>
                     </tr>
                 </tbody>
