@@ -21,7 +21,7 @@
         </div>
       </div>
     </div> -->
-    
+
     <div class="row">
       <!-- 행 영역 div-->
       <div class="col-12">
@@ -34,8 +34,8 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+            <div class="table-responsive p-0" style="max-height: 500px; overflow-y: auto;">
+              <table class="table align-items-center mb-0 justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
@@ -50,11 +50,12 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">납기예정일자
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">비고</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">발주상태</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">발주상태
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in matReqList" v-bind:key="info.id" v-on:click="mateDetailInfo(info)">
+                  <tr v-for="(info, index) in matReqList" v-bind:key="info.id" class="group cursor-pointer" v-on:click="mateDetailInfo(info)">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_id }}</td>
@@ -62,7 +63,8 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.req_due_date }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
-                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-sm btn-success" disabled>{{ info.req_status }}</button></td>
+                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-sm btn-success"
+                        disabled>{{ info.req_status }}</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -82,7 +84,7 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
-              <table class="table align-items-center justify-content-center mb-0">
+              <table class="table align-items-center justify-content-center mb-0 justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
@@ -98,14 +100,15 @@
 
                 </thead>
                 <tbody>
-                    <tr v-for="(info, index) in mateList" v-bind:key="info.id">
-                      <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
-                      <td class="align-middle font-weight-bolder text-center">{{ info.req_detail_id }}</td>
-                      <td class="align-middle font-weight-bolder text-center">{{ info.mate_name }}</td>
-                      <td class="align-middle font-weight-bolder text-center">{{ info.req_amount }}</td>
-                      <td class="align-middle font-weight-bolder text-center">
-                      <input type="number" v-model.number="info.inbound_amount" @change="amountCheck(info)"></td>
-                      </tr>
+                  <tr v-for="(info, index) in mateList" v-bind:key="info.id">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.req_detail_id }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.mate_name }}</td>
+                    <td class="align-middle font-weight-bolder text-center">{{ info.req_amount }}</td>
+                    <td class="align-middle font-weight-bolder text-center">
+                      <input type="number" v-model.number="info.inbound_amount" @change="amountCheck(info)">
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -125,11 +128,11 @@
 
 <script>
 import axios from 'axios'
-  // stores 
-  import { useUserStore } from "@/stores/user"; 
-  // state, getter => mapState 
-  // actions => mapActions 
-  import { mapState } from 'pinia';
+// stores 
+import { useUserStore } from "@/stores/user";
+// state, getter => mapState 
+// actions => mapActions 
+import { mapState } from 'pinia';
 
 export default {
   name: "orderprod",
@@ -173,8 +176,7 @@ export default {
     mateDetailInfo(info) {
       this.selectedInfo = info;
       axios
-        .get(`/api/storeMate/${info.req_id}`, {
-        })
+        .get(`/api/storeMate/${info.req_id}`)
         .then((response) => {
           this.mateList = response.data;
         })
@@ -182,12 +184,16 @@ export default {
           console.log('검색 실패:', error.response?.data || error.message);
         });
     },
-      // 발주수량보다 입고수량을 초과하여 입력시 경고창 띄움 (자동으로 발주수량으로 되돌림)
-     amountCheck(info) {
-     if (info.inbound_amount > info.req_amount) {
-      alert("입고수량은 발주수량을 초과할 수 없습니다.");
-      info.inbound_amount = info.req_amount; // 자동으로 발주수량으로 되돌림
-    }
+
+    // 발주수량보다 입고수량을 초과하여 입력시 경고창 띄움 (자동으로 발주수량으로 되돌림)
+    amountCheck(info) {
+      if (info.inbound_amount > info.req_amount) {
+        this.$swal({
+          text: '입고수량은 발주수량을 초과할 수 없습니다.',
+          icon: 'warning'
+        });
+        info.inbound_amount = info.req_amount;
+      }
     },
 
     // 저장버튼  
@@ -196,7 +202,10 @@ export default {
       this.selectedList = this.mateList.filter(item => item.inbound_amount > 0);
 
       if (this.selectedList.length === 0) {
-        alert("입고수량을 입력한 항목이 없습니다.");
+        await this.$swal({
+          text: '입고수량을 입력한 항목이 없습니다.',
+          icon: 'info'
+        });
         return;
       }
 
@@ -214,20 +223,28 @@ export default {
       try {
         const ajaxRes = await axios.post(`/api/storeSave`, storeInfo);
         if (ajaxRes.data.affectedRows > 0) {
-          alert("검사요청되었습니다.");
-          // this.$router.push('/StoreList');
-
+          await this.$swal({
+            text: '검사요청되었습니다.',
+            icon: 'success'
+          });
           this.mateList = [];
           this.id = '';
           this.storeMateAll();
         } else {
-          alert("저장이 실패하였습니다.");
+          await this.$swal({
+            text: '저장이 실패하였습니다.',
+            icon: 'error'
+          });
         }
       } catch (err) {
         console.error(err);
-        alert("저장 중 오류가 발생했습니다.");
+        await this.$swal({
+          text: '저장 중 오류가 발생했습니다.',
+          icon: 'error'
+        });
       }
     }
+
   }
 }
 </script>

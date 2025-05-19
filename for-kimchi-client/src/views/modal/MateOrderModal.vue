@@ -16,8 +16,8 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+            <div class="table-responsive p-0" style="max-height: 500px; overflow-y: auto;">
+              <table class="table align-items-center mb-0 justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">No</th>
@@ -96,7 +96,7 @@ export default {
       await axios.get(`/api/mateOrder`)
                 .catch(err=> console.log(err));
       this.mateOrderList = ajaxRes.data
-      console.log('mateOrderList--------------------------',  this.mateOrderList[0].prod_order_lot)
+
     },
 
   // 발주저장버튼 클릭시 값 자동입력
@@ -106,9 +106,6 @@ async mateBomOrderSave(info) {
   let ajaxRes = await axios.get(`/api/mateBomInsert/${info.prod_order_lot}`)
                           .catch(err => console.log(err));
   this.bomList = ajaxRes.data.data || ajaxRes.data;
-  console.log("받은 BOM 리스트111111111111111111:", ajaxRes.data);
-  console.log('info.prod_order_lot--------------123123', info.prod_order_lot)
-
 
   this.$emit('save-order', {
     prodOrder: info,
