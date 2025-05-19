@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - main  
+      - master  
       
 jobs:
   deploy:
@@ -20,7 +20,7 @@ jobs:
         node-version: '20'
 
     - name: Build Vue app
-      working-directory: client
+      working-directory: for-kimchi-client
       run: |
         npm update
         npm run build
@@ -33,12 +33,12 @@ jobs:
 
     # 서버에 접속하여 배포 실행          
     - name: SSH into server and deploy
-      working-directory: client
+      working-directory: for-kimchi-client
       run: |
-        scp   -r -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/brickflow/server/public/      
+        scp   -r -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/root/kimchi/forKimchi/server/public/      
         ssh -vvv -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no  ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd ~/brickflow
-            git pull origin main
+            cd ~/kimchi/forKimchi
+            git pull origin master
             cd server
             npm ci
             pm2 restart app || pm2 start app.js --name "app"
