@@ -23,13 +23,14 @@
       <div class="card-body">
         <ul class="list-group list-group-horizontal">
           <li class="list-group-item" style="margin-left: 10px;">거래처</li>
-          <li class="list-group-item"><input type="text" v-model="search.vendor_name"></li>
+          <li class="list-group-item"><input type="text" v-model="search.vendor_name" placeholder="검색"></li>
           <li class="list-group-item" style="margin-left: 20px;">발주일자</li>
           <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date"
               v-model="search.endDate"></li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">발주상태</li>
           <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
             <select v-model="search.req_status" class="form-select" style="min-width: 130px;">
+              <option value="" disabled selected hidden>상태</option>
               <option value="">전체</option>
               <option value="1o">발주등록</option>
               <option value="2o">발주승인</option>
@@ -49,8 +50,8 @@
       <div class="col-12">
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+            <div class="table-responsive p-0" style="max-height: 350px; overflow-y: auto;">
+              <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th>No</th>
@@ -67,7 +68,8 @@
                 </thead>
                 <tbody>
                   <template v-if="matReqList.length > 0">
-                    <tr v-for="(info, index) in matReqList" :key="info.id" @click="handleRowClick(info)">
+                    <tr v-for="(info, index) in matReqList" :key="info.id" @click="handleRowClick(info, index)"
+                    :class="selectedOrderRow === index ? 'table-active' : ''" >
                       <td>{{ index + 1 }}</td>
                       <td>
                         <input type="checkbox" v-if="info.req_status === '발주등록'" v-model="info.selected"
@@ -109,7 +111,7 @@
         <div class="card my-4">
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th>No</th>
@@ -159,11 +161,15 @@ export default {
   data() {
     return {
       search: {
+        req_status: "",
       },
       matReqList: [],
       selectedInfo: {},        // 클릭한 상세 데이터
       mateList: [],
       allSelected: [],
+      selectedOrderRow: null,
+      selectedOrder: {},
+      
     };
   },
     created() {
@@ -191,8 +197,9 @@ export default {
           console.error('검색 실패:', error);
         });
     },
-    async handleRowClick(info) {
+    async handleRowClick(info, index) {
       this.selectedInfo = info;
+      this.selectedOrderRow =index;
       await axios
         .get(`/api/materials/${info.req_id}`,{
         })

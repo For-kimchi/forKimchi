@@ -386,7 +386,8 @@ const insertOption = async (body) => {
 };
 // 검사항목 삭제
 const deleteOption = async (id) => {
-  let list = await mariaDB.query('deleteOption', id);
+  let list = await mariaDB.query('deleteOption', id)
+                          .catch(err => console.log(err));
   return list;
 };
 
@@ -408,7 +409,7 @@ const selectOptionControl = async (params) => {
     keyword = {};
   }
 
-  let list = await mariaDB.query("selectOption", keyword);
+  let list = await mariaDB.query("selectOptionControl", keyword);
   return list;
 };
 
@@ -416,18 +417,18 @@ const selectOptionControl = async (params) => {
 const insertOptionControl = async (params) => {
   let columnlist = ['option_id', 'option_name', 'option_standard', 'option_method'];
   let addInfo = converts.convertObjToAry(params, columnlist);
-  let result = await mariaDB.query('insertOption', addInfo);
+  let result = await mariaDB.query('insertOptionControl', addInfo);
   return result;
 };
 // 검사기준 업데이트
 const updateOptionControl = async (info, id) => {
   let updateOpt = [info.option_id, info.option_name, info.option_standard, info.option_method, id];
-  let result = await mariaDB.query('updateOption', updateOpt);
+  let result = await mariaDB.query('updateOptionControl', updateOpt);
   return result;
 };
 // 검사기준 삭제
 const deleteOptionControl = async (id) => {
-  let list = await mariaDB.query('deleteOption', id);
+  let list = await mariaDB.query('deleteOptionControl', id);
   return list;
 };
 

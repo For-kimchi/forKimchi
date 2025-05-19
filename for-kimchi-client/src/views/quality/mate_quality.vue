@@ -35,7 +35,7 @@
         </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
@@ -96,7 +96,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: scroll;">
+            <div class="table-responsive p-0" style="max-height: 250px; overflow-y: scroll;">
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
@@ -297,6 +297,7 @@
         this.searchName= '';
         this.searchStartDate = formatDate();
         this.searchEndDate = formatDateAfter(null, 1);
+        this.mateQualityViewAll();
       }
     }
   }

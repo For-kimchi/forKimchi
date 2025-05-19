@@ -145,7 +145,8 @@ router.post('/options', async (req, res) => {
 
 // 검사삭제
 router.delete('/options/:id', async (req, res) => {
-  let result = await quality_service.deleteOption(req.params.id);
+  let result = await quality_service.deleteOption(req.params.id)
+                                    .catch(err => console.log(err));
   res.send(result);
 });
 
@@ -164,20 +165,20 @@ router.put('/options/:id', async (req, res) => {
 // 검사조회
 router.get('/options', async (req, res) => {
   let params = req.query;
-  let list = await quality_service.selectOption(params);
+  let list = await quality_service.selectOptionControl(params);
   res.send(list);
 });
 
 // 검사등록
 router.post('/options', async (req, res) => {
   let body = req.body;
-  let result = await quality_service.insertOption(body);
+  let result = await quality_service.insertOptionControl(body);
   res.send(result);
 });
 
 // 검사삭제
 router.delete('/options/:id', async (req, res) => {
-  let result = await quality_service.deleteOption(req.params.id);
+  let result = await quality_service.deleteOptionControl(req.params.id);
   res.send(result);
 });
 
@@ -185,7 +186,7 @@ router.delete('/options/:id', async (req, res) => {
 router.put('/options/:id', async (req, res) => {
   let id = req.params.id;
   let info = req.body;
-  let result = await quality_service.updateOption(info, id);
+  let result = await quality_service.updateOptionControl(info, id);
   res.send(result);
 });
 

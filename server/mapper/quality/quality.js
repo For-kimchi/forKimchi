@@ -11,7 +11,7 @@ SELECT
     memo
 FROM t_mate_inbound_detail
 WHERE inbound_status = '1p'
-ORDER BY inbound_detail_id
+ORDER BY inbound_detail_id DESC
 `;
 // 자재검사요청 (대기-상세)
 const mateQualityWait = 
@@ -97,7 +97,7 @@ FROM
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
 ORDER BY
-	inbound_id DESC
+	quality_date DESC
 `;
 
 // 검색조건 (자재명)
@@ -242,7 +242,7 @@ pp.proc_id,
 pp.prod_id,
 prod_id(pp.prod_id) prod_name,
 SUM(pp.proc_input_amount) total,
-pp.proc_status
+sub_code(pp.proc_status) proc_status
 from t_proc p JOIN t_proc_flow_detail pfd on p.proc_id = pfd.proc_id
 JOIN t_proc_flow pf ON pfd.proc_flow_id = pf.proc_flow_id 
 JOIN t_prod_order po ON pf.prod_id = po.prod_id
@@ -255,7 +255,7 @@ AND order_status= '4d'
 AND p.proc_type = '2g'
 AND pp.proc_status = '4e'
 -- AND pp.prod_order_lot = 'OLOT-20250518-002'
-GROUP BY proc_id
+GROUP BY proc_id DESC
 `;
 
 // 제품검사요청 (대기-상세)
@@ -316,7 +316,7 @@ select
     sub_code(tqp.quality_final_result) final_result
 from
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
-order by tqp.prod_proc_id
+order by DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') DESC
 `;
 
 // 제품검사조회 (제품이름)
