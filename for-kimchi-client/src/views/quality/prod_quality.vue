@@ -26,6 +26,7 @@
                     <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사ID</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사날짜</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">양품수량</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">불량수량</th>
@@ -40,6 +41,7 @@
                         <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                         <td class="align-middle text-center">{{ info.prod_id }}</td>
                         <td class="align-middle text-center">{{ info.prod_name }}</td>
+                        <td class="align-middle text-center">{{ info.quality_date }}</td>
                         <td class="align-middle text-center">{{ info.quality_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_pass_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_fail_amount }}</td>

@@ -64,12 +64,6 @@ router.get('/selectMateName/:id', async (req, res) => {
   res.send(selectMateId);
 });
 
-// 검색조건 (합격 : 불합격)
-router.get('/selectResultMate/:id', async (req, res) => {
-  let mRe = req.params.id;
-  let ResultMate = await quality_service.selectResultMate(mRe);
-  res.send(ResultMate);
-})
 //--------------------------------------------------------
 
 // 제품검사요청

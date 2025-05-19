@@ -88,6 +88,7 @@ SELECT DISTINCT
     q.quality_id,
     md.mate_id,
     mate_id(md.mate_id) mate_name,
+    q.quality_date,
     q.quality_amount,
     q.quality_pass_amount,
     q.quality_fail_amount,
@@ -121,15 +122,16 @@ ORDER BY
 	inbound_id DESC
 `;
 
-// 자재검색조건 (합격 불합격)
-const selectResultMate = 
+// 자재검색조건 (날짜)
+const selectResultDate = 
 `
 SELECT DISTINCT
-    md.inbound_id,
+md.inbound_id,
 	q.inbound_detail_id,
     q.quality_id,
     md.mate_id,
     mate_id(md.mate_id) mate_name,
+    q.quality_date,
     q.quality_amount,
     q.quality_pass_amount,
     q.quality_fail_amount,
@@ -181,21 +183,54 @@ LIMIT 1
 //-----------------------------------------------------------------------------
 
 // 제품검사요청 (요청)  --- 공정상태 추후 t_sub_code  E : 4e 생성시 코드변경
-const prodQualityReq = 
+// const prodQualityReq = 
+// `
+// SELECT
+// 	prod_order_lot,
+// 	prod_proc_id,
+// 	proc_id,
+// 	prod_id,
+//     prod_id (prod_id) prod_name,
+//     sub_code(proc_status) proc_status,
+// 	proc_input_amount
+// FROM
+// 	t_prod_proc
+// WHERE
+//     proc_status = '4e'
+// ORDER BY prod_order_lot
+// `;
+
+// 제품검사요청1
+const prodQuality1 = 
+`
+SELECT 
+	prod_id
+FROM t_prod_order
+WHERE prod_order_lot = ?
+`;
+
+// 제품검사요청2
+const prodQuality2 = 
+`
+SELECT distinct
+	p.proc_id 
+FROM t_proc_flow_detail pfd
+JOIN t_proc p ON pfd.proc_id = p.proc_id
+JOIN t_proc_flow pf ON pf.proc_flow_id = pfd.proc_flow_id
+WHERE proc_flow_status = '1v'
+AND p.proc_type = '2g'
+`;
+
+// 제품검사요청3
+const prodQuality3 = 
 `
 SELECT
-	prod_order_lot,
-	prod_proc_id,
-	proc_id,
-	prod_id,
-    prod_id (prod_id) prod_name,
-    sub_code(proc_status) proc_status,
-	proc_input_amount
-FROM
-	t_prod_proc
-WHERE
-    proc_status = '4e'
-ORDER BY prod_order_lot
+	SUM(pp.proc_pass_amount) 총생산량,
+    po.prod_id,
+    prod_id(po.prod_id) prod_name
+FROM t_prod_proc pp JOIN t_prod_order po ON pp.prod_order_lot = po.prod_order_lot
+WHERE pp.prod_order_lot = ?
+AND pp.proc_id = ?
 `;
 
 // 제품검사요청 (대기-상세)
@@ -249,6 +284,7 @@ select
     tqp.quality_id,
     prod_id(tpp.prod_id) prod_name,
     tpp.prod_id,
+    DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') quality_date,
     tqp.quality_amount,
     tqp.quality_pass_amount,
     tqp.quality_fail_amount,
@@ -516,9 +552,12 @@ module.exports = {
      updateMateQuality,
      updateMate,
      selectMateName,
-     selectResultMate,
+     selectResultDate,
     // 제품
-     prodQualityReq,
+    //  prodQualityReq,
+     prodQuality1,
+     prodQuality2,
+     prodQuality3,
      prodQualityWait,
     //  prodQualityViewDropDown,
      prodQualityViewAll,
