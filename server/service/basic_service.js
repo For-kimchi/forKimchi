@@ -54,7 +54,13 @@ const postProd = async (body) => {
 
 // 거래처 조건 조회
 const getVendor = async (params) => {
-  let count = Object.keys(params).length;
+
+  let {
+    vendor_type,
+    ...others
+  } = params
+
+  let count = Object.keys(others).length;
   let keyword;
   if (count > 0) {
     let selected = [];
@@ -62,9 +68,15 @@ const getVendor = async (params) => {
       selected.push('AND ');
     }
 
-    keyword = converts.convertObjToQueryLike(params, selected);
+    keyword = converts.convertObjToQueryLike(others, selected);
   } else {
-    keyword = {};
+    keyword = {
+      searchKeyword: '',
+    };
+  }
+
+  if (vendor_type) {
+    keyword.searchKeyword += ` AND vendor_type IN ('${vendor_type}', '3m')`
   }
 
   let list = await mariaDB.query("selectVendor", keyword);

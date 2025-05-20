@@ -3,9 +3,15 @@ const router = express.Router();
 
 const prodMateService = require('../service/prod_mate_service.js');
 
-// 자재요청 현황 목록 조회
+// 자재요청/완료 현황 목록 조회
 router.get('/prodMateOrder', async(req, res)=>{
   let list = await prodMateService.getPmo();
+  res.send(list);
+});
+
+// 자재요청 현황 조회
+router.get('/prodMateOrderReq', async(req, res)=>{
+  let list = await prodMateService.getPmoReq();
   res.send(list);
 });
 

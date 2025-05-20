@@ -211,11 +211,11 @@ export default {
       this.getStd();
     }, 
     searchOptions() {
-      if (!this.std.std_id) {
+      if (!this.std.target_id) {
         this.$swal({
-    text: "검사대상을 먼저 선택해주세요",
-    icon: "warning"
-  });
+        text: "검사대상을 먼저 선택해주세요",
+        icon: "warning"
+      });
         return;
       }
       this.getOptions();
