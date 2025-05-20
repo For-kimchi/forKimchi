@@ -44,7 +44,7 @@ SELECT
         sub_code(d.plan_status) plan_status
  FROM t_prod_plan_detail d left JOIN t_prod_plan t
                          ON (d.plan_id = t.plan_id)
- WHERE t.plan_final_status in ('2i', '3i')
+ WHERE t.plan_final_status in ('2i')
  `;
 // 생산지시상세 조회
 const selectplanOrderInfo = `
