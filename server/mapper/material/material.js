@@ -111,13 +111,14 @@ ORDER BY CAST(SUBSTRING(req_status, 1, 1) AS UNSIGNED)
 // 자재발주상세조회 (No,품목코드,품목명,납품예정일,,수량,단위,검사여부,비고)
 const selectMateDetail =
 `SELECT 
-		    req_detail_id,
-        req_id,
-        mate_id(mate_id) mate_id, 
-        req_amount,
-        memo
-FROM t_mate_req_detail
-WHERE req_id = ?;`;
+		mrd.req_detail_id,
+        mrd.req_id,
+        mate_id(mrd.mate_id) mate_id, 
+        mrd.req_amount,
+        m.mate_unit
+FROM t_mate_req_detail mrd
+JOIN t_mate m ON mrd.mate_id = m.mate_id
+WHERE mrd.req_id = ?`;
 
 // 자재발주페이지 승인버튼(상태값 변경)
 const updateMateStatus =

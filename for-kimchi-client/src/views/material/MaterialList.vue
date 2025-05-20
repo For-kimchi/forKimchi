@@ -12,10 +12,12 @@
       </button>
     </div>
     <!-- 자재발주조회 -->
+  <div class="container-fluid">
     <div class="row">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
             <h6 class="text-white text-capitalize ps-3">검 색</h6>
           </div>
         </div>
@@ -40,7 +42,7 @@
           <!-- 발주상태 -->
           <div class="col-md-3">
             <div class="d-flex align-items-center">
-              <label class="form-label me-2 mb-0 align-self-center" style="width: 100px;">발주상태</label>
+              <label class="form-label me-2 mb-0 align-items-center" style="width: 100px;">발주상태</label>
               <select v-model="search.req_status" class="form-select border">
                 <option value="">전체</option>
                 <option value="1o">발주등록</option>
@@ -51,11 +53,13 @@
           </div>
         </div>
       </div>
+      </div>
     </div>
+  </div>
   </div>
   <!-- 자재발주조회리스트 -->
 
-  <div class="container-fluid py-4">
+  <div class="container-fluid">
     <div class="row">
       <div class="col-12">
         <div class="card my-4">
@@ -65,7 +69,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 500px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 300px; overflow-y: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
@@ -90,12 +94,12 @@
                         <input type="checkbox" v-if="info.req_status === '발주등록'" v-model="info.selected"
                           @change="check">
                       </td>
-                      <td>{{ info.req_date }}</td>
-                      <td>{{ info.req_id }}</td>
-                      <td>{{ info.vendor_name }}</td>
-                      <td>{{ info.employee_name }}</td>
-                      <td>{{ info.req_due_date }}</td>
-                      <td class="align-middle text-center">
+                      <td class="align-items-center">{{ info.req_date }}</td>
+                      <td class="align-items-center">{{ info.req_id }}</td>
+                      <td class="align-items-center">{{ info.vendor_name }}</td>
+                      <td class="align-items-center">{{ info.employee_name }}</td>
+                      <td class="align-items-center">{{ info.req_due_date }}</td>
+                      <td class="align-items-center">
                         <button class="btn btn-sm" :class="{
                           'btn-primary': info.req_status === '발주등록',
                           'btn-success': info.req_status === '발주승인',
@@ -120,7 +124,7 @@
   </div>
 
   <!-- 자재발주 상세조회 -->
-  <div class="container-fluid py-4">
+  <div class="container-fluid">
     <div class="row">
       <div class="col-12">
         <div class="card my-4">
@@ -139,6 +143,7 @@
                     <th>자재발주ID</th>
                     <th>자재명</th>
                     <th>발주수량</th>
+                    <th>단위</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -149,6 +154,7 @@
                     <td>{{ info.req_id }}</td>
                     <td>{{ info.mate_id }}</td>
                     <td>{{ info.req_amount }}</td>
+                    <td>{{ info.mate_unit }}</td>
                   </tr>
                   <!-- </template> -->
                   <!-- <tr v-else>

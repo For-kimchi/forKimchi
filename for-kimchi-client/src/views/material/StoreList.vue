@@ -40,7 +40,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 500px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 300px; overflow-y: auto;">
               <table class="table align-items-center mb-0 justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>

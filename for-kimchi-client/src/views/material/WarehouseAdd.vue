@@ -39,9 +39,9 @@
                     <td class="align-middle font-weight-bolder text-center">{{ info.vendor_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_name }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.memo }}</td>
-                    <td class="align-middle font-weight-bolder text-center"><button class="btn btn-sm btn-info"
+                    <td class="align-middle font-weight-bolder text-center align-middle pt-3"><button class="btn btn-sm btn-info"
                         disabled>{{ info.inbound_status }}</button></td>
-                  </tr>
+                  </tr> 
                 </tbody>
               </table>
             </div>

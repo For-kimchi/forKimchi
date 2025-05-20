@@ -56,13 +56,13 @@
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
           </template>
           <template v-slot:list>
-            <SidenavCollapseItem refer="/prodMateOrder" miniIcon="" text="자재출고관리"/>
             <SidenavCollapseItem refer="/materlist" miniIcon="" text="자재발주조회"/>
             <SidenavCollapseItem refer="/matma" miniIcon="" text="자재발주관리"/>
             <SidenavCollapseItem refer="/storeList" miniIcon="" text="입고조회"/>
             <SidenavCollapseItem refer="/storema" miniIcon="" text="입고관리"/>
             <SidenavCollapseItem refer="/warehouseAdd" miniIcon="" text="창고입고"/>
             <SidenavCollapseItem refer="/warehouseList" miniIcon="" text="창고현황"/>
+            <SidenavCollapseItem refer="/prodMateOrder" miniIcon="" text="자재출고관리"/>
           </template>
         </sidenav-collapse>
       </li>
