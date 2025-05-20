@@ -237,11 +237,8 @@ WHERE mr.req_id = ?`;
 // 자재발주관리페이지에서 자재리스트 중 선택항목 삭제버튼
 const deleteMateBtn =
 `DELETE 
-FROM t_mate_req_detail
-WHERE req_detail_id =?`
-
-
-
+FROM t_mate_req
+WHERE req_id =?`
 
 // 자재발주 상세삭제(자재발주상세부터 삭제해야 오류가 안난다.)
 const deleteDetailMate =
