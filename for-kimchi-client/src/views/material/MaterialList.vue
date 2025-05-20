@@ -40,8 +40,8 @@
           <!-- 발주상태 -->
           <div class="col-md-3">
             <div class="d-flex align-items-center">
-              <label class="form-label me-2 mb-0" style="width: 100px;">발주상태</label>
-              <select v-model="search.req_status" class="form-select border text-center">
+              <label class="form-label me-2 mb-0 align-self-center" style="width: 100px;">발주상태</label>
+              <select v-model="search.req_status" class="form-select border">
                 <option value="">전체</option>
                 <option value="1o">발주등록</option>
                 <option value="2o">발주승인</option>
@@ -50,27 +50,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="card-body">
-        <ul class="list-group list-group-horizontal">
-          <li class="list-group-item" style="margin-left: 10px;">거래처</li>
-          <li class="list-group-item"><input type="text" v-model="search.vendor_name" placeholder="검색"></li>
-          <li class="list-group-item" style="margin-left: 20px;">발주일자</li>
-          <li class="list-group-item"><input type="date" v-model="search.startDate"> ~ <input type="date"
-              v-model="search.endDate"></li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">발주상태</li>
-          <li class="list-group-item me-3 d-flex align-items-center" style="border-left: 1px solid #ccc;">
-            <select v-model="search.req_status" class="form-select" style="min-width: 130px;">
-              <option value="" disabled selected hidden>상태</option>
-              <option value="">전체</option>
-              <option value="1o">발주등록</option>
-              <option value="2o">발주승인</option>
-              <option value="3o">발주마감</option>
-            </select>
-          </li>
-        </ul>
-        <ul class="list-group list-group-horizontal flex-wrap mt-3">
-        </ul>
       </div>
     </div>
   </div>
@@ -86,7 +65,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 350px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 500px; overflow-y: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>

@@ -59,7 +59,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in storeList" v-bind:key="info.inbound_id" class="group cursor-pointer"
-                    v-on:click="getStoreDtList(info.inbound_id)">
+                    v-on:click="getStoreDtList(info.inbound_id, index)" :class="selectedOrderRow === index ? 'table-active' : ''" >
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.inbound_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.employee_name }}</td>
@@ -146,6 +146,7 @@ export default {
       search: {
 
       },
+      selectedOrderRow: null,
     }
   },
   created() {
@@ -166,7 +167,8 @@ export default {
           .catch(err => console.log(err));
       this.storeList = ajaxRes.data;
     },
-    async getStoreDtList(storeId) {
+    async getStoreDtList(storeId, index) {
+      this.selectedOrderRow = index;
       let ajaxRes =
         await axios.get(`/api/storeList/${storeId}`)
           .catch(err => console.log(err));
