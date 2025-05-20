@@ -148,7 +148,7 @@ const routes = [
     component: ProdProcWork,
      meta: { 
       requiresAuth: true,
-      pageName: '생산이력',
+      pageName: '생산실적관리',
      }
   },
   {

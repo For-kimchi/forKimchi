@@ -44,7 +44,7 @@
             <SidenavCollapseItem refer="/Prodplan" miniIcon="" text="생산계획관리"/>
             <SidenavCollapseItem refer="/ProdOrderInfo" miniIcon="" text="생산지시관리"/>
             <SidenavCollapseItem refer="/Prodprocess" miniIcon="" text="생산공정관리"/>
-            <SidenavCollapseItem refer="/Prodprocwork" miniIcon="" text="생산이력관리"/>
+            <SidenavCollapseItem refer="/Prodprocwork" miniIcon="" text="생산실적관리"/>
           </template>
         </sidenav-collapse>
       </li>

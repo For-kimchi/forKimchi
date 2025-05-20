@@ -74,9 +74,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <!-- <tr>
-                      <td colspan="8" rowspan="8" class="align-middle text-center ">생산계획을 선택해주세요</td>
-                    </tr> -->
+                    <template v-if="procFlow.length > 0">
                     <tr v-for="(info,index) in procFlow"  @click="selectProc(index)" :class="this.number === index ? 'table-active' : ''">
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_seq}}</td>
                       <td class="align-middle font-weight-bolder text-center">{{info.proc_id}}</td>
@@ -97,14 +95,22 @@
                       <td class="align-middle font-weight-bolder text-center"><span class="badge badge-sm bg-gradient-primary" v-if="this.num < info.proc_seq">공정대기</span>
                       <span class="badge badge-sm bg-gradient-secondary" v-else-if="this.num > info.proc_seq">공정완료</span>
                       <span class="badge badge-sm bg-gradient-primary" v-else-if="this.num === info.proc_seq && this.type === '4e'">검사중</span>
+                      <span class="badge badge-sm bg-gradient-primary" v-else-if="this.num === info.proc_seq && this.type === '5e'">공정중단</span>
                       <span class="badge badge-sm bg-gradient-secondary" v-else-if="this.num === info.proc_seq && this.type === '3e'">공정완료</span>
                       <span class="badge badge-sm bg-gradient-warning" v-else-if="this.num === info.proc_seq && this.type === '2e'">공정진행중</span>
+                      <span class="badge badge-sm bg-gradient-warning" v-else-if="this.num === info.proc_seq && this.type === '1e'">공정진행중</span>
                       <span class="badge badge-sm bg-gradient-secondary" v-else>공정완료</span></td>
                       <!-- <td class="align-middle font-weight-bolder text-center" v-if="info.count == info.status && info.proc_type == '품질검사대상' && info.count > 0"><span class="badge badge-sm bg-gradient-danger" @click.stop="addQuality(index)">품질검사요청</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.count == info.status && info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정완료</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_type == '일반' && info.count > 0"><span class="badge badge-sm bg-gradient-info">공정진행중</span></td>
                       <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-info">공정대기</span></td> -->
                     </tr>
+                  </template>
+                  <template v-else>
+                    <tr>
+                      <td class="align-middle font-weight-bolder text-center" colspan="10" rowspan="3">지시를 선택하거나 공정흐름도를 저장해주세요.</td>
+                    </tr>
+                  </template>
                   </tbody>
                 </table>
               </div>
@@ -216,6 +222,7 @@
                     <td class="align-middle font-weight-bolder text-center" v-if="info.proc_status === '공정완료'"><span class="badge badge-sm bg-gradient-secondary">{{info.proc_status}}</span></td>
                     <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_status === '검사진행'"><span class="badge badge-sm bg-gradient-primary">{{info.proc_status}}</span></td>
                     <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_status === '공정진행'"><span class="badge badge-sm bg-gradient-warning">{{info.proc_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.proc_status === '공정중단'"><span class="badge badge-sm bg-gradient-info">{{info.proc_status}}</span></td>
                     <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-success">{{info.proc_status}}</span></td>
                   </tr>
                 </tbody>
@@ -279,7 +286,7 @@ export default {
             order_amount: 0,
             pass_amount: 0,
             num: 0,
-            type: '',
+            type: null,
         }
     },
     created(){
