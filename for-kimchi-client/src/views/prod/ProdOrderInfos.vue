@@ -17,7 +17,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2" >
-            <div class="table-responsive p-0" style="height: 450px;">
+            <div class="table-responsive p-0" style="height: 300px;">
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
@@ -38,8 +38,8 @@
                   <tr v-for="(info,index) in prodDetailList" @click="clickDtList(index)" style="height: 50px; overflow: auto;"
                   :class="this.idx === index ? 'table-active' : ''">
                     <td class="align-middle font-weight-bolder text-center">{{index + 1}}</td>
-                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인' && info.plan_amount <= info.sum_amount"><button class="btn btn-warning w-100 px-1 m-1"data-bs-toggle="modal" data-bs-target="#insertProc" disabled>지시추가</button></td>
-                    <td class="align-middle font-weight-bolder text-center" v-else><button class="btn btn-warning w-100 px-1 m-1"data-bs-toggle="modal" data-bs-target="#insertProc">지시추가</button></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세지시완료' && info.plan_amount <= info.sum_amount"><button class="btn btn-warning w-80 p-1 m-0"data-bs-toggle="modal" data-bs-target="#insertProc" disabled>지시추가</button></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><button class="btn btn-warning w-80 p-1 m-0"data-bs-toggle="modal" data-bs-target="#insertProc">지시추가</button></td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_detail_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.prod_id}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_amount}}</td>
@@ -253,7 +253,6 @@ export default {
                   title: "생산지시완료",
                   text: "성공",
                 });
-            console.log(Order);
             this.prodAmount = '';
             await this.selectProdDetailList();
             await this.clickDtList(this.idx);

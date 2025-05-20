@@ -15,7 +15,7 @@
               <h6 class="text-white text-capitalize ps-3">생산계획</h6>
             </div>
           </div>
-          <div class="card-body px-0 pb-2" style="height: 500px; overflow: auto;">
+          <div class="card-body px-0 pb-2" style="height: 300px; overflow: auto;">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
@@ -167,7 +167,7 @@ export default {
       // 생산계획 상세 조회
       async proddtList(index){
         this.idx = index;
-        let planId = this.prodlist[index].plan_id;
+        let planId = this.prodlist[this.idx].plan_id;
         this.start_date = formatDate(this.start_date);
         this.end_date = formatDateAfter(this.start_date, 30);
         let  ajaxRes =
@@ -274,8 +274,8 @@ export default {
                   text: "계획이 승인되었습니다.",
                 });
                 this.checkAll = false;
-            await this.prodList();
             await this.proddtList(this.idx);
+            await this.prodList();
           }else{
             this.$swal({
                   icon: "error",
