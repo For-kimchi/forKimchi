@@ -144,7 +144,7 @@ const selectMateName = async (mId) => {
 };
 
 // 검색조건 (날짜)
-const getMateDate = async(params) => {
+const getMateDate = async (params) => {
   const {
     startDate,
     endDate,
@@ -152,9 +152,9 @@ const getMateDate = async(params) => {
   } = params;
   let count = Object.keys(others).length;
   let keyword;
-  if(count > 0) {
+  if (count > 0) {
     let selected = [];
-    for(let i=0; i < (count - 1); i++) {
+    for (let i = 0; i < (count - 1); i++) {
       selected.push('AND ');
     }
 
@@ -174,10 +174,10 @@ const getMateDate = async(params) => {
 // -------------------------------------------------------------------
 
 //제품검사요청
- const prodQualityReq = async () => {
-   let list = await mariaDB.query('prodQualityReq');
-   return list;
- };
+const prodQualityReq = async () => {
+  let list = await mariaDB.query('prodQualityReq');
+  return list;
+};
 
 //  const prodQuality = async (rst) => {
 //    let lot = await mariaDB.query('prodQuality1');
@@ -244,7 +244,7 @@ const prodQualityInsert = async (prodInfo) => {
     let lastProdDetailId = lastProdDetail[0].quality_detail_id;
 
     for (let detail of details_) {
-      
+
       // prodQuality detail key 생성
       let newProdDetailId = keys.getNextKeyId(lastProdDetailId);
       detail.quality_detail_id = newProdDetailId;
@@ -262,11 +262,17 @@ const prodQualityInsert = async (prodInfo) => {
       // prodQuality detail insert 완료 시 최근 key 정보 갱신
       lastProdDetailId = newProdDetailId;
     }
-    
-    selectedSql = await mariaDB.selectedQuery('updateProd', {});
-      result = await conn.query(selectedSql, prod.prod_proc_id);
-    
 
+    for (let rst of prodInfo) {
+      let param = [rst.proc_status, rst.prod_proc_id];
+      if (result_ === '1x') {
+        rst.proc_status = '4e'
+      } else if (result_ === '2x') {
+        rst.proc_status = '5e'
+      }
+      selectedSql = await mariaDB.selectedQuery('updateProd', param);
+      let result = await conn.query(selectedSql, param);
+    };
     // 정상 완료 시 commit
     conn.commit();
 
@@ -294,7 +300,7 @@ const prodQualityViewAll = async () => {
 };
 
 // 검색조건 (날짜)
-const getProdDate = async(params) => {
+const getProdDate = async (params) => {
   const {
     startDate,
     endDate,
@@ -302,9 +308,9 @@ const getProdDate = async(params) => {
   } = params;
   let count = Object.keys(others).length;
   let keyword;
-  if(count > 0) {
+  if (count > 0) {
     let selected = [];
-    for(let i=0; i < (count - 1); i++) {
+    for (let i = 0; i < (count - 1); i++) {
       selected.push('AND ');
     }
 
@@ -329,7 +335,7 @@ const prodQualityViewDetail = async (detailId) => {
 }
 
 // 검사조건 (제품명)
-const selectProdName =async (pId) => {
+const selectProdName = async (pId) => {
   pId = '%' + pId + '%'
   let list = await mariaDB.query('selectProdName', pId);
   return list;
@@ -387,7 +393,7 @@ const insertOption = async (body) => {
 // 검사항목 삭제
 const deleteOption = async (id) => {
   let list = await mariaDB.query('deleteOption', id)
-                          .catch(err => console.log(err));
+    .catch(err => console.log(err));
   return list;
 };
 

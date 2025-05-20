@@ -17,18 +17,23 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고상세ID
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재입고ID
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재ID
+                    </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">자재명</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량
+                    </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(info, index) in mateQualityreq" v-bind:key="info.inbound_detail_id"
-                    v-on:click="mateQualityWait(index)" style="cursor: pointer;" :class="selectedIndex === index ? 'table-active' : ''">
+                    v-on:click="mateQualityWait(index)" style="cursor: pointer;"
+                    :class="selectedIndex === index ? 'table-active' : ''">
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle text-center">{{ info.inbound_detail_id }}</td>
                     <td class="align-middle text-center">{{ info.inbound_id }}</td>
@@ -82,7 +87,8 @@
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}} {{info.option_operator}}</td>
-                    <td class="align-middle text-center"><input type="number" placeholder="검사기준입력" v-model="info.quality_result_value"></td>
+                    <td class="align-middle text-center"><input type="number" placeholder="검사기준입력"
+                        v-model="info.quality_result_value"></td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
                         style="width: 60px; text-align: center;">
@@ -153,16 +159,16 @@
             const standard = info.option_standard;
             const operator = info.option_operator;
             if (!isNaN(result_value) && !isNaN(standard)) {
-              if(result_value == null || result_value == ''){
+              if (result_value == null || result_value == '') {
                 info.result = '대기';
-              } else if(operator == '이하') {
+              } else if (operator == '이하') {
                 info.result = result_value <= standard ? '합격' : '불합격';
-              } else if(operator == '이상'){
+              } else if (operator == '이상') {
                 info.result = result_value >= standard ? '합격' : '불합격';
+              }
+            } else {
+              info.result = '대기';
             }
-          }else{
-            info.result = '대기';
-        }
           });
         },
         deep: true
@@ -187,56 +193,55 @@
         this.mateQualitywait = ajaxRes.data;
       },
       // 검사버튼
-// 검사버튼
-async test() {
-  let param = {
-    inbound_detail_id: this.selected.inbound_detail_id,
-    details: this.mateQualitywait
-  };
+      // 검사버튼
+      async test() {
+        let param = {
+          inbound_detail_id: this.selected.inbound_detail_id,
+          details: this.mateQualitywait
+        };
 
-  // 검사결과값 입력 여부 체크
-  for (let idx of this.mateQualitywait) {
-    let val = Object.hasOwn(idx, 'quality_result_value');
-    if (!val || idx.quality_result_value <= 0) {
-      this.$swal({
-        text: "검사결과값을 입력하세요.",
-        icon: "warning"
-      });
-      return;
-    }
-  }
+        // 검사결과값 입력 여부 체크
+        for (let idx of this.mateQualitywait) {
+          let val = Object.hasOwn(idx, 'quality_result_value');
+          if (!val || idx.quality_result_value <= 0) {
+            this.$swal({
+              text: "검사결과값을 입력하세요.",
+              icon: "warning"
+            });
+            return;
+          }
+        }
 
-  try {
-    const testlist = await axios.post('/api/mateInsert', param);
-    
-    if (testlist.data.affectedRows > 0) {
-      this.$swal({
-        text: "저장이 완료되었습니다",
-        icon: "success"
-      });
-      if (this.selectedIndex !== null && this.selectedIndex >= 0) {
-        this.mateQualityreq.splice(this.selectedIndex, 1);
-      }
-      this.selected = [];
-      this.selectedIndex = null;
-      this.mateQualitywait = [];
+        try {
+          const testlist = await axios.post('/api/mateInsert', param);
 
-    } else {
-      this.$swal({
-        text: "저장 과정에서 오류가 발생했습니다",
-        icon: "error"
-      });
-    }
+          if (testlist.data.affectedRows > 0) {
+            this.$swal({
+              text: "저장이 완료되었습니다",
+              icon: "success"
+            });
+            if (this.selectedIndex !== null && this.selectedIndex >= 0) {
+              this.mateQualityreq.splice(this.selectedIndex, 1);
+            }
+            this.selected = [];
+            this.selectedIndex = null;
+            this.mateQualitywait = [];
 
-  } catch (err) {
-    console.error(err);
+          } else {
+            this.$swal({
+              text: "저장 과정에서 오류가 발생했습니다",
+              icon: "error"
+            });
+          }
+
+        } catch (err) {
+          console.error(err);
           this.$swal({
-        text: "저장 중 오류가 발생했습니다.",
-        icon: "error"
-      });
-  }
-}
-,
+            text: "저장 중 오류가 발생했습니다.",
+            icon: "error"
+          });
+        }
+      },
       // addRow() {
       //   this.mateQualitywait.push({});
       // }
