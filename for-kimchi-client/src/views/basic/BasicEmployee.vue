@@ -136,7 +136,7 @@
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">이메일</label>
-            <input v-model="selected.employee_email" type="email" class="form-control border text-center" :disabled="action === '수정'"/>
+            <input v-model="selected.employee_email" type="email" class="form-control border text-center"/>
           </div>
           <div class="mb-3 d-flex align-items-center">
             <label class="form-label me-2 mb-0 " style="width: 100px;">연락처</label>
