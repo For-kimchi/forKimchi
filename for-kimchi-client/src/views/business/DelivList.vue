@@ -17,7 +17,7 @@
       <div class="row mt-3 px-3">
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">거래처명</label>
             <input v-model="searchName" type="text" class="form-control border text-center" placeholder="거래처명" />
           </div>
         </div>
@@ -34,13 +34,13 @@
         <!-- </div> -->
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">시작일자</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">시작일자</label>
             <input v-model="searchStartDate" type="date" class="form-control border text-center" placeholder="" />
           </div>
         </div>
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">종료일자</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">종료일자</label>
             <input v-model="searchEndDate" type="date" class="form-control border text-center" placeholder="" />
           </div>
         </div>
@@ -127,7 +127,7 @@ export default {
         searchName: "",
         searchType: "",
         searchStartDate: formatDate(),
-        searchEndDate: formatDateAfter(null, 1),
+        searchEndDate: formatDate(),
         delivs : [],
         delivDetails : [],
         codes: [],
@@ -150,6 +150,9 @@ export default {
                   .catch(err => console.log(err));
 
         this.delivs = result.data;
+        
+        this.selectedIndex = null
+        this.delivDetails = []
       },
       async getDelivDetails(index) {
         this.selectedIndex = index;

@@ -109,17 +109,19 @@ const orderCheck = async(orderCheck) =>{
     try{
         conn = await mariaDB.getConnection();
         await conn.beginTransaction();
-        console.log(orderCheck);
+        
+        let plan_detail_id = orderCheck[0].plan_detail_id;
+        delete orderCheck[0].plan_detail_id;
         for(let check of orderCheck){
             let param = [check.employee_id, check.prod_order_lot];
-            console.log(param);
             selectedSql = await mariaDB.selectedQuery('updateProdOrderBtn', param);
             let lastPlan = await conn.query(selectedSql, param);
+            
         }
-
-        // 모든 항목 승인 여부 확인.
-        // selectedSql = await mariaDB.selectedQuery('updateProdOrderStatusinfo', param);
-        // let lastPlan = await conn.query(selectedSql, param);
+        
+        selectedSql = await mariaDB.selectedQuery('prodPlanOrderStatusInfo', plan_detail_id);
+        result = await conn.query(selectedSql, plan_detail_id);
+        
 
         conn.commit();
         return list;

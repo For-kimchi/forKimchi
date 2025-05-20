@@ -82,21 +82,10 @@ UPDATE t_prod_plan_detail
 SET plan_status = '3c'
 WHERE plan_detail_id = ?
 `;
-// -------------------------------추가해야함
 // 생산지시 승인 했을때 모든항목 승인여부 확인
-const selectProdOrderStatusinfo =`
-SELECT order_status
-FROM t_prod_order
-WHERE plan_detail_id = ?
+const prodPlanOrderStatusInfo =`
+CALL prodPlanStatus(?);
 `;
-
-// 승인여부확인 후 작동하는 쿼리
-const updateProdOrderStatusinfo =`
-UPDATE t_prod_plan_detail
-SET plan_status = ?
-WHERE plan_detail_id = ?
-`;
-
 // ----------------------------------------------------------------
 // 선출창고관리
 
@@ -157,6 +146,6 @@ module.exports = {
     selectBomsBomDetail,
     updatePlanDetailStatus,
     updateProdOrderBtn,
-    selectProdOrderStatusinfo,
-    updateProdOrderStatusinfo,
+    prodPlanOrderStatusInfo,
+    
 }

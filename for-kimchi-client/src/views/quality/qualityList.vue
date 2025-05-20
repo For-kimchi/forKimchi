@@ -51,7 +51,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in optionList" v-bind:key="option_id">
+                  <tr v-for="(item, index) in optionList" v-bind:key="item.option_id">
                     <td class="align-middle text-center">{{ item.option_id }}</td>
                     <td class="align-middle text-center">{{ item.option_name }}</td>
                     <td class="align-middle text-center">{{ item.option_standard }}</td>
@@ -59,6 +59,7 @@
                     <td class="align-middle text-center">{{ item.option_method }}</td>
                     <td class="align-middle text-center">
                       <button class="btn btn-warning m-0" v-on:click="editOption(index)">수정</button>
+                      <button class="btn btn-danger m-0 ms-2" v-on:click="delOption(index)">삭제</button>
                       <!-- <button class="btn btn-danger m-0 ms-2" v-on:click="delOption(index)">삭제</button> -->
                     </td>
                   </tr>
@@ -112,14 +113,20 @@
 
 <script>
   import axios from 'axios';
-  import { codeToName } from '../../utils/common';
+  import {
+    codeToName
+  } from '../../utils/common';
 
   // pinia import
   // stores 
-  import { useUserStore } from "@/stores/user"; 
+  import {
+    useUserStore
+  } from "@/stores/user";
   // state, getter => mapState 
   // actions => mapActions 
-  import { mapState } from 'pinia';
+  import {
+    mapState
+  } from 'pinia';
 
   export default {
     data() {
@@ -130,6 +137,7 @@
         searchName: '',
         searchId: '',
         codes: [],
+        optionList: [],
       };
     },
     computed: {
@@ -141,9 +149,9 @@
       // <template></template> 내부에서는 userInfo.employee_id
       // export default {} 내부에서는 this.userInfo.employee_id
       ...mapState(useUserStore, [
-      "isLoggedIn",
-      "userInfo",
-    ])
+        "isLoggedIn",
+        "userInfo",
+      ])
     },
     created() {
       // this.selectOption();
@@ -168,7 +176,7 @@
 
       // 수정(담기만)
       async editOption(index) {
-        this.selected =  {
+        this.selected = {
           ...this.optionList[index]
         }
         this.action = '수정';
@@ -176,35 +184,95 @@
 
       // 저장 (추가/수정)
       async save() {
+        const {
+          option_id,
+          option_name,
+          option_standard,
+          option_operator,
+          option_method
+        } = this.selected;
+        if (!option_name ||
+          !option_standard ||
+          !option_operator ||
+          !option_method
+        ) {
+          this.$swal({
+            title: "검사항목이 비었습니다.",
+            text: "검사항목을 입력하세요.",
+            icon: "warning"
+          });
+          return;
+        }
+
+        if (isNaN(option_standard)) {
+          this.$swal({
+            title: "검사기준 오류",
+            text: "검사기준은 숫자만 입력 가능합니다.",
+            icon: "warning"
+          });
+          return;
+        }
+
         let result = await axios.post('/api/options', this.selected)
           .catch(err => console.log(err));
         console.log(result);
 
         if (result.data.affectedRows > 0) {
-                    this.$swal({
-    text: "저장이 완료되었습니다",
-    icon: "success"
-  });
+          this.$swal({
+            title: "저장이 완료되었습니다",
+            text: "검사항목이 추가되었습니다.",
+            icon: "success"
+          });
           this.selectOption();
           this.resetForm();
         } else {
-            this.$swal({
-    text: "저장 과정에서 오류가 발생했습니다",
-    icon: "error"
-  });
+          this.$swal({
+            text: "저장 과정에서 오류가 발생했습니다",
+            icon: "error"
+          });
         }
+
       },
 
-      // 삭제
-      // async delOption(index) {
-      // },
+      async delOption(index) {
+        const optionId = this.optionList[index].option_id;
+
+        const result = await this.$swal({
+          title: "정말 삭제하시겠습니까?",
+          text: "삭제시 복구 불가능 합니다.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "네",
+          cancelButtonText: "아니요",
+        });
+
+        if (result.isConfirmed) {
+          let ajaxRes = await axios.delete(`/api/options/${optionId}`)
+            .catch(err => {
+              console.error(err);
+              return null;
+            });
+
+          if (ajaxRes && ajaxRes.data.affectedRows > 0) {
+            this.$swal({
+              text: "삭제가 정상적으로 되었습니다.",
+              icon: "success"
+            });
+            this.selectOption();
+          } else {
+            this.$swal({
+              text: "삭제를 실패하였습니다.",
+              icon: "error"
+            });
+          }
+        }
+      },
 
       // 폼 초기화
       resetForm() {
         this.selected = {};
         this.action = '추가';
       },
-
       async getOptionType() {
         let res = await axios.get(`/api/codes/C2`)
           .catch(err => console.log(err));

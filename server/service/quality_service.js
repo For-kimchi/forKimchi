@@ -135,7 +135,7 @@ const mateQualityViewDetail = async (detailId) => {
   return list;
 }
 
-// 검색조건 (자재명)
+// 검색조건 (이름)
 const selectMateName = async (mId) => {
   mId = '%' + mId + '%'
   console.log(mId);
@@ -143,24 +143,52 @@ const selectMateName = async (mId) => {
   return search;
 };
 
+// 검색조건 (날짜)
+const getMateDate = async(params) => {
+  const {
+    startDate,
+    endDate,
+    ...others
+  } = params;
+  let count = Object.keys(others).length;
+  let keyword;
+  if(count > 0) {
+    let selected = [];
+    for(let i=0; i < (count - 1); i++) {
+      selected.push('AND ');
+    }
+
+    keyword = converts.convertObjToQueryLike(others, selected);
+  } else {
+    keyword = {
+      searchKeyword: '',
+    };
+  }
+
+  keyword.searchKeyword = `AND quality_date BETWEEN '${startDate}' AND '${endDate}'` +
+    keyword.searchKeyword;
+
+  let list = await mariaDB.query("getMateDate", keyword);
+  return list;
+}
 // -------------------------------------------------------------------
 
 //제품검사요청
-// const prodQualityReq = async () => {
-//   let list = await mariaDB.query('prodQualityReq');
-//   return list;
-// };
+ const prodQualityReq = async () => {
+   let list = await mariaDB.query('prodQualityReq');
+   return list;
+ };
 
-  const prodQuality = async (rst) => {
-    let lot = await mariaDB.query('prodQuality1');
-    let selectLot = (lot, {});
-    
-    let procId = await mariaDB.query('prodQuality2');
-    let procId_ = (procId, {});
+//  const prodQuality = async (rst) => {
+//    let lot = await mariaDB.query('prodQuality1');
+//    let selectLot = (lot, {});
+//    
+//    let procId = await mariaDB.query('prodQuality2');
+//    let procId_ = (procId, {});
 
-    let result = await mariaDB.query('prodQuality3');
-    result = [{selectLot}, {procId_}];
-  };
+//    let result = await mariaDB.query('prodQuality3');
+//    result = [{selectLot}, {procId_}];
+//  };
 
 
 //제품검사요청 (대기)
@@ -265,6 +293,35 @@ const prodQualityViewAll = async () => {
   return list;
 };
 
+// 검색조건 (날짜)
+const getProdDate = async(params) => {
+  const {
+    startDate,
+    endDate,
+    ...others
+  } = params;
+  let count = Object.keys(others).length;
+  let keyword;
+  if(count > 0) {
+    let selected = [];
+    for(let i=0; i < (count - 1); i++) {
+      selected.push('AND ');
+    }
+
+    keyword = converts.convertObjToQueryLike(others, selected);
+  } else {
+    keyword = {
+      searchKeyword: '',
+    };
+  }
+
+  keyword.searchKeyword = `AND quality_date BETWEEN '${startDate}' AND '${endDate}'` +
+    keyword.searchKeyword;
+
+  let list = await mariaDB.query("getProdDate", keyword);
+  return list;
+}
+
 // 제품검사조회 (상세)
 const prodQualityViewDetail = async (detailId) => {
   let list = await mariaDB.query('prodQualityViewDetail', detailId);
@@ -329,7 +386,8 @@ const insertOption = async (body) => {
 };
 // 검사항목 삭제
 const deleteOption = async (id) => {
-  let list = await mariaDB.query('deleteOption', id);
+  let list = await mariaDB.query('deleteOption', id)
+                          .catch(err => console.log(err));
   return list;
 };
 
@@ -351,7 +409,7 @@ const selectOptionControl = async (params) => {
     keyword = {};
   }
 
-  let list = await mariaDB.query("selectOption", keyword);
+  let list = await mariaDB.query("selectOptionControl", keyword);
   return list;
 };
 
@@ -359,18 +417,18 @@ const selectOptionControl = async (params) => {
 const insertOptionControl = async (params) => {
   let columnlist = ['option_id', 'option_name', 'option_standard', 'option_method'];
   let addInfo = converts.convertObjToAry(params, columnlist);
-  let result = await mariaDB.query('insertOption', addInfo);
+  let result = await mariaDB.query('insertOptionControl', addInfo);
   return result;
 };
 // 검사기준 업데이트
 const updateOptionControl = async (info, id) => {
   let updateOpt = [info.option_id, info.option_name, info.option_standard, info.option_method, id];
-  let result = await mariaDB.query('updateOption', updateOpt);
+  let result = await mariaDB.query('updateOptionControl', updateOpt);
   return result;
 };
 // 검사기준 삭제
 const deleteOptionControl = async (id) => {
-  let list = await mariaDB.query('deleteOption', id);
+  let list = await mariaDB.query('deleteOptionControl', id);
   return list;
 };
 
@@ -481,14 +539,16 @@ module.exports = {
   mateQualityViewDetail,
   updateMateQuality,
   selectMateName,
+  getMateDate,
   // 제품
-  // prodQualityReq,
+  prodQualityReq,
   prodQualityWait,
   prodQualityViewDropDown,
   prodQualityViewAll,
   prodQualityViewDetail,
   prodQualityInsert,
   selectProdName,
+  getProdDate,
   // 검사항목
   selectOption,
   insertOption,

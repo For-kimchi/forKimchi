@@ -17,13 +17,13 @@
       <div class="row mt-3 px-3">
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">거래처명</label>
             <input v-model="searchName" type="text" class="form-control border text-center" placeholder="거래처명" />
           </div>
         </div>
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">주문상태</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">주문상태</label>
             <select v-model="searchType" class="form-select border text-center">
               <option value="">전체</option>
               <option v-for="code in codes" :key="code.sub_code" :value="code.sub_code">
@@ -34,13 +34,13 @@
         </div>
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">시작일자</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">시작일자</label>
             <input v-model="searchStartDate" type="date" class="form-control border text-center" placeholder="" />
           </div>
         </div>
         <div class="col-md-3">
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">종료일자</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">종료일자</label>
             <input v-model="searchEndDate" type="date" class="form-control border text-center" placeholder="" />
           </div>
         </div>

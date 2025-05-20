@@ -104,6 +104,7 @@ FROM t_mate_req mr
 JOIN t_vendor v ON mr.vendor_id = v.vendor_id
 WHERE 1=1
 :searchKeyword
+ORDER BY CAST(SUBSTRING(req_status, 1, 1) AS UNSIGNED)
 `;
 
 

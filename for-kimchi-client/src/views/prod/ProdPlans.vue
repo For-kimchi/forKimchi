@@ -83,9 +83,10 @@
                   </tr>
                 </thead>
                 <tbody>
+                  <template v-if="proddtlist.length > 0">
                   <tr v-for="(info,index) in proddtlist" v-bind:key="info.plan_detail_id">
                     <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인'"><span></span></td>
-                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_status === '상세계획등록'"><input type="checkbox" v-model="info.check"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><input type="checkbox" v-model="info.check"></td>
                     <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.plan_detail_id }}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.prod_id }}</td>
@@ -98,13 +99,20 @@
                     <td class="align-middle font-weight-bolder text-center" v-if="info.plan_amount - info.order_amount <= 0">0</td>
                     <td class="align-middle font-weight-bolder text-center" v-else>{{info.plan_amount - info.order_amount}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{ info.deliv_due_date }}</td>
-                    <td class="align-middle font-weight-bolder text-center"><input class="text-center" type="date" v-model="info.plan_start_date"></td>
-                    <td class="align-middle font-weight-bolder text-center"><input class="text-center" type="date" v-model="info.plan_end_date"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_start_date === null || info.plan_start_date === ''"><input class="text-center" type="date" v-model="start_date"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><input class="text-center" type="date" v-model="info.plan_start_date"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-if="info.plan_end_date === null || info.plan_end_date === ''"><input class="text-center" type="date" v-model="end_date"></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><input class="text-center" type="date" v-model="info.plan_end_date"></td>
                     <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인'"><span class="badge badge-sm bg-gradient-info">{{ info.plan_status }}</span></td>
                     <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_status === '상세계획등록'"><span class="badge badge-sm bg-gradient-warning">{{ info.plan_status }}</span></td>
                     <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-success">{{ info.plan_status }}</span></td>
                   </tr>
+                  </template>
+                  <template v-else>
+                    <td class="align-middle font-weight-bolder text-center" colspan="12" rowspan="3">계획이 없습니다.</td>
+                  </template>
                 </tbody>
+                
               </table>
             </div>
           </div>
@@ -117,6 +125,11 @@
 import axios from 'axios'
 import { useUserStore } from "@/stores/user"; 
 import { mapState } from 'pinia';
+import {
+    formatDate,
+    codeToName,
+    formatDateAfter
+  } from '@/utils/common';
 export default {
     name: "Prodplan",
     data(){
@@ -128,6 +141,8 @@ export default {
         idx: null,
         status1: false,
         status2: false,
+        start_date: formatDate(),
+        end_date: '',
         
       }
     },
@@ -153,11 +168,15 @@ export default {
       async proddtList(index){
         this.idx = index;
         let planId = this.prodlist[index].plan_id;
+        this.start_date = formatDate(this.start_date);
+        this.end_date = formatDateAfter(this.start_date, 30);
         let  ajaxRes =
         await axios.get(`/api/proddtlist/${planId}`)
                    .catch(err => console.log(err));
         this.proddtlist = ajaxRes.data.map(item => ({
           ...item,
+          plan_start_date : this.start_date,
+          plan_end_date : this.end_date,
           check: false,
         }));
         // 계획중, 계획승인, 계획등록
@@ -213,6 +232,7 @@ export default {
                   title: "저장 완료",
                   draggable: true
                 });
+            await this.prodList();
             await this.proddtList(this.idx);
         }else{
           this.$swal({
@@ -234,7 +254,6 @@ export default {
         let checkCheck = false;
         // 항목 선택했는지 확인하기
         if(Object.keys(this.proddtlist).length > 0){
-
           // 체크한게 있는지 확인
           for(let planDetail of this.proddtlist){
             if(planDetail.check){
@@ -244,13 +263,19 @@ export default {
               checkCheck = true;
             }
           }
-
           if(checkCheck){
             let  ajaxRes =
             await axios.put(`/api/plandtbtn`, param)
                        .catch(err => console.log(err));
             this.proddtlist = ajaxRes.data
+            this.$swal({
+                  icon: "success",
+                  title: "승인 완료.",
+                  text: "계획이 승인되었습니다.",
+                });
+                this.checkAll = false;
             await this.prodList();
+            await this.proddtList(this.idx);
           }else{
             this.$swal({
                   icon: "error",
@@ -264,11 +289,15 @@ export default {
               title: "항목이 선택되지 않았습니다.",
               text: "선택하세요",
             });
-    };
-
+        };
+      },
+      formatDate(dateString) {
+        return formatDate(dateString);
+      },
+      formatDateAfter() {
+        return formatDateAfter(this.start_date, 30);
       },
     },
-    
 }
 
 </script>

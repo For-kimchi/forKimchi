@@ -12,7 +12,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                  <tr>  
@@ -22,7 +22,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">공정ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">투입량</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">총생산</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                   </tr>
                 </thead>
@@ -35,8 +35,8 @@
                       <td class="align-middle text-center">{{ info.proc_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_id }}</td>
                       <td class="align-middle text-center">{{ info.prod_name }}</td>
-                      <td class="align-middle text-center">{{ info.proc_input_amount }}</td>
-                      <td class="align-middle text-center">{{ info.proc_status }}</td>
+                      <td class="align-middle text-center">{{ info.total }}</td>
+                      <td class="align-middle text-center text-warning">{{ info.proc_status }}</td>
                     </tr>
                 </tbody>
               </table>
@@ -59,7 +59,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>

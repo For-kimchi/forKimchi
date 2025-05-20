@@ -47,17 +47,29 @@
     methods: {
       async resetPwd() {
 
+        if (!this.employee_email) {
+          this.$swal({
+          text: '이메일을 입력해주세요',
+          icon: 'warning'
+        });
+        return;
+        }
+ 
         let res = await axios.post('/api/resetPwd', {
           employee_email: this.employee_email,
         }).catch(err => console.log(err));
 
-        console.log(res.data);
-
         if (res.data.success) {
-          alert('발급 성공');
+        this.$swal({
+          text: '임시비밀번호가 발급되었습니다',
+          icon: 'success'
+        });
           this.close();
         } else {
-          alert('발급 실패');
+        this.$swal({
+          text: '등록되지 않은 이메일입니다',
+          icon: 'error'
+        });
         }
       },
       close() {

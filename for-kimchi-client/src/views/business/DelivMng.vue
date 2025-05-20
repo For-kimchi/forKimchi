@@ -17,25 +17,25 @@
       <div class="row mt-3 px-3">
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">거래처명</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">거래처명 : </label>
             {{ orderDetail.vendor_name }}
           </div>
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">납품일자</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">납품일자 : </label>
             {{ formatDate(orderDetail.deliv_due_date) }}
           </div>
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">담당자명</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">담당자명 : </label>
             {{ userInfo.employee_name }}
           </div>
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">제품명</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">제품명 : </label>
             {{ orderDetail.prod_name }}
           </div>
         </div>
@@ -43,23 +43,23 @@
       <div class="row my-3 px-3">
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">주문수량</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">주문수량 : </label>
             {{ orderDetail.remain_amount }}
           </div>
         </div>
         <div class="col-md-3">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">납품수량</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">납품수량 : </label>
             {{ delivAmount }}
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">잔여수량</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">잔여수량 : </label>
             {{ orderDetail.remain_amount && orderDetail.remain_amount >= delivAmount ? orderDetail.remain_amount - delivAmount : 0 }}
           </div>
         </div>
         <div class="col-md-3">
           <div class="d-flex align-items-center">
-            <label class="form-label me-2 mb-0 " style="width: 100px;">비고</label>
+            <label class="form-label me-2 mb-0 font-weight-bolder" style="width: 100px;">비고 : </label>
             {{ orderDetail.memo }}
           </div>
         </div>

@@ -12,7 +12,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
@@ -35,7 +35,7 @@
                     <td class="align-middle text-center">{{ info.mate_id }}</td>
                     <td class="align-middle text-center">{{ info.mate_name }}</td>
                     <td class="align-middle text-center">{{ info.inbound_amount }}</td>
-                    <td class="align-middle text-center">{{ info.inbound_status }}</td>
+                    <td class="align-middle text-center text-warning">{{ info.inbound_status }}</td>
                     <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
@@ -59,7 +59,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="max-height: 400px; overflow-y: auto;">
+            <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
               <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
