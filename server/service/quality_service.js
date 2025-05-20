@@ -199,18 +199,11 @@ const prodQualityWait = async (detailId) => {
 
 // 제품검사등록
 const prodQualityInsert = async (prodInfo) => {
-
   try {
     conn = await mariaDB.getConnection();
     await conn.beginTransaction();
 
-    console.log(prodInfo);
-
-    // 구조 분해 할당 (detail 분리)
-    const {
-      details_,
-      ...prod
-    } = prodInfo;
+    const { details_, ...prod } = prodInfo;
 
     // 최근 key 정보 조회
     let selectedSql = await mariaDB.selectedQuery('selectLastProdQuality', {});
@@ -225,64 +218,51 @@ const prodQualityInsert = async (prodInfo) => {
     let prodColumn = ['quality_id', 'prod_proc_id'];
     let prodParam = converts.convertObjToAry(prod, prodColumn);
 
-    // 검사결과
-    const result_ = details_.every(item => item.result == '합격')
-    prodParam.push(result_ ? '1x' : '2x');
+    // 검사결과가 모두 합격인지 확인
+    const allPassed = details_.every(item => item.result === '합격');
+
+    // prodParam에 검사 결과 코드 추가 ('1x' or '2x')
+    prodParam.push(allPassed ? '1x' : '2x');
 
     // prodQuality insert
     selectedSql = await mariaDB.selectedQuery('prodQualityInsert', prodParam);
     let result = await conn.query(selectedSql, prodParam);
 
-    console.log(result);
-
-    // prodQuality detail column 정보 배열
+    // prodQuality detail insert
     let prodDetailColumn = ['quality_detail_id', 'quality_id', 'option_id', 'quality_result_value'];
 
-    // // 최근 key 정보 조회
     selectedSql = await mariaDB.selectedQuery('selectLastProdQualityDetail', {});
     let lastProdDetail = await conn.query(selectedSql, {});
     let lastProdDetailId = lastProdDetail[0].quality_detail_id;
 
     for (let detail of details_) {
-
-      // prodQuality detail key 생성
       let newProdDetailId = keys.getNextKeyId(lastProdDetailId);
       detail.quality_detail_id = newProdDetailId;
       detail.quality_id = newProdId;
 
-      // prodQuality detail insert
       let prodDetailParam = converts.convertObjToAry(detail, prodDetailColumn);
-      prodDetailParam.push(detail.result == '합격' ? '1r' : '2r');
+      prodDetailParam.push(detail.result === '합격' ? '1r' : '2r');
 
       selectedSql = await mariaDB.selectedQuery('prodWaitInsert', prodDetailParam);
       result = await conn.query(selectedSql, prodDetailParam);
 
-      console.log(result);
-
-      // prodQuality detail insert 완료 시 최근 key 정보 갱신
       lastProdDetailId = newProdDetailId;
     }
 
-    for (let rst of prodInfo) {
-      let param = [rst.proc_status, rst.prod_proc_id];
-      if (result_ === '1x') {
-        rst.proc_status = '4e'
-      } else if (result_ === '2x') {
-        rst.proc_status = '5e'
-      }
-      selectedSql = await mariaDB.selectedQuery('updateProd', param);
-      let result = await conn.query(selectedSql, param);
-    };
-    // 정상 완료 시 commit
-    conn.commit();
+    // proc_status 업데이트 (합격 → '3e', 불합격 → '5e')
+    const newStatus = allPassed ? '3e' : '5e';
+    const updateParam = [newStatus, prod.prod_proc_id];
+
+    selectedSql = await mariaDB.selectedQuery('updateProd', updateParam);
+    result = await conn.query(selectedSql, updateParam);
+
+    await conn.commit();
 
     return result;
   } catch (err) {
-    // error 발생 시 console 출력 및 rollback
     console.log(err);
-    if (conn) conn.rollback();
+    if (conn) await conn.rollback();
   } finally {
-    // connection 반환
     if (conn) conn.release();
   }
 };
