@@ -166,7 +166,7 @@ const routes = [
     component: ProdOrderInfo,
      meta: { 
       requiresAuth: true,
-      pageName: '생산계획관리',
+      pageName: '생산지시관리',
      }
   },
   {
