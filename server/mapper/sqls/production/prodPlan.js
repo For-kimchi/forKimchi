@@ -34,7 +34,9 @@ const selectprodorders =
         date_type(reg_date) reg_date,
         memo
  FROM  t_order 
- WHERE order_final_status = '2a'`;
+ WHERE order_final_status = '2a'
+ ORDER BY order_id
+ `;
 
  // 주문 상세 조회
  const selectorderdt =`
@@ -45,7 +47,9 @@ const selectprodorders =
        date_type(deliv_due_date) deliv_due_date,
        memo
   FROM t_order_detail
-  WHERE order_id = ?`;
+  WHERE order_id = ?
+  ORDER BY order_detail_id
+  `;
 
 // 생산계획 목록(지시완료 제외) 
 const selectprod =
@@ -61,7 +65,7 @@ const selectprod =
                         on (t.order_id = o.order_id)
    WHERE t.plan_final_status in ('1i')
    GROUP BY t.plan_id
-   ORDER BY reg_date DESC
+   ORDER BY reg_date DESC, plan_id
    `;
 
 // 상세생산계획 조회

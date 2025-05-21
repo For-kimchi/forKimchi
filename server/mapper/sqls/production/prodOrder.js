@@ -44,7 +44,7 @@ SELECT
         sub_code(d.plan_status) plan_status
  FROM t_prod_plan_detail d left JOIN t_prod_plan t
                          ON (d.plan_id = t.plan_id)
- WHERE t.plan_final_status in ('2i')
+ WHERE d.plan_status in ('1c', '2c', '3c')
  `;
 // 생산지시상세 조회
 const selectplanOrderInfo = `
@@ -57,6 +57,7 @@ SELECT
         sub_code(order_status) order_status
 FROM t_prod_order
 WHERE plan_detail_id = ?
+ORDER BY prod_order_lot
 `;
 // 생산지시 등록
 const insertProdOrderInfo = `
@@ -100,6 +101,7 @@ SELECT
         sub_code(order_status) order_status
 FROM t_prod_order
 WHERE order_status in ('2d', '3d')
+ORDER BY order_date DESC, prod_order_lot
 `;
 
 // 재고요청
