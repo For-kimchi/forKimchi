@@ -181,6 +181,7 @@ export default {
     data(){
         return{
           prodDetailList: [],
+          prodDetailLists: [],
           prodOrderList: [],
           planDetailId: '',
           planDetailProd: '',
@@ -200,7 +201,7 @@ export default {
       ...mapState(useUserStore, [
       "isLoggedIn",
       "userInfo",
-    ])
+      ])
     },
     methods:{
       // 생산계획 리스트
@@ -209,12 +210,19 @@ export default {
         await axios.get(`/api/planDetailList`)
                    .catch(err => console.log(err));
                    this.prodDetailList = ajaxRes.data;
+
+                  //  this.prodDetailLists.filter(item =>{
+                  //   if(item.plan_status === '상세계획승인'){
+                  //     this.prodDetailList.push(item);
+                  //     }
+                  //   })
       },
       // 생산계획상세 리스트
       async clickDtList(index){
-        if(index || index === 0){
         this.idx = index;
-        let info = this.prodDetailList[this.idx];
+        let info = this.prodDetailList[index];
+        console.log(this.prodDetailList[this.idx]);
+        // console.log(info);
         // plan_detail_id 에러
         let dtid = info.plan_detail_id
         let ajaxRes =
@@ -224,13 +232,12 @@ export default {
           ...item,
           check: false,
         }));;
-        
+          console.log(this.prodOrderList);
           this.planDetailId = info.plan_detail_id;
           this.planDetailProd = info.prod_id;
           this.planAmount = info.plan_amount;
           this.planEndDate = info.plan_end_date;
           this.prodDate = formatDate();
-        }
       },
       // 추가 버튼
       async addOrders(){
@@ -290,35 +297,37 @@ export default {
             // 체크된애들 값을 저장.
             if(this.prodDetailList[this.idx] !== null || this.prodDetailList[this.idx] !== undefined){
               if(orderDetail.check){
+                console.log(param);
                 param.push({prod_order_lot: orderDetail.prod_order_lot,
                             employee_id: this.userInfo.employee_id,
                             // 에러원인
                             plan_detail_id: this.prodDetailList[this.idx].plan_detail_id
                  });
+                 console.log(param);
                 checkCheck = true;
               }
             }
           }
           if(checkCheck){ 
             if(param !== null || param !== undefined){
-            let  ajaxRes =
-            await axios.put(`/api/orderCheck`, param)
-            .catch(err => console.log(err));
-            this.proddtlist = ajaxRes.data
-            this.$swal({
-              icon: "success",
-              title: "승인완료",
-              text: "지시가 승인되었습니다.",
-            });
-            this.checkAll = false;
-            this.prodOrderList.forEach(item => {
-            item.check = false;
-            });   
-            await this.selectProdDetailList();
-            await this.clickDtList(this.idx);
-          }else{
-            await this.selectProdDetailList();
-          }
+              let  ajaxRes =
+              await axios.put(`/api/orderCheck`, param)
+                         .catch(err => console.log(err));
+              this.proddtlist = ajaxRes.data
+              this.$swal({
+                icon: "success",
+                title: "승인완료",
+                text: "지시가 승인되었습니다.",
+              });
+              this.checkAll = false;
+              this.prodOrderList.forEach(item => {
+                item.check = false;
+              });
+              await this.selectProdDetailList();
+              await this.clickDtList(this.idx);
+            }else{
+              await this.selectProdDetailList();
+            }
           }else{
             this.$swal({
                   icon: "warning",

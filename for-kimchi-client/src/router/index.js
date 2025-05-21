@@ -33,6 +33,7 @@ import ProdProcWork from "../views/prod/ProdProcWorks.vue";
 import OrderProd from "../views/prod/OrderProd.vue";
 import ProdOrderInfo from "../views/prod/ProdOrderInfos.vue";
 import ProdMate from "../views/prod/ProdMates.vue";
+import ProdPlanWork from "../views/prod/ProdPlanWorks.vue";
 
 import ProdMateOrder from "../views/material/ProdMateOrder.vue";
 // 김어진 (자재발주)
@@ -148,7 +149,16 @@ const routes = [
     component: ProdProcWork,
      meta: { 
       requiresAuth: true,
-      pageName: '생산실적관리',
+      pageName: '공정실적조회',
+     }
+  },
+  {
+    path: "/prodPlanWork",
+    name: "ProdPlanWork",
+    component: ProdPlanWork,
+     meta: { 
+      requiresAuth: true,
+      pageName: '계획실적관리',
      }
   },
   {
