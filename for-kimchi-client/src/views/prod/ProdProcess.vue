@@ -264,6 +264,8 @@
 // 공정 삭제만드는거 생각해봐야함.
 
 import axios from 'axios'
+import { useUserStore } from "@/stores/user"; 
+import { mapState } from 'pinia';
 
 export default {
     name: "Prodorder",
@@ -296,6 +298,10 @@ export default {
       isValue(){
         return ;
       },
+      ...mapState(useUserStore, [
+      "isLoggedIn",
+      "userInfo",
+    ])
       // pass_amount(){
       //   return this.procFlow[index - 1].sum_pass_amount;
       // },
@@ -343,7 +349,7 @@ export default {
       // 공정생성버튼(procFlowList)
       async addList(){
           this.procFlowList.push({prod_order_lot:this.prodProdProcessInfo.prod_order_lot,
-                                  employee_id: this.prodProdProcessInfo.employee_id,
+                                  employee_id: this.userInfo.employee_name,
                                   proc_order_amount: this.prodProdProcessInfo.order_amount,
                                   proc_id: this.procFlow[this.number].proc_id});
       },
@@ -400,6 +406,11 @@ export default {
         let param = list.filter(item =>{
           return Object.hasOwn(item, 'prod_order_lot');
         });
+        // console.log(param);
+        // let params = [];
+        // for(params of param){
+        //   params.employee_id = this.userInfo.employee_id;
+        // }
         // 통신처리
         let ajaxRes =
         await axios.post(`/api/insertProdProc`, param)
