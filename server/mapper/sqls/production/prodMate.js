@@ -10,7 +10,7 @@ select prod_order_lot,
        prod_id
 from t_prod_order
 WHERE order_status in ('2d','3d')
-ORDER BY order_date, prod_order_lot, order_status;
+ORDER BY order_date, prod_order_lot DESC;
 `;
 
 const selectPmoReq =
