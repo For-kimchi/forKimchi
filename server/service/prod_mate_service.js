@@ -12,6 +12,11 @@ const getPmoReq = async () => {
   return list;
 }
 
+const getPmoDone = async () => {
+  let list = await mariaDB.query("selectPmoDone");
+  return list;
+}
+
 
 const getPmoOne = async (id) => {
   let list = await mariaDB.query("selectPmoOne", [id]);
@@ -143,6 +148,7 @@ const postPmo = async (PmoInfo) => {
 module.exports = {
   getPmo,
   getPmoReq,
+  getPmoDone,
   getPmoOne,
   getPmoOneAll,
   putPmo,

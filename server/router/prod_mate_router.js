@@ -15,6 +15,13 @@ router.get('/prodMateOrderReq', async(req, res)=>{
   res.send(list);
 });
 
+// 생산완료 현황 조회
+router.get('/prodMateOrderDone', async(req, res)=>{
+  let list = await prodMateService.getPmoDone();
+  res.send(list);
+});
+
+
 // 자재요청 현황 목록 상세 조회
 router.get('/prodMateOrder/:id', async(req, res)=>{
   let id = req.params.id

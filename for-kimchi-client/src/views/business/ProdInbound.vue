@@ -26,7 +26,7 @@
                   <tr>
                     <th class="text-center font-weight-bolder">생산지시LOT</th>
                     <th class="text-center font-weight-bolder">생산제품</th>
-                    <th class="text-center font-weight-bolder">생산량</th>
+                    <th class="text-center font-weight-bolder">최종생산량</th>
                     <th class="text-center font-weight-bolder">생산일자</th>
                     <th class="text-center font-weight-bolder">담당자</th>
                     <th class="text-center font-weight-bolder">생산지시상태</th>
@@ -84,8 +84,8 @@
                 <tr>
                   <th class="text-center font-weight-bolder">제품명</th>
                   <th class="text-center font-weight-bolder">제품ID</th>
-                  <th class="text-center font-weight-bolder">입고창고</th>
-                  <th class="text-center font-weight-bolder">입고량</th>
+                  <th class="text-center font-weight-bolder" style="width: 300px;">입고창고</th>
+                  <th class="text-center font-weight-bolder" style="width: 300px;">입고량</th>
                   <th class="text-center font-weight-bolder">
                   </th>
                 </tr>
@@ -99,7 +99,7 @@
                     {{ info.prod_name }}
                   </td>
                   <td class="text-center">
-                    <select v-model="info.warehouse_id" class="form-select border text-center">
+                    <select v-model="info.warehouse_id" class="form-select border text-center" style="width: 300px;">
                       <option value=""></option>
                       <option v-for="warehouse in warehouses" :key="warehouse.warehouse_id"
                         :value="warehouse.warehouse_id">
@@ -107,7 +107,7 @@
                       </option>
                     </select>
                   </td>
-                  <td class="text-center">
+                  <td class="text-center" style="width: 300px;">
                     <input class="form-control border text-center" type="number" v-model="info.inbound_amount">
                   </td>
                   <td class="text-center">
@@ -180,10 +180,7 @@ export default {
     methods:{
       async prodOrderList(){
         let res =
-        await axios.get(`/api/prodMateOrder`, {
-          params: {
-            order_status: '5d',
-          }
+        await axios.get(`/api/prodMateOrderDone`, {
         }).catch(err => console.log(err));
 
         this.prodOrderLists = res.data;
