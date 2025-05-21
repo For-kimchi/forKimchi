@@ -19,6 +19,7 @@ export const useEventStore = defineStore('event', {
     navbarFixed:
       "position-sticky blur shadow-blur left-auto top-1 z-index-sticky px-0 mx-4",
     absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
+    expandedMenu: null,
   }),
   getters: {
 
@@ -58,6 +59,9 @@ export const useEventStore = defineStore('event', {
     },
     setColor({ commit }, payload) {
       commit("color", payload);
+    },
+    setExpandedMenu(ref) {
+      this.expandedMenu = this.expandedMenu === ref ? null : ref;
     },
   },
 });
