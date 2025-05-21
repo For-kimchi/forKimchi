@@ -166,6 +166,7 @@ export default {
       },
       // 생산계획 상세 조회
       async proddtList(index){
+        if(index || index === 0){
         this.idx = index;
         let planId = this.prodlist[this.idx].plan_id;
         this.start_date = formatDate(this.start_date);
@@ -193,6 +194,7 @@ export default {
             this.status2 = true;
           }
         }
+      }
       },
       // 저장 버튼
       async planDetailSave(planDetailList){
@@ -274,8 +276,8 @@ export default {
                   text: "계획이 승인되었습니다.",
                 });
                 this.checkAll = false;
-            await this.proddtList(this.idx);
-            await this.prodList();
+                await this.prodList();
+                // await this.proddtList(this.idx);
           }else{
             this.$swal({
                   icon: "error",

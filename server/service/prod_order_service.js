@@ -118,13 +118,12 @@ const orderCheck = async(orderCheck) =>{
             let lastPlan = await conn.query(selectedSql, param);
             
         }
-        
         selectedSql = await mariaDB.selectedQuery('prodPlanOrderStatusInfo', plan_detail_id);
         result = await conn.query(selectedSql, plan_detail_id);
         
 
         conn.commit();
-        return list;
+        return result;
     }catch(err){
         if(conn) conn.rollback();
     }finally{

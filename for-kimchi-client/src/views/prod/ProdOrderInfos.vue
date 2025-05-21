@@ -51,7 +51,9 @@
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_start_date}}</td>
                     <td class="align-middle font-weight-bolder text-center">{{info.plan_end_date}}</td>
                     <td class="align-middle font-weight-bolder text-center" v-if="info.plan_status === '상세계획승인'"><span class="badge badge-sm bg-gradient-info">{{info.plan_status}}</span></td>
-                    <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-warning">{{info.plan_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_status === '상세지시중'"><span class="badge badge-sm bg-gradient-success">{{info.plan_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else-if="info.plan_status === '상세계획등록'"><span class="badge badge-sm bg-gradient-warning">{{info.plan_status}}</span></td>
+                    <td class="align-middle font-weight-bolder text-center" v-else><span class="badge badge-sm bg-gradient-secondary">{{info.plan_status}}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -97,7 +99,7 @@
                           <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10 p-3 w-50">목표 수량</th>
                           <td class="align-middle text-start"><input type="number" class="input-group-static border" v-model="planAmount" disabled></td>
                           <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-10 p-3 w-50">생산지시수량</th>
-                          <td class="align-middle text-start"><input type="number" class="input-group-static border" v-model="prodAmount" placeholder="수량을 입력하세요"></td>
+                          <td class="align-middle text-start"><input type="number" class="input-group-static border" min="1" v-model="prodAmount" placeholder="수량을 입력하세요"></td>
                         </tr>
                     </table>
                   </div>
@@ -210,9 +212,10 @@ export default {
       },
       // 생산계획상세 리스트
       async clickDtList(index){
+        if(index || index === 0){
         this.idx = index;
         let info = this.prodDetailList[this.idx];
-        
+        // plan_detail_id 에러
         let dtid = info.plan_detail_id
         let ajaxRes =
         await axios.get(`/api/prodOrder/${dtid}`)
@@ -221,12 +224,13 @@ export default {
           ...item,
           check: false,
         }));;
-
-        this.planDetailId = info.plan_detail_id;
-        this.planDetailProd = info.prod_id;
-        this.planAmount = info.plan_amount;
-        this.planEndDate = info.plan_end_date;
-        this.prodDate = formatDate();
+        
+          this.planDetailId = info.plan_detail_id;
+          this.planDetailProd = info.prod_id;
+          this.planAmount = info.plan_amount;
+          this.planEndDate = info.plan_end_date;
+          this.prodDate = formatDate();
+        }
       },
       // 추가 버튼
       async addOrders(){
@@ -247,7 +251,7 @@ export default {
             let ajaxRes =
             await axios.put(`/api/insertProdOrder`, info)
                         .catch(err=> console.log(err));
-                        let Order = ajaxRes.date;
+                        let Order = ajaxRes.data;
             this.$swal({
                   icon: "success",
                   title: "생산지시완료",
@@ -284,27 +288,37 @@ export default {
           // 체크한게 있는지 확인
           for(let orderDetail of this.prodOrderList){
             // 체크된애들 값을 저장.
-            if(orderDetail.check){
-              param.push({prod_order_lot: orderDetail.prod_order_lot,
-                          employee_id: this.userInfo.employee_id,
-                          plan_detail_id: this.prodDetailList[this.idx].plan_detail_id
-               });
-              checkCheck = true;
+            if(this.prodDetailList[this.idx] !== null || this.prodDetailList[this.idx] !== undefined){
+              if(orderDetail.check){
+                param.push({prod_order_lot: orderDetail.prod_order_lot,
+                            employee_id: this.userInfo.employee_id,
+                            // 에러원인
+                            plan_detail_id: this.prodDetailList[this.idx].plan_detail_id
+                 });
+                checkCheck = true;
+              }
             }
           }
           if(checkCheck){ 
+            if(param !== null || param !== undefined){
             let  ajaxRes =
             await axios.put(`/api/orderCheck`, param)
-                       .catch(err => console.log(err));
+            .catch(err => console.log(err));
             this.proddtlist = ajaxRes.data
+            this.$swal({
+              icon: "success",
+              title: "승인완료",
+              text: "지시가 승인되었습니다.",
+            });
+            this.checkAll = false;
+            this.prodOrderList.forEach(item => {
+            item.check = false;
+            });   
             await this.selectProdDetailList();
             await this.clickDtList(this.idx);
-              this.$swal({
-                  icon: "success",
-                  title: "승인완료",
-                  text: "지시가 승인되었습니다.",
-                });
-                this.checkAll = false;
+          }else{
+            await this.selectProdDetailList();
+          }
           }else{
             this.$swal({
                   icon: "warning",
