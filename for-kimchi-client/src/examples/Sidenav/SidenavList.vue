@@ -27,7 +27,7 @@
             <SidenavCollapseItem refer="/orders" miniIcon="receipt_long" text="주문조회"/>
             <SidenavCollapseItem refer="/ordersmng" miniIcon="receipt_long" text="주문등록/수정"/>
             <SidenavCollapseItem refer="/delivs" miniIcon="local_shipping" text="납품조회"/>
-            <SidenavCollapseItem refer="/delivsmng" miniIcon="local_shipping" text="납품관리"/>
+            <SidenavCollapseItem refer="/delivsmng" miniIcon="local_shipping" text="납품등록"/>
             <SidenavCollapseItem refer="/prodinbound" miniIcon="save_alt" text="제품입고"/>
             <SidenavCollapseItem refer="/prodwh" miniIcon="save_alt" text="제품현황"/>
           </template>

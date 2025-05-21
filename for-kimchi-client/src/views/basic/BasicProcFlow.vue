@@ -206,6 +206,7 @@
           this.procFlow.flow_details.push({
             proc_id: this.procs[index].proc_id,
             proc_name: this.procs[index].proc_name,
+            proc_type: this.procs[index].proc_type,
           })
         }
       },

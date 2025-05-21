@@ -22,6 +22,7 @@
         </div>
 
         <!-- 검색 결과 테이블 -->
+        <div style="max-height: 300px; overflow: auto;">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -36,6 +37,7 @@
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   </teleport>

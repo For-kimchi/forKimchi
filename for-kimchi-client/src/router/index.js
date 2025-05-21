@@ -426,7 +426,7 @@ const routes = [
     component: DelivMng,
     meta: { 
       requiresAuth: true,
-      pageName: '납품관리',
+      pageName: '납품등록',
      }
   },
   {
