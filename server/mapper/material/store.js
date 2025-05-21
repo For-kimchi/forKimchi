@@ -280,7 +280,7 @@ const warehouseLotList =
 FROM t_mate_warehouse m
 JOIN t_warehouse w ON w.warehouse_id = m.warehouse_id
 WHERE w.warehouse_id = ?
-ORDER BY m.inbound_date `;
+ORDER BY m.mate_lot `;
 
 // 창고 자재별 묶음 합계조회
 const groupBywareList =

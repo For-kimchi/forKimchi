@@ -327,7 +327,7 @@ export default {
 
     // 자재발주관리에서 삭제버튼 클릭시 발주삭제
     async deleteRow(index) {
-      const reqId = this.materialList[index].req_detail_id;
+      const reqId = this.materialList[index].req_id;
 
       const result = await this.$swal({
         text: '정말 삭제하시겠습니까?',
@@ -529,7 +529,7 @@ moveToCustomer() {
         const ajaxRes = await axios.post(`/api/mateSave`, mateInfo);
         if (ajaxRes.data.affectedRows > 0) {
           await this.$swal({
-            text: "저장되었습니다.",
+            text: "등록되었습니다.",
             icon: "success"
           });
           this.resetForm();
