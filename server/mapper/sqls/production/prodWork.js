@@ -6,21 +6,19 @@
 const selectWorkPlan =`
 SELECT
        t.plan_id,
-       vendor_id(o.vendor_id) vendor_name,
-       vendor_id,
-       employee_id(t.employee_id) employee_name,
-       employee_id,
-       employee_id(t.manager_id) manager_name,
-       manager_id,
+       v.vendor_name,
+       e.employee_name,
+       m.employee_name manager_name,
        date_type(t.reg_date) reg_date,
-       sub_code(t.plan_final_status) plan_final_status,
-       t.memo
-   FROM t_prod_plan t left join t_order o
-                        on (t.order_id = o.order_id)
-   WHERE t.plan_final_status in ('4i')
+       sc.sub_code_name plan_final_status
+   FROM t_prod_plan t left join t_order o ON (t.order_id = o.order_id)
+   left JOIN t_employee e ON(t.employee_id = e.employee_id)
+   left JOIN t_employee m ON(t.manager_id = m.employee_id)
+   left JOIN t_vendor v ON(o.vendor_id = v.vendor_id)
+   WHERE 1=1
    :searchKeyword
    GROUP BY t.plan_id
-   ORDER BY reg_date DESC
+   ORDER BY plan_id DESC
 `;
 
 
@@ -42,15 +40,24 @@ SELECT
  WHERE t.plan_id = ?
  GROUP BY plan_detail_id
 `;
-// employee_id 가져오기
-const selectEmployeeIdInfo =`
-SELECT employee_id
-FROM t_employee
-WHERE employee_name = ?
+// 공정실적조회
+const selectWorkProdProc =`
+SELECT 
+        o.prod_order_lot,
+        p.prod_name,
+        date_type(o.order_date) order_date,
+        o.order_amount,
+        e.employee_name,
+        sc.sub_code_name order_status
+FROM t_prod_order o left JOIN t_employee e ON(o.employee_id = e.employee_id)
+                    left JOIN t_prod p ON(o.prod_id = p.prod_id)
+                    left JOIN t_sub_code sc ON (o.order_status = sc.sub_code)
+WHERE 1=1
+:searchKeyword
+ORDER BY prod_order_lot
 `;
 module.exports = {
   selectWorkPlan,
   selectWorkPlanDetail,
-  selectEmployeeIdInfo,
-
+  selectWorkProdProc,
 }

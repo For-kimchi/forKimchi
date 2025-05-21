@@ -39,7 +39,7 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive mb-4" style="max-height: 600px; overflow-y: auto;">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="align-middle text-center">검사ID</th>

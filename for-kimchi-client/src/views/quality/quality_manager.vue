@@ -44,7 +44,7 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0" style="max-height: 400px;">
-              <table class="table align-items-center justify-content-center mb-0">
+              <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="text-center font-weight-bolder">검사ID</th>
@@ -98,7 +98,7 @@
             </div>
           </div>
             <div class="table-responsive p-0" style="max-height: 400px;">
-              <table class="table align-items-center justify-content-center mb-0">
+              <table class="table align-items-center justify-content-center mb-0 table-hover">
                 <thead>
                   <tr>
                     <th class="text-center font-weight-bolder">검사ID</th>

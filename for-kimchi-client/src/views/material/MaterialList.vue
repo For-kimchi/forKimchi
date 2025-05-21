@@ -12,50 +12,50 @@
       </button>
     </div>
     <!-- 자재발주조회 -->
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <div class="card my-4">
-          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
-            <h6 class="text-white text-capitalize ps-3">검 색</h6>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+                <h6 class="text-white text-capitalize ps-3">검 색</h6>
+              </div>
+            </div>
+            <div class="row g-2 my-3 px-3">
+              <!-- 거래처 -->
+              <div class="col-md-3">
+                <div class="d-flex align-items-center">
+                  <label class="form-label me-2 mb-0" style="width: 100px;">거래처</label>
+                  <input v-model="search.vendor_name" type="text" class="form-control border text-center"
+                    placeholder="거래처명" />
+                </div>
+              </div>
+              <!-- 발주일자 -->
+              <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                  <label class="form-label me-2 mb-0" style="width: 150px;">발주일자</label>
+                  <input type="date" v-model="search.startDate" class="form-control border text-center me-1" />
+                  <span class="mx-1">~</span>
+                  <input type="date" v-model="search.endDate" class="form-control border text-center" />
+                </div>
+              </div>
+              <!-- 발주상태 -->
+              <div class="col-md-3">
+                <div class="d-flex align-items-center">
+                  <label class="form-label me-2 mb-0 align-items-center" style="width: 100px;">발주상태</label>
+                  <select v-model="search.req_status" class="form-select border">
+                    <option value="">전체</option>
+                    <option value="1o">발주등록</option>
+                    <option value="2o">발주승인</option>
+                    <option value="3o">발주마감</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="row g-2 my-3 px-3">
-          <!-- 거래처 -->
-          <div class="col-md-3">
-            <div class="d-flex align-items-center">
-              <label class="form-label me-2 mb-0" style="width: 100px;">거래처</label>
-              <input v-model="search.vendor_name" type="text" class="form-control border text-center"
-                placeholder="거래처명" />
-            </div>
-          </div>
-          <!-- 발주일자 -->
-          <div class="col-md-4">
-            <div class="d-flex align-items-center">
-              <label class="form-label me-2 mb-0" style="width: 150px;">발주일자</label>
-              <input type="date" v-model="search.startDate" class="form-control border text-center me-1" />
-              <span class="mx-1">~</span>
-              <input type="date" v-model="search.endDate" class="form-control border text-center" />
-            </div>
-          </div>
-          <!-- 발주상태 -->
-          <div class="col-md-3">
-            <div class="d-flex align-items-center">
-              <label class="form-label me-2 mb-0 align-items-center" style="width: 100px;">발주상태</label>
-              <select v-model="search.req_status" class="form-select border">
-                <option value="">전체</option>
-                <option value="1o">발주등록</option>
-                <option value="2o">발주승인</option>
-                <option value="3o">발주마감</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
       </div>
     </div>
-  </div>
   </div>
   <!-- 자재발주조회리스트 -->
 
@@ -87,8 +87,8 @@
                 </thead>
                 <tbody>
                   <template v-if="matReqList.length > 0">
-                    <tr v-for="(info, index) in matReqList" :key="info.id" class="group cursor-pointer" @click="handleRowClick(info, index)"
-                    :class="selectedOrderRow === index ? 'table-active' : ''" >
+                    <tr v-for="(info, index) in matReqList" :key="info.id" class="group cursor-pointer"
+                      @click="handleRowClick(info, index)" :class="selectedOrderRow === index ? 'table-active' : ''">
                       <td>{{ index + 1 }}</td>
                       <td>
                         <input type="checkbox" v-if="info.req_status === '발주등록'" v-model="info.selected"
@@ -127,6 +127,14 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
+        <div class="text-end pe-3 ">
+          <button class="btn btn-success me-2" @click="downloadExcel">
+            📥 엑셀 다운로드
+          </button>
+          <button class="btn btn-danger ms-2 me-2" @click="downloadPdf">
+            발주서.pdf
+          </button>
+        </div>
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
@@ -173,6 +181,8 @@
 <script>
 import axios from 'axios';
 import MaterialCheckbox from '../../components/MaterialCheckbox.vue';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 // stores 
 import { useUserStore } from "@/stores/user";
 // state, getter => mapState 
@@ -195,7 +205,7 @@ export default {
       allSelected: [],
       selectedOrderRow: null,
       selectedOrder: {},
-      
+
     };
   },
   created() {
@@ -225,7 +235,7 @@ export default {
     },
     async handleRowClick(info, index) {
       this.selectedInfo = info;
-      this.selectedOrderRow =index;
+      this.selectedOrderRow = index;
       await axios
         .get(`/api/materials/${info.req_id}`, {
         })
@@ -283,6 +293,139 @@ export default {
           icon: 'warning'
         });
       }
+    },
+    // 발주서.pdf
+    async downloadPdf() {
+      if (this.mateList.length === 0) {
+        this.$swal({
+          text: "다운로드 실패 - 검사결과를 클릭하세요!",
+          icon: "warning"
+        });
+        return;
+      }
+
+      this.$swal({
+        text: "다운로드 성공",
+        icon: "success"
+      });
+
+      try {
+        const response = await axios.get('/templates/mateReport.html');
+        let templateHtml = response.data;
+
+        // tableRows 문자열 생성
+        const tableRows = this.mateList.map(info => {
+          return `
+              <tr>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.req_detail_id}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.req_id}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.mate_id}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.req_amount}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.mate_unit}</td>
+              </tr>
+            `;
+        }).join('');
+
+        // const allPassed = this.mateQualityViewdetail.every(info => info.result === '합격');
+        // const finalResult = allPassed ?
+        //   '<span style="color: green;">최종합격</span>' :
+        //   '<span style="color: red;">최종불합격</span>';
+
+        templateHtml = templateHtml
+          .replace('{{ req_date }}', this.matReqList[this.selectedOrderRow]?.req_date || 'N/A')
+          .replace('{{ req_id }}', this.matReqList[this.selectedOrderRow]?.req_id || 'N/A')
+          .replace('{{ vendor_name }}', this.matReqList[this.selectedOrderRow]?.vendor_name || 'N/A')
+          .replace('{{ employee_name }}', this.matReqList[this.selectedOrderRow]?.employee_name || 'N/A')
+          .replace('{{ req_due_date }}', this.matReqList[this.selectedOrderRow]?.req_due_date || 'N/A')
+          .replace('{{ req_status }}', this.matReqList[this.selectedOrderRow]?.req_status || 'N/A')
+          .replace('{{ table_rows }}', tableRows);
+
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = templateHtml;
+        document.body.appendChild(tempElement);
+
+        const opt = {
+          margin: 0.3,
+          filename: `발주서_${new Date().toISOString().slice(0, 10)}.pdf`,
+          image: {
+            type: 'jpeg',
+            quality: 0.98
+          },
+          html2canvas: {
+            scale: 2
+          },
+          jsPDF: {
+            unit: 'in',
+            format: 'a4',
+            orientation: 'portrait'
+          }
+        };
+
+        await html2pdf().set(opt).from(tempElement).save();
+        document.body.removeChild(tempElement);
+
+      } catch (err) {
+        console.error("PDF 다운로드 실패:", err);
+        this.$swal({
+          text: "PDF 생성 중 오류가 발생했습니다.",
+          icon: "error"
+        });
+      }
+    },
+    // 발주서.excel
+    downloadExcel() {
+     if (this.selectedOrderRow === -1 || !this.matReqList[this.selectedOrderRow]) {
+        this.$swal({
+          text: "발주를 선택한 후 다운로드 해주세요!",
+          icon: "warning"
+        });
+        return;
+      }
+            this.$swal({
+        text: "다운로드 성공",
+        icon: "success"
+      });
+      
+      const headerTitle = [['자재 발주서']];
+      const headerInfo = [
+        ['발주일자', this.matReqList[this.selectedOrderRow]?.req_date || 'N/A',
+          '발주번호', this.matReqList[this.selectedOrderRow]?.req_id || 'N/A'],
+        ['거래처', this.matReqList[this.selectedOrderRow]?.vendor_name || 'N/A',
+          '담당자', this.matReqList[this.selectedOrderRow]?.employee_name || 'N/A'],
+        ['납기예정일자', this.matReqList[this.selectedOrderRow]?.req_due_date || 'N/A',
+          '발주상태', this.matReqList[this.selectedOrderRow]?.req_status || 'N/A']
+      ];
+
+      const detailHeader = [['자재발주상세ID', '자재발주ID', '자재명', '발주수량', '단위']];
+
+      const detailData = this.mateList.map(item => [
+        item.req_detail_id,
+        item.req_id,
+        item.mate_id,
+        item.req_amount,
+        item.mate_unit
+      ]);
+
+      // 시트에 넣을 전체 데이터 구성
+      const finalSheetData = [
+        ...headerTitle,
+        [],
+        ...headerInfo,
+        [],
+        ...detailHeader,
+        ...detailData
+      ];
+
+      const worksheet = XLSX.utils.aoa_to_sheet(finalSheetData);
+
+      // 병합 (제목 "자재 발주서"를 병합하기)
+      worksheet['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } } // A1~E1 병합
+      ];
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, '자재발주서');
+      XLSX.writeFile(workbook, '자재발주서.xlsx');
     }
 
 
