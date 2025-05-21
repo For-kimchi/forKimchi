@@ -75,7 +75,7 @@
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준
                     </th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사결과입력
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                   </tr>
@@ -86,7 +86,7 @@
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}} {{ info.option_operator}}</td>
-                    <td class="align-middle text-center"><input type="number" placeholder="검사기준입력"
+                    <td class="align-middle text-center"><input type="number" placeholder="검사결과입력"
                         v-model="info.quality_result_value"></td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
