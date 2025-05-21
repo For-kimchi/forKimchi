@@ -148,7 +148,7 @@ const routes = [
     component: ProdProcWork,
      meta: { 
       requiresAuth: true,
-      pageName: '생산이력',
+      pageName: '생산실적관리',
      }
   },
   {
@@ -166,7 +166,7 @@ const routes = [
     component: ProdOrderInfo,
      meta: { 
       requiresAuth: true,
-      pageName: '생산계획관리',
+      pageName: '생산지시관리',
      }
   },
   {
@@ -426,7 +426,7 @@ const routes = [
     component: DelivMng,
     meta: { 
       requiresAuth: true,
-      pageName: '납품관리',
+      pageName: '납품등록',
      }
   },
   {

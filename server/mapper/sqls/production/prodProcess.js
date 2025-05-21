@@ -8,7 +8,7 @@ SELECT
         employee_id(employee_id) employee_id,
         sub_code(order_status) order_status
 FROM t_prod_order
-WHERE order_status in ('4d', '3d') and order_date >= date_format(sysdate(), '%y/%m/%d')
+WHERE order_status in ('4d', '3d') and order_date
 `;
 
 // 생산작업을 위한 공정흐름도 조회

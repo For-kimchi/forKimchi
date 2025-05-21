@@ -100,7 +100,7 @@
     border-radius: 0.5rem;
     padding: 1.5rem;
     width: 50vw;
-    max-width: 600px;
+    max-width: 400px;
     box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
   }
 

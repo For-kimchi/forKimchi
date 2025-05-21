@@ -3,6 +3,7 @@ const router = express.Router();
 
 const prodPlanService = require('../service/prod_plan_service.js');
 const prodOrderService = require('../service/prod_order_service.js');
+const prodWorkService = require('../service/prod_work_service.js');
 
 // prodPlanService 생산계획
 // 주문조회
@@ -134,6 +135,19 @@ router.put('/updateEndTime/:id', async(req, res)=>{
   let procId = req.params.id;
   let param = req.body;
   let result = await prodOrderService.updateEndTime(param, procId);
+  res.send(result);
+});
+// 실적 조회
+// 계획 실적조회
+router.get('/selectWorkplan', async(req, res)=>{
+  let params = req.query;
+  let result = await prodWorkService.selectWorkplan(params);
+  res.send(result);
+});
+// 상세계획 실적조회
+router.get('/selectWorkplanDetail/:id', async(req, res)=>{
+  let planId = req.params.id
+  let result = await prodWorkService.selectWorkPlanDetail(planId);
   res.send(result);
 });
 module.exports = router;

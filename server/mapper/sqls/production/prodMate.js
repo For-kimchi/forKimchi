@@ -10,6 +10,43 @@ select prod_order_lot,
        prod_id
 from t_prod_order
 WHERE order_status in ('2d','3d')
+ORDER BY order_date, prod_order_lot DESC;
+`;
+
+const selectPmoReq =
+`
+SELECT prod_order_lot,
+	     plan_detail_id,
+       po.prod_id,
+       p.prod_name,
+       order_date,
+       order_amount,
+       po.employee_id,
+       e.employee_name,
+       sub_code(order_status) order_status
+FROM t_prod_order po
+JOIN t_employee e ON po.employee_id = e.employee_id
+JOIN t_prod p ON po.prod_id = p.prod_id
+WHERE order_status = '2d'
+ORDER BY order_date DESC;
+`;
+
+const selectPmoDone =
+`
+SELECT prod_order_lot,
+	     plan_detail_id,
+       po.prod_id,
+       p.prod_name,
+       order_date,
+       order_last_amount,
+       order_amount,
+       po.employee_id,
+       e.employee_name,
+       sub_code(order_status) order_status
+FROM t_prod_order po
+JOIN t_employee e ON po.employee_id = e.employee_id
+JOIN t_prod p ON po.prod_id = p.prod_id
+WHERE order_status = '5d'
 ORDER BY order_date DESC;
 `;
 
@@ -89,6 +126,8 @@ CALL insert_prod_mate_used(?, ?, ?, ?, ?)
 
 module.exports = {
   selectPmo,
+  selectPmoReq,
+  selectPmoDone,
   selectPmoOne,
   updatePmo,
   selectLastPmo,

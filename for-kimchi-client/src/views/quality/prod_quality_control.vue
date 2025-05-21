@@ -15,29 +15,34 @@
             <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
-                 <tr>  
+                  <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산지시LOT</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">공정ID</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산지시LOT
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">생산공정ID
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">공정ID
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품ID
+                    </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">제품명</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">총생산</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_proc_id" 
-                  v-on:click="prodQualityWait(index)" :class="selectedIndex === index ? 'table-active' : '' " style="cursor: pointer;">
-                      <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
-                      <td class="align-middle text-center">{{ info.prod_order_lot }}</td>
-                      <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
-                      <td class="align-middle text-center">{{ info.proc_id }}</td>
-                      <td class="align-middle text-center">{{ info.prod_id }}</td>
-                      <td class="align-middle text-center">{{ info.prod_name }}</td>
-                      <td class="align-middle text-center">{{ info.total }}</td>
-                      <td class="align-middle text-center text-warning">{{ info.proc_status }}</td>
-                    </tr>
+                  <tr v-for="(info, index) in prodQualityreq" v-bind:key="info.prod_proc_id"
+                    v-on:click="prodQualityWait(index)" :class="selectedIndex === index ? 'table-active' : '' "
+                    style="cursor: pointer;">
+                    <td class="align-middle font-weight-bolder text-center">{{ index + 1 }}</td>
+                    <td class="align-middle text-center">{{ info.prod_order_lot }}</td>
+                    <td class="align-middle text-center">{{ info.prod_proc_id }}</td>
+                    <td class="align-middle text-center">{{ info.proc_id }}</td>
+                    <td class="align-middle text-center">{{ info.prod_id }}</td>
+                    <td class="align-middle text-center">{{ info.prod_name }}</td>
+                    <td class="align-middle text-center">{{ info.total }}</td>
+                    <td class="align-middle text-center text-warning">{{ info.proc_status }}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -64,10 +69,14 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사이름</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사번호
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사이름
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">검사기준입력
+                    </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
                   </tr>
                 </thead>
@@ -77,7 +86,8 @@
                     <td class="align-middle text-center">{{ info.option_id }}</td>
                     <td class="align-middle text-center">{{ info.option_name }}</td>
                     <td class="align-middle text-center">{{ info.option_standard}} {{ info.option_operator}}</td>
-                    <td class="align-middle text-center"><input type="number" placeholder="검사기준입력" v-model="info.quality_result_value"></td>
+                    <td class="align-middle text-center"><input type="number" placeholder="검사기준입력"
+                        v-model="info.quality_result_value"></td>
                     <td class="align-middle text-center">
                       <span v-if="info.result === '합격'" class="badge badge-sm bg-gradient-info"
                         style="width: 60px; text-align: center;">
@@ -105,19 +115,23 @@
 <script>
   import axios from 'axios';
 
-    // pinia import
+  // pinia import
   // stores 
-  import { useUserStore } from "@/stores/user"; 
+  import {
+    useUserStore
+  } from "@/stores/user";
   // state, getter => mapState 
   // actions => mapActions 
-  import { mapState } from 'pinia';
+  import {
+    mapState
+  } from 'pinia';
 
   export default {
     data() {
       return {
-        prodQualityreq :[],
-        prodQualitywait : [],
-        selected: {},
+        prodQualityreq: [],
+        prodQualitywait: [],
+        selected: [],
         selectedIndex: null,
       }
     },
@@ -130,9 +144,9 @@
       // <template></template> 내부에서는 userInfo.employee_id
       // export default {} 내부에서는 this.userInfo.employee_id
       ...mapState(useUserStore, [
-      "isLoggedIn",
-      "userInfo",
-    ])
+        "isLoggedIn",
+        "userInfo",
+      ])
     },
     created() {
       this.prodQualityReq();
@@ -145,16 +159,16 @@
             const standard = info.option_standard;
             const operator = info.option_operator;
             if (!isNaN(result_value) && !isNaN(standard)) {
-              if(result_value == null || result_value == ''){
+              if (result_value == null || result_value == '') {
                 info.result = '대기';
-              } else if(operator == '이하') {
+              } else if (operator == '이하') {
                 info.result = result_value <= standard ? '합격' : '불합격';
-              } else if(operator == '이상'){
+              } else if (operator == '이상') {
                 info.result = result_value >= standard ? '합격' : '불합격';
+              }
+            } else {
+              info.result = '대기';
             }
-          }else{
-            info.result = '대기';
-        }
           });
         },
         deep: true
@@ -162,33 +176,27 @@
     },
     methods: {
       // 제품품검사요청 (요청)
-      async prodQualityReq(){
-        let ajaxRes = 
-        await axios.get(`/api/prodQualityReq`)
-                   .catch(err => console.log(err));
-                   this.prodQualityreq = ajaxRes.data;
+      async prodQualityReq() {
+        let ajaxRes =
+          await axios.get(`/api/prodQualityReq`)
+          .catch(err => console.log(err));
+        this.prodQualityreq = ajaxRes.data;
       },
 
       // 제품검사요청 (대기)
-      async prodQualityWait(index){
+      async prodQualityWait(index) {
         this.selectedIndex = index;
         this.selected = this.prodQualityreq[index];
-        let id = this.prodQualityreq[index].prod_proc_id
-        let ajaxRes = 
+        let id = this.prodQualityreq[index].prod_order_lot
+        let ajaxRes =
           await axios.get(`/api/prodQualityWait/${id}`)
-                   .catch(err => console.log(err));
-                   this.prodQualitywait = ajaxRes.data;
+          .catch(err => console.log(err));
+        this.prodQualitywait = ajaxRes.data;
       },
-    async test() {
-    let param = {
-    prod_proc_id: this.selected.prod_proc_id,
-    details_: this.prodQualitywait
-  };
-
+      async test() {
   // 검사결과값 입력여부 체크
   for (let idx of this.prodQualitywait) {
-    let val = Object.hasOwn(idx, 'quality_result_value');
-    if (!val || idx.quality_result_value == 0) {
+    if (idx.quality_result_value === null || idx.quality_result_value === undefined || idx.quality_result_value === '') {
       this.$swal({
         text: "검사결과값을 입력하세요.",
         icon: "warning"
@@ -197,21 +205,31 @@
     }
   }
 
-  try {
-    let testlist = await axios.post('/api/prod', param);
+  // 검사 결과 전체 상태 판단
+  const allPassed = this.prodQualitywait.every(item => item.result === '합격');
+  const proc_status = allPassed ? '3e' : '5e';  // 조건에 맞는 상태값
 
-    if (testlist.data.affectedRows > 0) {
+  // 서버에 보낼 파라미터에 proc_status 포함
+  let param = {
+    ...this.selected,
+    details_: this.prodQualitywait,
+    proc_status: proc_status
+  };
+
+  try {
+    let res = await axios.post('/api/prod', param);
+
+    if (res.data && res.data.affectedRows > 0) {
       this.$swal({
         text: "저장이 완료되었습니다.",
         icon: "success"
       });
-      // [수정 포인트] 검사 완료된 항목을 prodQualityreq에서 제거
-      // filter 결과를 다시 prodQualityreq에 할당해야 함
+
       this.prodQualityreq = this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected.prod_proc_id);
 
-      // 선택 항목 초기화
-      this.selected = {};
+      this.selected = [];
       this.prodQualitywait = [];
+      this.selectedIndex = null;
 
     } else {
       this.$swal({
@@ -219,18 +237,14 @@
         icon: "error"
       });
     }
-
   } catch (err) {
     console.log(err);
-          this.$swal({
-        text: "저장 중 오류가 발생했습니다.",
-        icon: "error"
-      });
+    this.$swal({
+      text: "저장 중 오류가 발생했습니다.",
+      icon: "error"
+    });
   }
-},
-      // addRow() {
-      //   this.prodQualitywait.push({});
-      // }
+}
     }
   }
 </script>

@@ -17,7 +17,7 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0" style="height: 400px; overflow: auto;">
+            <div class="table-responsive p-0" style="height: 300px; overflow: auto;">
               <table class="table align-items-center mb-0 table-hover">
                 <thead>
                   <tr>

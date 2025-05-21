@@ -110,15 +110,20 @@ router.get('/mateBomSaves', async(req, res) => {
 
 // 자재발주관리 저장버튼 클릭시 (req_id가 있으면 put, req_id가 없으면 post)
 router.post('/mateSave', async (req, res) => {
-  const mate_detail_list = req.body;
-  let result = await mateService.insertMates(mate_detail_list).catch((err) => console.log(err));
+  const { mate_detail_list, ...rest } = req.body;
+
+  // mate_detail_list는 배열, 나머지는 정보
+  const result = await mateService.insertMates({
+    mate_detail_list,
+    ...rest
+  }).catch((err) => console.log(err));
+
   res.send(result);
-}); 
+});
 
 // 자재발주관리 저장버튼 클릭시 (req_id가 있으면 put, req_id가 없으면 post)
 router.put('/mateSave', async (req, res) => {
   const updateData = req.body;
-  console.log(updateData);
   let result = await mateService.updateMates(updateData).catch((err) => console.log(err));
   res.send(result);
 });

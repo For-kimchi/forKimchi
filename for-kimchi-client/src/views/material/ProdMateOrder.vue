@@ -143,10 +143,10 @@ export default {
     methods:{
       async prodOrderList(){
         let ajaxRes =
-        await axios.get(`/api/prodMateOrder`, {
-          params: {
-            order_status: '2d',
-          }
+        await axios.get(`/api/prodMateOrderReq`, {
+          // params: {
+          //   order_status: '2d',
+          // }
         }).catch(err => console.log(err));
 
         this.prodOrderLists = ajaxRes.data;

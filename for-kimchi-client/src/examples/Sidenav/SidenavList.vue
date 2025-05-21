@@ -27,7 +27,7 @@
             <SidenavCollapseItem refer="/orders" miniIcon="receipt_long" text="주문조회"/>
             <SidenavCollapseItem refer="/ordersmng" miniIcon="receipt_long" text="주문등록/수정"/>
             <SidenavCollapseItem refer="/delivs" miniIcon="local_shipping" text="납품조회"/>
-            <SidenavCollapseItem refer="/delivsmng" miniIcon="local_shipping" text="납품관리"/>
+            <SidenavCollapseItem refer="/delivsmng" miniIcon="local_shipping" text="납품등록"/>
             <SidenavCollapseItem refer="/prodinbound" miniIcon="save_alt" text="제품입고"/>
             <SidenavCollapseItem refer="/prodwh" miniIcon="save_alt" text="제품현황"/>
           </template>
@@ -44,7 +44,7 @@
             <SidenavCollapseItem refer="/Prodplan" miniIcon="" text="생산계획관리"/>
             <SidenavCollapseItem refer="/ProdOrderInfo" miniIcon="" text="생산지시관리"/>
             <SidenavCollapseItem refer="/Prodprocess" miniIcon="" text="생산공정관리"/>
-            <SidenavCollapseItem refer="/Prodprocwork" miniIcon="" text="생산이력관리"/>
+            <SidenavCollapseItem refer="/Prodprocwork" miniIcon="" text="생산실적관리"/>
           </template>
         </sidenav-collapse>
       </li>
@@ -56,13 +56,13 @@
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
           </template>
           <template v-slot:list>
-            <SidenavCollapseItem refer="/prodMateOrder" miniIcon="" text="자재출고관리"/>
             <SidenavCollapseItem refer="/materlist" miniIcon="" text="자재발주조회"/>
             <SidenavCollapseItem refer="/matma" miniIcon="" text="자재발주관리"/>
             <SidenavCollapseItem refer="/storeList" miniIcon="" text="입고조회"/>
             <SidenavCollapseItem refer="/storema" miniIcon="" text="입고관리"/>
             <SidenavCollapseItem refer="/warehouseAdd" miniIcon="" text="창고입고"/>
             <SidenavCollapseItem refer="/warehouseList" miniIcon="" text="창고현황"/>
+            <SidenavCollapseItem refer="/prodMateOrder" miniIcon="" text="자재출고관리"/>
           </template>
         </sidenav-collapse>
       </li>

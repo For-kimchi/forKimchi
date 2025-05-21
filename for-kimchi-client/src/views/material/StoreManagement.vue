@@ -192,7 +192,7 @@ export default {
     amountCheck(info) {
       if (info.inbound_amount > info.req_amount) {
         this.$swal({
-          text: '입고수량은 발주수량을 초과할 수 없습니다.',
+          text: '검사요청수량은 발주수량을 초과할 수 없습니다.',
           icon: 'warning'
         });
         info.inbound_amount = info.req_amount;

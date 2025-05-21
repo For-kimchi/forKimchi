@@ -49,7 +49,18 @@
 
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
-                                <template v-if="searchType === 'lot'">
+                                <template v-if="isLoading">
+                                    <tr>
+                                        <td class="text-center" :colspan="searchType === 'lot' ? 7 : 6">데이터를 불러오는 중입니다...
+<div class="spinner-border text-primary" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
+
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template v-else>
+                                    <template v-if="searchType === 'lot'">
                                     <thead>
                                         <tr>
                                         <th class="text-center font-weight-bolder">제품LOT</th>
@@ -108,6 +119,7 @@
                                         </tr>
                                     </tbody>
                                 </template>
+                                </template>
                             </table>
                         </div>
                     </div>
@@ -131,6 +143,7 @@
                 prodFilter: '',
                 warehouseFilter: '',
                 warehouses: [],
+                isLoading: false,
             };
         },
         created() {
@@ -141,6 +154,7 @@
         },
         methods: {
             async getProdWarehouse() {
+                this.isLoading = true;
                 try {
                     const params = {
                         type: this.searchType,
@@ -154,6 +168,9 @@
                     this.doFilter();
                 } catch (err) {
                     console.error('창고현황 조회 실패:', err);
+                    this.filtered = [];
+                } finally {
+                    this.isLoading = false;
                 }
             },
             async getWarehouse() {

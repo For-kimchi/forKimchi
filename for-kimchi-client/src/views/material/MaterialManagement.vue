@@ -33,12 +33,12 @@
                   :selectedValue="selectedCompany" @close="closeCompanySearchModal" @select="selectCompany" />
               </li>
               <li class="list-group-item d-flex align-items-center">
-                <input type="text" readonly v-model="vendor.vendor_name">
+                <input type="text" class="form-control" readonly v-model="vendor.vendor_name">
                 <i class="fas fa-search d-flex align-items-center"
                   style="font-size: 20px; cursor: pointer; margin-left: 10px; " @click="openProdVendor"></i>
               </li>
-              <li class="list-group-item d-flex align-items-center" style="margin-left: 20px; width: 130px;">납기예정일자</li>
-              <li class="list-group-item d-flex align-items-center"><input type="date" v-model="req_due_date"></li>
+              <li class="list-group-item d-flex align-items-center">납기예정일자</li>
+              <li class="list-group-item d-flex align-items-center"><input type="date" class="form-control fs-6" v-model="req_due_date"></li>
             </ul>
           </div>
         </div>
@@ -61,7 +61,7 @@
                 자재명
               </li>
               <li class="list-group-item d-flex align-items-center">
-                <input type="text" v-model="search.material" @keyup.enter="handleClick" class="form-control mb-2"
+                <input type="text" v-model="search.material" @keyup.enter="handleClick" class="form-control"
                   placeholder="자재명을 입력하세요" />
                 <i class="fas fa-search d-flex align-items-center"
                   style="font-size: 20px; cursor: pointer; margin-left: 10px;" @click="handleClick(info)"></i>
@@ -327,7 +327,7 @@ export default {
 
     // 자재발주관리에서 삭제버튼 클릭시 발주삭제
     async deleteRow(index) {
-      const reqId = this.materialList[index].req_detail_id;
+      const reqId = this.materialList[index].req_id;
 
       const result = await this.$swal({
         text: '정말 삭제하시겠습니까?',
@@ -529,7 +529,7 @@ moveToCustomer() {
         const ajaxRes = await axios.post(`/api/mateSave`, mateInfo);
         if (ajaxRes.data.affectedRows > 0) {
           await this.$swal({
-            text: "저장되었습니다.",
+            text: "등록되었습니다.",
             icon: "success"
           });
           this.resetForm();
