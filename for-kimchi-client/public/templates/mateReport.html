@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>자재 발주서</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .info-table {
+      width: 100%;
+      margin-bottom: 30px;
+      border-collapse: collapse;
+    }
+    .info-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+    .info-label {
+      background-color: #f0f0f0;
+      font-weight: bold;
+      width: 20%;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th,
+    .data-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .data-table th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h2>자재 발주서</h2>
+
+  <table class="info-table">
+    <tr>
+      <td class="info-label">발주일자</td>
+      <td>{{ req_date }}</td>
+      <td class="info-label">발주번호</td>
+      <td>{{ req_id }}</td>
+    </tr>
+    <tr>
+      <td class="info-label">거래처</td>
+      <td>{{ vendor_name }}</td>
+      <td class="info-label">담당자</td>
+      <td>{{ employee_name }}</td>
+    </tr>
+    <tr>
+      <td class="info-label">납기예정일자</td>
+      <td>{{ req_due_date }}</td>
+      <td class="info-label">발주상태</td>
+      <td>{{ req_status }}</td>
+    </tr>
+  </table>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>자재발주상세ID</th>
+        <th>자재발주ID</th>
+        <th>자재명</th>
+        <th>발주수량</th>
+        <th>단위</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ table_rows }}
+    </tbody>
+  </table>
+</body>
+</html>
