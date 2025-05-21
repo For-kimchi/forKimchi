@@ -60,8 +60,8 @@ router.get('/prodOrder', async(req, res)=>{
 
 // 생산지시 등록을 위한 상세 계획 조회
 router.get('/planDetailList', async(req, res)=>{
-  let PlanDetailList = await prodOrderService.selectProdPlanDetailList();
-  res.send(PlanDetailList);
+  let planDetailList = await prodOrderService.selectProdPlanDetailList();
+  res.send(planDetailList);
 });
 
 // 생산지시 조회
@@ -148,6 +148,12 @@ router.get('/selectWorkplan', async(req, res)=>{
 router.get('/selectWorkplanDetail/:id', async(req, res)=>{
   let planId = req.params.id
   let result = await prodWorkService.selectWorkPlanDetail(planId);
+  res.send(result);
+});
+// 공정 실적조회
+router.get('/prodProcessWork', async(req, res)=>{
+  let params = req.query;
+  let result = await prodWorkService.selectProdProcessWork(params);
   res.send(result);
 });
 module.exports = router;
