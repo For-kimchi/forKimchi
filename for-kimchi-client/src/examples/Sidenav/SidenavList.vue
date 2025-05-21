@@ -17,7 +17,7 @@
                   view_in_ar,
                   receipt_long
                   A,B,C, 알파벳이 있음. 실험을 해보고 사용하길 권장드려요~-->
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="영업">
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="order" navText="영업">
           <template v-slot:icon>
             <!-- 표시될 아이콘 이름 -->
             <i class="material-icons-round opacity-10 fs-5">inventory</i>
@@ -36,7 +36,7 @@
 
       <!-- 생산 -->
       <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="생산">
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="production" navText="생산">
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
           </template>
@@ -51,7 +51,7 @@
 
       <!-- 자재 -->
       <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="자재">
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="material" navText="자재">
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
           </template>
@@ -69,7 +69,7 @@
 
       <!-- 품질관리 -->
       <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="검사">
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="quality" navText="검사">
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">checklist</i>
           </template>
@@ -86,7 +86,7 @@
 
        <!-- 기준관리 -->
        <li class="nav-item">
-        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="" navText="기준관리">
+        <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="true" collapseRef="basic" navText="기준관리">
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
           </template>

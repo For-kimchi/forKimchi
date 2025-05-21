@@ -20,6 +20,11 @@
         <slot name="list" />
       </ul>
     </div>
+    <!-- <div :id="collapseRef" :class="isExpanded ? 'collapse show' : 'collapse'">
+      <ul class="nav nav-sm flex-column" v-if="isExpanded">
+        <slot name="list" />
+      </ul>
+    </div> -->
   </div>
 </template>
 
@@ -35,11 +40,15 @@ export default {
     collapse: { type: Boolean, default: true }
   },
   data() {
-    return { isExpanded: false };
+    return { 
+      // isExpanded: false
+     };
   },
   methods: {
     toggleExpand() {
-      this.isExpanded = !this.isExpanded;
+      // this.isExpanded = !this.isExpanded;
+      const store = useEventStore();
+      store.setExpandedMenu(this.collapseRef);
     },
     getRoute() {
       const routeArr = this.$route.path.split("/");
@@ -47,7 +56,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(useEventStore, ["isRTL", "color"])
+    ...mapState(useEventStore, ["isRTL", "color", 'expandedMenu']),
+    isExpanded() {
+      return this.expandedMenu === this.collapseRef;
+    }
   }
 };
 </script>
