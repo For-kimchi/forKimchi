@@ -88,7 +88,7 @@ SELECT DISTINCT
     q.quality_id,
     md.mate_id,
     mate_id(md.mate_id) mate_name,
-    q.quality_date,
+    DATE_FORMAT(q.quality_date, '%Y/%m/%d') quality_date,
     q.quality_amount,
     q.quality_pass_amount,
     q.quality_fail_amount,
@@ -97,7 +97,7 @@ FROM
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
 ORDER BY
-	q.inbound_detail_id DESC
+	inbound_id, inbound_detail_id
 `;
 
 // 검색조건 (자재명)
@@ -109,6 +109,7 @@ SELECT DISTINCT
     q.quality_id,
     md.mate_id,
     mate_id(md.mate_id) mate_name,
+    DATE_FORMAT(q.quality_date, '%Y/%m/%d') quality_date,
     q.quality_amount,
     q.quality_pass_amount,
     q.quality_fail_amount,
@@ -131,7 +132,7 @@ SELECT DISTINCT
     q.quality_id,
     md.mate_id,
     mate_id(md.mate_id) mate_name,
-    q.quality_date,
+    DATE_FORMAT(q.quality_date, '%Y/%m/%d') quality_date,
     q.quality_amount,
     q.quality_pass_amount,
     q.quality_fail_amount,
@@ -317,8 +318,11 @@ select
 from
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
     JOIN t_prod_order po ON tpp.prod_order_lot = po.prod_order_lot
-order by DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') DESC
+order by 
+    prod_proc_id DESC
 `;
+//order by 
+//    DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') DESC
 
 // 제품검사조회 (제품이름)
 const selectProdName =

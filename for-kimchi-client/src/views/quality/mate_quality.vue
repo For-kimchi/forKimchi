@@ -19,13 +19,13 @@
             <div class="col-md-3">
               <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0 " style="width: 100px;">시작일자</label>
-                <input v-model="searchStartDate" type="date" class="form-control border text-center" />
+                <input v-model="searchStartDate" type="date" class="form-control border text-center group cursor-pointer" />
               </div>
             </div>
             <div class="col-md-3">
               <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0 " style="width: 100px;">종료일자</label>
-                <input v-model="searchEndDate" type="date" class="form-control border text-center" />
+                <input v-model="searchEndDate" type="date" class="form-control border text-center group cursor-pointer" />
               </div>
             </div>
             <div class="col-md-3">
@@ -37,7 +37,7 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0" style="max-height: 250px; overflow-y: auto;">
-              <table class="table align-items-center mb-0 table-hover">
+              <table class="table align-items-center mb-0 table-hover group cursor-pointer">
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
@@ -67,7 +67,7 @@
                     <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                     <td class="align-middle text-center">{{ info.mate_id }}</td>
                     <td class="align-middle text-center">{{ info.mate_name }}</td>
-                    <td class="align-middle text-center">{{ formatDate(info.quality_date) }}</td>
+                    <td class="align-middle text-center">{{ info.quality_date }}</td>
                     <!-- <td class="align-middle text-center">{{ info.quality_amount }}</td>
                     <td class="align-middle text-center">{{ info.quality_pass_amount }}</td>
                     <td class="align-middle text-center">{{ info.quality_fail_amount }}</td> -->
@@ -261,6 +261,7 @@
             .replace('{{ mate_name }}', this.mateQualityViewall[this.selectedIndex] ?.mate_name || 'N/A')
             .replace('{{ mate_id }}', this.mateQualityViewall[this.selectedIndex] ?.mate_id || 'N/A')
             .replace('{{ quality_id }}', this.mateQualityViewall[this.selectedIndex] ?.quality_id || 'N/A')
+            .replace('{{ quality_date }}', this.mateQualityViewall[this.selectedIndex] ?.quality_date || 'N/A')
             .replace('{{ final_result }}', finalResult)
             .replace('{{ table_rows }}', tableRows);
 

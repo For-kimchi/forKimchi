@@ -19,13 +19,13 @@
             <div class="col-md-3">
               <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0 " style="width: 100px;">시작일자</label>
-                <input v-model="searchStartDate" type="date" class="form-control border text-center" />
+                <input v-model="searchStartDate" type="date" class="form-control border text-center group cursor-pointer" />
               </div>
             </div>
             <div class="col-md-3">
               <div class="mb-3 d-flex align-items-center">
                 <label class="form-label me-2 mb-0 " style="width: 100px;">종료일자</label>
-                <input v-model="searchEndDate" type="date" class="form-control border text-center" />
+                <input v-model="searchEndDate" type="date" class="form-control border text-center group cursor-pointer" />
               </div>
             </div>
             <div class="col-md-3">
@@ -65,7 +65,7 @@
                     <!-- <td class="align-middle text-center">{{ info.quality_id }}</td> -->
                     <td class="align-middle text-center">{{ info.prod_id }}</td>
                     <td class="align-middle text-center">{{ info.prod_name }}</td>
-                    <td class="align-middle text-center">{{ formatDate(info.quality_date) }}</td>
+                    <td class="align-middle text-center">{{ info.quality_date }}</td>
                     <!-- <td class="align-middle text-center">{{ info.quality_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_pass_amount }}</td>
                         <td class="align-middle text-center">{{ info.quality_fail_amount }}</td> -->
@@ -257,6 +257,7 @@
             .replace('{{ prod_name }}', this.prodQualityViewall[0] ?.prod_name || 'N/A')
             .replace('{{ prod_id }}', this.prodQualityViewall[0] ?.prod_id || 'N/A')
             .replace('{{ quality_id }}', this.prodQualityViewall[0] ?.quality_id || 'N/A')
+            .replace('{{ quality_date }}', this.prodQualityViewall[0] ?.quality_date || 'N/A')
             .replace('{{ date }}', new Date().toLocaleDateString())
             .replace('{{ table_rows }}', tableRows)
             .replace('{{ final_result }}', finalResult);
