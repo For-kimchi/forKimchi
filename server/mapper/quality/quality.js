@@ -142,7 +142,7 @@ FROM
 WHERE 1=1
 	:searchKeyword
 ORDER BY
-	inbound_id DESC
+	q.quality_date DESC
 `;
 
 // 자재검사조회 (상세)
@@ -307,8 +307,8 @@ const prodQualityViewAll =
 select 
 	tqp.prod_proc_id,
     tqp.quality_id,
-    prod_id(tpp.prod_id) prod_name,
-    tpp.prod_id,
+    prod_id(po.prod_id) prod_name,
+    po.prod_id,
     DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') quality_date,
     tqp.quality_amount,
     tqp.quality_pass_amount,
@@ -316,6 +316,7 @@ select
     sub_code(tqp.quality_final_result) final_result
 from
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
+    JOIN t_prod_order po ON tpp.prod_order_lot = po.prod_order_lot
 order by DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') DESC
 `;
 
@@ -325,14 +326,15 @@ const selectProdName =
 SELECT
 	tqp.prod_proc_id,
     tqp.quality_id,
-    prod_id(tpp.prod_id) prod_name,
-    tpp.prod_id,
+    prod_id(po.prod_id) prod_name,
+    po.prod_id,
     tqp.quality_amount,
     tqp.quality_pass_amount,
     tqp.quality_fail_amount,
     sub_code(tqp.quality_final_result) final_result
 FROM
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
+    JOIN t_prod_order po ON tpp.prod_order_lot = po.prod_order_lot
 WHERE 
 	prod_id(tpp.prod_id) LIKE ?
 ORDER BY
@@ -345,8 +347,8 @@ const getProdDate =
 select 
 	tqp.prod_proc_id,
     tqp.quality_id,
-    prod_id(tpp.prod_id) prod_name,
-    tpp.prod_id,
+    prod_id(po.prod_id) prod_name,
+    po.prod_id,
     DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') quality_date,
     tqp.quality_amount,
     tqp.quality_pass_amount,
@@ -354,9 +356,11 @@ select
     sub_code(tqp.quality_final_result) final_result
 from
 	t_prod_proc tpp join t_quality_prod tqp on (tpp.prod_proc_id = tqp.prod_proc_id)
+    JOIN t_prod_order po ON tpp.prod_order_lot = po.prod_order_lot
 WHERE 1=1
 :searchKeyword
-order by tqp.prod_proc_id
+order by 
+DATE_FORMAT(tqp.quality_date, '%Y/%m/%d') DESC
 `;
 
 // 제품검사조회 (상세)
