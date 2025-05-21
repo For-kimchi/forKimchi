@@ -1,5 +1,6 @@
 <template>
-  <div class="w-auto h-auto collapse navbar-collapse max-height-vh-100 h-100" id="sidenav-collapse-main">
+  <div class="w-auto h-auto collapse navbar-collapse max-height-vh-100 h-100" id="sidenav-collapse-main"
+  style="overflow-y: hidden;">
     <ul class="navbar-nav">
 
       <!-- 영업 -->
