@@ -194,58 +194,57 @@
         this.prodQualitywait = ajaxRes.data;
       },
       async test() {
-        let param = {
-          prod_order_lot: this.selected.prod_order_lot,
-          details_: this.prodQualitywait
-        };
+  // 검사결과값 입력여부 체크
+  for (let idx of this.prodQualitywait) {
+    if (idx.quality_result_value === null || idx.quality_result_value === undefined || idx.quality_result_value === '') {
+      this.$swal({
+        text: "검사결과값을 입력하세요.",
+        icon: "warning"
+      });
+      return;
+    }
+  }
 
-        // 검사결과값 입력여부 체크
-        for (let idx of this.prodQualitywait) {
-          let val = Object.hasOwn(idx, 'quality_result_value');
-          if (!val || idx.quality_result_value == 0) {
-            this.$swal({
-              text: "검사결과값을 입력하세요.",
-              icon: "warning"
-            });
-            return;
-          }
-        }
+  // 검사 결과 전체 상태 판단
+  const allPassed = this.prodQualitywait.every(item => item.result === '합격');
+  const proc_status = allPassed ? '3e' : '5e';  // 조건에 맞는 상태값
 
-        try {
-          let testlist = await axios.post('/api/prod', param);
+  // 서버에 보낼 파라미터에 proc_status 포함
+  let param = {
+    ...this.selected,
+    details_: this.prodQualitywait,
+    proc_status: proc_status
+  };
 
-          if (testlist.data.affectedRows > 0) {
-            this.$swal({
-              text: "저장이 완료되었습니다.",
-              icon: "success"
-            });
-            // [수정 포인트] 검사 완료된 항목을 prodQualityreq에서 제거
-            // filter 결과를 다시 prodQualityreq에 할당해야 함
-            this.prodQualityreq = this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected
-              .prod_proc_id);
+  try {
+    let res = await axios.post('/api/prod', param);
 
-            // 선택 항목 초기화
-            this.selected = [];
-            this.prodQualitywait = [];
+    if (res.data && res.data.affectedRows > 0) {
+      this.$swal({
+        text: "저장이 완료되었습니다.",
+        icon: "success"
+      });
 
-          } else {
-            this.$swal({
-              text: "저장 과정에서 오류가 발생했습니다",
-              icon: "error"
-            });
-          }
+      this.prodQualityreq = this.prodQualityreq.filter(item => item.prod_proc_id !== this.selected.prod_proc_id);
 
-        } catch (err) {
-          console.log(err);
-          this.$swal({
-            text: "저장 중 오류가 발생했습니다.",
-            icon: "error"
-          });
-        }
-      },
-      // addRow() {
-      //   this.prodQualitywait.push({});
-      // }
+      this.selected = [];
+      this.prodQualitywait = [];
+      this.selectedIndex = null;
+
+    } else {
+      this.$swal({
+        text: "저장 과정에서 오류가 발생했습니다",
+        icon: "error"
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    this.$swal({
+      text: "저장 중 오류가 발생했습니다.",
+      icon: "error"
+    });
+  }
+}
     }
   }
 </script>

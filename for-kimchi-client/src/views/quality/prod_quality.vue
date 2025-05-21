@@ -196,7 +196,11 @@
       async getProdDate() {
         const params = {};
         if (this.searchStartDate) params.startDate = this.searchStartDate;
-        if (this.searchEndDate) params.endDate = this.searchEndDate;
+        if (this.searchEndDate) {
+          const end = new Date(this.searchEndDate);
+          end.setDate(end.getDate() + 1);
+          params.endDate = end.toISOString().split('T')[0];
+        }
         let result =
           await axios.get(`/api/getProdDate`, {
             params

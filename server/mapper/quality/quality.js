@@ -97,7 +97,7 @@ FROM
 	t_quality_mate q join
     t_mate_inbound_detail md  on(q.inbound_detail_id = md.inbound_detail_id)
 ORDER BY
-	quality_date DESC
+	q.inbound_detail_id DESC
 `;
 
 // 검색조건 (자재명)

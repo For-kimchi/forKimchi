@@ -27,7 +27,6 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">입고수량
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">상태</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">비고</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -41,7 +40,6 @@
                     <td class="align-middle text-center">{{ info.mate_name }}</td>
                     <td class="align-middle text-center">{{ info.inbound_amount }}</td>
                     <td class="align-middle text-center text-warning">{{ info.inbound_status }}</td>
-                    <td class="align-middle text-center">{{ info.memo }}</td>
                   </tr>
                 </tbody>
               </table>

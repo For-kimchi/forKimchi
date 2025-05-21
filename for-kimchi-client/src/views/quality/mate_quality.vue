@@ -197,7 +197,13 @@
       async getMateDate() {
         const params = {};
         if (this.searchStartDate) params.startDate = this.searchStartDate;
-        if (this.searchEndDate) params.endDate = this.searchEndDate;
+        
+        if (this.searchEndDate){
+          const endDate = new Date(this.searchEndDate);
+          endDate.setDate(endDate.getDate() + 1);
+          const adjustedEndDate = endDate.toISOString().split('T')[0];
+          params.endDate = adjustedEndDate;
+        }
         let result =
           await axios.get(`/api/getMateDate`, {
             params
