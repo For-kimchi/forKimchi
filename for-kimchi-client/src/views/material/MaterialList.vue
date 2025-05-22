@@ -298,7 +298,7 @@ export default {
     async downloadPdf() {
       if (this.mateList.length === 0) {
         this.$swal({
-          text: "다운로드 실패 - 검사결과를 클릭하세요!",
+          text: "발주를 선택한 후 다운로드 해주세요",
           icon: "warning"
         });
         return;
