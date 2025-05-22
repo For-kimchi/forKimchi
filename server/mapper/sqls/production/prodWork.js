@@ -15,7 +15,8 @@ SELECT
    left JOIN t_employee e ON(t.employee_id = e.employee_id)
    left JOIN t_employee m ON(t.manager_id = m.employee_id)
    left JOIN t_vendor v ON(o.vendor_id = v.vendor_id)
-   WHERE 1=1
+   left JOIN t_sub_code sc ON (t.plan_final_status = sc.sub_code)
+   WHERE t.plan_final_status in ('4i')
    :searchKeyword
    GROUP BY t.plan_id
    ORDER BY plan_id DESC
@@ -52,7 +53,7 @@ SELECT
 FROM t_prod_order o left JOIN t_employee e ON(o.employee_id = e.employee_id)
                     left JOIN t_prod p ON(o.prod_id = p.prod_id)
                     left JOIN t_sub_code sc ON (o.order_status = sc.sub_code)
-WHERE 1=1
+WHERE o.order_status in ('5d')
 :searchKeyword
 ORDER BY prod_order_lot
 `;
