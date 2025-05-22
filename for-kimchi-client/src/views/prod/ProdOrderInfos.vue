@@ -181,7 +181,7 @@ export default {
     data(){
         return{
           prodDetailList: [],
-          prodDetailLists: [],
+          // prodDetailLists: [],
           prodOrderList: [],
           planDetailId: '',
           planDetailProd: '',
@@ -220,8 +220,17 @@ export default {
       // 생산계획상세 리스트
       async clickDtList(index){
         this.idx = index;
-        let info = this.prodDetailList[index];
-        console.log(this.prodDetailList[this.idx]);
+        if(this.idx <= 0){
+          return;
+        }else{
+          this.idx = index - 1;
+        }
+
+        if(this.prodDetailList[this.idx].length > 0 || this.prodDetailList[this.idx].length !== null){
+
+        
+        this.idx = index;
+        let info = this.prodDetailList[this.idx];
         // console.log(info);
         // plan_detail_id 에러
         let dtid = info.plan_detail_id
@@ -232,12 +241,14 @@ export default {
           ...item,
           check: false,
         }));;
-          console.log(this.prodOrderList);
           this.planDetailId = info.plan_detail_id;
           this.planDetailProd = info.prod_id;
           this.planAmount = info.plan_amount;
           this.planEndDate = info.plan_end_date;
           this.prodDate = formatDate();
+        }else{
+            
+        }
       },
       // 추가 버튼
       async addOrders(){

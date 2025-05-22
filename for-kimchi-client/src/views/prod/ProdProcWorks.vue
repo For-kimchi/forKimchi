@@ -127,7 +127,7 @@
                       <div class="row mt-3">
                         <div class="col text-end">
                           <button class="btn btn-success" @click="prodProdProcessList">조회</button>
-                          <button class="btn btn-secondary ms-2" @click="resetForm()">초기화</button>
+                          <!-- <button class="btn btn-secondary ms-2" @click="resetForm()">초기화</button> -->
                         </div>
                       </div>
                       <div class="card my-4">
