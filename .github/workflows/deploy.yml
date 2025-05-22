@@ -1,15 +1,15 @@
 name: Build Vue and Deploy Node App
 
-on:
- push:
-   branches:
-     - master
-
 # on:
-#   pull_request:
-#     types: [closed]
-#     branches:
-#       - master
+#  push:
+#    branches:
+#      - master
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
       
 jobs:
   deploy:
