@@ -26,7 +26,7 @@ For 김치는 프로젝트는 김치 제조 공장의 생산 및 재고 관리�
 
 ## ⚙️ 개발환경
 - **Frontend**: Vue 3, Bootstrap 5, Pinia
-- **Backend**: Node.js (Express), Axios,
+- **Backend**: Node.js (Express), Axios
 - **Database**: MariaDB
 - **Tools**: VS Code, Git, MySQL Workbench
-- **배포환경**: Ubuntu, Nginx, PM2, NCP,
+- **배포환경**: Ubuntu, Nginx, PM2, NCP
